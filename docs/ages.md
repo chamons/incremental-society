@@ -1,0 +1,27 @@
+# Ages
+
+- Stone Age
+    - Enough food and heat to survive
+    - Domestication of animals / plants
+    - Late stone age introduction of trade
+- Iron Age
+    - First exploration and warfare expansion
+    - Tools provide large yield improvements
+    - Early chance for trade \ religion \ professional military 
+- Bronze Age
+    - Peaceful expansion
+    - Trade \ Religion \ Early Wonders 
+- Classical Age
+    - Engineering, Currency, 
+    - Strong urban civilizations
+- Medieval Age    
+- Renaissance 
+    - Overseas expansion
+- Industrial Age
+    - Cross continent wars
+- Modern Age
+    - Atomic
+- Information Age
+    - Electronics
+- Space Age
+    - Moon Shot?

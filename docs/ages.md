@@ -4,11 +4,11 @@
     - Enough food and heat to survive
     - Domestication of animals / plants
     - Late stone age introduction of trade
-- Iron Age
+- Bronze Age
     - First exploration and warfare expansion
     - Tools provide large yield improvements
     - Early chance for trade \ religion \ professional military 
-- Bronze Age
+- Iron Age
     - Peaceful expansion
     - Trade \ Religion \ Early Wonders 
 - Classical Age

@@ -1,0 +1,34 @@
+,
+{
+    "name": "Ore",
+    "type": "Cap",
+    "age": "Bronze"
+},
+{
+    "name": "Copper",
+    "age": "Bronze"
+},
+{
+    "name": "Tin",
+    "age": "Bronze"
+},
+{
+    "name": "Bronze",
+    "age": "Bronze"
+},
+{
+    "name": "Civilian Goods",
+    "age": "Bronze"
+}
+
+
+{
+    "age": "bronze",
+    "resource": "Civilian Goods",
+    "amount": 0.25,
+    "missing_effect": "Happiness",
+    "missing_power": 0.5
+}
+
+"Fertile",
+"Wildlife"

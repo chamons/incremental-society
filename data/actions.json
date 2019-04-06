@@ -1,0 +1,12 @@
+{
+    "actions": [
+        {
+            "name": "Grow Population",
+            "age": "Stone"
+        },
+        {
+            "name": "Build Settlement",
+            "age": "Stone"
+        }
+    ]
+}

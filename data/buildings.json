@@ -1,0 +1,38 @@
+{
+    "buildings": [
+        {
+            "name": "Gathering Camp",
+            "introduced_age": "stone",
+            "valid_regions": "Plains, Forest, Mountain"
+        },
+        {
+            "name": "Charcoal Pit",
+            "introduced_age": "stone",
+            "valid_regions": "Settlement"
+        },
+        {
+            "name": "Toolmaker's Shack",
+            "introduced_age": "stone",
+            "valid_regions": "Settlement"
+        },
+        {
+            "name": "Clay Pit",
+            "introduced_age": "stone",
+            "valid_regions": "Mountain, Plains, Forest",
+            "resource": "clay"
+        },
+        {
+            "name": "Quarry",
+            "introduced_age": "stone",
+            "valid_regions": "Mountain, Plains, Forest",
+            "resource": "stone"
+        }
+    ],
+    "settlements": [
+        {
+            "name": "Crude Settlement",
+            "introduced_age": "stone",
+            "valid_regions": "Plains, Forest"
+        }
+    ]
+}

@@ -5,10 +5,10 @@ There are a number of interacting systems that make up the gameplay loops.
 ## General Concepts
 
 - Your empire is made up of people, land, buildings, materials and knowledge.
-- Land is made up of provinces, each providing one or more slots for buildings.
-- Buildings produce jobs that people can fill, can be specialized into different versions, and made have a base yield.
-- Jobs are the primary source of yield in the empire. Each job must be filled by a person.
+- You land is made up of regions, each providing a number of districts
+- Each district can contain a number of buildings. Each building produces some yield.
 - Yield can be directly a material or a conversion from one to another.
+- The number of buildings in a region is based on population and the type.
 - Trade, faith (religion), and knowledge (research) can all specialize your society over time.
 - New ages can be reached by researching sufficient technologies and spending a research cost.
 - Entering new ages will increases the base requirements of people and buildings as people expect more to be happy.
@@ -20,29 +20,17 @@ There are a number of interacting systems that make up the gameplay loops.
 - Buildings also may require goods to function, and may go offline if those are not available.
 - Long term unhappiness may have some sort of negative impact (Civil War? Disposed?)
 
-## Provinces
+## Regions
 
-- The empire is made up by one or more provinces. 
-- Each provinces will have one or more typed slots which determine what buildings can be built.
+- The empire is made up by one or more region. 
+- Each region will have one or more typed slots which determine what buildings can be built.
 - You can build mines in mountains, logging camps in forests, and harbors on the shore.
-- You can convert a province slot into a "city" which will allow urban buildings to be built for a cost. City dwellers have significantly higher expectations.
+- You can convert a region slot into a "city" which will allow urban buildings to be built for a cost. City dwellers have significantly higher expectations.
 - Cities do not have base yields (no grain or wood to harvest) but can allow foreign trade, research, and administration.
 
 ## Buildings
 
-- Buildings are based upon the province slot types.
-- Plains
-    - Farms
-    - Villages
-- Forest
-    - Camps
-    - Logging
-- Mountain
-    - Mines
-    - Observatory
-- Coast
-    - Fishing Village
-    - Harbors
+See [buildings.md](buildings.md)
 
 ## Edicts
 
@@ -116,5 +104,3 @@ There are a number of interacting systems that make up the gameplay loops.
 - As an incremental game, resets should provide some benefit and required to reach later ages
 - Challenges should also provide an incentive to show mastery of the game systems
     - Example: "Barbarian Horde" - Reach the medieval age while barbarian aggressive is massively increased
-
- 

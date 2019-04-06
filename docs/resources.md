@@ -2,9 +2,19 @@
 
 The heart and soul of any incremental game, or most strategy games in general, is effective use of resources. 
 
+In Incremental Society, there are many resources that as your society progresses. 
+
+Some resource will be generated over time, where others will have a "cap" that you can consume. It doesn's make
+sense to store water for example.
+
+Some resources will be needed ongoing to sastify your citizens, where others saved up to build, research, and expand.
+
+New citizens will require "space" in the food\water\space caps and ongoing resourcse.
+
 # Detailed Listing
 
-In Incremental Society, there are many resources that will be generated over time as your society progresses. They can be catagorized into a number of different types:
+
+They can be catagorized into a number of different types:
 
 - Food
     - Perishable Food
@@ -29,8 +39,10 @@ In Incremental Society, there are many resources that will be generated over tim
 - Natural Resources
     - Logs
         - -> Boards
+	- Clay
     - Stone
     - Precious Stones
+- Currency
 - Building Materials
     - Bricks
     - Concrete
@@ -50,6 +62,7 @@ In Incremental Society, there are many resources that will be generated over tim
     - Uranium
         - -> Enriched Uranium
 - Advanced Goods
+	- Tools
     - Civilian Goods
     - Luxuries
     - Weapons

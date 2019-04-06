@@ -24,13 +24,6 @@
             "amount": 0.25,
             "missing_effect": "Health",
             "missing_power": 0.25
-        },
-        {
-            "age": "bronze",
-            "resource": "Civilian Goods",
-            "amount": 0.25,
-            "missing_effect": "Happiness",
-            "missing_power": 0.5
         }
-    ],
+    ]
 }

@@ -2,7 +2,6 @@
     "resources": [
         {
             "name": "Knowledge",
-            "type": "Cap",
             "age": "Stone"
         },
         {
@@ -12,7 +11,6 @@
         },
         {
             "name": "Preserved Food",
-            "type": "Stored",
             "age": "Stone"
         },
         {
@@ -22,58 +20,27 @@
         },
         {
             "name": "Wood",
-            "type": "Stored",
             "age": "Stone"
         },
         {
             "name": "Clay",
-            "type": "Stored",
             "age": "Stone"
         },
         {
             "name": "Bricks",
-            "type": "Stored",
             "age": "Stone"
         },
         {
             "name": "Stone",
-            "type": "Stored",
             "age": "Stone"
         },
         {
             "name": "Tools",
-            "type": "Stored",
             "age": "Stone"
         },
         {
             "name": "Charcoal",
-            "type": "Stored",
             "age": "Stone"
-        },
-        {
-            "name": "Ore",
-            "type": "Cap",
-            "age": "Bronze"
-        },
-        {
-            "name": "Copper",
-            "type": "Store",
-            "age": "Bronze"
-        },
-        {
-            "name": "Tin",
-            "type": "Store",
-            "age": "Bronze"
-        },
-        {
-            "name": "Bronze",
-            "type": "Store",
-            "age": "Bronze"
-        },
-        {
-            "name": "Civilian Goods",
-            "type": "Stored",
-            "age": "Bronze"
         }
     ]
 }

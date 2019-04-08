@@ -5,4 +5,16 @@
     <RootNamespace>IncrementalSociety</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\data\actions.json" Link="data\actions.json" />
+    <EmbeddedResource Include="..\..\data\buildings.json" Link="data\buildings.json" />
+    <EmbeddedResource Include="..\..\data\game.json" Link="data\game.json" />
+    <EmbeddedResource Include="..\..\data\regions.json" Link="data\regions.json" />
+    <EmbeddedResource Include="..\..\data\resources.json" Link="data\resources.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="data\" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
 .DS_Store
-src/build/*.js*
-src/build/style*
-node_modules/
+.vs/
+bin/
+obj/

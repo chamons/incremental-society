@@ -1,25 +1,25 @@
 {
     "ages": [
-        "stone",
-        "bronze"
+        "Stone",
+        "Bronze"
     ],
     "population_needs": [
         {
-            "age": "stone",
+            "age": "Stone",
             "resource": "water",
             "amount": 1,
             "missing_effect": "Health",
             "missing_power": 1
         },
         {
-            "age": "stone",
+            "age": "Stone",
             "resource": "Food",
             "amount": 2,
             "missing_effect": "Health",
             "missing_power": 0.5
         },
         {
-            "age": "stone",
+            "age": "Stone",
             "resource": "Wood",
             "amount": 0.25,
             "missing_effect": "Health",

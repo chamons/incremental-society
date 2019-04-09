@@ -1,3 +1,4 @@
+using IncrementalSociety.Web.Services;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,6 +8,7 @@ namespace IncrementalSociety.Web
     {
         public void ConfigureServices (IServiceCollection services)
         {
+            services.AddSingleton<GameService> ();
         }
 
         public void Configure (IComponentsApplicationBuilder app)

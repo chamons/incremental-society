@@ -1,5 +1,13 @@
 ﻿@page "/"
+@using  IncrementalSociety.Web.Services
+@inject GameService GameService
 
-<h1>Hello, world!</h1>
+<h1>Resourcs</h1>
 
-Welcome to your new app.
+
+<ul>
+    @foreach (var forecast in @GameService.ResourcesNames)
+    {
+        <li>Name = @forecast</li>
+    }
+</ul>

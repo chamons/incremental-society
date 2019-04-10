@@ -9,6 +9,7 @@ namespace IncrementalSociety.Resources
         public string Name { get; set; }
         public string Type { get; set; }
         public string Age { get; set; }
+        public bool Image_has_age_prefix { get; set; }
     }
 
     public class ResourceDeclarations

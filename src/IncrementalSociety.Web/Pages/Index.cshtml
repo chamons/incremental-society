@@ -2,12 +2,24 @@
 @using  IncrementalSociety.Web.Services
 @inject GameService GameService
 
-<h1>Resourcs</h1>
+    <div class="container-fluid">
+        <div class="row">
 
+            <div class="col-4">
+                <h1>Resources</h1>
 
-<ul>
-    @foreach (var forecast in @GameService.ResourcesNames)
-    {
-        <li>Name = @forecast</li>
-    }
-</ul>
+                <ul id="resource-list">
+                    @foreach (var resource in @GameService.Resourcs)
+                    {
+                        <li>
+                            <img class="resource-image" src="@GameService.GetImageFilename(resource)"/>
+                            <p>@resource.Name: 1</p>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+    </div>

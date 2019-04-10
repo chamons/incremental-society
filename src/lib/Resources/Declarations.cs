@@ -65,7 +65,7 @@ namespace IncrementalSociety.Resources
         public List<Settlement> Settlements { get; set; }
     }
 
-    public class Action
+    public class GameAction
     {
         public string Name { get; set; }
         public string Age { get; set; }
@@ -73,6 +73,6 @@ namespace IncrementalSociety.Resources
 
     public class ActionDeclarations
     {
-        public List<Action> Actions { get; set; }
+        public List<GameAction> Actions { get; set; }
     }
 }

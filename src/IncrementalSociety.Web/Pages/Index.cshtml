@@ -6,20 +6,27 @@
         <div class="row">
 
             <div class="col-4">
-                <h1>Resources</h1>
+                <div id="resources">
+                    <h1>Resources</h1>
 
-                <ul id="resource-list">
-                    @foreach (var resource in @GameService.Resourcs)
+                    <ul id="resource-list">
+                        @foreach (var resource in @GameService.Resources)
+                        {
+                            <li>
+                                <img class="resource-image" src="@GameService.GetImageFilename(resource)" />
+                                <p>@resource.Name: 1</p>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div id="actions">
+                    @foreach (var action in @GameService.Actions)
                     {
-                        <li>
-                            <img class="resource-image" src="@GameService.GetImageFilename(resource)"/>
-                            <p>@resource.Name: 1</p>
-                        </li>
+                        <button type="button">@action.Name</button>
                     }
-                </ul>
+                </div>
             </div>
             <div class="col">
-
             </div>
         </div>
     </div>

@@ -14,7 +14,9 @@ namespace IncrementalSociety.Web.Services
             Loader = JsonLoader.Load ();
         }
 
-        public ResourceDeclaration[] Resourcs => Loader.Resources.Resources.ToArray ();
+        // STUB_DATA - Filter by age
+        public IEnumerable<ResourceDeclaration> Resources => Loader.Resources.Resources;
+        public IEnumerable<GameAction> Actions => Loader.Actions.Actions;
 
         public string GetImageFilename (ResourceDeclaration decl)
         {

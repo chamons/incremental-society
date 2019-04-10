@@ -11,3 +11,13 @@
   #resource-list p {
     vertical-align: middle;
     display: inline; }
+
+#actions {
+  border: 1px solid black;
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px; }
+
+#resources {
+  border: 1px solid black;
+  padding-left: 20px; }

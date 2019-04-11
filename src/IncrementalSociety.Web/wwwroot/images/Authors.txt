@@ -9,12 +9,18 @@ stone-tools.png
 wood.png
 preserved-food.png
 boards.png
+plains.png
+forest.png
+ocean.png
+desert.png
+swamp.png
 
 lorc
 -----------
 food.png
 stone.png
 charcoal.png
+mountain.png
 
 skoll
 -----------

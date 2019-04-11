@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,14 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="wwwroot\images\food.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="0.9.0-preview3-19154-02" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.9.0-preview3-19154-02" PrivateAssets="all" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
@@ -28,63 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="compilerconfig.json" />
-    <None Include="wwwroot\images\Authors.txt" />
-    <None Include="wwwroot\images\boards.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\bricks.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\charcoal.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\clay.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\hide.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\knowledge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\license.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\medicine.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\preserved-food.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\stone-goods.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\stone-people.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\stone-tools.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\stone.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\water.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\images\wood.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\lib\incremental-society.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\images\food.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

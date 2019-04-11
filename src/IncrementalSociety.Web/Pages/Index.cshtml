@@ -1,0 +1,47 @@
+﻿@page "/"
+@using  IncrementalSociety.Web.Services
+@inject GameService GameService
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-4">
+                <div id="resources">
+                    <h1>Resources</h1>
+
+                    <ul id="resource-list">
+                        @foreach (var resource in @GameService.Resources)
+                        {
+                            <li>
+                                <img class="resource-image" src="@GameService.GetImageFilename(resource)" />
+                                <p>@resource.Name: @GameService.GetResourceCount(resource.Name) </p>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div id="actions">
+                    @foreach (var action in @GameService.Actions)
+                    {
+                        <button type="button">@action.Name</button>
+                    }
+                </div>
+            </div>
+            <div class="col">
+                <div id="regions">
+                    @foreach (var region in @GameService.Regions)
+                    {
+                        <div class="region">
+                            <p>@region.Name</p>
+                            <div class="region-areas d-flex flex-row flex-wrap">
+                                @for(int i = 0; i < region.Areas.Length; ++i)
+                                {
+                                    string areaInfoID = region.Name + i.ToString ();
+                                    <AreaView area="@region.Areas[i]"/>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+     </div>

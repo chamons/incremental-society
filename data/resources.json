@@ -32,7 +32,8 @@
         },
         {
             "name": "Tools",
-            "age": "Stone"
+            "age": "Stone",
+            "image_has_age_prefix":  true
         },
         {
             "name": "Charcoal",

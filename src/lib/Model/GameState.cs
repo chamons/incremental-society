@@ -31,16 +31,10 @@
         List<Area> Areas;
     }
 
-    public class Resource
-    {
-        string Name;
-        int Amount;
-    }
-
     public class GameState
     {
         Age Age;
         List<Region> Regions;
-        List<Resource> Resources;
+        Dictionary<string, int> Resources;
     }
 }

@@ -42,29 +42,17 @@ namespace IncrementalSociety.Model
 		}
 	}
 
-	public partial class Resource
-	{
-		public string Name { get; }
-		public int Amount { get; }
-
-		public Resource (string name, int amount)
-		{
-			Name = name;
-			Amount = amount;
-		}
-	}
-
 	public partial class GameState
 	{
 		public Age Age { get; }
 		public ImmutableArray<Region> Regions { get; }
-		public ImmutableArray<Resource> Resources { get; }
+		public ImmutableDictionary<string, int> Resources { get; }
 
-		public GameState (Age age, IEnumerable<Region> regions, IEnumerable<Resource> resources)
+		public GameState (Age age, IEnumerable<Region> regions, Dictionary<string, int> resources)
 		{
 			Age = age;
 			Regions = ImmutableArray.CreateRange (regions ?? Array.Empty<Region> ());
-			Resources = ImmutableArray.CreateRange (resources ?? Array.Empty<Resource> ());
+			Resources = resources.ToImmutableDictionary ();
 		}
 	}
 }

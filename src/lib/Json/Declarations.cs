@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IncrementalSociety.Resources
+namespace IncrementalSociety.Json
 {
     public class ResourceDeclaration
     {

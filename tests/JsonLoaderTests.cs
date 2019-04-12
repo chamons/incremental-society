@@ -1,4 +1,4 @@
-using System.Linq;
+using IncrementalSociety.Json;
 using Xunit;
 
 namespace IncrementalSociety.Tests

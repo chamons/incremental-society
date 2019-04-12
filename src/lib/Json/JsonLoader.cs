@@ -1,10 +1,10 @@
-﻿using IncrementalSociety.Resources;
+﻿using IncrementalSociety.Json;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace IncrementalSociety
+namespace IncrementalSociety.Json
 {
     public class JsonLoader
     {

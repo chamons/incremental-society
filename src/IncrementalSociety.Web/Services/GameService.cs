@@ -2,8 +2,7 @@
 using System.Linq;
 
 using IncrementalSociety.Model;
-using IncrementalSociety.Resources;
-
+using IncrementalSociety.Json;
 
 namespace IncrementalSociety.Web.Services
 {
@@ -27,8 +26,7 @@ namespace IncrementalSociety.Web.Services
 
         public int GetResourceCount (string name)
         {
-            var resource = State.Resources.FirstOrDefault (x => x.Name == name);
-            return resource != null ? resource.Amount : 0;
+			return State.Resources.ContainsKey (name) ? State.Resources[name] : 0;
         }
 
         public string GetImageFilename (ResourceDeclaration decl)

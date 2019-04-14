@@ -19,6 +19,13 @@ namespace IncrementalSociety
 			Yields = new YieldCache ();
 		}
 
+		public GameState AddTickOfResources (GameState state)
+		{
+			var newResources = state.Resources.ToBuilder ();
+			AddResources (newResources, CalculateAdditionalNextTick (state));
+			return state.WithResources (newResources.ToImmutable ());
+		}
+
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();

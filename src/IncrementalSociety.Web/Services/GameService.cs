@@ -24,7 +24,7 @@ namespace IncrementalSociety.Web.Services
 
 		public IEnumerable<Region> Regions => State.Regions;
 
-		public int GetResourceCount (string name)
+		public double GetResourceCount (string name)
 		{
 			return State.Resources.ContainsKey (name) ? State.Resources[name] : 0;
 		}
@@ -36,6 +36,11 @@ namespace IncrementalSociety.Web.Services
 				return $"images\\{State.Age}-{name}.png";
 			else
 				return $"images\\{name}.png";
+		}
+
+		public void ApplyAction (string action)
+		{			
+			State = GameEngine.ApplyAction (State, action);
 		}
 	}
 }

@@ -34,10 +34,11 @@ namespace IncrementalSociety.Model
 		List<Area> Areas;
 	}
 
+	[With]
 	public class GameState
 	{
 		Age Age;
 		List<Region> Regions;
-		Dictionary<string, int> Resources;
+		Dictionary<string, double> Resources;
 	}
 }

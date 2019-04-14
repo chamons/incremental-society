@@ -14,16 +14,13 @@
 					{
 						<li>
 							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @GameService.GetResourceCount (resource.Name) </p>
+							<p>@resource.Name: @(GameService.GetResourceCount (resource.Name))</p>
 						</li>
 					}
 				</ul>
 			</div>
 			<div id="actions">
-				@foreach (var action in @GameService.Actions)
-				{
-					<button type="button">@action.Name</button>
-				}
+				<ActionView Refresh="@Refresh" />
 			</div>
 		</div>
 		<div class="col">
@@ -45,3 +42,10 @@
 		</div>
 	</div>
 </div>
+
+@functions {
+	public void Refresh ()
+	{
+		StateHasChanged ();
+	}
+}

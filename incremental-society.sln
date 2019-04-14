@@ -15,6 +15,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{BDD3AF2E-9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IncrementalSociety.Web", "src\IncrementalSociety.Web\IncrementalSociety.Web.csproj", "{3C9BACBD-623E-48AD-BA6F-7CB6594F1BFF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42234264-EEF8-4E76-B590-7135EB8ABA84}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		TODO.md = TODO.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

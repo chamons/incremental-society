@@ -15,11 +15,19 @@ namespace IncrementalSociety.Tests
 			return engine;
 		}
 
+		// TODO - This should use test specific  resources!
+		static GameState CreateGameState ()
+		{
+			var area = new Area (AreaType.Plains, "Gathering Camp".Yield ());
+			var region = new Region ("TestLand", area.Yield ());
+			return new GameState (Age.Stone, region.Yield(), new System.Collections.Generic.Dictionary<string, double> ());
+		}
+
 		[Fact]
 		public void AdditionalResourceNextTick ()
 		{
 			ResourceEngine engine = CreateEngine ();
-			GameState state = new GameState (Age.Stone, (new Region ("TestLand", (new Area (AreaType.Plains, "Gathering Camp".Yield ())).Yield ())).Yield (), new System.Collections.Generic.Dictionary<string, int> ());
+			GameState state = CreateGameState ();
 			var resources = engine.CalculateAdditionalNextTick (state);
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);

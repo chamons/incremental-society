@@ -1,27 +1,27 @@
-﻿@using  IncrementalSociety.Web.Services
+@using  IncrementalSociety.Web.Services
 @using  IncrementalSociety.Model
 @inject IJSRuntime JsRuntime;
 
-    <div>
-        <div class="collapse @(Expanded ? "hide" : "show")">
-            <img class="area-image" src="images\\@(area.Type).png" onclick="@OnAreaClick" />
-        </div>
+<div>
+	<div class="collapse @(Expanded ? "hide" : "show")">
+		<img class="area-image" src="images\\@(area.Type).png" onclick="@OnAreaClick" />
+	</div>
 
-        <div class="area-more-info collapse @(Expanded ? "show" : "hide")">
-            <img class="area-image" src="images\\@(area.Type).png" onclick="@OnAreaClick" />
-            <p>Name = @area.Type</p>
-        </div>
-    </div>
+	<div class="area-more-info collapse @(Expanded ? "show" : "hide")">
+		<img class="area-image" src="images\\@(area.Type).png" onclick="@OnAreaClick" />
+		<p>Name = @area.Type</p>
+	</div>
+</div>
 
 @functions {
-    [Parameter]
-    Area area { get; set; }
+	[Parameter]
+	Area area { get; set; }
 
-    bool Expanded;
+	bool Expanded;
 
-    private void OnAreaClick ()
-    {
-        Expanded = !Expanded;
-        StateHasChanged ();
-    }
+	private void OnAreaClick ()
+	{
+		Expanded = !Expanded;
+		StateHasChanged ();
+	}
 }

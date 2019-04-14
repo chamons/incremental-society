@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,7 +10,7 @@ using IncrementalSociety.Utilities;
 namespace IncrementalSociety
 {
 	public class ResourceEngine
-    {
+	{
 		JsonLoader Json;
 		YieldCache Yields;
 		public ResourceEngine (JsonLoader json)
@@ -20,8 +20,8 @@ namespace IncrementalSociety
 		}
 
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
-        {
-			var additional = ImmutableDictionary.CreateBuilder <string, double> ();
+		{
+			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var region in state.Regions)
 			{
 				foreach (var area in region.Areas)
@@ -45,7 +45,7 @@ namespace IncrementalSociety
 			{
 				foreach (var yield in building.Yield.AsNotNull ())
 					AddResources (resources, Yields.From (yield));
-			
+
 				foreach (var conversionYield in building.ConversionYield.AsNotNull ())
 					AddResources (resources, Yields.From (conversionYield));
 
@@ -63,13 +63,13 @@ namespace IncrementalSociety
 		}
 
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
-        {
-            foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
-            {
+		{
+			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
+			{
 				double leftValue = left.ContainsKey (resourceName) ? left[resourceName] : 0;
 				double rightValue = right.ContainsKey (resourceName) ? right[resourceName] : 0;
 				left[resourceName] = leftValue + rightValue;
 			}
-        }
-    }
+		}
+	}
 }

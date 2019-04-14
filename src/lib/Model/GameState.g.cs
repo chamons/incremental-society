@@ -4,21 +4,21 @@ using System.Collections.Immutable;
 
 namespace IncrementalSociety.Model
 {
-    public enum AreaType
-    {
-        Forest,
-        Plains,
-        Mountain,
-        Ocean,
-        Swamp,
-        Desert
-    }
+	public enum AreaType
+	{
+		Forest,
+		Plains,
+		Mountain,
+		Ocean,
+		Swamp,
+		Desert
+	}
 
-    public enum Age
-    {
-        Stone,
-        Bronze
-    }
+	public enum Age
+	{
+		Stone,
+		Bronze
+	}
 
 	public partial class Area
 	{

@@ -35,7 +35,7 @@ namespace IncrementalSociety
 			return additional.ToImmutable ();
 		}
 
-		// TODO Pass in actived conversions
+		// TODO Pass in activated conversions
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();

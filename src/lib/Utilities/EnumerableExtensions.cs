@@ -10,5 +10,10 @@ namespace IncrementalSociety.Utilities
 		{
 			return original ?? Enumerable.Empty<T> ();
 		}
+
+		public static IEnumerable<T> Yield<T> (this T item)
+		{
+			yield return item;
+		}
 	}
 }

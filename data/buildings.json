@@ -2,37 +2,78 @@
     "buildings": [
         {
             "name": "Gathering Camp",
-            "introduced_age": "stone",
-            "valid_regions": "Plains, Forest, Mountain"
+            "introduced_age": "Stone",
+            "valid_regions": "Plains, Forest, Mountain",
+            "yield": [
+                { "Food": 2 },
+                { "Water": 2 },
+                { "Stone": 0.5 },
+                { "Wood": 1 }
+            ]
         },
         {
             "name": "Charcoal Pit",
-            "introduced_age": "stone",
-            "valid_regions": "Settlement"
+            "introduced_age": "Stone",
+            "valid_regions": "Settlement",
+            "yield": [
+                {
+                    "cost": { "Wood": 1 },
+                    "provides": { "Charcoal": 0.5 }
+                }
+            ],
+            "conversion": true
         },
         {
             "name": "Toolmaker's Shack",
-            "introduced_age": "stone",
-            "valid_regions": "Settlement"
+            "introduced_age": "Stone",
+            "valid_regions": "Settlement",
+            "yield": [
+                {
+                    "name": "Create Stone Tools",
+                    "cost": { "Stone": 1 },
+                    "provides": { "Tool": 0.1 }
+                },
+                {
+                    "name": "Create Wood Tools",
+                    "cost": { "Wood": 1 },
+                    "provides": { "Tool": 0.1 }
+                }
+            ],
+            "conversion": true
         },
         {
             "name": "Clay Pit",
-            "introduced_age": "stone",
+            "introduced_age": "Stone",
             "valid_regions": "Mountain, Plains, Forest",
-            "resource": "clay"
+            "RequiredResource ": "Clay",
+            "yield": [
+                { "clay": 2 },
+                {
+                    "name": "Create Bricks",
+                    "cost": { "Clay": 1 },
+                    "provides": { "Bricks": 0.5 }
+                }
+            ],
+            "conversion": true
         },
         {
             "name": "Quarry",
-            "introduced_age": "stone",
+            "introduced_age": "Stone",
             "valid_regions": "Mountain, Plains, Forest",
-            "resource": "stone"
+            "RequiredResource ": "Stone",
+            "yield": [
+                { "Stone": 2 }
+            ]
         }
     ],
     "settlements": [
         {
             "name": "Crude Settlement",
-            "introduced_age": "stone",
-            "valid_regions": "Plains, Forest"
+            "introduced_age": "Stone",
+            "valid_regions": "Plains, Forest",
+            "yield": [
+                { "Knowledge": 1 }
+            ]
         }
     ]
 }

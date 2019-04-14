@@ -9,6 +9,10 @@ namespace IncrementalSociety
     {
         public static ImmutableDictionary<string, int> CalculateAdditionalNextTick (GameState state)
         {
+			foreach (var region in state.Regions)
+			{
+				
+			}
             return ImmutableDictionary.Create<string, int> ();
         }
 

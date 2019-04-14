@@ -49,7 +49,7 @@ namespace IncrementalSociety.Json
         public string Name { get; set; }
         public string Introduced_age { get; set; }
         public string Valid_regions { get; set; }
-        public string Resource { get; set; }
+        public string RequiredResource { get; set; }
     }
 
     public class Settlement

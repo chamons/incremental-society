@@ -45,7 +45,6 @@ namespace IncrementalSociety.Json
 		public List<PopulationNeeds> Population_needs { get; set; }
 	}
 
-
 	public partial class BuildingDeclarations
 	{
 		[JsonProperty ("buildings")]

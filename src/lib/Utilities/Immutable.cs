@@ -16,5 +16,12 @@ namespace IncrementalSociety.Utilities
             d.Add (key, value);
             return d.ToImmutableDictionary ();
         }
-    }
+
+		public static ImmutableDictionary<T, U>.Builder CreateBuilderDictionary<T, U> (T key, U value)
+		{
+			var d = ImmutableDictionary.CreateBuilder<T, U> ();
+			d[key] = value;
+			return d;
+		}
+	}
 }

@@ -23,6 +23,9 @@
     public class Area
     {
         AreaType Type;
+
+		[Default ("null")]
+        List<string> Buildings;
     }
 
     public class Region

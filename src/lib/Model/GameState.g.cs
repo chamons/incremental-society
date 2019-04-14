@@ -23,10 +23,12 @@ namespace IncrementalSociety.Model
 	public partial class Area
 	{
 		public AreaType Type { get; }
+		public ImmutableArray<string> Buildings { get; }
 
-		public Area (AreaType type)
+		public Area (AreaType type, IEnumerable<string> buildings = null)
 		{
 			Type = type;
+			Buildings = ImmutableArray.CreateRange (buildings ?? Array.Empty<string> ());
 		}
 	}
 

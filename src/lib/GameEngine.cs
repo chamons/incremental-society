@@ -9,7 +9,16 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		public static GameState ApplyAction (GameState state, string action)
+		JsonLoader Loader;
+		ResourceEngine ResourceEngine;
+
+		public GameEngine ()
+		{
+			Loader = JsonLoader.Load ();
+			ResourceEngine = new ResourceEngine (Loader);
+		}
+
+		public GameState ApplyAction (GameState state, string action)
 		{
 #if DEBUG
 			Console.WriteLine ($"ApplyAction - {action}\nState = {JsonConvert.SerializeObject (state)}");
@@ -31,18 +40,14 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public static GameState ProcessTick (GameState state)
+		public GameState ProcessTick (GameState state)
 		{
-			JsonLoader loader = JsonLoader.Load ();
-			ResourceEngine engine = new ResourceEngine (loader);
-			return engine.AddTickOfResources (state);
+			return ResourceEngine.AddTickOfResources (state);
 		}
 
-		public static ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
+		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
-			JsonLoader loader = JsonLoader.Load ();
-			ResourceEngine engine = new ResourceEngine (loader);
-			return engine.CalculateAdditionalNextTick (state);
+			return ResourceEngine.CalculateAdditionalNextTick (state);
 		}
 
 		public static GameState CreateNewGame ()

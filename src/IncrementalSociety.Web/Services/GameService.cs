@@ -11,19 +11,21 @@ namespace IncrementalSociety.Web.Services
 	{
 		JsonLoader Loader;
 
+		GameEngine Engine;
 		public GameState State { get; private set; }
 
 		public GameService ()
 		{
 			Loader = JsonLoader.Load ();
 			State = GameEngine.CreateNewGame ();
+			Engine = new GameEngine ();
 		}
 
 		// STUB_DATA - Filter by age
 		public IEnumerable<ResourceDeclaration> Resources => Loader.Resources.Resources;
 		public IEnumerable<GameAction> Actions => Loader.Actions.Actions;
 		public IEnumerable<Region> Regions => State.Regions;
-		public ImmutableDictionary<string, double> GetNextTickResources () => GameEngine.GetResourcesNextTick (State);
+		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
 
 		public string GetImageFilename (ResourceDeclaration decl)
 		{
@@ -36,7 +38,7 @@ namespace IncrementalSociety.Web.Services
 
 		public void ApplyAction (string action)
 		{			
-			State = GameEngine.ApplyAction (State, action);
+			State = Engine.ApplyAction (State, action);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using IncrementalSociety.Json;
+using IncrementalSociety.Utilities;
 
 namespace IncrementalSociety
 {
@@ -54,9 +55,9 @@ namespace IncrementalSociety
 		static ImmutableDictionary<string, double> Convert (ConversionYield conversionYield)
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var cost in conversionYield.Cost)
+			foreach (var cost in conversionYield.Cost.AsNotNull ())
 				resources.Add (cost.Name, cost.Amount);
-			foreach (var provide in conversionYield.Provides)
+			foreach (var provide in conversionYield.Provides.AsNotNull ())
 				resources.Add (provide.Name, provide.Amount);
 			return resources.ToImmutable ();
 		}

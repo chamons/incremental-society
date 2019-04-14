@@ -1,4 +1,5 @@
 ﻿using System;
+using IncrementalSociety.Json;
 using Xunit;
 
 namespace IncrementalSociety.Tests
@@ -6,10 +7,21 @@ namespace IncrementalSociety.Tests
 	public class YieldCacheTests
 	{
 		[Fact]
-		public void DuplicateItems ()
+		public void DuplicateItemsYield ()
 		{
 			YieldCache cache = new YieldCache ();
-			cache.From (new Json.Yield { Name = "A", Amount = 1 });
+			var first = cache.From (new Yield { Name = "A", Amount = 1 });
+			var second = cache.From (new Yield { Name = "A", Amount = 1 });
+			Assert.Equal (first, second);
+		}
+
+		[Fact]
+		public void DuplicateItemsYieldConversion ()
+		{
+			YieldCache cache = new YieldCache ();
+			var first = cache.From (new ConversionYield () { Name = "Test", Cost = new Yield[] { new Yield { Name = "A", Amount = 1 } } } );
+			var second = cache.From (new ConversionYield () { Name = "Test", Cost = new Yield[] { new Yield { Name = "A", Amount = 1 } } });
+			Assert.Equal (first, second);
 		}
 	}
 }

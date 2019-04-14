@@ -1,5 +1,6 @@
 @page "/"
 @using  IncrementalSociety.Web.Services
+@using  System.Collections.Immutable
 @inject GameService GameService
 
 <div class="container-fluid">
@@ -14,7 +15,7 @@
 					{
 						<li>
 							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @(GameService.GetResourceCount (resource.Name)) (@(GameService.GetNextTickResourceCount (resource.Name)))</p>
+							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GetResourceDeltaClass(resource.Name)">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
 						</li>
 					}
 				</ul>
@@ -44,8 +45,30 @@
 </div>
 
 @functions {
+	public ImmutableDictionary<string, double> NextTickResources;
+
+	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
+	{
+		return resources.ContainsKey (name) ? resources[name] : 0;
+	}
+
+	protected override void OnInit ()
+	{
+		NextTickResources = GameService.GetNextTickResources ();
+	}
+
 	public void Refresh ()
 	{
 		StateHasChanged ();
+	}
+
+	public string GetResourceDeltaClass (string name)
+	{
+		double count = GetResourceCount (NextTickResources, name);
+		if (count < -.001)
+			return "red";
+		else if (count > .001)
+			return "green";
+		return "clear";
 	}
 }

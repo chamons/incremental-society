@@ -3,13 +3,15 @@ using System.Linq;
 
 using IncrementalSociety.Model;
 using IncrementalSociety.Json;
+using System.Collections.Immutable;
 
 namespace IncrementalSociety.Web.Services
 {
 	public class GameService
 	{
 		JsonLoader Loader;
-		GameState State;
+
+		public GameState State { get; private set; }
 
 		public GameService ()
 		{
@@ -19,21 +21,9 @@ namespace IncrementalSociety.Web.Services
 
 		// STUB_DATA - Filter by age
 		public IEnumerable<ResourceDeclaration> Resources => Loader.Resources.Resources;
-
 		public IEnumerable<GameAction> Actions => Loader.Actions.Actions;
-
 		public IEnumerable<Region> Regions => State.Regions;
-
-		public double GetResourceCount (string name)
-		{
-			return State.Resources.ContainsKey (name) ? State.Resources[name] : 0;
-		}
-
-		public double GetNextTickResourceCount (string name)
-		{
-			var resources = GameEngine.GetResourcesNextTick (State);
-			return resources.ContainsKey (name) ? resources[name] : 0;
-		}
+		public ImmutableDictionary<string, double> GetNextTickResources () => GameEngine.GetResourcesNextTick (State);
 
 		public string GetImageFilename (ResourceDeclaration decl)
 		{

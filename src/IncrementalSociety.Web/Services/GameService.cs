@@ -29,6 +29,12 @@ namespace IncrementalSociety.Web.Services
 			return State.Resources.ContainsKey (name) ? State.Resources[name] : 0;
 		}
 
+		public double GetNextTickResourceCount (string name)
+		{
+			var resources = GameEngine.GetResourcesNextTick (State);
+			return resources.ContainsKey (name) ? resources[name] : 0;
+		}
+
 		public string GetImageFilename (ResourceDeclaration decl)
 		{
 			string name = decl.Name.ToLower ().Replace (' ', '-');

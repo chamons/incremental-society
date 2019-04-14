@@ -14,7 +14,7 @@
 					{
 						<li>
 							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @(GameService.GetResourceCount (resource.Name))</p>
+							<p>@resource.Name: @(GameService.GetResourceCount (resource.Name)) (@(GameService.GetNextTickResourceCount (resource.Name)))</p>
 						</li>
 					}
 				</ul>

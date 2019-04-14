@@ -1,10 +1,12 @@
 ## Short term todo
 
-- Builds should add their yield
-- Show nexts tick in UI
+- Fix duplication in GameEngine, should be made non-static
+- Fix tests that have reference to game json
+- Show nexts tick in UI with green\red color
+
 - Add validation on startup
 	- All resources on buildings match name
 	- All buildings in regions exist
-- Button to increment time
-- Timer for that
+
+- Timer for incrementing time
 - Expose buildings in UI

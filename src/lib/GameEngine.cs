@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using Newtonsoft.Json;
@@ -35,6 +36,13 @@ namespace IncrementalSociety
 			JsonLoader loader = JsonLoader.Load ();
 			ResourceEngine engine = new ResourceEngine (loader);
 			return engine.AddTickOfResources (state);
+		}
+
+		public static ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
+		{
+			JsonLoader loader = JsonLoader.Load ();
+			ResourceEngine engine = new ResourceEngine (loader);
+			return engine.CalculateAdditionalNextTick (state);
 		}
 
 		public static GameState CreateNewGame ()

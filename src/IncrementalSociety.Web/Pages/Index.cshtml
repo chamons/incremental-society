@@ -65,6 +65,7 @@
 		var timer = new Timer (new TimerCallback (_ =>
 		{
 			GameService.OnTick ();
+			NextTickResources = GameService.GetNextTickResources ();
 			this.StateHasChanged ();
 		}), null, 1000, 1000);
 	}

@@ -25,9 +25,6 @@ namespace IncrementalSociety
 #endif
 			switch (action)
 			{
-				case "Pass Time":
-					state = ProcessTick (state);
-					break;
 				case "Grow Population":
 					Console.WriteLine ("Grow Population");
 					break;

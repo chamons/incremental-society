@@ -40,5 +40,10 @@ namespace IncrementalSociety.Web.Services
 		{			
 			State = Engine.ApplyAction (State, action);
 		}
+
+		public void OnTick ()
+		{
+			State = Engine.ProcessTick (State);
+		}
 	}
 }

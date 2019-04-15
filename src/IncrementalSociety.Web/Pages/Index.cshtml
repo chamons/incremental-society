@@ -1,6 +1,8 @@
 @page "/"
-@using  IncrementalSociety.Web.Services
-@using  System.Collections.Immutable
+@using System.Collections.Immutable
+@using System.Threading;
+@using IncrementalSociety.Web.Services
+
 @inject GameService GameService
 
 <div class="container-fluid">
@@ -55,6 +57,16 @@
 	protected override void OnInit ()
 	{
 		NextTickResources = GameService.GetNextTickResources ();
+		StartTickTimer ();
+	}
+
+	void StartTickTimer ()
+	{
+		var timer = new Timer (new TimerCallback (_ =>
+		{
+			GameService.OnTick ();
+			this.StateHasChanged ();
+		}), null, 1000, 1000);
 	}
 
 	public void Refresh ()

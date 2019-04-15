@@ -1,9 +1,6 @@
 {
   "actions": [
     {
-      "name": "Pass Time"
-    },
-    {
       "name": "Grow Population"
     }
   ]

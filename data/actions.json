@@ -1,16 +1,7 @@
 {
   "actions": [
     {
-      "name": "Pass Time",
-      "age": "Stone"
-    },
-    {
-      "name": "Grow Population",
-      "age": "Stone"
-    },
-    {
-      "name": "Build Settlement",
-      "age": "Stone"
+      "name": "Grow Population"
     }
   ]
 }

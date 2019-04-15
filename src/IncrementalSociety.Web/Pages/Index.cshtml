@@ -1,47 +1,87 @@
-﻿@page "/"
-@using  IncrementalSociety.Web.Services
+@page "/"
+@using System.Collections.Immutable
+@using System.Threading;
+@using IncrementalSociety.Web.Services
+
 @inject GameService GameService
 
-    <div class="container-fluid">
-        <div class="row">
+<div class="container-fluid">
+	<div class="row">
 
-            <div class="col-4">
-                <div id="resources">
-                    <h1>Resources</h1>
+		<div class="col-4">
+			<div id="resources">
+				<h1>Resources</h1>
 
-                    <ul id="resource-list">
-                        @foreach (var resource in @GameService.Resources)
-                        {
-                            <li>
-                                <img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-                                <p>@resource.Name: @GameService.GetResourceCount(resource.Name) </p>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div id="actions">
-                    @foreach (var action in @GameService.Actions)
-                    {
-                        <button type="button">@action.Name</button>
-                    }
-                </div>
-            </div>
-            <div class="col">
-                <div id="regions">
-                    @foreach (var region in @GameService.Regions)
-                    {
-                        <div class="region">
-                            <p>@region.Name</p>
-                            <div class="region-areas d-flex flex-row flex-wrap">
-                                @for(int i = 0; i < region.Areas.Length; ++i)
-                                {
-                                    string areaInfoID = region.Name + i.ToString ();
-                                    <AreaView area="@region.Areas[i]"/>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-     </div>
+				<ul id="resource-list">
+					@foreach (var resource in @GameService.Resources)
+					{
+						<li>
+							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
+							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GetResourceDeltaClass(resource.Name)">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
+						</li>
+					}
+				</ul>
+			</div>
+			<div id="actions">
+				<ActionView Refresh="@Refresh" />
+			</div>
+		</div>
+		<div class="col">
+			<div id="regions">
+				@foreach (var region in @GameService.Regions)
+				{
+					<div class="region">
+						<p>@region.Name</p>
+						<div class="region-areas d-flex flex-row flex-wrap">
+							@for (int i = 0; i < region.Areas.Length; ++i)
+							{
+								string areaInfoID = region.Name + i.ToString ();
+								<AreaView area="@region.Areas[i]" />
+							}
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+@functions {
+	public ImmutableDictionary<string, double> NextTickResources;
+
+	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
+	{
+		return resources.ContainsKey (name) ? resources[name] : 0;
+	}
+
+	protected override void OnInit ()
+	{
+		NextTickResources = GameService.GetNextTickResources ();
+		StartTickTimer ();
+	}
+
+	void StartTickTimer ()
+	{
+		var timer = new Timer (new TimerCallback (_ =>
+		{
+			GameService.OnTick ();
+			NextTickResources = GameService.GetNextTickResources ();
+			this.StateHasChanged ();
+		}), null, 1000, 1000);
+	}
+
+	public void Refresh ()
+	{
+		StateHasChanged ();
+	}
+
+	public string GetResourceDeltaClass (string name)
+	{
+		double count = GetResourceCount (NextTickResources, name);
+		if (count < -.001)
+			return "red";
+		else if (count > .001)
+			return "green";
+		return "clear";
+	}
+}

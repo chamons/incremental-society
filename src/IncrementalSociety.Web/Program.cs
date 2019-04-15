@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Blazor.Hosting;
+using Microsoft.AspNetCore.Blazor.Hosting;
 
 namespace IncrementalSociety.Web
 {
-    public class Program
-    {
-        public static void Main (string[] args)
-        {
-            CreateHostBuilder (args).Build ().Run ();
-        }
+	public class Program
+	{
+		public static void Main (string[] args)
+		{
+			CreateHostBuilder (args).Build ().Run ();
+		}
 
-        public static IWebAssemblyHostBuilder CreateHostBuilder (string[] args) =>
-            BlazorWebAssemblyHost.CreateDefaultBuilder ()
-                .UseBlazorStartup<Startup> ();
-    }
+		public static IWebAssemblyHostBuilder CreateHostBuilder (string[] args) =>
+			BlazorWebAssemblyHost.CreateDefaultBuilder ()
+				.UseBlazorStartup<Startup> ();
+	}
 }

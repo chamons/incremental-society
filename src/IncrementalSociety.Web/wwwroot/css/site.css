@@ -46,3 +46,15 @@
 
 #regions {
   border: 1px solid black; }
+
+.resource-delta {
+  display: inline; }
+
+.green {
+  color: green; }
+
+.red {
+  color: red; }
+
+.clear {
+  display: none; }

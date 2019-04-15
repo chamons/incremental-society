@@ -1,38 +1,88 @@
 {
-    "buildings": [
-        {
-            "name": "Gathering Camp",
-            "introduced_age": "stone",
-            "valid_regions": "Plains, Forest, Mountain"
-        },
-        {
-            "name": "Charcoal Pit",
-            "introduced_age": "stone",
-            "valid_regions": "Settlement"
-        },
-        {
-            "name": "Toolmaker's Shack",
-            "introduced_age": "stone",
-            "valid_regions": "Settlement"
-        },
-        {
-            "name": "Clay Pit",
-            "introduced_age": "stone",
-            "valid_regions": "Mountain, Plains, Forest",
-            "resource": "clay"
-        },
-        {
-            "name": "Quarry",
-            "introduced_age": "stone",
-            "valid_regions": "Mountain, Plains, Forest",
-            "resource": "stone"
-        }
-    ],
-    "settlements": [
-        {
-            "name": "Crude Settlement",
-            "introduced_age": "stone",
-            "valid_regions": "Plains, Forest"
-        }
-    ]
+	"buildings": [
+		{
+			"name": "Gathering Camp",
+			"valid_regions": [ "Plains", "Forest", "Mountain" ],
+			"yield": [
+				{ "Name": "Food", "Amount" : 2 },
+				{ "Name": "Water", "Amount" : 2 },
+				{ "Name": "Stone", "Amount" : 0.5 },
+				{ "Name": "Wood", "Amount" : 1 }
+			]
+		},
+		{
+			"name": "Charcoal Pit",
+			"valid_regions": [ "Settlement" ],
+			"conversion_yield": [
+				{
+					"cost": [ 
+						{ "Name": "Wood", "Amount" : 1 }
+					],
+					"provides": [ 
+						{ "Name": "Charcoal", "Amount" : 0.5 }
+					]
+				}
+			]
+		},
+		{
+			"name": "Toolmaker's Shack",
+			"valid_regions": [ "Settlement" ],
+			"conversion_yield": [
+				{
+					"name": "Create Stone Tools",
+					"cost": [ 
+						{ "Name": "Stone", "Amount" : 1 }
+					],
+					"provides": [ 
+						{ "Name": "Tools", "Amount" : 0.1 }
+					]
+				},
+				{
+					"name": "Create Wooden Tools",
+					"cost": [ 
+						{ "Name": "Wood", "Amount" : 2 }
+					],
+					"provides": [ 
+						{ "Name": "Tools", "Amount" : 0.1 }
+					]
+				}
+			]
+		},
+		{
+			"name": "Clay Pit",
+			"valid_regions": [ "Mountain", "Plains", "Forest" ],
+			"RequiredResource ": "Clay",
+			"yield": [
+				{ "Name": "Clay", "Amount" : 2 }
+			],
+			"conversion_yield": [
+				{
+					"name": "Create Bricks",
+					"cost": [ 
+						{ "Name": "Clay", "Amount" : 1 }
+					],
+					"provides": [ 
+						{ "Name": "Bricks", "Amount" : 0.5 }
+					]
+				}
+			]
+		},
+		{
+			"name": "Quarry",
+			"valid_regions": [ "Mountain", "Plains", "Forest" ],
+			"RequiredResource ": "Stone",
+			"yield": [
+				{ "Name": "Stone", "Amount" : 2 }
+			]
+		}
+	],
+	"settlements": [
+		{
+			"name": "Crude Settlement",
+			"valid_regions": [ "Plains", "Forest" ],
+			"yield": [
+				{ "Name": "Knowledge", "Amount" : 1 }
+			]
+		}
+	]
 }

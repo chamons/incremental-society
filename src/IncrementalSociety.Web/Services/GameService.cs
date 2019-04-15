@@ -1,43 +1,49 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using IncrementalSociety.Model;
-using IncrementalSociety.Resources;
-
+using IncrementalSociety.Json;
+using System.Collections.Immutable;
 
 namespace IncrementalSociety.Web.Services
 {
-    public class GameService
-    {
-        JsonLoader Loader;
-        GameState State;
+	public class GameService
+	{
+		JsonLoader Loader;
 
-        public GameService ()
-        {
-            Loader = JsonLoader.Load ();
-            State = GameEngine.CreateNewGame ();
-        }
+		GameEngine Engine;
+		public GameState State { get; private set; }
 
-        // STUB_DATA - Filter by age
-        public IEnumerable<ResourceDeclaration> Resources => Loader.Resources.Resources;
+		public GameService ()
+		{
+			Loader = JsonLoader.Load ();
+			State = GameEngine.CreateNewGame ();
+			Engine = new GameEngine ();
+		}
 
-        public IEnumerable<GameAction> Actions => Loader.Actions.Actions;
+		// STUB_DATA - Filter by age
+		public IEnumerable<ResourceDeclaration> Resources => Loader.Resources.Resources;
+		public IEnumerable<GameAction> Actions => Loader.Actions.Actions;
+		public IEnumerable<Region> Regions => State.Regions;
+		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
 
-        public IEnumerable<Region> Regions => State.Regions;
+		public string GetImageFilename (ResourceDeclaration decl)
+		{
+			string name = decl.Name.ToLower ().Replace (' ', '-');
+			if (decl.ImageHasAgePrefix)
+				return $"images\\{State.Age}-{name}.png";
+			else
+				return $"images\\{name}.png";
+		}
 
-        public int GetResourceCount (string name)
-        {
-            var resource = State.Resources.FirstOrDefault (x => x.Name == name);
-            return resource != null ? resource.Amount : 0;
-        }
+		public void ApplyAction (string action)
+		{			
+			State = Engine.ApplyAction (State, action);
+		}
 
-        public string GetImageFilename (ResourceDeclaration decl)
-        {
-            string name = decl.Name.ToLower ().Replace (' ', '-');
-            if (decl.Image_has_age_prefix)
-                return $"images\\{State.Age}-{name}.png";
-            else
-                return $"images\\{name}.png";
-        }
-    }
+		public void OnTick ()
+		{
+			State = Engine.ProcessTick (State);
+		}
+	}
 }

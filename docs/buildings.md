@@ -11,6 +11,8 @@
 - Forest
     - Camps
     - Logging
+	- Herb Gathering
+	- Hunting
 - Mountain
     - Mines
     - Observatory

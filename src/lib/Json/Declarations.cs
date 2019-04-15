@@ -9,8 +9,8 @@ namespace IncrementalSociety.Json
 	{
 		public string Name { get; set; }
 		public string Type { get; set; }
-		public string Age { get; set; }
-		public bool Image_has_age_prefix { get; set; }
+		[JsonProperty ("Image_has_age_prefix")]
+		public bool ImageHasAgePrefix { get; set; }
 	}
 
 	public class ResourceDeclarations
@@ -22,7 +22,8 @@ namespace IncrementalSociety.Json
 	{
 		public string Name { get; set; }
 		public List<string> Resources { get; set; }
-		public bool? Can_spawn { get; set; }
+		[JsonProperty ("can_spawn")]
+		public bool? CanSpawn { get; set; }
 	}
 
 	public class RegionDeclarations
@@ -32,17 +33,18 @@ namespace IncrementalSociety.Json
 
 	public class PopulationNeeds
 	{
-		public string Age { get; set; }
 		public string Resource { get; set; }
 		public double Amount { get; set; }
-		public string Missing_effect { get; set; }
-		public double Missing_power { get; set; }
+		[JsonProperty ("missing_effect")]
+		public string MissingEffect { get; set; }
+		[JsonProperty ("missing_power")]
+		public double MissingPower { get; set; }
 	}
 
 	public class GameDeclarations
 	{
-		public List<string> Ages { get; set; }
-		public List<PopulationNeeds> Population_needs { get; set; }
+		[JsonProperty ("population_needs")]
+		public List<PopulationNeeds> PopulationNeeds { get; set; }
 	}
 
 	public partial class BuildingDeclarations
@@ -58,9 +60,6 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
-
-		[JsonProperty ("introduced_age")]
-		public string IntroducedAge { get; set; }
 
 		[JsonProperty ("valid_regions")]
 		public string ValidRegions { get; set; }
@@ -100,9 +99,6 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
-
-		[JsonProperty ("introduced_age")]
-		public string IntroducedAge { get; set; }
 
 		[JsonProperty ("valid_regions")]
 		public string ValidRegions { get; set; }

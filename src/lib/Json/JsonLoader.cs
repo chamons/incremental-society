@@ -23,7 +23,7 @@ namespace IncrementalSociety.Json
 		public string ResourcesJSON { get; }
 		public ResourceDeclarations Resources { get; }
 
-		JsonLoader (string actions, string buildings, string game, string regions, string resources)
+		public JsonLoader (string actions, string buildings, string game, string regions, string resources)
 		{
 			ActionsJSON = actions;
 			Actions = JsonConvert.DeserializeObject<ActionDeclarations> (ActionsJSON);

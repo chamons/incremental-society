@@ -2,7 +2,6 @@
 	"buildings": [
 		{
 			"name": "Gathering Camp",
-			"introduced_age": "Stone",
 			"valid_regions": "Plains, Forest, Mountain",
 			"yield": [
 				{ "Name": "Food", "Amount" : 2 },
@@ -13,7 +12,6 @@
 		},
 		{
 			"name": "Charcoal Pit",
-			"introduced_age": "Stone",
 			"valid_regions": "Settlement",
 			"conversion_yield": [
 				{
@@ -24,11 +22,10 @@
 						{ "Name": "Charcoal", "Amount" : 0.5 }
 					]
 				}
-			],
+			]
 		},
 		{
 			"name": "Toolmaker's Shack",
-			"introduced_age": "Stone",
 			"valid_regions": "Settlement",
 			"conversion_yield": [
 				{
@@ -53,7 +50,6 @@
 		},
 		{
 			"name": "Clay Pit",
-			"introduced_age": "Stone",
 			"valid_regions": "Mountain, Plains, Forest",
 			"RequiredResource ": "Clay",
 			"yield": [
@@ -73,7 +69,6 @@
 		},
 		{
 			"name": "Quarry",
-			"introduced_age": "Stone",
 			"valid_regions": "Mountain, Plains, Forest",
 			"RequiredResource ": "Stone",
 			"yield": [
@@ -84,7 +79,6 @@
 	"settlements": [
 		{
 			"name": "Crude Settlement",
-			"introduced_age": "Stone",
 			"valid_regions": "Plains, Forest",
 			"yield": [
 				{ "Name": "Knowledge", "Amount" : 1 }

@@ -30,7 +30,7 @@ namespace IncrementalSociety.Web.Services
 		public string GetImageFilename (ResourceDeclaration decl)
 		{
 			string name = decl.Name.ToLower ().Replace (' ', '-');
-			if (decl.Image_has_age_prefix)
+			if (decl.ImageHasAgePrefix)
 				return $"images\\{State.Age}-{name}.png";
 			else
 				return $"images\\{name}.png";

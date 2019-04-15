@@ -8,9 +8,41 @@ namespace IncrementalSociety.Tests
 {
 	public class ResourceEngineTests
 	{
+		const string ResourceJSON = @"{    ""resources"": [
+        {
+            ""name"": ""Food"",
+        },
+        {
+            ""name"": ""Water"",
+        }
+		]
+}";
+
+		const string BuildingJSON = @"{	""buildings"": [
+		{
+			""name"": ""Gathering Camp"",
+			""valid_regions"": ""Plains"",
+			""yield"": [
+				{ ""Name"": ""Food"", ""Amount"" : 2 },
+				{ ""Name"": ""Water"", ""Amount"" : 2 }
+			]
+		}
+	]
+}";
+
+		const string RegionJSON = @"{
+			""regions"": [
+				{
+					""name"": ""Plains""
+				}
+			]
+	}
+";
+
+
 		static ResourceEngine CreateEngine ()
 		{
-			var resources = JsonLoader.Load ();
+			var resources = new JsonLoader ("", BuildingJSON, "", RegionJSON, ResourceJSON);
 			ResourceEngine engine = new ResourceEngine (resources);
 			return engine;
 		}
@@ -31,8 +63,6 @@ namespace IncrementalSociety.Tests
 			var resources = engine.CalculateAdditionalNextTick (state);
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);
-			Assert.True (resources["Stone"] > 0.0);
-			Assert.True (resources["Wood"] > 0.0);
 		}
 
 		[Fact]
@@ -42,33 +72,31 @@ namespace IncrementalSociety.Tests
 			var campResources = engine.GetBuildingResources ("Gathering Camp");
 			Assert.True (campResources["Food"] > 0.0);
 			Assert.True (campResources["Water"] > 0.0);
-			Assert.True (campResources["Stone"] > 0.0);
-			Assert.True (campResources["Wood"] > 0.0);
 		}
 
 		[Fact]
 		public void AddTwoResourcesDifferentItems ()
 		{
-			var result = Immutable.CreateBuilderDictionary ("A", 1.0);
-			ResourceEngine.AddResources (result, Immutable.CreateDictionary ("B", 1.0));
-			Assert.Equal (1, result["A"]);
-			Assert.Equal (1, result["B"]);
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			ResourceEngine.AddResources (result, Immutable.CreateDictionary ("Water", 1.0));
+			Assert.Equal (1, result["Food"]);
+			Assert.Equal (1, result["Water"]);
 		}
 
 		[Fact]
 		public void AddTwoResourcesWithSameItems ()
 		{
-			var result = Immutable.CreateBuilderDictionary ("A", 1.0);
-			ResourceEngine.AddResources (result, Immutable.CreateDictionary ("A", 1.0));
-			Assert.Equal (2, result["A"]);
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			ResourceEngine.AddResources (result, Immutable.CreateDictionary ("Food", 1.0));
+			Assert.Equal (2, result["Food"]);
 		}
 
 		[Fact]
 		public void AddTwoResourceOneEmpty ()
 		{
-			var result = Immutable.CreateBuilderDictionary ("A", 1.0);
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
 			ResourceEngine.AddResources (result, ImmutableDictionary<string, double>.Empty);
-			Assert.Equal (1, result["A"]);
+			Assert.Equal (1, result["Food"]);
 		}
 	}
 }

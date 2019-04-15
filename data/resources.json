@@ -2,46 +2,36 @@
     "resources": [
         {
             "name": "Food",
-            "type": "Cap",
-            "age": "Stone"
+            "type": "Cap"
         },
         {
-            "name": "Preserved Food",
-            "age": "Stone"
+            "name": "Preserved Food"
         },
         {
             "name": "Water",
-            "type": "Cap",
-            "age": "Stone"
+            "type": "Cap"
         },
         {
-            "name": "Wood",
-            "age": "Stone"
+            "name": "Wood"
         },
         {
-            "name": "Clay",
-            "age": "Stone"
+            "name": "Clay"
         },
         {
-            "name": "Bricks",
-            "age": "Stone"
+            "name": "Bricks"
         },
         {
-            "name": "Stone",
-            "age": "Stone"
+            "name": "Stone"
         },
         {
             "name": "Tools",
-            "age": "Stone",
             "image_has_age_prefix":  true
         },
         {
-            "name": "Charcoal",
-            "age": "Stone"
+            "name": "Charcoal"
         },
         {
-            "name": "Knowledge",
-            "age": "Stone"
+            "name": "Knowledge"
         }
     ]
 }

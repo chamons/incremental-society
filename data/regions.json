@@ -33,7 +33,7 @@
             ]
         },
         {
-            "name": "City",
+            "name": "Settlement",
             "can_spawn": false
         }
     ]

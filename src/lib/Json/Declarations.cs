@@ -62,7 +62,7 @@ namespace IncrementalSociety.Json
 		public string Name { get; set; }
 
 		[JsonProperty ("valid_regions")]
-		public string ValidRegions { get; set; }
+		public string[] ValidRegions { get; set; }
 
 		[JsonProperty ("yield", NullValueHandling = NullValueHandling.Ignore)]
 		public Yield[] Yield { get; set; }
@@ -101,7 +101,7 @@ namespace IncrementalSociety.Json
 		public string Name { get; set; }
 
 		[JsonProperty ("valid_regions")]
-		public string ValidRegions { get; set; }
+		public string[] ValidRegions { get; set; }
 
 		[JsonProperty ("yield")]
 		public Yield[] Yield { get; set; }

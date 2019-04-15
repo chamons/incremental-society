@@ -21,13 +21,19 @@ namespace IncrementalSociety.Tests
 		const string BuildingJSON = @"{	""buildings"": [
 		{
 			""name"": ""Gathering Camp"",
-			""valid_regions"": ""Plains"",
+			""valid_regions"": [""Plains""],
 			""yield"": [
 				{ ""Name"": ""Food"", ""Amount"" : 2 },
 				{ ""Name"": ""Water"", ""Amount"" : 2 }
 			]
-		}
-	]
+			}
+		],
+		""settlements"": [
+			{
+				""name"": ""Test Settlement"",
+				""valid_regions"": [""Plains""],
+			}
+		]
 }";
 
 		const string RegionJSON = @"{

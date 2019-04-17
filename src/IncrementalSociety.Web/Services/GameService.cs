@@ -13,10 +13,12 @@ namespace IncrementalSociety.Web.Services
 
 		GameEngine Engine;
 		public GameState State { get; private set; }
+		public int RegionCapacity { get; private set; }
 
 		public GameService ()
 		{
 			Loader = JsonLoader.Load ();
+			RegionCapacity = Loader.Game.RegionCapacity;
 			State = GameEngine.CreateNewGame ();
 			Engine = new GameEngine ();
 		}
@@ -45,5 +47,6 @@ namespace IncrementalSociety.Web.Services
 		{
 			State = Engine.ProcessTick (State);
 		}
+
 	}
 }

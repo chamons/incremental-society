@@ -78,10 +78,12 @@
 	public string GetResourceDeltaClass (string name)
 	{
 		double count = GetResourceCount (NextTickResources, name);
-		if (count < -.001)
+		if (count < -.001) {
 			return "red";
-		else if (count > .001)
+		}
+		if (count > .001) {
 			return "green";
+		}
 		return "clear";
 	}
 }

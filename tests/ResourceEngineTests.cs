@@ -8,23 +8,44 @@ namespace IncrementalSociety.Tests
 {
 	public class ResourceEngineTests
 	{
-		const string ResourceJSON = @"{    ""resources"": [
-        {
-            ""name"": ""Food"",
-        },
-        {
-            ""name"": ""Water"",
-        }
+		const string ResourceJSON = @"{ ""resources"": [
+			{
+				""name"": ""Food"",
+			},
+			{
+				""name"": ""Water"",
+			},
+			{
+				""name"": ""Charcoal"",
+			},
+			{
+				""name"": ""Wood"",
+			}
 		]
 }";
 
-		const string BuildingJSON = @"{	""buildings"": [
-		{
+		const string BuildingJSON = @"{	
+		""buildings"": [
+			{
 			""name"": ""Gathering Camp"",
 			""valid_regions"": [""Plains""],
 			""yield"": [
 				{ ""Name"": ""Food"", ""Amount"" : 2 },
 				{ ""Name"": ""Water"", ""Amount"" : 2 }
+			]
+			},
+			{
+			""name"": ""Workshop"",
+			""valid_regions"": [""Plains""],
+			""conversion_yield"": [
+				{
+					""cost"": [ 
+						{ ""Name"": ""Wood"", ""Amount"" : 1 }
+					],
+					""provides"": [ 
+						{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
+					]
+				}
 			]
 			}
 		],
@@ -53,7 +74,6 @@ namespace IncrementalSociety.Tests
 			return engine;
 		}
 
-		// TODO - This should use test specific  resources!
 		static GameState CreateGameState ()
 		{
 			var area = new Area (AreaType.Plains, "Gathering Camp".Yield ());
@@ -78,6 +98,15 @@ namespace IncrementalSociety.Tests
 			var campResources = engine.GetBuildingResources ("Gathering Camp");
 			Assert.True (campResources["Food"] > 0.0);
 			Assert.True (campResources["Water"] > 0.0);
+		}
+	
+		[Fact]
+		public void ConversionYield ()
+		{
+			ResourceEngine engine = CreateEngine ();
+			var campResources = engine.GetBuildingResources ("Workshop");
+			Assert.True (campResources["Wood"] < 0.0);
+			Assert.True (campResources["Charcoal"] > 0.0);
 		}
 
 		[Fact]

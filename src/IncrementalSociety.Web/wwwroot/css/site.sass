@@ -1,3 +1,10 @@
+=disable-select()
+	-webkit-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	-o-user-select: none
+	user-select: none
+
 .region
 	border: 1px solid black
 	padding-left: 20px
@@ -66,6 +73,7 @@
 		vertical-align: middle
 
 #actions
+	+disable-select()
 	border: 1px solid black
 	margin-top: 1px
 	padding-left: 20px
@@ -73,11 +81,14 @@
 	padding-bottom: 20px
 
 #resources
+	+disable-select()
 	border: 1px solid black
 	padding-left: 20px
 
 #regions
+	+disable-select()
 	border: 1px solid black
+	user-select: none
 
 .green
 	color: green

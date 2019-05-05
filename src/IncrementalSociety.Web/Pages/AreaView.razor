@@ -7,8 +7,10 @@
 	</div>
 
 	<div class="area-more-info collapse @(Expanded ? "show" : "hide")">
-		<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaClick" />
-		<p>@Area.Type</p>
+		<div class="area-more-info-header">
+			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaClick" />
+			<p>@Area.Type</p>
+		</div>
 		@for (int i = 0; i < GameService.RegionCapacity; ++i)
 		{
 			if (i < Area.Buildings.Length)

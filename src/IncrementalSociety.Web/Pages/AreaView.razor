@@ -3,7 +3,10 @@
 
 <div>
 	<div class="collapse @(Expanded ? "hide" : "show")">
-		<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaClick" />
+		<div class="area-image-small-container" onclick="@OnAreaClick">
+			<img class="area-image" src="images/@(Area.Type).png" alt="@Area.Type" />
+			<span>@Area.Buildings.Length/@GameService.RegionCapacity</span>
+		</div>
 	</div>
 
 	<div class="area-more-info collapse @(Expanded ? "show" : "hide")">

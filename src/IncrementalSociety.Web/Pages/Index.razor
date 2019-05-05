@@ -15,9 +15,10 @@
 				<ul id="resource-list">
 					@foreach (var resource in @GameService.Resources)
 					{
-						<li>
-							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GameService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
+						<li class="d-flex align-items-center resource-list-item">
+							<img class="img-fluid resource-image" src="@GameService.GetImageFilename(resource)" />
+							@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
+							<div class="@GameService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 						</li>
 					}
 				</ul>

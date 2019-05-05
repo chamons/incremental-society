@@ -9,7 +9,7 @@
 			{
 				<div class="building-resource">
 					<img class="resource-image" src="@GameService.GetImageFilename(@res.Key)" />
-					<p class="resource-delta @GameService.GetResourceDeltaClass(res.Value)">@res.Value</p>
+					<p class="@GameService.GetResourceDeltaClass(res.Value)">@res.Value</p>
 				</div>
 			}
 		}

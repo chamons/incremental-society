@@ -4,3 +4,4 @@ bin/
 obj/
 .sass-cache/
 src/IncrementalSociety.Web/wwwroot/css/site.css.map
+src/IncrementalSociety.Web/wwwroot/css/*.css

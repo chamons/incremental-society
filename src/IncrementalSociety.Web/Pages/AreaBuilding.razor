@@ -2,16 +2,18 @@
 @using IncrementalSociety.Model
 
 <div>
-	<div class="area-building">
-		<p class="area-building-title">@Building</p>
+	<div class="d-flex flex-column area-building">
+		<p class="area-building-title ">@Building</p>
 		@if (!String.IsNullOrEmpty (@Building)) {
-			@foreach (var res in GameService.GetBuildingResources (@Building))
-			{
-				<div class="building-resource">
-					<img class="resource-image" src="@GameService.GetImageFilename(@res.Key)" />
-					<p class="@GameService.GetResourceDeltaClass(res.Value)">@res.Value</p>
-				</div>
-			}
+			<div class="d-flex flex-wrap">
+				@foreach (var res in GameService.GetBuildingResources (@Building))
+				{
+					<div class="building-resource d-flex align-items-center">
+						<img class="resource-image" src="@GameService.GetImageFilename(@res.Key)" />
+						<div class="@GameService.GetResourceDeltaClass(res.Value)">@res.Value</div>
+					</div>
+				}
+			</div>
 		}
 	</div>
 </div>

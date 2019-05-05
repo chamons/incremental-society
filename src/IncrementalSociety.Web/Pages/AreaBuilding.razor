@@ -1,13 +1,25 @@
-@using  IncrementalSociety.Web.Services
-@using  IncrementalSociety.Model
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
 
 <div>
 	<div class="area-building">
 		<p class="area-building-title">@Building</p>
+		@if (!String.IsNullOrEmpty (@Building)) {
+			@foreach (var res in GameService.GetBuildingResources (@Building))
+			{
+				<div class="building-resource">
+					<img class="resource-image" src="@GameService.GetImageFilename(@res.Key)" />
+					<p class="resource-delta @GameService.GetResourceDeltaClass(res.Value)">@res.Value</p>
+				</div>
+			}
+		}
 	</div>
 </div>
 
 @functions {
 	[Parameter]
 	string Building { get; set; }
+	
+	[Parameter]
+	GameService GameService { get; set; }
 }

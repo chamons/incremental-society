@@ -17,7 +17,7 @@
 					{
 						<li>
 							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GetResourceDeltaClass(resource.Name)">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
+							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GameService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
 						</li>
 					}
 				</ul>
@@ -36,7 +36,7 @@
 							@for (int i = 0; i < region.Areas.Length; ++i)
 							{
 								string areaInfoID = region.Name + i.ToString ();
-								<AreaView area="@region.Areas[i]" RegionCapacity="@GameService.RegionCapacity"/>
+								<AreaView area="@region.Areas[i]" GameService="@GameService"/>
 							}
 						</div>
 					</div>
@@ -73,17 +73,5 @@
 	public void Refresh ()
 	{
 		StateHasChanged ();
-	}
-
-	public string GetResourceDeltaClass (string name)
-	{
-		double count = GetResourceCount (NextTickResources, name);
-		if (count < -.001) {
-			return "red";
-		}
-		if (count > .001) {
-			return "green";
-		}
-		return "clear";
 	}
 }

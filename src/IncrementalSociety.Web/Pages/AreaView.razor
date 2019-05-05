@@ -9,15 +9,15 @@
 	<div class="area-more-info collapse @(Expanded ? "show" : "hide")">
 		<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaClick" />
 		<p>@Area.Type</p>
-		@for (int i = 0; i < RegionCapacity; ++i)
+		@for (int i = 0; i < GameService.RegionCapacity; ++i)
 		{
 			if (i < Area.Buildings.Length)
 			{
-				<AreaBuilding Building="@Area.Buildings[0]" />
+				<AreaBuilding GameService=@GameService Building="@Area.Buildings[0]" />
 			}
 			else
 			{
-				<AreaBuilding />
+				<AreaBuilding GameService=@GameService/>
 			}
 		}
 	</div>
@@ -28,7 +28,7 @@
 	Area Area { get; set; }
 
 	[Parameter]
-	int RegionCapacity{ get; set; }
+	GameService GameService { get; set; }
 
 	bool Expanded;
 

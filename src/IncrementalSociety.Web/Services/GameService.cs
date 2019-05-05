@@ -29,6 +29,11 @@ namespace IncrementalSociety.Web.Services
 		public IEnumerable<Region> Regions => State.Regions;
 		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
 
+		public string GetImageFilename (string name)
+		{
+			return GetImageFilename (Resources.First (x => x.Name == name));
+		}
+
 		public string GetImageFilename (ResourceDeclaration decl)
 		{
 			string name = decl.Name.ToLower ().Replace (' ', '-');
@@ -36,6 +41,11 @@ namespace IncrementalSociety.Web.Services
 				return $"images\\{State.Age}-{name}.png";
 			else
 				return $"images\\{name}.png";
+		}
+
+		public ImmutableDictionary<string, double> GetBuildingResources (string building)
+		{
+			return Engine.GetBuildingResources (building);
 		}
 
 		public void ApplyAction (string action)
@@ -48,5 +58,15 @@ namespace IncrementalSociety.Web.Services
 			State = Engine.ProcessTick (State);
 		}
 
+		public string GetResourceDeltaClass (double count)
+		{
+			if (count < -.001) {
+				return "red";
+			}
+			if (count > .001) {
+				return "green";
+			}
+			return "clear";
+		}
 	}
 }

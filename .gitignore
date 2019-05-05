@@ -2,3 +2,5 @@
 .vs/
 bin/
 obj/
+.sass-cache/
+src/IncrementalSociety.Web/wwwroot/css/site.css.map

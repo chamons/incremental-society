@@ -46,7 +46,6 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-
 			var building = Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
 			if (building != null)
 			{
@@ -66,7 +65,7 @@ namespace IncrementalSociety
 					AddResources (resources, Yields.From (yield));
 				return resources.ToImmutable ();
 			}
-			throw new InvalidOperationException ($"Unable to find building {name} in resources");
+			throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
 		}
 
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)

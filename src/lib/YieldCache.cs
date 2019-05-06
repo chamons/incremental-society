@@ -56,7 +56,7 @@ namespace IncrementalSociety
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var cost in conversionYield.Cost.AsNotNull ())
-				resources.Add (cost.Name, cost.Amount);
+				resources.Add (cost.Name, cost.Amount * -1);
 			foreach (var provide in conversionYield.Provides.AsNotNull ())
 				resources.Add (provide.Name, provide.Amount);
 			return resources.ToImmutable ();

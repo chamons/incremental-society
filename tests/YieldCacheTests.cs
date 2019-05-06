@@ -23,5 +23,19 @@ namespace IncrementalSociety.Tests
 			var second = cache.From (new ConversionYield () { Name = "Test", Cost = new Yield[] { new Yield { Name = "A", Amount = 1 } } });
 			Assert.Equal (first, second);
 		}
+		
+		[Fact]
+		public void ConversionYieldCostsAreNegative ()
+		{
+			YieldCache cache = new YieldCache ();
+			var yield = cache.From (new ConversionYield () { 
+					Name = "Test",
+					Cost = new Yield[] { new Yield { Name = "A", Amount = 1 } },
+					Provides = new Yield[] { new Yield { Name = "B", Amount = .5 } }
+			});
+			Assert.Equal (-1, yield["A"]);
+			Assert.Equal (.5, yield["B"]);
+		}
+
 	}
 }

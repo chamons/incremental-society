@@ -30,6 +30,16 @@ namespace IncrementalSociety.Model
 			Type = type;
 			Buildings = ImmutableArray.CreateRange (buildings ?? Array.Empty<string> ());
 		}
+
+		public Area WithType (AreaType type)
+		{
+			return new Area (type, Buildings);
+		}
+
+		public Area WithBuildings (IEnumerable<string> buildings)
+		{
+			return new Area (Type, buildings);
+		}
 	}
 
 	public partial class Region
@@ -41,6 +51,16 @@ namespace IncrementalSociety.Model
 		{
 			Name = name;
 			Areas = ImmutableArray.CreateRange (areas ?? Array.Empty<Area> ());
+		}
+
+		public Region WithName (string name)
+		{
+			return new Region (name, Areas);
+		}
+
+		public Region WithAreas (IEnumerable<Area> areas)
+		{
+			return new Region (Name, areas);
 		}
 	}
 

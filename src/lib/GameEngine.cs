@@ -9,16 +9,24 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		JsonLoader Loader;
-		ResourceEngine ResourceEngine;
+		public int RegionCapacity { get; private set; }
 
-		public GameEngine ()
+		ResourceEngine ResourceEngine;
+		BuildingEngine BuildingEngine;
+		public static GameEngine Create ()
 		{
-			Loader = JsonLoader.Load ();
-			ResourceEngine = new ResourceEngine (Loader);
+			var loader = JsonLoader.Load ();
+			return new GameEngine (new ResourceEngine (loader));
 		}
 
-		public GameState ApplyAction (GameState state, string action)
+		public GameEngine (ResourceEngine resourceEngine)
+		{
+			ResourceEngine = resourceEngine;
+			BuildingEngine = new BuildingEngine (ResourceEngine);
+			RegionCapacity = ResourceEngine.RegionCapacity;
+		}
+
+		public GameState ApplyAction (GameState state, string action, string [] args = null)
 		{
 #if DEBUG
 			Console.WriteLine ($"ApplyAction - {action}\nState = {JsonConvert.SerializeObject (state)}");
@@ -28,6 +36,22 @@ namespace IncrementalSociety
 				case "Grow Population":
 					Console.WriteLine ("Grow Population");
 					break;
+				case "Build District":
+				{
+					string regionName = args[0];
+					int regionIndex = int.Parse (args[1]);
+					string buildingName = args[2];
+					state = BuildingEngine.Build (state, regionName, regionIndex, buildingName);
+					break;
+				}
+				case "Destory District":
+				{
+					string regionName = args[0];
+					int regionIndex = int.Parse (args[1]);
+					int buildingIndex = int.Parse (args[2]);
+					state = BuildingEngine.Destroy (state, regionName, regionIndex, buildingIndex);
+					break;
+				};
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");
 			}
@@ -42,14 +66,24 @@ namespace IncrementalSociety
 			return ResourceEngine.AddTickOfResources (state);
 		}
 
+		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
+		{
+			return BuildingEngine.GetValidBuildingsForArea (area);
+		}
+
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
 			return ResourceEngine.CalculateAdditionalNextTick (state);
 		}
+		
+		public ImmutableDictionary<string, double> GetBuildingResources (string building)
+		{
+			return ResourceEngine.GetBuildingResources (building);
+		}
 
 		public static GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
+			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Workshop" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
 			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Wood", 50 } };
 			return new GameState (Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources);

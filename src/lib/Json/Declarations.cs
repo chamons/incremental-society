@@ -45,6 +45,9 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("population_needs")]
 		public List<PopulationNeeds> PopulationNeeds { get; set; }
+
+		[JsonProperty ("region_capacity")]
+		public int RegionCapacity { get; set; }
 	}
 
 	public partial class BuildingDeclarations
@@ -72,6 +75,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
+		
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
 	}
 
 	public partial class ConversionYield
@@ -105,6 +111,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("yield")]
 		public Yield[] Yield { get; set; }
+		
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
 	}
 
 	public class GameAction

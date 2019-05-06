@@ -4,6 +4,7 @@
 @using IncrementalSociety.Web.Services
 
 @inject GameService GameService
+@inject StyleService StyleService 
 
 <div class="container-fluid">
 	<div class="row">
@@ -15,15 +16,16 @@
 				<ul id="resource-list">
 					@foreach (var resource in @GameService.Resources)
 					{
-						<li>
-							<img class="resource-image" src="@GameService.GetImageFilename(resource)" />
-							<p>@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) <div class="resource-delta @GetResourceDeltaClass(resource.Name)">(@(GetResourceCount (NextTickResources, resource.Name)))</div></p>
+						<li class="d-flex align-items-center resource-list-item">
+							<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
+							@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
+							<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 						</li>
 					}
 				</ul>
 			</div>
 			<div id="actions">
-				<ActionView Refresh="@Refresh" />
+				<ActionView />
 			</div>
 		</div>
 		<div class="col">
@@ -36,11 +38,12 @@
 							@for (int i = 0; i < region.Areas.Length; ++i)
 							{
 								string areaInfoID = region.Name + i.ToString ();
-								<AreaView area="@region.Areas[i]" />
+								<AreaView area="@region.Areas[i]"  />
 							}
 						</div>
 					</div>
 				}
+				<BuildingSelectModal />
 			</div>
 		</div>
 	</div>
@@ -56,6 +59,7 @@
 
 	protected override void OnInit ()
 	{
+		GameService.NotifyUIStateHasChanged = () => this.StateHasChanged ();
 		NextTickResources = GameService.GetNextTickResources ();
 		StartTickTimer ();
 	}
@@ -68,20 +72,5 @@
 			NextTickResources = GameService.GetNextTickResources ();
 			this.StateHasChanged ();
 		}), null, 1000, 1000);
-	}
-
-	public void Refresh ()
-	{
-		StateHasChanged ();
-	}
-
-	public string GetResourceDeltaClass (string name)
-	{
-		double count = GetResourceCount (NextTickResources, name);
-		if (count < -.001)
-			return "red";
-		else if (count > .001)
-			return "green";
-		return "clear";
 	}
 }

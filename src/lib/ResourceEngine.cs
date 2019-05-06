@@ -13,10 +13,25 @@ namespace IncrementalSociety
 	{
 		JsonLoader Json;
 		YieldCache Yields;
+		
+		public int RegionCapacity => Json.Game.RegionCapacity;
+		
 		public ResourceEngine (JsonLoader json)
 		{
 			Json = json;
 			Yields = new YieldCache ();
+		}
+		
+		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
+
+		public Building FindBuilding (string name)
+		{
+			return Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+		}
+		
+		public Settlement FindSettlement (string name)
+		{
+			return Json.Buildings.Settlements.FirstOrDefault (x => x.Name == name);
 		}
 
 		public GameState AddTickOfResources (GameState state)
@@ -46,8 +61,7 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-
-			var building = Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			var building = FindBuilding (name);
 			if (building != null)
 			{
 				foreach (var yield in building.Yield.AsNotNull ())
@@ -59,14 +73,14 @@ namespace IncrementalSociety
 				return resources.ToImmutable ();
 			}
 
-			var settlement = Json.Buildings.Settlements.FirstOrDefault (x => x.Name == name);
+			var settlement = FindSettlement (name);
 			if (settlement != null)
 			{
 				foreach (var yield in settlement.Yield.AsNotNull ())
 					AddResources (resources, Yields.From (yield));
 				return resources.ToImmutable ();
 			}
-			throw new InvalidOperationException ($"Unable to find building {name} in resources");
+			throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
 		}
 
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)

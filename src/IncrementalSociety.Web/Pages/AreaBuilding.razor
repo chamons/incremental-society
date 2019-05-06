@@ -1,0 +1,57 @@
+@using System.Collections.Immutable
+
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject GameService GameService
+@inject StyleService StyleService
+
+<div>
+	<Building 
+		BuildingName="@Building"
+		Resources="@Resources"
+		BackgroundColor="@BackgroundColor"
+		OnClick="OnClick"
+		ColorResourcesAsDelta=true />
+</div>
+
+@functions {
+	[Parameter]
+	Area Area { get; set; }
+
+	[Parameter]
+	int Index { get; set; }
+
+	[Parameter]
+	string Building { get; set; }
+	
+	bool HasBuilding => !String.IsNullOrEmpty (Building);
+
+	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.GetBuildingResources (Building) : null;
+
+	string BackgroundColor
+	{
+		get
+		{
+			switch (GameService.CurrentUIState) 
+			{
+				case GameUIState.SelectBuildingToDestory:
+					return HasBuilding ? "gray" : "white"; 
+				default:
+					return "white";	
+			}
+		}
+	}
+	
+	void OnClick ()
+	{
+		switch (GameService.CurrentUIState) 
+		{
+			case GameUIState.SelectBuildingToDestory:
+				if (HasBuilding) {
+					GameService.OnDestroySelection (Area, Index);
+				}
+				break;
+		}
+	}
+}

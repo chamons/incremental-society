@@ -18,7 +18,7 @@ namespace IncrementalSociety.Web.Services
 
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
 		public GameState State { get; private set; }
-		public int RegionCapacity { get; private set; }
+		public int RegionCapacity => Engine.RegionCapacity;
 	
 		const string CancelText = "Cancel";
 		// These must match keys in GameEngine::ApplyAction
@@ -28,7 +28,6 @@ namespace IncrementalSociety.Web.Services
 		public GameService ()
 		{
 			Loader = JsonLoader.Load ();
-			RegionCapacity = Loader.Game.RegionCapacity;
 			State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create ();
 			
@@ -126,7 +125,7 @@ namespace IncrementalSociety.Web.Services
 			
 			var region = State.Regions.First (x => x.Areas.Contains (area));
 			int areaIndex = region.Areas.IndexOf (area);
-			State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Crude Workshop" });
+			State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Gathering Camp" });
 		
 			NotifyUIStateHasChanged ();
 		}

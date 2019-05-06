@@ -20,6 +20,7 @@ namespace IncrementalSociety.Model
 		Bronze
 	}
 
+	[With]
 	public class Area
 	{
 		AreaType Type;
@@ -28,6 +29,7 @@ namespace IncrementalSociety.Model
 		List<string> Buildings;
 	}
 
+	[With]
 	public class Region
 	{
 		string Name;

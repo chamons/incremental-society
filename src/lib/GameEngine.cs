@@ -9,8 +9,10 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		ResourceEngine ResourceEngine;
+		public int RegionCapacity { get; private set; }
 
+		ResourceEngine ResourceEngine;
+		BuildingEngine BuildingEngine;
 		public static GameEngine Create ()
 		{
 			var loader = JsonLoader.Load ();
@@ -20,6 +22,8 @@ namespace IncrementalSociety
 		public GameEngine (ResourceEngine resourceEngine)
 		{
 			ResourceEngine = resourceEngine;
+			BuildingEngine = new BuildingEngine (ResourceEngine);
+			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)
@@ -33,11 +37,21 @@ namespace IncrementalSociety
 					Console.WriteLine ("Grow Population");
 					break;
 				case "Build District":
-					Console.WriteLine ("Build");
+				{
+					string regionName = args[0];
+					int regionIndex = int.Parse (args[1]);
+					string buildingName = args[2];
+					state = BuildingEngine.Build (state, regionName, regionIndex, buildingName);
 					break;
+				}
 				case "Destory District":
-					Console.WriteLine ("Nuke");
+				{
+					string regionName = args[0];
+					int regionIndex = int.Parse (args[1]);
+					int buildingIndex = int.Parse (args[2]);
+					state = BuildingEngine.Destroy (state, regionName, regionIndex, buildingIndex);
 					break;
+				};
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");
 			}

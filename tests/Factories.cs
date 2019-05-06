@@ -99,9 +99,9 @@ namespace IncrementalSociety.Tests
 		}
 
 
-		public static GameEngine CreateGameEngine ()
+		public static BuildingEngine CreateBuildingEngine ()
 		{
-			return new GameEngine (CreateResourceEngine ());
+			return new BuildingEngine (CreateResourceEngine ());
 		}
 	}
 }

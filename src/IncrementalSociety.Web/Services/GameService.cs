@@ -95,7 +95,9 @@ namespace IncrementalSociety.Web.Services
 
 		public void SetUIState (GameUIState state, Dictionary<string, object> options = null)
 		{
+#if DEBUG
 			Console.Error.WriteLine ($"SetUIState: {state}");
+#endif
 			CurrentUIState = state;
 			
 			ResetActionList ();

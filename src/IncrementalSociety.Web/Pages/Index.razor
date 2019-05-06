@@ -24,7 +24,7 @@
 				</ul>
 			</div>
 			<div id="actions">
-				<ActionView Refresh="@Refresh" />
+				<ActionView GameService=@GameService/>
 			</div>
 		</div>
 		<div class="col">
@@ -57,6 +57,7 @@
 
 	protected override void OnInit ()
 	{
+		GameService.NotifyUIStateHasChanged = () => this.StateHasChanged ();
 		NextTickResources = GameService.GetNextTickResources ();
 		StartTickTimer ();
 	}
@@ -69,10 +70,5 @@
 			NextTickResources = GameService.GetNextTickResources ();
 			this.StateHasChanged ();
 		}), null, 1000, 1000);
-	}
-
-	public void Refresh ()
-	{
-		StateHasChanged ();
 	}
 }

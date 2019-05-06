@@ -1,20 +1,18 @@
 @using  IncrementalSociety.Web.Services
 @using  IncrementalSociety.Model
-@inject GameService GameService
 
 @foreach (var action in @GameService.Actions)
 {
-	<button type="button" onclick="@(() => OnClick(@action.Name))">@action.Name</button>
+	<button type="button" onclick="@(() => OnClick(@action))">@action</button>
 }
 
 @functions {
-
+	
 	[Parameter]
-	Action Refresh { get; set; }
+	GameService GameService { get; set; }
 
-	private void OnClick (string action)
+	void OnClick (string action)
 	{
 		GameService.ApplyAction (action);
-		Refresh ();
 	}
 }

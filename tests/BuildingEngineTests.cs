@@ -67,5 +67,16 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Destroy (state, state.Regions[0].Name, 0, 1));
 		}
+		
+		[Fact]
+		public void ReturnsOnlyValidBuildingsForArea ()
+		{
+			GameState state = Factories.CreateGameStateWithOneCamp ();
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
+			Assert.Equal (2, buildings.Count);
+			Assert.Contains (buildings, x => x.BuildingName == "Gathering Camp");
+			Assert.Contains (buildings, x => x.BuildingName == "Workshop");
+		}
 	}
 }

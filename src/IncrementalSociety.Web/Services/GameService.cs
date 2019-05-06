@@ -18,7 +18,7 @@ namespace IncrementalSociety.Web.Services
 	public class GameService
 	{
 		JsonLoader Loader;
-		GameEngine Engine;
+		public GameEngine Engine { get; private set; } 
 		public Action NotifyUIStateHasChanged;
 
 		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  

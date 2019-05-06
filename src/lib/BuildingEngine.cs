@@ -55,5 +55,11 @@ namespace IncrementalSociety
 			var newRegions = state.Regions.Replace (region, newRegion);
 			return state.WithRegions (newRegions);
 		}
+		
+		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
+		{
+			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => x.ValidRegions.Contains (area.Type.ToString ()));
+			return buildings.Select (x => (x.Name, ImmutableDictionary<string, double>.Empty)).ToList ();
+		}
 	}
 }

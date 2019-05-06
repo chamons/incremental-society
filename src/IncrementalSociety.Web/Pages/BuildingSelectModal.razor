@@ -12,6 +12,10 @@
 					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
+					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
+					{
+						<text>@building.BuildingName</text>
+					}	
 				</div>
 			}
 		</div>
@@ -25,7 +29,8 @@
 	bool Enabled => Region != null;
 	Region Region { get; set; }
 	int AreaIndex { get; set; }
-	string AreaName => Region.Areas[AreaIndex].Type.ToString (); 
+	Area Area => Region.Areas[AreaIndex];
+	string AreaName => Area.Type.ToString ();
 
 	protected override void OnInit ()
 	{

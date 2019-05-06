@@ -66,6 +66,11 @@ namespace IncrementalSociety
 			return ResourceEngine.AddTickOfResources (state);
 		}
 
+		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
+		{
+			return BuildingEngine.GetValidBuildingsForArea (area);
+		}
+
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
 			return ResourceEngine.CalculateAdditionalNextTick (state);

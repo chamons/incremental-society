@@ -21,6 +21,8 @@ namespace IncrementalSociety
 			Json = json;
 			Yields = new YieldCache ();
 		}
+		
+		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
 
 		public Building FindBuilding (string name)
 		{

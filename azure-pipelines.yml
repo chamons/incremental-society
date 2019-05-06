@@ -10,6 +10,10 @@ pool:
   vmImage: 'vs2017-win2016'
 
 steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    version: '3.0.100-preview4-011223'
+
 - script: dotnet build
   displayName: 'Build'
 

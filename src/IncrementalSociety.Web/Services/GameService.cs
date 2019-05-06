@@ -33,7 +33,6 @@ namespace IncrementalSociety.Web.Services
 
 		public GameService ()
 		{
-			Console.Error.WriteLine ("Creating a GameService");
 			Loader = JsonLoader.Load ();
 			State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create ();

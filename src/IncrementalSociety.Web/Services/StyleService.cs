@@ -14,7 +14,6 @@ namespace IncrementalSociety.Web.Services
 
 		public StyleService (GameService gameService)
 		{
-			Console.Error.WriteLine ("Creating a StyleService");
 			GameService = gameService;
 		}
 

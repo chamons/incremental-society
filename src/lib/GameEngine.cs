@@ -18,7 +18,7 @@ namespace IncrementalSociety
 			ResourceEngine = new ResourceEngine (Loader);
 		}
 
-		public GameState ApplyAction (GameState state, string action)
+		public GameState ApplyAction (GameState state, string action, string [] args = null)
 		{
 #if DEBUG
 			Console.WriteLine ($"ApplyAction - {action}\nState = {JsonConvert.SerializeObject (state)}");
@@ -27,6 +27,12 @@ namespace IncrementalSociety
 			{
 				case "Grow Population":
 					Console.WriteLine ("Grow Population");
+					break;
+				case "Build District":
+					Console.WriteLine ("Build");
+					break;
+				case "Destory District":
+					Console.WriteLine ("Nuke");
 					break;
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");

@@ -20,6 +20,12 @@
 
 @functions {
 	[Parameter]
+	Area Area { get; set; }
+
+	[Parameter]
+	int Index { get; set; }
+
+	[Parameter]
 	string Building { get; set; }
 	
 	[Parameter]
@@ -33,8 +39,6 @@
 		{
 			switch (GameService.CurrentUIState) 
 			{
-				case GameUIState.SelectForBuild:
-					return HasBuilding ? "white" : "gray"; 
 				case GameUIState.SelectForDestory:
 					return HasBuilding ? "gray" : "white"; 
 				default:
@@ -47,14 +51,9 @@
 	{
 		switch (GameService.CurrentUIState) 
 		{
-			case GameUIState.SelectForBuild:
-				if (!HasBuilding) {
-					GameService.OnBuildSelection (null, 0);
-				}
-				break;
 			case GameUIState.SelectForDestory:
 				if (HasBuilding) {
-					GameService.OnDestroySelection (null, 0);
+					GameService.OnDestroySelection (Area, Index);
 				}
 				break;
 		}

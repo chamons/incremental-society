@@ -21,6 +21,7 @@ namespace IncrementalSociety.Web.Services
 		public int RegionCapacity { get; private set; }
 	
 		const string CancelText = "Cancel";
+		// These must match keys in GameEngine::ApplyAction
 		const string BuildText = "Build District";
 		const string DestroyText = "Destory District";
 
@@ -119,15 +120,25 @@ namespace IncrementalSociety.Web.Services
 			throw new InvalidOperationException ($"GetActionTextForState with state {state}");
 		}
 
-		public void OnBuildSelection (Region r, int position)
+		public void OnBuildSelection (Area area)
 		{
 			SetUIState (GameUIState.Default);
+			
+			var region = State.Regions.First (x => x.Areas.Contains (area));
+			int areaIndex = region.Areas.IndexOf (area);
+			State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Crude Workshop" });
+		
 			NotifyUIStateHasChanged ();
 		}
 		
-		public void OnDestroySelection (Region r, int position)
+		public void OnDestroySelection (Area area, int buildingPosition)
 		{
 			SetUIState (GameUIState.Default);
+		
+			var region = State.Regions.First (x => x.Areas.Contains (area));
+			int areaIndex = region.Areas.IndexOf (area);
+			State = Engine.ApplyAction (State, DestroyText, new string [] { region.Name, areaIndex.ToString (), buildingPosition.ToString () });
+		
 			NotifyUIStateHasChanged ();
 		}
 

@@ -1,28 +1,28 @@
 @using  IncrementalSociety.Web.Services
 @using  IncrementalSociety.Model
 
-<div>
-	<div class="collapse @(Expanded ? "hide" : "show")">
-		<div class="area-image-small-container" onclick="@OnAreaClick">
+<div class="region-view" onclick="@OnAreaClick" >
+	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;" >
+		<div class="area-image-small-container" onclick="@OnAreaImageClick">
 			<img class="area-image" src="images/@(Area.Type).png" alt="@Area.Type" />
 			<span>@Area.Buildings.Length/@GameService.RegionCapacity</span>
 		</div>
 	</div>
 
-	<div class="area-more-info collapse @(Expanded ? "show" : "hide")">
+	<div class="area-more-info collapse @(Expanded ? "show" : "hide")" style="background-color:@BackgroundColor;"
 		<div class="area-more-info-header">
-			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaClick" />
+			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaImageClick" />
 			<p>@Area.Type</p>
 		</div>
 		@for (int i = 0; i < GameService.RegionCapacity; ++i)
 		{
 			if (i < Area.Buildings.Length)
 			{
-				<AreaBuilding GameService=@GameService Building="@Area.Buildings[0]" />
+				<AreaBuilding Area=@Area Index=@i GameService=@GameService Building="@Area.Buildings[0]" />
 			}
 			else
 			{
-				<AreaBuilding GameService=@GameService/>
+				<AreaBuilding GameService=@GameService />
 			}
 		}
 	</div>
@@ -37,9 +37,46 @@
 
 	bool Expanded;
 
-	private void OnAreaClick ()
+	bool HasRoom => Area.Buildings.Length < GameService.RegionCapacity;
+
+	void OnAreaImageClick ()
 	{
-		Expanded = !Expanded;
-		StateHasChanged ();
+		switch (GameService.CurrentUIState) 
+		{
+			case GameUIState.SelectForBuild:
+				OnAreaClick ();
+				break;
+			default:
+				Expanded = !Expanded;
+				StateHasChanged ();
+				break;
+		}
 	}
+
+	string BackgroundColor
+	{
+		get
+		{
+			switch (GameService.CurrentUIState) 
+			{
+				case GameUIState.SelectForBuild:
+					return HasRoom ? "gray" : "white"; 
+				default:
+					return "white";	
+			}
+		}
+	}
+	
+	void OnAreaClick ()
+	{
+		switch (GameService.CurrentUIState) 
+		{
+			case GameUIState.SelectForBuild:
+				if (HasRoom) {
+					GameService.OnBuildSelection (Area);
+				}
+				break;
+		}
+	}
+
 }

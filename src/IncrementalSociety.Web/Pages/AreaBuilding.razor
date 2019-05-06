@@ -39,7 +39,7 @@
 		{
 			switch (GameService.CurrentUIState) 
 			{
-				case GameUIState.SelectForDestory:
+				case GameUIState.SelectBuildingToDestory:
 					return HasBuilding ? "gray" : "white"; 
 				default:
 					return "white";	
@@ -51,7 +51,7 @@
 	{
 		switch (GameService.CurrentUIState) 
 		{
-			case GameUIState.SelectForDestory:
+			case GameUIState.SelectBuildingToDestory:
 				if (HasBuilding) {
 					GameService.OnDestroySelection (Area, Index);
 				}

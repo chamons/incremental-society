@@ -8,14 +8,20 @@ using System.Collections.Immutable;
 
 namespace IncrementalSociety.Web.Services
 {
-	public enum GameUIState { Default, SelectForBuild, SelectForDestory }
-
+	public enum GameUIState { Default, SelectRegionToBuildIn, ShowBuildingSelectDialog, SelectBuildingToDestory }
+	
+	public class GameUIStateChangedEventArgs : EventArgs
+	{
+		public Dictionary<string, object> Options { get; set; }
+	}
+	
 	public class GameService
 	{
 		JsonLoader Loader;
 		GameEngine Engine;
 		public Action NotifyUIStateHasChanged;
 
+		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
 		public GameState State { get; private set; }
 		public int RegionCapacity => Engine.RegionCapacity;
@@ -69,14 +75,13 @@ namespace IncrementalSociety.Web.Services
 
 		public void ApplyAction (string action)
 		{
-			NotifyUIStateHasChanged ();
 			switch (action)
 			{
 				case BuildText:
-					SetUIState (GameUIState.SelectForBuild);
+					SetUIState (GameUIState.SelectRegionToBuildIn);
 					return;
 				case DestroyText:
-					SetUIState (GameUIState.SelectForDestory);
+					SetUIState (GameUIState.SelectBuildingToDestory);
 					return;
 				case CancelText:
 					SetUIState (GameUIState.Default);
@@ -88,21 +93,26 @@ namespace IncrementalSociety.Web.Services
 			}
 		}
 
-		void SetUIState (GameUIState state)
+		public void SetUIState (GameUIState state, Dictionary<string, object> options = null)
 		{
-			ResetActionList ();
+			Console.Error.WriteLine ($"SetUIState: {state}");
 			CurrentUIState = state;
-			if (state != GameUIState.Default)
-				ReplaceActionWithCancel (state);
+			
+			ResetActionList ();
+			ReplaceActionWithCancel (state);
+			NotifyUIStateHasChanged ();
+			CurrentUIStateChanged?.Invoke (this, new GameUIStateChangedEventArgs () { Options = options });
 		}
 
 		void ReplaceActionWithCancel (GameUIState state)
 		{
 			string actionText = GetActionTextForState (state);
-			for (int i = 0 ; i < Actions.Count ; ++i) {
-				if (Actions[i] == actionText) {
-					Actions[i] = CancelText;
-					return;
+			if (actionText != null) {
+				for (int i = 0 ; i < Actions.Count ; ++i) {
+					if (Actions[i] == actionText) {
+						Actions[i] = CancelText;
+						return;
+					}
 				}
 			}
 		}
@@ -111,23 +121,28 @@ namespace IncrementalSociety.Web.Services
 		{
 			switch (state)
 			{
-				case GameUIState.SelectForBuild:
+				case GameUIState.SelectRegionToBuildIn:
 					return BuildText;
-				case GameUIState.SelectForDestory:
+				case GameUIState.SelectBuildingToDestory:
 					return DestroyText;
+				default:
+					return null;
 			}
-			throw new InvalidOperationException ($"GetActionTextForState with state {state}");
 		}
 
-		public void OnBuildSelection (Area area)
+		public void OnBuildAreaSelection (Area area)
 		{
-			SetUIState (GameUIState.Default);
-			
 			var region = State.Regions.First (x => x.Areas.Contains (area));
 			int areaIndex = region.Areas.IndexOf (area);
-			State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Gathering Camp" });
+
+			var options = new Dictionary<string, object> {
+				["Region"] = region,
+				["AreaIndex"] = areaIndex
+			};
+			SetUIState (GameUIState.ShowBuildingSelectDialog, options);
+
+			// State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Gathering Camp" });
 		
-			NotifyUIStateHasChanged ();
 		}
 		
 		public void OnDestroySelection (Area area, int buildingPosition)
@@ -137,8 +152,6 @@ namespace IncrementalSociety.Web.Services
 			var region = State.Regions.First (x => x.Areas.Contains (area));
 			int areaIndex = region.Areas.IndexOf (area);
 			State = Engine.ApplyAction (State, DestroyText, new string [] { region.Name, areaIndex.ToString (), buildingPosition.ToString () });
-		
-			NotifyUIStateHasChanged ();
 		}
 
 		public void OnTick ()

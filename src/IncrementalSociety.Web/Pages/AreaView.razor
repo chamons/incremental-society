@@ -43,7 +43,7 @@
 	{
 		switch (GameService.CurrentUIState) 
 		{
-			case GameUIState.SelectForBuild:
+			case GameUIState.SelectRegionToBuildIn:
 				OnAreaClick ();
 				break;
 			default:
@@ -59,7 +59,7 @@
 		{
 			switch (GameService.CurrentUIState) 
 			{
-				case GameUIState.SelectForBuild:
+				case GameUIState.SelectRegionToBuildIn:
 					return HasRoom ? "gray" : "white"; 
 				default:
 					return "white";	
@@ -71,9 +71,9 @@
 	{
 		switch (GameService.CurrentUIState) 
 		{
-			case GameUIState.SelectForBuild:
+			case GameUIState.SelectRegionToBuildIn:
 				if (HasRoom) {
-					GameService.OnBuildSelection (Area);
+					GameService.OnBuildAreaSelection (Area);
 				}
 				break;
 		}

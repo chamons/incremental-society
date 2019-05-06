@@ -1,0 +1,69 @@
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+@inject IJSRuntime JsRuntime;
+
+<div class="modal fade" id="selectBuildingModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			@if (Enabled)
+			{
+				<div class="modal-header">
+					<h5 class="modal-title">Building in @AreaName region @Region.Name:</h5>
+					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
+				</div>
+				<div class="modal-body">
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+@functions {
+	[Parameter]
+	GameService GameService { get; set; }
+
+	bool Enabled => Region != null;
+	Region Region { get; set; }
+	int AreaIndex { get; set; }
+	string AreaName => Region.Areas[AreaIndex].Type.ToString (); 
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += OnUIStateChanged;
+	}
+
+	protected override void OnAfterRender ()
+	{
+		((IJSInProcessRuntime)JsRuntime).Invoke<object> ("InitBuildingModal", new DotNetObjectRef(this));
+	}
+
+	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
+	{
+		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog) {
+			Region = (Region)args.Options["Region"];
+			AreaIndex = (int)args.Options["AreaIndex"];
+			StateHasChanged ();
+			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("ShowBuildingModal");
+		}
+	}
+
+	void Dismiss (bool closeDialog = false)
+	{
+		Region = null;
+		GameService.SetUIState (GameUIState.Default);
+		if (closeDialog) {
+			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("DismissBuildingModal");
+		}
+	}
+
+	void OnCloseButton ()
+	{
+		Dismiss (true);
+	}
+
+	[JSInvokable]
+	public void OnModalDismissed ()
+	{
+		Dismiss ();
+	}
+}

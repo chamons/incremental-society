@@ -1,0 +1,89 @@
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject IJSRuntime JsRuntime;
+@inject GameService GameService
+
+<div class="modal fade" id="selectBuildingModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			@if (Enabled)
+			{
+				<div class="modal-header">
+					<h5 class="modal-title">Building in @AreaName region @Region.Name:</h5>
+					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
+				</div>
+				<div class="modal-body">
+					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
+					{
+						<Building 
+							BuildingName="@building.BuildingName"
+							Resources="@building.Cost"
+							BackgroundColor="white"
+							OnClick="@(() => OnSelection(@building.BuildingName))"
+							ColorResourcesAsDelta=false />
+					}	
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+@functions {
+	bool Enabled => Region != null;
+	Region Region { get; set; }
+	int AreaIndex { get; set; }
+	Area Area => Region.Areas[AreaIndex];
+	string AreaName => Area.Type.ToString ();
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += OnUIStateChanged;
+	}
+
+	protected override void OnAfterRender ()
+	{
+		// Register for bootstrap notifications if not already done
+		((IJSInProcessRuntime)JsRuntime).Invoke<object> ("InitBuildingModal", new DotNetObjectRef(this));
+	}
+
+	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
+	{
+		// If we're just transisitioning to the dialog, consume the options and show it
+		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog) {
+			Region = (Region)args.Options["Region"];
+			AreaIndex = (int)args.Options["AreaIndex"];
+			StateHasChanged ();
+			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("ShowBuildingModal");
+		}
+		StateHasChanged ();
+	}
+
+	void OnSelection (string buildingName)
+	{
+		GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
+		Dismiss (true);
+	}
+
+	void Dismiss (bool closeDialog = false)
+	{
+		Region = null;
+		GameService.SetUIState (GameUIState.Default);
+		if (closeDialog) {
+			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("DismissBuildingModal");
+		}
+	}
+
+	// Triggered with pressing the "X" button
+	void OnCloseButton ()
+	{
+		Dismiss (true);
+	}
+
+	// Triggered when clicking off modal from bootstrap
+	[JSInvokable]
+	public void OnModalDismissed ()
+	{
+		Dismiss ();
+	}
+}

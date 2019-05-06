@@ -1,3 +1,14 @@
+=disable-select()
+	-webkit-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	-o-user-select: none
+	user-select: none
+
+.main
+	margin-top: 5px
+	margin-bottom: 5px
+
 .region
 	border: 1px solid black
 	padding-left: 20px
@@ -5,12 +16,32 @@
 	padding-bottom: 10px
 	margin: 5px
 
+.region-view
+	margin-left: 5px
+	margin-right: 5px
+
 .resource-image
-	width: 30px
+	height: 30px
 	margin-right: 15px
 
 .area-image
+	background-size: cover
+	height: 45px
 	width: 45px
+
+.area-image-small-container
+	position: relative
+	span 
+		position: absolute 
+		top: 2px 
+		left: 23px
+		color: white
+		margin-left: 2px
+		margin-right: 2px
+		letter-spacing: -1px
+		background: rgba(0, 0, 0, 0.9)
+		font-size: .6rem
+		letter-spacing: .75px
 
 .area-more-info
 	border: 1px solid black
@@ -18,6 +49,11 @@
 	padding-right: 5px
 	margin-left: 1px
 	margin-right: 1px
+	min-width: 100px
+
+.area-more-info-header
+	text-align: center
+	margin-top: 5px		
 
 .area-view
 	margin-left: 5px
@@ -26,14 +62,15 @@
 #resource-list
 	list-style-type: none
 	padding-left: 0px
-	li
-		margin-top: 5px
-		margin-bottom: 5px
+
+.resource-list-item
+	margin-top: 5px
+	margin-bottom: 5px
 	p
 		vertical-align: middle
-		display: inline
 
 #actions
+	+disable-select()
 	border: 1px solid black
 	margin-top: 1px
 	padding-left: 20px
@@ -41,14 +78,14 @@
 	padding-bottom: 20px
 
 #resources
+	+disable-select()
 	border: 1px solid black
 	padding-left: 20px
 
 #regions
+	+disable-select()
 	border: 1px solid black
-
-.resource-delta
-	display: inline
+	user-select: none
 
 .green
 	color: green
@@ -58,4 +95,21 @@
 
 .clear
 	display: none
-	
+
+.building
+	border: 1px solid black
+	padding-left: 5px
+	padding-right: 5px
+	margin-bottom: 5px
+	min-height: 35px
+	max-width: 200px
+
+.building-title
+	margin-bottom: 5px
+
+.building-resource
+	font-size: .75rem
+	margin-right: 8px
+	.resource-image
+		height: 15px
+		margin-right: 2px

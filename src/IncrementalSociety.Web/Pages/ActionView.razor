@@ -1,0 +1,22 @@
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject GameService GameService
+
+@foreach (var action in @GameService.Actions)
+{
+	<button type="button" onclick="@(() => OnClick(@action))">@action</button>
+}
+
+@functions {
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
+
+	void OnClick (string action)
+	{
+		GameService.ApplyAction (action);
+	}
+}

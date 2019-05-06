@@ -9,6 +9,7 @@ namespace IncrementalSociety.Web
 		public void ConfigureServices (IServiceCollection services)
 		{
 			services.AddSingleton<GameService> ();
+			services.AddSingleton<StyleService> ();
 		}
 
 		public void Configure (IComponentsApplicationBuilder app)

@@ -1,6 +1,8 @@
 @using IncrementalSociety.Web.Services
 @using IncrementalSociety.Model
+
 @inject IJSRuntime JsRuntime;
+@inject GameService GameService
 
 <div class="modal fade" id="selectBuildingModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
@@ -23,9 +25,6 @@
 </div>
 
 @functions {
-	[Parameter]
-	GameService GameService { get; set; }
-
 	bool Enabled => Region != null;
 	Region Region { get; set; }
 	int AreaIndex { get; set; }

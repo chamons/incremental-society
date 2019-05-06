@@ -4,6 +4,7 @@
 @using IncrementalSociety.Web.Services
 
 @inject GameService GameService
+@inject StyleService StyleService 
 
 <div class="container-fluid">
 	<div class="row">
@@ -16,15 +17,15 @@
 					@foreach (var resource in @GameService.Resources)
 					{
 						<li class="d-flex align-items-center resource-list-item">
-							<img class="img-fluid resource-image" src="@GameService.GetImageFilename(resource)" />
+							<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
 							@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
-							<div class="@GameService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
+							<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 						</li>
 					}
 				</ul>
 			</div>
 			<div id="actions">
-				<ActionView GameService=@GameService/>
+				<ActionView />
 			</div>
 		</div>
 		<div class="col">
@@ -37,12 +38,12 @@
 							@for (int i = 0; i < region.Areas.Length; ++i)
 							{
 								string areaInfoID = region.Name + i.ToString ();
-								<AreaView area="@region.Areas[i]" GameService="@GameService"/>
+								<AreaView area="@region.Areas[i]"  />
 							}
 						</div>
 					</div>
 				}
-				<BuildingSelectModal GameService="@GameService"/>
+				<BuildingSelectModal />
 			</div>
 		</div>
 	</div>

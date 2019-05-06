@@ -1,5 +1,6 @@
-@using  IncrementalSociety.Web.Services
-@using  IncrementalSociety.Model
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+@inject GameService GameService
 
 @foreach (var action in @GameService.Actions)
 {
@@ -7,10 +8,6 @@
 }
 
 @functions {
-	
-	[Parameter]
-	GameService GameService { get; set; }
-
 	void OnClick (string action)
 	{
 		GameService.ApplyAction (action);

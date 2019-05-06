@@ -1,0 +1,41 @@
+@using System.Collections.Immutable
+@using IncrementalSociety.Web.Services
+
+@inject StyleService StyleService
+
+<div>
+	<div class="d-flex flex-column building" style="background-color:@BackgroundColor;" onclick=@OnClick>
+		<p class="building-title" >@BuildingName</p>
+		@if (HasBuilding) {
+			<div class="d-flex flex-wrap">
+				@foreach (var res in Resources) {
+					<div class="building-resource d-flex align-items-center">
+						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
+						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</div>
+
+@functions {
+	[Parameter]
+	string BuildingName { get; set; }
+	
+	[Parameter]
+	ImmutableDictionary<string, double> Resources { get; set; }
+	
+	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
+
+	[Parameter]
+	string BackgroundColor { get; set; }
+	
+	[Parameter]
+	Action OnClick { get; set; }
+	
+	[Parameter]
+	bool ColorResourcesAsDelta { get; set; }
+
+	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
+}

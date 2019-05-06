@@ -1,5 +1,7 @@
-@using  IncrementalSociety.Web.Services
-@using  IncrementalSociety.Model
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject GameService GameService
 
 <div class="region-view" onclick="@OnAreaClick" >
 	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;" >
@@ -14,15 +16,12 @@
 			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaImageClick" />
 			<p>@Area.Type</p>
 		</div>
-		@for (int i = 0; i < GameService.RegionCapacity; ++i)
-		{
-			if (i < Area.Buildings.Length)
-			{
-				<AreaBuilding Area=@Area Index=@i GameService=@GameService Building="@Area.Buildings[i]" />
+		@for (int i = 0; i < GameService.RegionCapacity; ++i) {
+			if (i < Area.Buildings.Length) {
+				<AreaBuilding Area=@Area Index=@i Building="@Area.Buildings[i]" />
 			}
-			else
-			{
-				<AreaBuilding GameService=@GameService />
+			else {
+				<AreaBuilding />
 			}
 		}
 	</div>
@@ -31,9 +30,6 @@
 @functions {
 	[Parameter]
 	Area Area { get; set; }
-
-	[Parameter]
-	GameService GameService { get; set; }
 
 	bool Expanded;
 

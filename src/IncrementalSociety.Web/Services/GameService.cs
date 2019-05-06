@@ -17,7 +17,7 @@ namespace IncrementalSociety.Web.Services
 	
 	public class GameService
 	{
-		JsonLoader Loader;
+		public JsonLoader Loader { get; private set; }
 		public GameEngine Engine { get; private set; } 
 		public Action NotifyUIStateHasChanged;
 
@@ -33,6 +33,7 @@ namespace IncrementalSociety.Web.Services
 
 		public GameService ()
 		{
+			Console.Error.WriteLine ("Creating a GameService");
 			Loader = JsonLoader.Load ();
 			State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create ();
@@ -53,20 +54,6 @@ namespace IncrementalSociety.Web.Services
 		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
 		
 		public List<string> Actions { get; private set; }
-
-		public string GetImageFilename (string name)
-		{
-			return GetImageFilename (Resources.First (x => x.Name == name));
-		}
-
-		public string GetImageFilename (ResourceDeclaration decl)
-		{
-			string name = decl.Name.ToLower ().Replace (' ', '-');
-			if (decl.ImageHasAgePrefix)
-				return $"images\\{State.Age}-{name}.png";
-			else
-				return $"images\\{name}.png";
-		}
 
 		public ImmutableDictionary<string, double> GetBuildingResources (string building)
 		{
@@ -160,16 +147,6 @@ namespace IncrementalSociety.Web.Services
 		{
 			State = Engine.ProcessTick (State);
 		}
-
-		public string GetResourceDeltaClass (double count)
-		{
-			if (count < -.001) {
-				return "red";
-			}
-			if (count > .001) {
-				return "green";
-			}
-			return "clear";
+		
 		}
-	}
 }

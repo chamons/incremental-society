@@ -52,6 +52,15 @@ namespace IncrementalSociety.Tests
 		}
 		
 		[Fact]
+		public void DestoryOnlyOneCopy ()
+		{
+			GameState state = Factories.CreateGameStateFullOfCamps ();
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			state = engine.Destroy (state, state.Regions[0].Name, 0, 0);
+			Assert.Single (state.Regions[0].Areas[0].Buildings); 
+		}
+		
+		[Fact]
 		public void DestoryNonExistantBuilding ()
 		{
 			GameState state = Factories.CreateGameStateWithOneCamp ();

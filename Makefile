@@ -12,6 +12,9 @@ clean::
 test::
 	$(Q) dotnet test -nologo
 
+test-fast::
+	$(Q) dotnet test -nologo
+
 sass::
 	$(Q) sass --watch src/IncrementalSociety.Web/wwwroot/css/site.sass src/IncrementalSociety.Web/wwwroot/css
 

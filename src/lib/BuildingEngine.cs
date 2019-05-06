@@ -31,17 +31,29 @@ namespace IncrementalSociety
 			if (!building.ValidRegions.Contains (area.Type.ToString()))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
-			// Can we simplify this?
 			var newArea = area.WithBuildings (area.Buildings.Add (building.Name));
-			var newAreas = region.Areas.Replace (area, newArea);
-			var newRegion = region.WithAreas (newAreas);
-			var newRegions = state.Regions.Replace (region, newRegion);
-			return state.WithRegions (newRegions);
+			return UpdateStateWithArea (state, area, newArea, region);
 		}
 
 		public GameState Destroy (GameState state, string regionName, int regionIndex, int buildingIndex)
 		{
-			return state;
+			Region region = state.Regions.First (x => x.Name == regionName); 
+			Area area = region.Areas [regionIndex];
+			if (buildingIndex >= area.Buildings.Length)
+				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} for but invalid index {buildingIndex}");
+
+			string buildingName = area.Buildings[buildingIndex];
+
+			var newArea = area.WithBuildings (area.Buildings.Remove (buildingName));
+			return UpdateStateWithArea (state, area, newArea, region);
+		}
+
+		GameState UpdateStateWithArea (GameState state, Area area, Area newArea, Region region)
+		{
+			var newAreas = region.Areas.Replace (area, newArea);
+			var newRegion = region.WithAreas (newAreas);
+			var newRegions = state.Regions.Replace (region, newRegion);
+			return state.WithRegions (newRegions);
 		}
 	}
 }

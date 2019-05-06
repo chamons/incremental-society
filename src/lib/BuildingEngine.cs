@@ -59,7 +59,7 @@ namespace IncrementalSociety
 		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
 		{
 			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => x.ValidRegions.Contains (area.Type.ToString ()));
-			return buildings.Select (b => (b.Name, b.Cost.ToImmutableDictionary (x => x.Name, x => x.Amount))).ToList ();
+			return buildings.Select (b => (b.Name, b.Cost?.ToImmutableDictionary (x => x.Name, x => x.Amount))).ToList ();
 		}
 	}
 }

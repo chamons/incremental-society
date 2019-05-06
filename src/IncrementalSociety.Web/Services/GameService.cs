@@ -30,7 +30,7 @@ namespace IncrementalSociety.Web.Services
 			Loader = JsonLoader.Load ();
 			RegionCapacity = Loader.Game.RegionCapacity;
 			State = GameEngine.CreateNewGame ();
-			Engine = new GameEngine ();
+			Engine = GameEngine.Create ();
 			
 			ResetActionList ();
 		}

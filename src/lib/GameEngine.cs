@@ -9,13 +9,17 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		JsonLoader Loader;
 		ResourceEngine ResourceEngine;
 
-		public GameEngine ()
+		public static GameEngine Create ()
 		{
-			Loader = JsonLoader.Load ();
-			ResourceEngine = new ResourceEngine (Loader);
+			var loader = JsonLoader.Load ();
+			return new GameEngine (new ResourceEngine (loader));
+		}
+
+		public GameEngine (ResourceEngine resourceEngine)
+		{
+			ResourceEngine = resourceEngine;
 		}
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)

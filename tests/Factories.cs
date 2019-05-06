@@ -27,26 +27,30 @@ namespace IncrementalSociety.Tests
 		const string BuildingJSON = @"{	
 		""buildings"": [
 			{
-			""name"": ""Gathering Camp"",
-			""valid_regions"": [""Plains""],
-			""yield"": [
-				{ ""Name"": ""Food"", ""Amount"" : 2 },
-				{ ""Name"": ""Water"", ""Amount"" : 2 }
+				""name"": ""Gathering Camp"",
+				""valid_regions"": [""Plains""],
+				""yield"": [
+					{ ""Name"": ""Food"", ""Amount"" : 2 },
+					{ ""Name"": ""Water"", ""Amount"" : 2 }
+				]
+			},
+			{
+				""name"": ""Workshop"",
+				""valid_regions"": [""Plains""],
+				""conversion_yield"": [
+					{
+						""cost"": [ 
+							{ ""Name"": ""Wood"", ""Amount"" : 1 }
+						],
+						""provides"": [ 
+							{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
+						]
+					}
 			]
 			},
 			{
-			""name"": ""Workshop"",
-			""valid_regions"": [""Plains""],
-			""conversion_yield"": [
-				{
-					""cost"": [ 
-						{ ""Name"": ""Wood"", ""Amount"" : 1 }
-					],
-					""provides"": [ 
-						{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
-					]
-				}
-			]
+				""name"": ""Mine"",
+				""valid_regions"": [""Mountains""]
 			}
 		],
 		""settlements"": [
@@ -61,24 +65,43 @@ namespace IncrementalSociety.Tests
 			""regions"": [
 				{
 					""name"": ""Plains""
+				},
+				{
+					""name"": ""Mountains""
 				}
 			]
 	}
 ";
 
+		const string GameJSON = @"{ ""region_capacity"" :  2 }";
+
 		public static ResourceEngine CreateResourceEngine ()
 		{
-			var resources = new JsonLoader ("", BuildingJSON, "", RegionJSON, ResourceJSON);
+			var resources = new JsonLoader ("", BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
 			ResourceEngine engine = new ResourceEngine (resources);
 			return engine;
 		}
 
 		public static GameState CreateGameStateWithOneCamp ()
 		{
-			var area = new Area (AreaType.Plains, "Gathering Camp".Yield ());
+			return CreateGameState (new Area (AreaType.Plains, "Gathering Camp".Yield ()));
+		}
+
+		public static GameState CreateGameStateFullOfCamps ()
+		{
+			return CreateGameState (new Area (AreaType.Plains, new string [] { "Gathering Camp", "Gathering Camp"}));
+		}
+
+		static GameState CreateGameState (Area area)
+		{
 			var region = new Region ("TestLand", area.Yield ());
 			return new GameState (Age.Stone, region.Yield(), new System.Collections.Generic.Dictionary<string, double> ());
 		}
 
+
+		public static GameEngine CreateGameEngine ()
+		{
+			return new GameEngine (CreateResourceEngine ());
+		}
 	}
 }

@@ -147,6 +147,5 @@ namespace IncrementalSociety.Web.Services
 		{
 			State = Engine.ProcessTick (State);
 		}
-		
-		}
+	}
 }

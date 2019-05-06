@@ -16,7 +16,11 @@
 				<div class="modal-body">
 					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
 					{
-						<text>@building.BuildingName</text>
+						<Building 
+							BuildingName="@building.BuildingName"
+							Resources="@building.Cost"
+							BackgroundColor="white"
+							ColorResourcesAsDelta=false />
 					}	
 				</div>
 			}
@@ -49,6 +53,7 @@
 			StateHasChanged ();
 			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("ShowBuildingModal");
 		}
+		StateHasChanged ();
 	}
 
 	void Dismiss (bool closeDialog = false)

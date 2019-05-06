@@ -129,9 +129,11 @@ namespace IncrementalSociety.Web.Services
 				["AreaIndex"] = areaIndex
 			};
 			SetUIState (GameUIState.ShowBuildingSelectDialog, options);
+		}
 
-			// State = Engine.ApplyAction (State, BuildText, new string [] { region.Name, areaIndex.ToString (), "Gathering Camp" });
-		
+		public void OnSpecificBuildingSelection (string regionName, int areaIndex, string buildingName)
+		{
+			State = Engine.ApplyAction (State, BuildText, new string [] { regionName, areaIndex.ToString (), buildingName });
 		}
 		
 		public void OnDestroySelection (Area area, int buildingPosition)

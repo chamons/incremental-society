@@ -20,6 +20,7 @@
 							BuildingName="@building.BuildingName"
 							Resources="@building.Cost"
 							BackgroundColor="white"
+							OnClick="@(() => OnSelection(@building.BuildingName))"
 							ColorResourcesAsDelta=false />
 					}	
 				</div>
@@ -42,11 +43,13 @@
 
 	protected override void OnAfterRender ()
 	{
+		// Register for bootstrap notifications if not already done
 		((IJSInProcessRuntime)JsRuntime).Invoke<object> ("InitBuildingModal", new DotNetObjectRef(this));
 	}
 
 	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
 	{
+		// If we're just transisitioning to the dialog, consume the options and show it
 		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog) {
 			Region = (Region)args.Options["Region"];
 			AreaIndex = (int)args.Options["AreaIndex"];
@@ -54,6 +57,12 @@
 			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("ShowBuildingModal");
 		}
 		StateHasChanged ();
+	}
+
+	void OnSelection (string buildingName)
+	{
+		GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
+		Dismiss (true);
 	}
 
 	void Dismiss (bool closeDialog = false)
@@ -65,11 +74,13 @@
 		}
 	}
 
+	// Triggered with pressing the "X" button
 	void OnCloseButton ()
 	{
 		Dismiss (true);
 	}
 
+	// Triggered when clicking off modal from bootstrap
 	[JSInvokable]
 	public void OnModalDismissed ()
 	{

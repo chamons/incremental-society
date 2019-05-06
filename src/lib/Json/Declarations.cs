@@ -75,6 +75,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
+		
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
 	}
 
 	public partial class ConversionYield
@@ -108,6 +111,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("yield")]
 		public Yield[] Yield { get; set; }
+		
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
 	}
 
 	public class GameAction

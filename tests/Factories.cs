@@ -46,7 +46,11 @@ namespace IncrementalSociety.Tests
 							{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
 						]
 					}
-			]
+				],
+				""cost"": [
+					{ ""Name"": ""Wood"", ""Amount"" : 10 }
+				]
+
 			},
 			{
 				""name"": ""Mine"",

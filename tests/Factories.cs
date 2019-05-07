@@ -34,6 +34,9 @@ namespace IncrementalSociety.Tests
 				""yield"": [
 					{ ""Name"": ""Food"", ""Amount"" : 2 },
 					{ ""Name"": ""Water"", ""Amount"" : 2 }
+				],
+				""cost"": [
+					{ ""Name"": ""Wood"", ""Amount"" : 10 },
 				]
 			},
 			{
@@ -53,7 +56,6 @@ namespace IncrementalSociety.Tests
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 }
 				]
-
 			},
 			{
 				""name"": ""Mine"",

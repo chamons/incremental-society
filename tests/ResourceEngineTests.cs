@@ -82,6 +82,52 @@ namespace IncrementalSociety.Tests
 			ResourceEngine.AddResources (result, ImmutableDictionary<string, double>.Empty);
 			Assert.Equal (1, result["Food"]);
 		}
+		
+		[Fact]
+		public void SubtractTwoResourcesDifferentItems ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			ResourceEngine.SubtractResources (result, Immutable.CreateDictionary ("Water", 1.0));
+			Assert.Equal (1, result["Food"]);
+			Assert.Equal (-1, result["Water"]);
+		}
+
+		[Fact]
+		public void SubtractTwoResourcesWithSameItems ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			ResourceEngine.SubtractResources (result, Immutable.CreateDictionary ("Food", 1.0));
+			Assert.Equal (0, result["Food"]);
+		}
+
+		[Fact]
+		public void SubtractTwoResourceOneEmpty ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			ResourceEngine.SubtractResources (result, ImmutableDictionary<string, double>.Empty);
+			Assert.Equal (1, result["Food"]);
+		}
+		
+		[Fact]
+		public void CompareTwoResourcesDifferentItems ()
+		{
+			var result = Immutable.CreateDictionary ("Food", 1.0);
+			Assert.False (ResourceEngine.HasMoreResources (result, Immutable.CreateDictionary ("Water", 1.0)));
+		}
+
+		[Fact]
+		public void CompareTwoResourcesWithSameItems ()
+		{
+			var result = Immutable.CreateDictionary ("Food", 1.0);
+			Assert.True (ResourceEngine.HasMoreResources (result, Immutable.CreateDictionary ("Food", 1.0)));
+		}
+
+		[Fact]
+		public void CompareTwoResourceOneEmpty ()
+		{
+			var result = Immutable.CreateDictionary ("Food", 1.0);
+			Assert.True (ResourceEngine.HasMoreResources (result, ImmutableDictionary<string, double>.Empty));
+		}
 
 		[Fact]
 		public void ReturnsEnabledConversions ()

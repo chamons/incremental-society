@@ -12,15 +12,18 @@ namespace IncrementalSociety.Tests
 		public void BuildValidBuilding ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			state = engine.Build (state, state.Regions[0].Name, 0, "Workshop");
 			Assert.Equal (2, state.Regions[0].Areas[0].Buildings.Length); 
+			Assert.Equal (0, state.Resources["Wood"]); 
 		}
 		
 		[Fact]
 		public void BuildBuildingWhereNoRoom ()
 		{
 			GameState state = Factories.CreateGameState (camps: 2);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
@@ -30,6 +33,7 @@ namespace IncrementalSociety.Tests
 		public void BuildBuildingInvalidRegionType ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Mine"));
 		}
@@ -38,8 +42,27 @@ namespace IncrementalSociety.Tests
 		public void BuildBuildingInvalidBuildingName ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Invalid"));
+		}
+		
+		[Fact]
+		public void BuildBuildingWithoutResourcs ()
+		{
+			GameState state = Factories.CreateGameState (camps: 1);
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
+		}
+		
+		[Fact]
+		public void CanAffordBuilding()
+		{
+			GameState state = Factories.CreateGameState (camps: 1);
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.False (engine.CanAffordBuilding (state, "Workshop"));
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			Assert.True (engine.CanAffordBuilding (state, "Workshop"));
 		}
 
 		[Fact]

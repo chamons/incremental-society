@@ -87,6 +87,8 @@ namespace IncrementalSociety
 		{
 			return BuildingEngine.GetValidBuildingsForArea (area);
 		}
+		
+		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{

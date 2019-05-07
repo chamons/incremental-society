@@ -49,8 +49,6 @@ namespace IncrementalSociety.Json
 		{
 			if (Buildings.Buildings == null)
 				throw new InvalidOperationException ($"JSON failed validation, No buildings?");
-			if (Buildings.Settlements == null)
-				throw new InvalidOperationException ($"JSON failed validation, No settlements?");
 
 			foreach (var b in Buildings.Buildings)
 			{
@@ -69,16 +67,6 @@ namespace IncrementalSociety.Json
 				}
 
 				foreach (var region in b.ValidRegions)
-					ValidateRegion (region);
-			}
-			foreach (var s in Buildings.Settlements)
-			{
-				if (s.ValidRegions == null)
-					throw new InvalidOperationException ($"JSON failed validation, {s.Name} has no valid regions?");
-
-				foreach (var yield in s.Yield.AsNotNull ())
-					ValidateResource (yield.Name);
-				foreach (var region in s.ValidRegions)
 					ValidateRegion (region);
 			}
 		}

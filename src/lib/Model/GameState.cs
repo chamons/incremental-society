@@ -42,5 +42,7 @@ namespace IncrementalSociety.Model
 		Age Age;
 		List<Region> Regions;
 		Dictionary<string, double> Resources;
+		[Default ("null")]
+		List<string> DisabledConversions;
 	}
 }

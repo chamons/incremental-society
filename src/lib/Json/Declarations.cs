@@ -54,9 +54,6 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("buildings")]
 		public Building[] Buildings { get; set; }
-
-		[JsonProperty ("settlements")]
-		public Settlement[] Settlements { get; set; }
 	}
 
 	public partial class Building
@@ -99,21 +96,6 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("Amount")]
 		public double Amount { get; set; }
-	}
-
-	public partial class Settlement
-	{
-		[JsonProperty ("name")]
-		public string Name { get; set; }
-
-		[JsonProperty ("valid_regions")]
-		public string[] ValidRegions { get; set; }
-
-		[JsonProperty ("yield")]
-		public Yield[] Yield { get; set; }
-		
-		[JsonProperty ("cost")]
-		public Yield[] Cost { get; set; }
 	}
 
 	public class GameAction

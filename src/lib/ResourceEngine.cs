@@ -26,14 +26,12 @@ namespace IncrementalSociety
 
 		public Building FindBuilding (string name)
 		{
-			return Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			var building = Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			if (building == null)
+				throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
+			return building;
 		}
 		
-		public Settlement FindSettlement (string name)
-		{
-			return Json.Buildings.Settlements.FirstOrDefault (x => x.Name == name);
-		}
-
 		public GameState AddTickOfResources (GameState state)
 		{
 			var newResources = state.Resources.ToBuilder ();
@@ -44,45 +42,45 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var region in state.Regions)
-			{
-				foreach (var area in region.Areas)
-				{
-					foreach (var building in area.Buildings)
-					{
+			foreach (var region in state.Regions) {
+				foreach (var area in region.Areas) {
+					foreach (var building in area.Buildings) {
 						AddResources (additional, GetBuildingResources (building));
+						var conversions = GetBuildingConvertedResources (building);
+						foreach (var conversion in conversions) {
+							if (!state.DisabledConversions.Contains (conversion.Name)) {
+								AddResources (additional, conversion.Resources);
+							}
+						}
 					}
 				}
 			}
 			return additional.ToImmutable ();
 		}
 
-		// TODO Pass in activated conversions
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
 			var building = FindBuilding (name);
-			if (building != null)
-			{
-				foreach (var yield in building.Yield.AsNotNull ())
-					AddResources (resources, Yields.From (yield));
-
-				foreach (var conversionYield in building.ConversionYield.AsNotNull ())
-					AddResources (resources, Yields.From (conversionYield));
-
-				return resources.ToImmutable ();
-			}
-
-			var settlement = FindSettlement (name);
-			if (settlement != null)
-			{
-				foreach (var yield in settlement.Yield.AsNotNull ())
-					AddResources (resources, Yields.From (yield));
-				return resources.ToImmutable ();
-			}
-			throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
+			return TotalYieldResources (building.Yield);
 		}
 
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConvertedResources (string name)
+		{
+			var conversion = new List<(string name, ImmutableDictionary<string, double> resources)> ();
+			var building = FindBuilding (name);
+			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
+				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
+			return conversion;
+		}
+		
+		ImmutableDictionary<string, double> TotalYieldResources (Yield [] yields)
+		{
+			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			foreach (var yield in yields.AsNotNull ())
+				AddResources (resources, Yields.From (yield));
+			return resources.ToImmutable ();
+		}
+		
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
 		{
 			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())

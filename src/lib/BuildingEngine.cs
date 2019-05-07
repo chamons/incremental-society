@@ -24,9 +24,7 @@ namespace IncrementalSociety
 			if (area.Buildings.Length >= ResourceEngine.RegionCapacity)
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} for {buildingName} but out of room {area.Buildings.Length}");
 
-			Building building = ResourceEngine.FindBuilding (buildingName);
-			if (building == null)
-				throw new InvalidOperationException ($"Build for {buildingName} but unable to find.");
+			var building = ResourceEngine.FindBuilding (buildingName);
 
 			if (!building.ValidRegions.Contains (area.Type.ToString()))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");

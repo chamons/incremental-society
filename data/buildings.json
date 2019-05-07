@@ -18,6 +18,7 @@
 			"valid_regions": [ "Settlement" ],
 			"conversion_yield": [
 				{
+					"name": "Create Charcoal",
 					"cost": [ 
 						{ "Name": "Wood", "Amount" : 1 }
 					],
@@ -92,9 +93,7 @@
 				{ "Name": "Stone", "Amount" : 10 }
 			]
 
-		}
-	],
-	"settlements": [
+		},
 		{
 			"name": "Crude Settlement",
 			"valid_regions": [ "Plains", "Forest" ],

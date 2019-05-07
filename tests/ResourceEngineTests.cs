@@ -12,10 +12,31 @@ namespace IncrementalSociety.Tests
 		public void AdditionalResourceNextTick ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
-			GameState state = Factories.CreateGameStateWithOneCamp ();
+			GameState state = Factories.CreateGameState (camps: 1);
 			var resources = engine.CalculateAdditionalNextTick (state);
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);
+		}
+		
+		[Fact]
+		public void AdditionalResourceNextTickWithConversions ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (camps: 1, workshops: 1);
+			var resources = engine.CalculateAdditionalNextTick (state);
+			Assert.True (resources["Food"] > 0.0);
+			Assert.True (resources["Water"] > 0.0);
+			Assert.True (resources["Wood"] < 0.0);
+			Assert.True (resources["Charcoal"] > 0.0);
+		}
+		
+		[Fact]
+		public void AdditionalResourceNextTickWithConversionsDisabled ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions (new string [] {"Conversion"});
+			var resources = engine.CalculateAdditionalNextTick (state);
+			Assert.Empty (resources);
 		}
 
 		[Fact]
@@ -31,11 +52,12 @@ namespace IncrementalSociety.Tests
 		public void ConversionYield ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
-			var campResources = engine.GetBuildingResources ("Workshop");
-			Assert.True (campResources["Wood"] < 0.0);
-			Assert.True (campResources["Charcoal"] > 0.0);
+			var conversions = engine.GetBuildingConvertedResources ("Workshop");
+			Assert.Equal ("Conversion", conversions[0].Name);
+			Assert.True (conversions[0].Resources["Wood"] < 0.0);
+			Assert.True (conversions[0].Resources["Charcoal"] > 0.0);
 		}
-
+		
 		[Fact]
 		public void AddTwoResourcesDifferentItems ()
 		{

@@ -16,7 +16,7 @@
 				<div class="modal-body">
 					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
 					{
-						<Building 
+						<BuildingView 
 							BuildingName="@building.BuildingName"
 							Resources="@building.Cost"
 							BackgroundColor="white"

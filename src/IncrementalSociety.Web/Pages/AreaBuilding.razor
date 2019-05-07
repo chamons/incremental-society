@@ -10,6 +10,7 @@
 	<BuildingView 
 		BuildingName="@Building"
 		Resources="@Resources"
+		Conversions="@Conversions"
 		BackgroundColor="@BackgroundColor"
 		OnClick="OnClick"
 		ColorResourcesAsDelta=true />
@@ -28,6 +29,21 @@
 	bool HasBuilding => !String.IsNullOrEmpty (Building);
 
 	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.GetBuildingResources (Building) : null;
+
+	List<(bool Enabled, ImmutableDictionary<string, double> Resources)> Conversions
+	{
+		get
+		{
+			if (HasBuilding) {
+				var allConversions = new List<(bool Enabled, ImmutableDictionary<string, double> Resources)> ();
+				foreach (var conversion in GameService.GetBuildingConversionResources (Building)) {
+					allConversions.Add ((GameService.IsConversionEnabled (conversion.Name), conversion.Resources)); 
+				}
+				return allConversions;
+			}
+			return null;
+		}
+	}
 
 	string BackgroundColor
 	{

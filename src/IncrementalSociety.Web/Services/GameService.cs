@@ -54,9 +54,10 @@ namespace IncrementalSociety.Web.Services
 		
 		public List<string> Actions { get; private set; }
 
-		public ImmutableDictionary<string, double> GetBuildingResources (string building)
+		public ImmutableDictionary<string, double> GetBuildingResources (string building) => Engine.GetBuildingResources (building);
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
 		{
-			return Engine.GetBuildingResources (building);
+			return Engine.GetBuildingConversionResources (name);
 		}
 
 		public void ApplyAction (string action)

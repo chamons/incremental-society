@@ -1,20 +1,34 @@
 @using System.Collections.Immutable
 @using IncrementalSociety.Web.Services
+@using IncrementalSociety.Utilities
 
+@inject GameService GameService
 @inject StyleService StyleService
 
 <div>
 	<div class="d-flex flex-column building" style="background-color:@BackgroundColor;" onclick=@OnClick>
 		<p class="building-title" >@BuildingName</p>
 		@if (HasBuilding) {
-			<div class="d-flex flex-wrap">
-				@foreach (var res in Resources) {
+			@if (Resources.AsNotNull ().Any ()) {
+				<div class="d-flex flex-wrap resource-line">
+				@foreach (var res in Resources.AsNotNull ()) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
 						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
 					</div>
 				}
-			</div>
+				</div>
+			}
+			@foreach (var conversion in Conversions.AsNotNull ()) {
+				<div class="d-flex flex-wrap resource-line" style="background-color:@ConversionBackgroundColor(conversion.Enabled);">
+				@foreach (var res in conversion.Resources) {
+					<div class="building-resource d-flex align-items-center">
+						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
+						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
+					</div>
+				}
+				</div>
+			}
 		}
 	</div>
 </div>
@@ -26,8 +40,9 @@
 	[Parameter]
 	ImmutableDictionary<string, double> Resources { get; set; }
 	
-	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
-
+	[Parameter]
+	List<(bool Enabled, ImmutableDictionary<string, double> Resources)> Conversions { get; set; }
+	
 	[Parameter]
 	string BackgroundColor { get; set; }
 	
@@ -37,5 +52,7 @@
 	[Parameter]
 	bool ColorResourcesAsDelta { get; set; }
 
+	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
 	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
+	string ConversionBackgroundColor (bool enabled) => enabled ? "white" : "darkred";
 }

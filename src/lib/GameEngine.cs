@@ -72,6 +72,11 @@ namespace IncrementalSociety
 		}
 		
 		public List<(string Name, bool Enabled)> GetConversions (GameState state) => ResourceEngine.GetConversions (state);
+		
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
+		{
+			return ResourceEngine.GetBuildingConversionResources (name);
+		}
 
 		public GameState ProcessTick (GameState state)
 		{

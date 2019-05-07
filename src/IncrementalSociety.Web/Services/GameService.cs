@@ -78,6 +78,16 @@ namespace IncrementalSociety.Web.Services
 					return;
 			}
 		}
+		
+		public List<(string Name, bool Enabled)> Conversions => Engine.GetConversions (State);
+		
+		public bool IsConversionEnabled (string name) => Engine.IsConversionEnabled (State, name);
+		
+		public void ToggleConversion (string conversion)
+		{
+			State = Engine.ToggleConversion (State, conversion);
+			SetUIState (GameUIState.Default);
+		}
 
 		public void SetUIState (GameUIState state, Dictionary<string, object> options = null)
 		{

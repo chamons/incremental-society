@@ -60,6 +60,18 @@ namespace IncrementalSociety
 #endif
 			return state;
 		}
+		
+		public bool IsConversionEnabled (GameState state, string name) => ResourceEngine.IsConversionEnabled (state, name);
+		
+		public GameState ToggleConversion (GameState state, string conversion)
+		{
+			if (IsConversionEnabled (state, conversion))
+				return state.WithDisabledConversions (state.DisabledConversions.Add (conversion));
+			else
+				return state.WithDisabledConversions (state.DisabledConversions.Remove (conversion));
+		}
+		
+		public List<(string Name, bool Enabled)> GetConversions (GameState state) => ResourceEngine.GetConversions (state);
 
 		public GameState ProcessTick (GameState state)
 		{

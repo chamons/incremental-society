@@ -34,7 +34,7 @@ namespace IncrementalSociety.Tests
 		public void AdditionalResourceNextTickWithConversionsDisabled ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
-			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions (new string [] {"Conversion"});
+			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions ("Conversion".Yield ());
 			var resources = engine.CalculateAdditionalNextTick (state);
 			Assert.Empty (resources);
 		}
@@ -52,7 +52,7 @@ namespace IncrementalSociety.Tests
 		public void ConversionYield ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
-			var conversions = engine.GetBuildingConvertedResources ("Workshop");
+			var conversions = engine.GetBuildingConversionResources ("Workshop");
 			Assert.Equal ("Conversion", conversions[0].Name);
 			Assert.True (conversions[0].Resources["Wood"] < 0.0);
 			Assert.True (conversions[0].Resources["Charcoal"] > 0.0);
@@ -81,6 +81,16 @@ namespace IncrementalSociety.Tests
 			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
 			ResourceEngine.AddResources (result, ImmutableDictionary<string, double>.Empty);
 			Assert.Equal (1, result["Food"]);
+		}
+
+		[Fact]
+		public void ReturnsEnabledConversions ()
+		{
+			GameState state = Factories.CreateGameState (workshops: 1);
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			var conversions = engine.GetConversions (state);
+			Assert.Single (conversions);
+			Assert.Contains (conversions, x => x.Name == "Conversion" && x.Enabled);
 		}
 	}
 }

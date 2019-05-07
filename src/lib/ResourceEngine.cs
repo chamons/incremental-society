@@ -42,18 +42,12 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var region in state.Regions) {
-				foreach (var area in region.Areas) {
-					foreach (var building in area.Buildings) {
-						AddResources (additional, GetBuildingResources (building));
-						var conversions = GetBuildingConvertedResources (building);
-						foreach (var conversion in conversions) {
-							if (!state.DisabledConversions.Contains (conversion.Name)) {
-								AddResources (additional, conversion.Resources);
-							}
-						}
-					}
-				}
+			foreach (var building in AllBuildings (state) ) {
+				AddResources (additional, GetBuildingResources (building));
+
+				var conversions = GetBuildingConversionResources (building);
+				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
+					AddResources (additional, conversion.Resources);
 			}
 			return additional.ToImmutable ();
 		}
@@ -64,7 +58,7 @@ namespace IncrementalSociety
 			return TotalYieldResources (building.Yield);
 		}
 
-		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConvertedResources (string name)
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
 		{
 			var conversion = new List<(string name, ImmutableDictionary<string, double> resources)> ();
 			var building = FindBuilding (name);
@@ -89,6 +83,25 @@ namespace IncrementalSociety
 				double rightValue = right.ContainsKey (resourceName) ? right[resourceName] : 0;
 				left[resourceName] = leftValue + rightValue;
 			}
+		}
+
+		IEnumerable<string> AllBuildings (GameState state)
+		{
+			foreach (var region in state.Regions)
+				foreach (var area in region.Areas)
+					foreach (var building in area.Buildings)
+						yield return building;
+		}
+
+		public bool IsConversionEnabled (GameState state, string name) => !state.DisabledConversions.Contains (name);
+
+		public List<(string Name, bool Enabled)> GetConversions (GameState state)
+		{
+			var allConversions = new List<(string Conversion, bool Enabled)> ();
+			foreach (var building in AllBuildings (state))
+				foreach (var conversion in GetBuildingConversionResources (building))
+					allConversions.Add ((conversion.Name, IsConversionEnabled (state, conversion.Name))); 
+			return allConversions;
 		}
 	}
 }

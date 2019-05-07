@@ -69,13 +69,19 @@
 	p
 		vertical-align: middle
 
-#actions
+=action-selection-boxes()
 	+disable-select()
 	border: 1px solid black
 	margin-top: 1px
 	padding-left: 20px
 	padding-top: 20px
 	padding-bottom: 20px
+
+#actions
+	+action-selection-boxes()
+
+#conversions
+	+action-selection-boxes()
 
 #resources
 	+disable-select()

@@ -1,3 +1,9 @@
+// Top Level Sections
+
+.main
+	margin-top: 5px
+	margin-bottom: 5px
+
 =disable-select()
 	-webkit-user-select: none
 	-moz-user-select: none
@@ -5,9 +11,64 @@
 	-o-user-select: none
 	user-select: none
 
-.main
-	margin-top: 5px
+=action-selection-boxes()
+	+disable-select()
+	border: 1px solid black
+	margin-top: 1px
+	padding-left: 20px
+	padding-top: 20px
+	padding-bottom: 20px
+
+#actions
+	+action-selection-boxes()
+
+#conversions
+	+action-selection-boxes()
+
+#resources
+	+disable-select()
+	border: 1px solid black
+	padding-left: 20px
+
+#regions
+	+disable-select()
+	border: 1px solid black
+	user-select: none
+
+
+// Common
+
+.resource-image
+	height: 30px
+	margin-right: 15px
+
+.building
+	border: 1px solid black
+	padding-left: 5px
+	padding-right: 5px
 	margin-bottom: 5px
+	min-height: 35px
+	max-width: 200px
+
+.building-title
+	margin-bottom: 5px
+
+.resource-line
+	border: 1px solid gray
+	margin-bottom: 2px
+
+.building-resource
+	font-size: .75rem
+	margin-top: 1px
+	margin-bottom: 1px
+	margin-left: 4px
+	margin-right: 4px
+	.resource-image
+		height: 15px
+		margin-right: 2px
+
+
+// Region View 
 
 .region
 	border: 1px solid black
@@ -19,10 +80,6 @@
 .region-view
 	margin-left: 5px
 	margin-right: 5px
-
-.resource-image
-	height: 30px
-	margin-right: 15px
 
 .area-image
 	background-size: cover
@@ -53,11 +110,10 @@
 
 .area-more-info-header
 	text-align: center
-	margin-top: 5px		
+	margin-top: 5px
 
-.area-view
-	margin-left: 5px
-	margin-right: 5px
+
+// Resource List
 
 #resource-list
 	list-style-type: none
@@ -69,29 +125,8 @@
 	p
 		vertical-align: middle
 
-=action-selection-boxes()
-	+disable-select()
-	border: 1px solid black
-	margin-top: 1px
-	padding-left: 20px
-	padding-top: 20px
-	padding-bottom: 20px
 
-#actions
-	+action-selection-boxes()
-
-#conversions
-	+action-selection-boxes()
-
-#resources
-	+disable-select()
-	border: 1px solid black
-	padding-left: 20px
-
-#regions
-	+disable-select()
-	border: 1px solid black
-	user-select: none
+// Utilities
 
 .green
 	color: green
@@ -101,28 +136,3 @@
 
 .clear
 	display: none
-
-.building
-	border: 1px solid black
-	padding-left: 5px
-	padding-right: 5px
-	margin-bottom: 5px
-	min-height: 35px
-	max-width: 200px
-
-.building-title
-	margin-bottom: 5px
-
-.resource-line
-	border: 1px solid gray
-	margin-bottom: 2px
-
-.building-resource
-	font-size: .75rem
-	margin-top: 1px
-	margin-bottom: 1px
-	margin-left: 4px
-	margin-right: 4px
-	.resource-image
-		height: 15px
-		margin-right: 2px

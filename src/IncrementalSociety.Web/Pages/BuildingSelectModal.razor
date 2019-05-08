@@ -3,6 +3,7 @@
 
 @inject IJSRuntime JsRuntime;
 @inject GameService GameService
+@inject BuildingService BuildingService
 
 <div class="modal fade" id="selectBuildingModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
@@ -50,7 +51,7 @@
 	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
 	{
 		// If we're just transisitioning to the dialog, consume the options and show it
-		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog) {
+		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog && args.Options != null) {
 			Region = (Region)args.Options["Region"];
 			AreaIndex = (int)args.Options["AreaIndex"];
 			StateHasChanged ();
@@ -66,7 +67,7 @@
 	void OnSelection (string buildingName)
 	{
 		if (CanBuild (buildingName)) {
-			GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
+			BuildingService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
 			Dismiss (true);
 		}
 	}

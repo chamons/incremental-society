@@ -2,12 +2,13 @@
 @using IncrementalSociety.Model
 
 @inject GameService GameService
+@inject BuildingService BuildingService
 
-<div class="region-view" onclick="@OnAreaClick" >
-	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;" >
+<div class="region-view" onclick="@OnAreaClick">
+	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;">
 		<div class="area-image-small-container" onclick="@OnAreaImageClick">
 			<img class="area-image" src="images/@(Area.Type).png" alt="@Area.Type" />
-			<span>@Area.Buildings.Length/@GameService.RegionCapacity</span>
+			<span>@Area.Buildings.Length/@BuildingService.RegionCapacity</span>
 		</div>
 	</div>
 
@@ -16,7 +17,7 @@
 			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaImageClick" />
 			<p>@Area.Type</p>
 		</div>
-		@for (int i = 0; i < GameService.RegionCapacity; ++i) {
+		@for (int i = 0; i < BuildingService.RegionCapacity; ++i) {
 			if (i < Area.Buildings.Length) {
 				<AreaBuilding Area=@Area Index=@i Building="@Area.Buildings[i]" />
 			}
@@ -33,11 +34,16 @@
 
 	bool Expanded;
 
-	bool HasRoom => Area.Buildings.Length < GameService.RegionCapacity;
+	bool HasRoom => Area.Buildings.Length < BuildingService.RegionCapacity;
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
 
 	void OnAreaImageClick ()
 	{
-		switch (GameService.CurrentUIState) 
+		switch (GameService.CurrentUIState)
 		{
 			case GameUIState.SelectRegionToBuildIn:
 				OnAreaClick ();
@@ -53,23 +59,23 @@
 	{
 		get
 		{
-			switch (GameService.CurrentUIState) 
+			switch (GameService.CurrentUIState)
 			{
 				case GameUIState.SelectRegionToBuildIn:
-					return HasRoom ? "gray" : "white"; 
+					return HasRoom ? "gray" : "white";
 				default:
-					return "white";	
+					return "white";
 			}
 		}
 	}
-	
+
 	void OnAreaClick ()
 	{
-		switch (GameService.CurrentUIState) 
+		switch (GameService.CurrentUIState)
 		{
 			case GameUIState.SelectRegionToBuildIn:
 				if (HasRoom) {
-					GameService.OnBuildAreaSelection (Area);
+					BuildingService.OnBuildAreaSelection (Area);
 				}
 				break;
 		}

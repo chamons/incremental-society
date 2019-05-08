@@ -30,10 +30,10 @@ namespace IncrementalSociety
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
 			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
-			if (!ResourceEngine.HasMoreResources (state.Resources, buildingTotalCost))
+			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
-			ResourceEngine.SubtractResources (newResouces, buildingTotalCost);
+			newResouces.Subtract (buildingTotalCost);
 			state = state.WithResources (newResouces.ToImmutable ());
 
 			var newArea = area.WithBuildings (area.Buildings.Add (building.Name));
@@ -44,7 +44,7 @@ namespace IncrementalSociety
 		{
 			var building = ResourceEngine.FindBuilding (buildingName);
 			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
-			return ResourceEngine.HasMoreResources (state.Resources, buildingTotalCost);
+			return state.Resources.HasMoreThan (buildingTotalCost);
 		}
 
 		public GameState Destroy (GameState state, string regionName, int regionIndex, int buildingIndex)

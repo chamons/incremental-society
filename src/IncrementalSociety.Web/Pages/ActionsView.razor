@@ -1,9 +1,9 @@
 @using IncrementalSociety.Web.Services
-@using IncrementalSociety.Model
 
+@inject ActionService ActionService
 @inject GameService GameService
 
-@foreach (var action in @GameService.Actions)
+@foreach (var action in ActionService.Actions)
 {
 	<button type="button" onclick="@(() => OnClick(@action))">@action</button>
 }
@@ -17,6 +17,6 @@
 
 	void OnClick (string action)
 	{
-		GameService.ApplyAction (action);
+		ActionService.ApplyAction (action);
 	}
 }

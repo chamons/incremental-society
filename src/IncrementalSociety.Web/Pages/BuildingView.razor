@@ -55,4 +55,9 @@
 	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
 	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
 	string ConversionBackgroundColor (bool enabled) => enabled ? "white" : "darkred";
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
 }

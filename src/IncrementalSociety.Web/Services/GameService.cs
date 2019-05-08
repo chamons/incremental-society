@@ -19,7 +19,6 @@ namespace IncrementalSociety.Web.Services
 	{
 		public JsonLoader Loader { get; private set; }
 		public GameEngine Engine { get; private set; } 
-		public Action NotifyUIStateHasChanged;
 
 		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
@@ -54,9 +53,10 @@ namespace IncrementalSociety.Web.Services
 		
 		public List<string> Actions { get; private set; }
 
-		public ImmutableDictionary<string, double> GetBuildingResources (string building)
+		public ImmutableDictionary<string, double> GetBuildingResources (string building) => Engine.GetBuildingResources (building);
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
 		{
-			return Engine.GetBuildingResources (building);
+			return Engine.GetBuildingConversionResources (name);
 		}
 
 		public void ApplyAction (string action)
@@ -78,6 +78,16 @@ namespace IncrementalSociety.Web.Services
 					return;
 			}
 		}
+		
+		public List<(string Name, bool Enabled)> Conversions => Engine.GetConversions (State);
+		
+		public bool IsConversionEnabled (string name) => Engine.IsConversionEnabled (State, name);
+		
+		public void ToggleConversion (string conversion)
+		{
+			State = Engine.ToggleConversion (State, conversion);
+			SetUIState (GameUIState.Default);
+		}
 
 		public void SetUIState (GameUIState state, Dictionary<string, object> options = null)
 		{
@@ -85,10 +95,14 @@ namespace IncrementalSociety.Web.Services
 			Console.Error.WriteLine ($"SetUIState: {state}");
 #endif
 			CurrentUIState = state;
-			
+
 			ResetActionList ();
 			ReplaceActionWithCancel (state);
-			NotifyUIStateHasChanged ();
+			Refresh (options);
+		}
+
+		void Refresh (Dictionary<string, object> options = null)
+		{
 			CurrentUIStateChanged?.Invoke (this, new GameUIStateChangedEventArgs () { Options = options });
 		}
 
@@ -147,6 +161,7 @@ namespace IncrementalSociety.Web.Services
 		public void OnTick ()
 		{
 			State = Engine.ProcessTick (State);
+			Refresh ();
 		}
 	}
 }

@@ -1,0 +1,21 @@
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject GameService GameService
+
+@foreach (var conversion in @GameService.Conversions)
+{
+	<button type="button" onclick="@(() => OnClick(@conversion.Name))">@((conversion.Enabled ? "Disable " : "Enable ") + conversion.Name)</button>
+}
+
+@functions {
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
+
+	void OnClick (string conversion)
+	{
+		GameService.ToggleConversion (conversion);
+	}
+}

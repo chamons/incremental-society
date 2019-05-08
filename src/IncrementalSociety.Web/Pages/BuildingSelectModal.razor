@@ -16,10 +16,10 @@
 				<div class="modal-body">
 					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
 					{
-						<Building 
+						<BuildingView 
 							BuildingName="@building.BuildingName"
 							Resources="@building.Cost"
-							BackgroundColor="white"
+							BackgroundColor="@BuildingBackgroundColor(building.BuildingName)"
 							OnClick="@(() => OnSelection(@building.BuildingName))"
 							ColorResourcesAsDelta=false />
 					}	
@@ -59,10 +59,16 @@
 		StateHasChanged ();
 	}
 
+	bool CanBuild (string buildingName) => GameService.Engine.CanAffordBuilding (GameService.State, buildingName);
+
+	string BuildingBackgroundColor (string buildingName) => CanBuild (buildingName) ? "white" : "gray";
+
 	void OnSelection (string buildingName)
 	{
-		GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
-		Dismiss (true);
+		if (CanBuild (buildingName)) {
+			GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
+			Dismiss (true);
+		}
 	}
 
 	void Dismiss (bool closeDialog = false)

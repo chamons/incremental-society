@@ -18,6 +18,7 @@
 			"valid_regions": [ "Settlement" ],
 			"conversion_yield": [
 				{
+					"name": "Charcoal Production",
 					"cost": [ 
 						{ "Name": "Wood", "Amount" : 1 }
 					],
@@ -35,7 +36,7 @@
 			"valid_regions": [ "Settlement" ],
 			"conversion_yield": [
 				{
-					"name": "Create Stone Tools",
+					"name": "Stone Tools Creation",
 					"cost": [ 
 						{ "Name": "Stone", "Amount" : 1 }
 					],
@@ -44,7 +45,7 @@
 					]
 				},
 				{
-					"name": "Create Wooden Tools",
+					"name": "Wooden Tools Creation",
 					"cost": [ 
 						{ "Name": "Wood", "Amount" : 2 }
 					],
@@ -67,7 +68,7 @@
 			],
 			"conversion_yield": [
 				{
-					"name": "Create Bricks",
+					"name": "Bricks Production",
 					"cost": [ 
 						{ "Name": "Clay", "Amount" : 1 }
 					],
@@ -92,9 +93,7 @@
 				{ "Name": "Stone", "Amount" : 10 }
 			]
 
-		}
-	],
-	"settlements": [
+		},
 		{
 			"name": "Crude Settlement",
 			"valid_regions": [ "Plains", "Forest" ],

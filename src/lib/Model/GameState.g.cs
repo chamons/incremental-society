@@ -69,27 +69,34 @@ namespace IncrementalSociety.Model
 		public Age Age { get; }
 		public ImmutableArray<Region> Regions { get; }
 		public ImmutableDictionary<string, double> Resources { get; }
+		public ImmutableArray<string> DisabledConversions { get; }
 
-		public GameState (Age age, IEnumerable<Region> regions, IDictionary<string, double> resources)
+		public GameState (Age age, IEnumerable<Region> regions, IDictionary<string, double> resources, IEnumerable<string> disabledConversions = null)
 		{
 			Age = age;
 			Regions = ImmutableArray.CreateRange (regions ?? Array.Empty<Region> ());
 			Resources = resources.ToImmutableDictionary ();
+			DisabledConversions = ImmutableArray.CreateRange (disabledConversions ?? Array.Empty<string> ());
 		}
 
 		public GameState WithAge (Age age)
 		{
-			return new GameState (age, Regions, Resources);
+			return new GameState (age, Regions, Resources, DisabledConversions);
 		}
 
 		public GameState WithRegions (IEnumerable<Region> regions)
 		{
-			return new GameState (Age, regions, Resources);
+			return new GameState (Age, regions, Resources, DisabledConversions);
 		}
 
 		public GameState WithResources (IDictionary<string, double> resources)
 		{
-			return new GameState (Age, Regions, resources);
+			return new GameState (Age, Regions, resources, DisabledConversions);
+		}
+
+		public GameState WithDisabledConversions (IEnumerable<string> disabledConversions)
+		{
+			return new GameState (Age, Regions, Resources, disabledConversions);
 		}
 	}
 }

@@ -26,71 +26,141 @@ namespace IncrementalSociety
 
 		public Building FindBuilding (string name)
 		{
-			return Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			var building = Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			if (building == null)
+				throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
+			return building;
 		}
 		
-		public Settlement FindSettlement (string name)
-		{
-			return Json.Buildings.Settlements.FirstOrDefault (x => x.Name == name);
-		}
-
 		public GameState AddTickOfResources (GameState state)
 		{
-			var newResources = state.Resources.ToBuilder ();
-			AddResources (newResources, CalculateAdditionalNextTick (state));
-			return state.WithResources (newResources.ToImmutable ());
+			var activeConversions = new List<(string Conversion, double LeastAmount)> ();
+			do {
+				// Determine next tick
+				var tickOfResources = CalculateAdditionalNextTick (state);
+				var newResources = state.Resources.ToBuilder ();
+				AddResources (newResources, tickOfResources);
+
+				// If we're all positive, then go with that
+				if (!newResources.Keys.Any(x => newResources[x] < 0))
+					return state.WithResources (newResources.ToImmutable ());
+			
+				// Find the largets negative resource
+				var leastResource = newResources.OrderBy (x => x.Value).First().Key;
+
+				// Find the best conversion of that type that is enabled
+				activeConversions.Clear ();
+				foreach (var building in AllBuildings (state)) {
+					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name))) {
+						double amount = ResourceAmount (conversion.Resources, leastResource);
+						activeConversions.Add ((conversion.Name, amount)); 
+					}
+				}
+				string bestConversion = activeConversions.OrderBy (x => x.LeastAmount).First ().Conversion;
+
+				// Disable that conversion
+				state = state.WithDisabledConversions (state.DisabledConversions.Add (bestConversion));
+			}
+			while (activeConversions.Count > 0);
+			
+			return state;
 		}
 
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var region in state.Regions)
-			{
-				foreach (var area in region.Areas)
-				{
-					foreach (var building in area.Buildings)
-					{
-						AddResources (additional, GetBuildingResources (building));
-					}
-				}
+			foreach (var building in AllBuildings (state) ) {
+				AddResources (additional, GetBuildingResources (building));
+
+				var conversions = GetBuildingConversionResources (building);
+				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
+					AddResources (additional, conversion.Resources);
 			}
 			return additional.ToImmutable ();
 		}
 
-		// TODO Pass in activated conversions
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
 			var building = FindBuilding (name);
-			if (building != null)
-			{
-				foreach (var yield in building.Yield.AsNotNull ())
-					AddResources (resources, Yields.From (yield));
-
-				foreach (var conversionYield in building.ConversionYield.AsNotNull ())
-					AddResources (resources, Yields.From (conversionYield));
-
-				return resources.ToImmutable ();
-			}
-
-			var settlement = FindSettlement (name);
-			if (settlement != null)
-			{
-				foreach (var yield in settlement.Yield.AsNotNull ())
-					AddResources (resources, Yields.From (yield));
-				return resources.ToImmutable ();
-			}
-			throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
+			return TotalYieldResources (building.Yield);
 		}
 
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
+		{
+			var conversion = new List<(string name, ImmutableDictionary<string, double> resources)> ();
+			var building = FindBuilding (name);
+			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
+				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
+			return conversion;
+		}
+		
+		public ImmutableDictionary<string, double> TotalYieldResources (Yield [] yields)
+		{
+			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			foreach (var yield in yields.AsNotNull ())
+				AddResources (resources, Yields.From (yield));
+			return resources.ToImmutable ();
+		}
+
+		public static double ResourceAmount (IDictionary<string, double> resources, string resourceName)
+		{
+			return resources.ContainsKey (resourceName) ? resources[resourceName] : 0;
+		}
+		
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
 		{
 			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
 			{
-				double leftValue = left.ContainsKey (resourceName) ? left[resourceName] : 0;
-				double rightValue = right.ContainsKey (resourceName) ? right[resourceName] : 0;
+				double leftValue = ResourceAmount (left, resourceName);
+				double rightValue = ResourceAmount (right, resourceName);
 				left[resourceName] = leftValue + rightValue;
 			}
+		}
+		
+		public static void SubtractResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
+		{
+			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
+			{
+				double leftValue = ResourceAmount (left, resourceName);
+				double rightValue = ResourceAmount (right, resourceName);
+				left[resourceName] = leftValue - rightValue;
+			}
+		}
+		
+		public static bool HasMoreResources (ImmutableDictionary<string, double> left, IDictionary<string, double> right)
+		{
+			ImmutableDictionary<string, double>.Builder remain = left.ToBuilder ();
+			SubtractResources (remain, right);
+			foreach (var resourceName in right.Keys) {
+				if (remain[resourceName] < 0)
+					return false;
+			}
+			return true;		
+		}
+
+		IEnumerable<string> AllBuildings (GameState state)
+		{
+			foreach (var region in state.Regions)
+				foreach (var area in region.Areas)
+					foreach (var building in area.Buildings)
+						yield return building;
+		}
+
+		public bool IsConversionEnabled (GameState state, string name) => !state.DisabledConversions.Contains (name);
+
+		public List<(string Name, bool Enabled)> GetConversions (GameState state)
+		{
+			var consideredConversions = new HashSet<string> ();
+			var allConversions = new List<(string Conversion, bool Enabled)> ();
+			foreach (var building in AllBuildings (state)) {
+				foreach (var conversion in GetBuildingConversionResources (building)) {
+					if (!consideredConversions.Contains (conversion.Name)) {
+						consideredConversions.Add (conversion.Name);
+						allConversions.Add ((conversion.Name, IsConversionEnabled (state, conversion.Name)));
+					}
+				}
+			}
+			return allConversions;
 		}
 	}
 }

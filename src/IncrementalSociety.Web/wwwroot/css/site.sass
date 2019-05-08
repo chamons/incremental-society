@@ -69,13 +69,19 @@
 	p
 		vertical-align: middle
 
-#actions
+=action-selection-boxes()
 	+disable-select()
 	border: 1px solid black
 	margin-top: 1px
 	padding-left: 20px
 	padding-top: 20px
 	padding-bottom: 20px
+
+#actions
+	+action-selection-boxes()
+
+#conversions
+	+action-selection-boxes()
 
 #resources
 	+disable-select()
@@ -107,9 +113,16 @@
 .building-title
 	margin-bottom: 5px
 
+.resource-line
+	border: 1px solid gray
+	margin-bottom: 2px
+
 .building-resource
 	font-size: .75rem
-	margin-right: 8px
+	margin-top: 1px
+	margin-bottom: 1px
+	margin-left: 4px
+	margin-right: 4px
 	.resource-image
 		height: 15px
 		margin-right: 2px

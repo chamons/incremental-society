@@ -60,6 +60,23 @@ namespace IncrementalSociety
 #endif
 			return state;
 		}
+		
+		public bool IsConversionEnabled (GameState state, string name) => ResourceEngine.IsConversionEnabled (state, name);
+		
+		public GameState ToggleConversion (GameState state, string conversion)
+		{
+			if (IsConversionEnabled (state, conversion))
+				return state.WithDisabledConversions (state.DisabledConversions.Add (conversion));
+			else
+				return state.WithDisabledConversions (state.DisabledConversions.Remove (conversion));
+		}
+		
+		public List<(string Name, bool Enabled)> GetConversions (GameState state) => ResourceEngine.GetConversions (state);
+		
+		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
+		{
+			return ResourceEngine.GetBuildingConversionResources (name);
+		}
 
 		public GameState ProcessTick (GameState state)
 		{
@@ -70,6 +87,8 @@ namespace IncrementalSociety
 		{
 			return BuildingEngine.GetValidBuildingsForArea (area);
 		}
+		
+		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{

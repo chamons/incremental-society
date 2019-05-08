@@ -27,10 +27,6 @@ namespace IncrementalSociety.Tests
 			Assert.Contains (resources.Game.PopulationNeeds, x => x.Resource == "Food");
 
 			Assert.Contains (resources.Buildings.Buildings, x => x.Name == "Gathering Camp");
-			Assert.Contains (resources.Buildings.Settlements, x => x.Name == "Crude Settlement");
-
-			Assert.Contains (resources.Buildings.Buildings, x => x.Name == "Gathering Camp");
-			Assert.Contains (resources.Buildings.Settlements, x => x.Name == "Crude Settlement");
 
 			Assert.Contains (resources.Actions.Actions, x => x.Name == "Grow Population");
 		}

@@ -24,15 +24,27 @@ namespace IncrementalSociety
 			if (area.Buildings.Length >= ResourceEngine.RegionCapacity)
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} for {buildingName} but out of room {area.Buildings.Length}");
 
-			Building building = ResourceEngine.FindBuilding (buildingName);
-			if (building == null)
-				throw new InvalidOperationException ($"Build for {buildingName} but unable to find.");
+			var building = ResourceEngine.FindBuilding (buildingName);
 
 			if (!building.ValidRegions.Contains (area.Type.ToString()))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
+			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			if (!ResourceEngine.HasMoreResources (state.Resources, buildingTotalCost))
+				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
+			var newResouces = state.Resources.ToBuilder ();
+			ResourceEngine.SubtractResources (newResouces, buildingTotalCost);
+			state = state.WithResources (newResouces.ToImmutable ());
+
 			var newArea = area.WithBuildings (area.Buildings.Add (building.Name));
 			return UpdateStateWithArea (state, area, newArea, region);
+		}
+
+		public bool CanAffordBuilding (GameState state, string buildingName)
+		{
+			var building = ResourceEngine.FindBuilding (buildingName);
+			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			return ResourceEngine.HasMoreResources (state.Resources, buildingTotalCost);
 		}
 
 		public GameState Destroy (GameState state, string regionName, int regionIndex, int buildingIndex)

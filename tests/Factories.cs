@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
+
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
@@ -32,6 +34,9 @@ namespace IncrementalSociety.Tests
 				""yield"": [
 					{ ""Name"": ""Food"", ""Amount"" : 2 },
 					{ ""Name"": ""Water"", ""Amount"" : 2 }
+				],
+				""cost"": [
+					{ ""Name"": ""Wood"", ""Amount"" : 10 },
 				]
 			},
 			{
@@ -39,6 +44,7 @@ namespace IncrementalSociety.Tests
 				""valid_regions"": [""Plains""],
 				""conversion_yield"": [
 					{
+						""name"": ""Conversion"",
 						""cost"": [ 
 							{ ""Name"": ""Wood"", ""Amount"" : 1 }
 						],
@@ -50,20 +56,28 @@ namespace IncrementalSociety.Tests
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 }
 				]
-
+			},
+			{
+				""name"": ""Smoker"",
+				""valid_regions"": [""Plains""],
+				""conversion_yield"": [
+					{
+						""name"": ""OtherConversion"",
+						""cost"": [ 
+							{ ""Name"": ""Charcoal"", ""Amount"" : 1 }
+						],
+						""provides"": [ 
+							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
+						]
+					}
+				]
 			},
 			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}
-		],
-		""settlements"": [
-			{
-				""name"": ""Test Settlement"",
-				""valid_regions"": [""Plains""],
-			}
 		]
-}";
+		}";
 
 		const string RegionJSON = @"{
 			""regions"": [
@@ -86,22 +100,23 @@ namespace IncrementalSociety.Tests
 			return engine;
 		}
 
-		public static GameState CreateGameStateWithOneCamp ()
+		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)
 		{
-			return CreateGameState (new Area (AreaType.Plains, "Gathering Camp".Yield ()));
-		}
-
-		public static GameState CreateGameStateFullOfCamps ()
-		{
-			return CreateGameState (new Area (AreaType.Plains, new string [] { "Gathering Camp", "Gathering Camp"}));
+			var buildings = new List<string> ();
+			for (int i = 0 ; i < camps ; ++i)
+				buildings.Add ("Gathering Camp");
+			for (int i = 0 ; i < workshops ; ++i)
+				buildings.Add ("Workshop");
+			for (int i = 0 ; i < smokers ; ++i)
+				buildings.Add ("Smoker");
+			return CreateGameState (new Area (AreaType.Plains, buildings));
 		}
 
 		static GameState CreateGameState (Area area)
 		{
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (Age.Stone, region.Yield(), new System.Collections.Generic.Dictionary<string, double> ());
+			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> ());
 		}
-
 
 		public static BuildingEngine CreateBuildingEngine ()
 		{

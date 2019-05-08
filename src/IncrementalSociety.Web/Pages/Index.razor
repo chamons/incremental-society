@@ -25,8 +25,12 @@
 				</ul>
 			</div>
 			<div id="actions">
-				<ActionView />
+				<ActionsView />
 			</div>
+			<div id="conversions">
+				<ConversionsView />
+			</div>
+
 		</div>
 		<div class="col">
 			<div id="regions">
@@ -59,7 +63,7 @@
 
 	protected override void OnInit ()
 	{
-		GameService.NotifyUIStateHasChanged = () => this.StateHasChanged ();
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
 		NextTickResources = GameService.GetNextTickResources ();
 		StartTickTimer ();
 	}
@@ -70,7 +74,6 @@
 		{
 			GameService.OnTick ();
 			NextTickResources = GameService.GetNextTickResources ();
-			this.StateHasChanged ();
 		}), null, 1000, 1000);
 	}
 }

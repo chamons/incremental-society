@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "incremental-society.tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "incremental-society", "src\lib\incremental-society.csproj", "{476DEC2B-16CB-4492-875D-DEF26D2C25A5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{CA365B1C-606E-43EA-9EFE-DB37FFDDD92A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{BDD3AF2E-9351-4904-8987-73DD115007E9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IncrementalSociety.Web", "src\IncrementalSociety.Web\IncrementalSociety.Web.csproj", "{3C9BACBD-623E-48AD-BA6F-7CB6594F1BFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42234264-EEF8-4E76-B590-7135EB8ABA84}"
@@ -67,11 +63,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{79D4C911-7FEF-4D10-9DD7-842CDD084C4B} = {BDD3AF2E-9351-4904-8987-73DD115007E9}
-		{476DEC2B-16CB-4492-875D-DEF26D2C25A5} = {BDD3AF2E-9351-4904-8987-73DD115007E9}
-		{3C9BACBD-623E-48AD-BA6F-7CB6594F1BFF} = {CA365B1C-606E-43EA-9EFE-DB37FFDDD92A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED595AD9-15E2-4C99-98B6-F78D4A522EDD}

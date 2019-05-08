@@ -65,7 +65,7 @@
 
 	void OnSelection (string buildingName)
 	{
-		if (CanBuild (BuildingName)) {
+		if (CanBuild (buildingName)) {
 			GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
 			Dismiss (true);
 		}

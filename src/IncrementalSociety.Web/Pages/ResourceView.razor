@@ -1,0 +1,40 @@
+@using System.Collections.Immutable
+
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Model
+
+@inject GameService GameService
+@inject StyleService StyleService
+
+<h1>Resources</h1>
+
+<ul id="resource-list">
+	@foreach (var resource in @GameService.Resources)
+	{
+		<li class="d-flex align-items-center resource-list-item">
+			<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
+			@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
+			<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
+		</li>
+	}
+</ul>
+
+	@functions {
+	public ImmutableDictionary<string, double> NextTickResources;
+
+	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
+	{
+		// Round to three places for display
+		return resources.ContainsKey (name) ? Math.Round (resources[name], 3) : 0;
+	}
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => {
+			NextTickResources = GameService.GetNextTickResources ();
+			StateHasChanged ();
+		};
+
+		NextTickResources = GameService.GetNextTickResources ();
+	}
+	}

@@ -15,7 +15,7 @@
 		},
 		{
 			"name": "Charcoal Pit",
-			"valid_regions": [ "Settlement" ],
+			"valid_regions": [ "Plains" ],
 			"conversion_yield": [
 				{
 					"name": "Charcoal Production",
@@ -33,7 +33,7 @@
 		},
 		{
 			"name": "Crude Workshop",
-			"valid_regions": [ "Settlement" ],
+			"valid_regions": [ "Plains" ],
 			"conversion_yield": [
 				{
 					"name": "Stone Tools Creation",

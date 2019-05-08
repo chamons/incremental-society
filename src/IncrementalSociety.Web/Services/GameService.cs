@@ -19,7 +19,6 @@ namespace IncrementalSociety.Web.Services
 	{
 		public JsonLoader Loader { get; private set; }
 		public GameEngine Engine { get; private set; } 
-		public Action NotifyUIStateHasChanged;
 
 		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
@@ -96,10 +95,14 @@ namespace IncrementalSociety.Web.Services
 			Console.Error.WriteLine ($"SetUIState: {state}");
 #endif
 			CurrentUIState = state;
-			
+
 			ResetActionList ();
 			ReplaceActionWithCancel (state);
-			NotifyUIStateHasChanged ();
+			Refresh (options);
+		}
+
+		void Refresh (Dictionary<string, object> options = null)
+		{
 			CurrentUIStateChanged?.Invoke (this, new GameUIStateChangedEventArgs () { Options = options });
 		}
 
@@ -158,6 +161,7 @@ namespace IncrementalSociety.Web.Services
 		public void OnTick ()
 		{
 			State = Engine.ProcessTick (State);
+			Refresh ();
 		}
 	}
 }

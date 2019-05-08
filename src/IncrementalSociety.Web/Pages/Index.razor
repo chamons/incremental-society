@@ -1,28 +1,16 @@
 @page "/"
-@using System.Collections.Immutable
 @using System.Threading;
 @using IncrementalSociety.Web.Services
 
 @inject GameService GameService
-@inject StyleService StyleService 
+
 
 <div class="container-fluid">
 	<div class="row">
 
 		<div class="col-4">
 			<div id="resources">
-				<h1>Resources</h1>
-
-				<ul id="resource-list">
-					@foreach (var resource in @GameService.Resources)
-					{
-						<li class="d-flex align-items-center resource-list-item">
-							<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
-							@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
-							<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
-						</li>
-					}
-				</ul>
+				<ResourceView />
 			</div>
 			<div id="actions">
 				<ActionsView />
@@ -54,17 +42,11 @@
 </div>
 
 @functions {
-	public ImmutableDictionary<string, double> NextTickResources;
 
-	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
-	{
-		return resources.ContainsKey (name) ? resources[name] : 0;
-	}
 
 	protected override void OnInit ()
 	{
 		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
-		NextTickResources = GameService.GetNextTickResources ();
 		StartTickTimer ();
 	}
 
@@ -73,7 +55,6 @@
 		var timer = new Timer (new TimerCallback (_ =>
 		{
 			GameService.OnTick ();
-			NextTickResources = GameService.GetNextTickResources ();
 		}), null, 1000, 1000);
 	}
 }

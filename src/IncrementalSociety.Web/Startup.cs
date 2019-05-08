@@ -8,6 +8,8 @@ namespace IncrementalSociety.Web
 	{
 		public void ConfigureServices (IServiceCollection services)
 		{
+			services.AddSingleton<ActionService> ();
+			services.AddSingleton<BuildingService> ();
 			services.AddSingleton<GameService> ();
 			services.AddSingleton<StyleService> ();
 		}

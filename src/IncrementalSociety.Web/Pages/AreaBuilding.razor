@@ -5,6 +5,7 @@
 
 @inject GameService GameService
 @inject StyleService StyleService
+@inject BuildingService BuildingService
 
 <div>
 	<BuildingView 
@@ -70,7 +71,7 @@
 		{
 			case GameUIState.SelectBuildingToDestory:
 				if (HasBuilding) {
-					GameService.OnDestroySelection (Area, Index);
+					BuildingService.OnDestroySelection (Area, Index);
 				}
 				break;
 		}

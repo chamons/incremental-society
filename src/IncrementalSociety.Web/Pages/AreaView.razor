@@ -2,9 +2,10 @@
 @using IncrementalSociety.Model
 
 @inject GameService GameService
+@inject BuildingService BuildingService
 
-<div class="region-view" onclick="@OnAreaClick" >
-	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;" >
+<div class="region-view" onclick="@OnAreaClick">
+	<div class="collapse @(Expanded ? "hide" : "show")" style="background-color:@BackgroundColor;">
 		<div class="area-image-small-container" onclick="@OnAreaImageClick">
 			<img class="area-image" src="images/@(Area.Type).png" alt="@Area.Type" />
 			<span>@Area.Buildings.Length/@GameService.RegionCapacity</span>
@@ -42,7 +43,7 @@
 
 	void OnAreaImageClick ()
 	{
-		switch (GameService.CurrentUIState) 
+		switch (GameService.CurrentUIState)
 		{
 			case GameUIState.SelectRegionToBuildIn:
 				OnAreaClick ();
@@ -58,23 +59,23 @@
 	{
 		get
 		{
-			switch (GameService.CurrentUIState) 
+			switch (GameService.CurrentUIState)
 			{
 				case GameUIState.SelectRegionToBuildIn:
-					return HasRoom ? "gray" : "white"; 
+					return HasRoom ? "gray" : "white";
 				default:
-					return "white";	
+					return "white";
 			}
 		}
 	}
-	
+
 	void OnAreaClick ()
 	{
-		switch (GameService.CurrentUIState) 
+		switch (GameService.CurrentUIState)
 		{
 			case GameUIState.SelectRegionToBuildIn:
 				if (HasRoom) {
-					GameService.OnBuildAreaSelection (Area);
+					BuildingService.OnBuildAreaSelection (Area);
 				}
 				break;
 		}

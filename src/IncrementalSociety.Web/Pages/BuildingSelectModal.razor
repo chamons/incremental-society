@@ -3,6 +3,7 @@
 
 @inject IJSRuntime JsRuntime;
 @inject GameService GameService
+@inject BuildingService BuildingService
 
 <div class="modal fade" id="selectBuildingModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
@@ -66,7 +67,7 @@
 	void OnSelection (string buildingName)
 	{
 		if (CanBuild (buildingName)) {
-			GameService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
+			BuildingService.OnSpecificBuildingSelection (Region.Name, AreaIndex, buildingName);
 			Dismiss (true);
 		}
 	}

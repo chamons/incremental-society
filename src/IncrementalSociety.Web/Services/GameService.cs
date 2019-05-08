@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
-using Microsoft.AspNetCore.Components;
 
 namespace IncrementalSociety.Web.Services
 {
@@ -37,17 +39,21 @@ namespace IncrementalSociety.Web.Services
 
 		public async Task Load ()
 		{
+			Loader =  await LoadXML ();
+			State = GameEngine.CreateNewGame ();
+			Engine = GameEngine.Create (Loader);
+			Loaded = true;
+		}
+
+		async Task<JsonLoader> LoadXML ()
+		{
 			string actionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/actions.json");
-			Console.Error.WriteLine (URIHelper.GetBaseUri () + "data/actions.json");
 			string buildingsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/buildings.json");
 			string gameJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/game.json");
 			string regionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/regions.json");
 			string resourcesJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/resources.json");
 
-			Loader = new JsonLoader (actionsJson, buildingsJson, gameJson, regionsJson, resourcesJson);
-			State = GameEngine.CreateNewGame ();
-			Engine = GameEngine.Create (Loader);
-			Loaded = true;
+			return new JsonLoader (actionsJson, buildingsJson, gameJson, regionsJson, resourcesJson);
 		}
 
 		// Shared between multiple consumers

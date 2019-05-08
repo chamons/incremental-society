@@ -9,6 +9,26 @@ namespace IncrementalSociety.Tests
 	public class ResourceEngineTests
 	{
 		[Fact]
+		public void AddTickOfResources ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (camps: 1);
+			state = engine.AddTickOfResources (state);
+			Assert.True (state.Resources["Food"] > 0.0);
+			Assert.True (state.Resources["Water"] > 0.0);
+		}
+		
+		[Fact]
+		public void AddTickOfResourcesWithInvalidConversion ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (workshops: 1);
+			state = engine.AddTickOfResources (state);
+			Assert.Equal (0, state.Resources["Charcoal"] );
+			Assert.Contains (state.DisabledConversions, x => x == "Conversion");
+		}
+
+		[Fact]
 		public void AdditionalResourceNextTick ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
@@ -37,6 +57,18 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions ("Conversion".Yield ());
 			var resources = engine.CalculateAdditionalNextTick (state);
 			Assert.Empty (resources);
+		}
+
+		[Fact]
+		public void DisablesOnlyOneConversionWhenShort ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (workshops: 1, smokers: 1);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Charcoal", 10.0));
+			var resources = engine.CalculateAdditionalNextTick (state);
+			Assert.True (resources["Food"] > 0.0);
+			Assert.Single (state.DisabledConversions);
+			Assert.Contains (state.DisabledConversions, x => x == "Conversion");
 		}
 
 		[Fact]

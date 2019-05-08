@@ -34,9 +34,36 @@ namespace IncrementalSociety
 		
 		public GameState AddTickOfResources (GameState state)
 		{
-			var newResources = state.Resources.ToBuilder ();
-			AddResources (newResources, CalculateAdditionalNextTick (state));
-			return state.WithResources (newResources.ToImmutable ());
+			var activeConversions = new List<(string Conversion, double LeastAmount)> ();
+			do {
+				// Determine next tick
+				var tickOfResources = CalculateAdditionalNextTick (state);
+				var newResources = state.Resources.ToBuilder ();
+				AddResources (newResources, tickOfResources);
+
+				// If we're all positive, then go with that
+				if (!newResources.Keys.Any(x => newResources[x] < 0))
+					return state.WithResources (newResources.ToImmutable ());
+			
+				// Find the largets negative resource
+				var leastResource = newResources.OrderBy (x => x.Value).First().Key;
+
+				// Find the best conversion of that type that is enabled
+				activeConversions.Clear ();
+				foreach (var building in AllBuildings (state)) {
+					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name))) {
+						double amount = ResourceAmount (conversion.Resources, leastResource);
+						activeConversions.Add ((conversion.Name, amount)); 
+					}
+				}
+				string bestConversion = activeConversions.OrderBy (x => x.LeastAmount).First ().Conversion;
+
+				// Disable that conversion
+				state = state.WithDisabledConversions (state.DisabledConversions.Add (bestConversion));
+			}
+			while (activeConversions.Count > 0);
+			
+			return state;
 		}
 
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
@@ -74,13 +101,18 @@ namespace IncrementalSociety
 				AddResources (resources, Yields.From (yield));
 			return resources.ToImmutable ();
 		}
+
+		public static double ResourceAmount (IDictionary<string, double> resources, string resourceName)
+		{
+			return resources.ContainsKey (resourceName) ? resources[resourceName] : 0;
+		}
 		
 		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
 		{
 			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
 			{
-				double leftValue = left.ContainsKey (resourceName) ? left[resourceName] : 0;
-				double rightValue = right.ContainsKey (resourceName) ? right[resourceName] : 0;
+				double leftValue = ResourceAmount (left, resourceName);
+				double rightValue = ResourceAmount (right, resourceName);
 				left[resourceName] = leftValue + rightValue;
 			}
 		}
@@ -89,8 +121,8 @@ namespace IncrementalSociety
 		{
 			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
 			{
-				double leftValue = left.ContainsKey (resourceName) ? left[resourceName] : 0;
-				double rightValue = right.ContainsKey (resourceName) ? right[resourceName] : 0;
+				double leftValue = ResourceAmount (left, resourceName);
+				double rightValue = ResourceAmount (right, resourceName);
 				left[resourceName] = leftValue - rightValue;
 			}
 		}

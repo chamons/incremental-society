@@ -58,6 +58,21 @@ namespace IncrementalSociety.Tests
 				]
 			},
 			{
+				""name"": ""Smoker"",
+				""valid_regions"": [""Plains""],
+				""conversion_yield"": [
+					{
+						""name"": ""OtherConversion"",
+						""cost"": [ 
+							{ ""Name"": ""Charcoal"", ""Amount"" : 1 }
+						],
+						""provides"": [ 
+							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
+						]
+					}
+				]
+			},
+			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}
@@ -85,13 +100,15 @@ namespace IncrementalSociety.Tests
 			return engine;
 		}
 
-		public static GameState CreateGameState (int camps = 0, int workshops = 0)
+		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)
 		{
 			var buildings = new List<string> ();
 			for (int i = 0 ; i < camps ; ++i)
 				buildings.Add ("Gathering Camp");
 			for (int i = 0 ; i < workshops ; ++i)
 				buildings.Add ("Workshop");
+			for (int i = 0 ; i < smokers ; ++i)
+				buildings.Add ("Smoker");
 			return CreateGameState (new Area (AreaType.Plains, buildings));
 		}
 

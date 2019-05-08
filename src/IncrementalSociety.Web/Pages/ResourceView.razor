@@ -24,7 +24,8 @@
 
 	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
 	{
-		return resources.ContainsKey (name) ? resources[name] : 0;
+		// Round to three places for display
+		return resources.ContainsKey (name) ? Math.Round (resources[name], 3) : 0;
 	}
 
 	protected override void OnInit ()

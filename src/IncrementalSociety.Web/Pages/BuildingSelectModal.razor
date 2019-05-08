@@ -50,7 +50,7 @@
 	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
 	{
 		// If we're just transisitioning to the dialog, consume the options and show it
-		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog) {
+		if (GameService.CurrentUIState == GameUIState.ShowBuildingSelectDialog && args.Options != null) {
 			Region = (Region)args.Options["Region"];
 			AreaIndex = (int)args.Options["AreaIndex"];
 			StateHasChanged ();

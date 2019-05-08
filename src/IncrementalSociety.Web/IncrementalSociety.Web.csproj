@@ -25,4 +25,8 @@
     <ProjectReference Include="..\lib\incremental-society.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\data\" />
+  </ItemGroup>
+
 </Project>

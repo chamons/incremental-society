@@ -4,32 +4,39 @@
 
 @inject GameService GameService
 
-<div class="container-fluid">
-	<div class="row">
+@if (GameService.Loaded)
+{
+	<div class="container-fluid">
+		<div class="row">
 
-		<div class="col-4">
-			<div id="resources">
-				<ResourceView />
-			</div>
-			<div id="actions">
-				<ActionsView />
-			</div>
-			<div id="conversions">
-				<ConversionsView />
-			</div>
+			<div class="col-4">
+				<div id="resources">
+					<ResourceView />
+				</div>
+				<div id="actions">
+					<ActionsView />
+				</div>
+				<div id="conversions">
+					<ConversionsView />
+				</div>
 
-		</div>
-		<div class="col">
-			<div id="regions">
-				<RegionView />
-				<BuildingSelectModal />
+			</div>
+			<div class="col">
+				<div id="regions">
+					<RegionView />
+					<BuildingSelectModal />
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+}
 
 @functions {
 
+	protected override async Task OnInitAsync()
+	{
+		await GameService.Load ();
+	}
 
 	protected override void OnInit ()
 	{

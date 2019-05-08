@@ -3,7 +3,7 @@
 
 @inject GameService GameService
 
-@foreach (var region in @GameService.Regions)
+@foreach (var region in @Regions)
 {
 	<div class="region">
 		<p>@region.Name</p>
@@ -18,6 +18,8 @@
 }
 
 @functions {
+	public IEnumerable<Region> Regions => GameService.State.Regions;
+
 	protected override void OnInit ()
 	{
 		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();

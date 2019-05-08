@@ -29,7 +29,8 @@
 	
 	bool HasBuilding => !String.IsNullOrEmpty (Building);
 
-	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.GetBuildingResources (Building) : null;
+	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.Engine.GetBuildingResources (Building) : null;
+	bool IsConversionEnabled (string name) => GameService.Engine.IsConversionEnabled (GameService.State, name);
 
 	protected override void OnInit ()
 	{
@@ -42,8 +43,8 @@
 		{
 			if (HasBuilding) {
 				var allConversions = new List<(bool Enabled, ImmutableDictionary<string, double> Resources)> ();
-				foreach (var conversion in GameService.GetBuildingConversionResources (Building)) {
-					allConversions.Add ((GameService.IsConversionEnabled (conversion.Name), conversion.Resources)); 
+				foreach (var conversion in GameService.Engine.GetBuildingConversionResources (Building)) {
+					allConversions.Add ((IsConversionEnabled (conversion.Name), conversion.Resources)); 
 				}
 				return allConversions;
 			}

@@ -10,6 +10,8 @@ namespace IncrementalSociety.Web.Services
 		GameService GameService;
 		GameState State => GameService.State;
 
+		public int RegionCapacity => GameService.Engine.RegionCapacity;
+
 		public BuildingService (GameService gameService)
 		{
 			GameService = gameService;

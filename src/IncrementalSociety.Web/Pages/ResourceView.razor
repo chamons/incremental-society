@@ -1,7 +1,8 @@
 @using System.Collections.Immutable
 
-@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Json
 @using IncrementalSociety.Model
+@using IncrementalSociety.Web.Services
 
 @inject GameService GameService
 @inject StyleService StyleService
@@ -9,7 +10,7 @@
 <h1>Resources</h1>
 
 <ul id="resource-list">
-	@foreach (var resource in @GameService.Resources)
+	@foreach (var resource in Resources)
 	{
 		<li class="d-flex align-items-center resource-list-item">
 			<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
@@ -19,7 +20,9 @@
 	}
 </ul>
 
-	@functions {
+@functions {
+	public IEnumerable<ResourceDeclaration> Resources => GameService.Loader.Resources.Resources;
+
 	public ImmutableDictionary<string, double> NextTickResources;
 
 	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
@@ -30,11 +33,12 @@
 
 	protected override void OnInit ()
 	{
-		GameService.CurrentUIStateChanged += (o, e) => {
+		GameService.CurrentUIStateChanged += (o, e) =>
+		{
 			NextTickResources = GameService.GetNextTickResources ();
 			StateHasChanged ();
 		};
 
 		NextTickResources = GameService.GetNextTickResources ();
 	}
-	}
+}

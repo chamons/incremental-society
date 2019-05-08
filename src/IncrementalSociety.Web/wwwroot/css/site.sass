@@ -4,6 +4,13 @@
 	margin-top: 5px
 	margin-bottom: 5px
 
+=disable-select()
+	-webkit-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	-o-user-select: none
+	user-select: none
+
 =action-selection-boxes()
 	+disable-select()
 	border: 1px solid black
@@ -120,13 +127,6 @@
 
 
 // Utilities
-
-=disable-select()
-	-webkit-user-select: none
-	-moz-user-select: none
-	-ms-user-select: none
-	-o-user-select: none
-	user-select: none
 
 .green
 	color: green

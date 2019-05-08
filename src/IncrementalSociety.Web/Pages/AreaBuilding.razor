@@ -30,6 +30,11 @@
 
 	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.GetBuildingResources (Building) : null;
 
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
+
 	List<(bool Enabled, ImmutableDictionary<string, double> Resources)> Conversions
 	{
 		get

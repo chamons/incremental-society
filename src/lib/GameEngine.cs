@@ -13,9 +13,9 @@ namespace IncrementalSociety
 
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
-		public static GameEngine Create ()
+
+		public static GameEngine Create (JsonLoader loader)
 		{
-			var loader = JsonLoader.Load ();
 			return new GameEngine (new ResourceEngine (loader));
 		}
 

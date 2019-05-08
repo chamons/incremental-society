@@ -82,18 +82,5 @@ namespace IncrementalSociety.Json
 			if (!Regions.Regions.Any (x => x.Name == name))
 				throw new InvalidOperationException ($"JSON failed validation, unable to find region - {name}");
 		}
-
-		static string ReadJSONText (string filename)
-		{
-			var x = Assembly.GetExecutingAssembly ().GetManifestResourceNames ();
-			using (Stream stream = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("IncrementalSociety.data." + filename))
-			using (StreamReader reader = new StreamReader (stream))
-				return reader.ReadToEnd ();
-		}
-
-		public static JsonLoader Load ()
-		{
-			return new JsonLoader (ReadJSONText ("actions.json"), ReadJSONText ("buildings.json"), ReadJSONText ("game.json"), ReadJSONText ("regions.json"), ReadJSONText ("resources.json"));
-		}
 	}
 }

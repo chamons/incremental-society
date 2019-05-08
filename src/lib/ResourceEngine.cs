@@ -150,10 +150,16 @@ namespace IncrementalSociety
 
 		public List<(string Name, bool Enabled)> GetConversions (GameState state)
 		{
+			var consideredConversions = new HashSet<string> ();
 			var allConversions = new List<(string Conversion, bool Enabled)> ();
-			foreach (var building in AllBuildings (state))
-				foreach (var conversion in GetBuildingConversionResources (building))
-					allConversions.Add ((conversion.Name, IsConversionEnabled (state, conversion.Name))); 
+			foreach (var building in AllBuildings (state)) {
+				foreach (var conversion in GetBuildingConversionResources (building)) {
+					if (!consideredConversions.Contains (conversion.Name)) {
+						consideredConversions.Add (conversion.Name);
+						allConversions.Add ((conversion.Name, IsConversionEnabled (state, conversion.Name)));
+					}
+				}
+			}
 			return allConversions;
 		}
 	}

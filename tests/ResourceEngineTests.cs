@@ -170,5 +170,14 @@ namespace IncrementalSociety.Tests
 			Assert.Single (conversions);
 			Assert.Contains (conversions, x => x.Name == "Conversion" && x.Enabled);
 		}
+
+		[Fact]
+		public void ReturnsSingleConversionWhenMultipleBuildings ()
+		{
+			GameState state = Factories.CreateGameState (workshops: 2);
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			var conversions = engine.GetConversions (state);
+			Assert.Single (conversions);
+		}
 	}
 }

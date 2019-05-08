@@ -1,8 +1,8 @@
 @using System.Collections.Immutable
 
 @using IncrementalSociety.Json
-@using IncrementalSociety.Model
 @using IncrementalSociety.Web.Services
+@using IncrementalSociety.Utilities
 
 @inject GameService GameService
 @inject StyleService StyleService
@@ -25,11 +25,8 @@
 
 	public ImmutableDictionary<string, double> NextTickResources;
 
-	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name)
-	{
-		// Round to three places for display
-		return resources.ContainsKey (name) ? Math.Round (resources[name], 3) : 0;
-	}
+	// Round to three places for display
+	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name) => Math.Round (resources.AmountOf (name), 3);
 
 	protected override void OnInit ()
 	{

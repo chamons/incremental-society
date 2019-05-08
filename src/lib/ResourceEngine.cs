@@ -39,7 +39,7 @@ namespace IncrementalSociety
 				// Determine next tick
 				var tickOfResources = CalculateAdditionalNextTick (state);
 				var newResources = state.Resources.ToBuilder ();
-				AddResources (newResources, tickOfResources);
+				newResources.Add (tickOfResources);
 
 				// If we're all positive, then go with that
 				if (!newResources.Keys.Any(x => newResources[x] < 0))
@@ -50,12 +50,10 @@ namespace IncrementalSociety
 
 				// Find the best conversion of that type that is enabled
 				activeConversions.Clear ();
-				foreach (var building in AllBuildings (state)) {
-					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name))) {
-						double amount = ResourceAmount (conversion.Resources, leastResource);
-						activeConversions.Add ((conversion.Name, amount)); 
-					}
-				}
+				foreach (var building in AllBuildings (state))
+					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
+						activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (leastResource)));
+
 				string bestConversion = activeConversions.OrderBy (x => x.LeastAmount).First ().Conversion;
 
 				// Disable that conversion
@@ -70,11 +68,11 @@ namespace IncrementalSociety
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var building in AllBuildings (state) ) {
-				AddResources (additional, GetBuildingResources (building));
+				additional.Add (GetBuildingResources (building));
 
 				var conversions = GetBuildingConversionResources (building);
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
-					AddResources (additional, conversion.Resources);
+					additional.Add (conversion.Resources);
 			}
 			return additional.ToImmutable ();
 		}
@@ -98,44 +96,8 @@ namespace IncrementalSociety
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var yield in yields.AsNotNull ())
-				AddResources (resources, Yields.From (yield));
+				resources.Add (Yields.From (yield));
 			return resources.ToImmutable ();
-		}
-
-		public static double ResourceAmount (IDictionary<string, double> resources, string resourceName)
-		{
-			return resources.ContainsKey (resourceName) ? resources[resourceName] : 0;
-		}
-		
-		public static void AddResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
-		{
-			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
-			{
-				double leftValue = ResourceAmount (left, resourceName);
-				double rightValue = ResourceAmount (right, resourceName);
-				left[resourceName] = leftValue + rightValue;
-			}
-		}
-		
-		public static void SubtractResources (ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
-		{
-			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
-			{
-				double leftValue = ResourceAmount (left, resourceName);
-				double rightValue = ResourceAmount (right, resourceName);
-				left[resourceName] = leftValue - rightValue;
-			}
-		}
-		
-		public static bool HasMoreResources (ImmutableDictionary<string, double> left, IDictionary<string, double> right)
-		{
-			ImmutableDictionary<string, double>.Builder remain = left.ToBuilder ();
-			SubtractResources (remain, right);
-			foreach (var resourceName in right.Keys) {
-				if (remain[resourceName] < 0)
-					return false;
-			}
-			return true;		
 		}
 
 		IEnumerable<string> AllBuildings (GameState state)

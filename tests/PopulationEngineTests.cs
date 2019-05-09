@@ -40,6 +40,11 @@ namespace IncrementalSociety.Tests
 			double mideRate = PopulationEngine.GetGrowthRate (150, 200);
 			double highRate = PopulationEngine.GetGrowthRate (190, 200);
 			Assert.True (lowRate > mideRate && mideRate > highRate);
+
+			double lowOverRate = PopulationEngine.GetGrowthRate (200, 100);
+			double mideOverRate = PopulationEngine.GetGrowthRate (150, 100);
+			double highOverRate = PopulationEngine.GetGrowthRate (110, 100);
+			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
 		}
 
 		[Fact]

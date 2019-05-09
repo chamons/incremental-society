@@ -35,8 +35,6 @@ namespace IncrementalSociety.Json
 	{
 		public string Resource { get; set; }
 		public double Amount { get; set; }
-		[JsonProperty ("missing_effect")]
-		public string MissingEffect { get; set; }
 		[JsonProperty ("missing_power")]
 		public double MissingPower { get; set; }
 	}
@@ -98,13 +96,8 @@ namespace IncrementalSociety.Json
 		public double Amount { get; set; }
 	}
 
-	public class GameAction
-	{
-		public string Name { get; set; }
-	}
-
 	public class ActionDeclarations
 	{
-		public List<GameAction> Actions { get; set; }
+		public List<string> Actions { get; set; }
 	}
 }

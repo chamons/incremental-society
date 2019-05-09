@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
-using Xunit;
 
 namespace IncrementalSociety.Tests
 {
@@ -91,7 +89,15 @@ namespace IncrementalSociety.Tests
 	}
 ";
 
-		const string GameJSON = @"{ ""region_capacity"" :  2 }";
+		const string GameJSON = @"{
+			""population_needs"": [
+			{
+				""resource"": ""water"",
+				""amount"": 1,
+				""missing_power"": 1
+			}],
+			""region_capacity"" :  2
+		}";
 
 		public static ResourceEngine CreateResourceEngine ()
 		{
@@ -115,7 +121,7 @@ namespace IncrementalSociety.Tests
 		static GameState CreateGameState (Area area)
 		{
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> ());
+			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 1000, 2000);
 		}
 
 		public static BuildingEngine CreateBuildingEngine ()

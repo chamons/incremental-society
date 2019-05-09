@@ -33,8 +33,11 @@ namespace IncrementalSociety
 #endif
 			switch (action)
 			{
-				case "Grow Population":
-					Console.WriteLine ("Grow Population");
+				case "Grow Population Cap":
+					Console.WriteLine ("Grow Population Cap");
+					break;
+				case "Lower Population Cap":
+					Console.WriteLine ("Lower Population Cap");
 					break;
 				case "Build District":
 				{
@@ -105,7 +108,7 @@ namespace IncrementalSociety
 			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Workshop" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
 			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Wood", 50 } };
-			return new GameState (Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources);
+			return new GameState (Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 1000, 2000);
 		}
 	}
 }

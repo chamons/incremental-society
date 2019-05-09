@@ -40,8 +40,15 @@ namespace IncrementalSociety.Model
 	public class GameState
 	{
 		Age Age;
+
 		List<Region> Regions;
+
 		Dictionary<string, double> Resources;
+
+		double Population;
+
+		double PopulationCap;
+
 		[Default ("null")]
 		List<string> DisabledConversions;
 	}

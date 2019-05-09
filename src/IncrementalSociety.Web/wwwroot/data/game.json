@@ -3,19 +3,16 @@
 		{
 			"resource": "water",
 			"amount": 1,
-			"missing_effect": "Health",
 			"missing_power": 1
 		},
 		{
 			"resource": "Food",
 			"amount": 2,
-			"missing_effect": "Health",
 			"missing_power": 0.5
 		},
 		{
 			"resource": "Wood",
 			"amount": 0.25,
-			"missing_effect": "Health",
 			"missing_power": 0.25
 		}
 	],

@@ -108,5 +108,11 @@ namespace IncrementalSociety.Tests
 			var conversions = engine.GetConversions (state);
 			Assert.Single (conversions);
 		}
+
+
+		[Fact]
+		public void UnderPopulationShouldAffectProduction ()
+		{
+		}
 	}
 }

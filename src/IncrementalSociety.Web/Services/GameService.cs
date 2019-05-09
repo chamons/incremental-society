@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Components;
 
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
+using Microsoft.JSInterop;
+using Newtonsoft.Json;
 
 namespace IncrementalSociety.Web.Services
 {
@@ -28,19 +30,22 @@ namespace IncrementalSociety.Web.Services
 	{
 		HttpClient Client;
 		IUriHelper URIHelper;
-		public JsonLoader Loader { get; private set; }
-		public GameEngine Engine { get; private set; } 
+		IJSRuntime JSRuntime;
 
+		public JsonLoader Loader { get; private set; }
+		public GameEngine Engine { get; private set; }
+		
 		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
 
 		public GameState State { get; private set; }
 		public bool Loaded { get; private set; }
 	
-		public GameService (HttpClient client, IUriHelper uriHelper, ExceptionNotificationService exceptionNotification)
+		public GameService (HttpClient client, IUriHelper uriHelper, IJSRuntime jsRuntime, ExceptionNotificationService exceptionNotification)
 		{
 			Client = client;
 			URIHelper = uriHelper;
+			JSRuntime = jsRuntime;
 			exceptionNotification.OnException += (o, s) => OnException (s);
 		}
 
@@ -54,8 +59,13 @@ namespace IncrementalSociety.Web.Services
 
 		public async Task Load ()
 		{
-			Loader =  await LoadXML ();
-			State = GameEngine.CreateNewGame ();
+			Loader = await LoadXML ();
+
+			string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
+			if (!string.IsNullOrEmpty (serializedState))
+				State = JsonConvert.DeserializeObject<GameState> (serializedState);
+			else
+				State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create (Loader);
 			Loaded = true;
 		}
@@ -102,6 +112,17 @@ namespace IncrementalSociety.Web.Services
 		void Refresh (Dictionary<string, object> options = null)
 		{
 			CurrentUIStateChanged?.Invoke (this, new GameUIStateChangedEventArgs () { Options = options });
+		}
+
+		public void NewGame ()
+		{
+			State = GameEngine.CreateNewGame ();
+			SetUIState (GameUIState.Default);
+		}
+
+		public void Save ()
+		{
+			((IJSInProcessRuntime)JSRuntime).Invoke<object> ("SaveGame", JsonConvert.SerializeObject (State) );
 		}
 	}
 }

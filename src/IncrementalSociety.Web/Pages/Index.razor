@@ -43,13 +43,20 @@
 	{
 		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
 		StartTickTimer ();
+		StartSaveTimer ();
 	}
 
 	void StartTickTimer ()
 	{
-		var timer = new Timer (new TimerCallback (_ =>
-		{
+		var timer = new Timer (new TimerCallback (_ => {
 			GameService.OnTick ();
 		}), null, 1000, 1000);
+	}
+
+	void StartSaveTimer ()
+	{
+		var timer = new Timer (new TimerCallback (_ => {
+			GameService.Save ();
+		}), null, 5000, 5000);
 	}
 }

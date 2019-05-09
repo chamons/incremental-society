@@ -6,6 +6,17 @@ window.DismissBuildingModal = () => {
 	$('#selectBuildingModal').modal('hide');
 };
 
+window.SaveGame = (state) => {
+	localStorage.setItem('save-state', state);
+};
+
+window.LoadGame = () => {
+	var save = localStorage.getItem('save-state');
+	if (save === null)
+		return "";
+	return save;
+};
+
 onBuildingModalShown = function (event) {
 }
 

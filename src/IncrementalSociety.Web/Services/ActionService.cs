@@ -13,6 +13,7 @@ namespace IncrementalSociety.Web.Services
 		// These must match keys in GameEngine::ApplyAction
 		public const string BuildText = "Build District";
 		public const string DestroyText = "Destory District";
+		public const string NewGameText = "New Game";
 		public const string CancelText = "Cancel";
 
 		public ActionService (GameService gameService)
@@ -34,6 +35,7 @@ namespace IncrementalSociety.Web.Services
 			Actions = new List<string> (GameService.Loader.Actions.Actions.Select (x => x.Name));
 			Actions.Add (BuildText);
 			Actions.Add (DestroyText);
+			Actions.Add (NewGameText);
 		}
 
 		void ReplaceActionWithCancel ()
@@ -74,6 +76,9 @@ namespace IncrementalSociety.Web.Services
 					return;
 				case CancelText:
 					GameService.SetUIState (GameUIState.Default);
+					return;
+				case NewGameText:
+					GameService.NewGame ();
 					return;
 				default:
 					GameService.SetUIState (GameUIState.Default);

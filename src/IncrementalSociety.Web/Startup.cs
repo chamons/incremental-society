@@ -12,6 +12,7 @@ namespace IncrementalSociety.Web
 			services.AddSingleton<BuildingService> ();
 			services.AddSingleton<GameService> ();
 			services.AddSingleton<StyleService> ();
+			services.AddSingleton<ExceptionNotificationService> ();
 		}
 
 		public void Configure (IComponentsApplicationBuilder app)

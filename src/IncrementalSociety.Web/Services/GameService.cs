@@ -11,7 +11,13 @@ using IncrementalSociety.Model;
 
 namespace IncrementalSociety.Web.Services
 {
-	public enum GameUIState { Default, SelectRegionToBuildIn, ShowBuildingSelectDialog, SelectBuildingToDestory }
+	public enum GameUIState {
+		Default,
+		SelectRegionToBuildIn,
+		ShowBuildingSelectDialog,
+		SelectBuildingToDestory,
+		InternalError
+	}
 	
 	public class GameUIStateChangedEventArgs : EventArgs
 	{
@@ -31,10 +37,19 @@ namespace IncrementalSociety.Web.Services
 		public GameState State { get; private set; }
 		public bool Loaded { get; private set; }
 	
-		public GameService (HttpClient client, IUriHelper uriHelper)
+		public GameService (HttpClient client, IUriHelper uriHelper, ExceptionNotificationService exceptionNotification)
 		{
 			Client = client;
 			URIHelper = uriHelper;
+			exceptionNotification.OnException += (o, s) => OnException (s);
+		}
+
+		void OnException (string s)
+		{
+			var options = new Dictionary<string, object> {
+				["Exception"] = s
+			};
+			SetUIState (GameUIState.InternalError, options);
 		}
 
 		public async Task Load ()
@@ -80,11 +95,7 @@ namespace IncrementalSociety.Web.Services
 
 		public void SetUIState (GameUIState state, Dictionary<string, object> options = null)
 		{
-#if DEBUG
-			Console.Error.WriteLine ($"SetUIState: {state}");
-#endif
 			CurrentUIState = state;
-
 			Refresh (options);
 		}
 

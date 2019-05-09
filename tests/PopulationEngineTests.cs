@@ -7,7 +7,7 @@ using Xunit;
 
 namespace IncrementalSociety.Tests
 {
-	public class PopulationNeedsEngineTests
+	public class PopulationEngineTests
 	{
 		[Fact]
 		public void PopsRequireResourcesEachTick ()
@@ -31,6 +31,15 @@ namespace IncrementalSociety.Tests
 		public void PopsDoNotIncreaseLinearly ()
 		{
 
+		}
+
+		[Fact]
+		public void PopsGrowRateBasedOnSpaceToCap ()
+		{
+			double lowRate = PopulationEngine.GetGrowthRate (100, 200);
+			double mideRate = PopulationEngine.GetGrowthRate (150, 200);
+			double highRate = PopulationEngine.GetGrowthRate (190, 200);
+			Assert.True (lowRate > mideRate && mideRate > highRate);
 		}
 
 		[Fact]

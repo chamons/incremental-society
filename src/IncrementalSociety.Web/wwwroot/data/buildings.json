@@ -10,8 +10,12 @@
 				{ "Name": "Wood", "Amount" : 1 }
 			],
 			"cost": [
-				{ "Name": "Wood", "Amount" : 10 }
-			]
+				{
+					"Name": "Wood",
+					"Amount": 10
+				}
+			],
+			"housing_capacity": 50
 		},
 		{
 			"name": "Charcoal Pit",
@@ -57,7 +61,8 @@
 			"cost": [
 				{ "Name": "Wood", "Amount" : 10 },
 				{ "Name": "Stone", "Amount" : 10 }
-			]
+			],
+			"housing_capacity": 50
 		},
 		{
 			"name": "Clay Pit",
@@ -97,13 +102,19 @@
 		{
 			"name": "Crude Settlement",
 			"valid_regions": [ "Plains", "Forest" ],
-			"yield": [
-				{ "Name": "Knowledge", "Amount" : 1 }
+			"conversion_yield": [
+				{
+					"name": "Research",
+					"cost": [ 
+						{ "Name": "Wood", "Amount" : 5 },
+						{ "Name": "Stone", "Amount" : 5 }
+					],
+					"provides": [ 
+						{ "Name": "Knowledge", "Amount" : 0.5 }
+					]
+				}
 			],
-			"cost": [
-				{ "Name": "Wood", "Amount" : 10 },
-				{ "Name": "Stone", "Amount" : 10 }
-			]
+			"housing_capacity": 200
 		}
 	]
 }

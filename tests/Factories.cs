@@ -35,7 +35,8 @@ namespace IncrementalSociety.Tests
 				],
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 },
-				]
+				],
+				""housing_capacity"": 200
 			},
 			{
 				""name"": ""Workshop"",
@@ -53,7 +54,8 @@ namespace IncrementalSociety.Tests
 				],
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 }
-				]
+				],
+				""housing_capacity"": 50
 			},
 			{
 				""name"": ""Smoker"",

@@ -73,6 +73,9 @@ namespace IncrementalSociety.Json
 		
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
+
+		[JsonProperty ("housing_capacity")]
+		public int HousingCapacity { get; set; }
 	}
 
 	public partial class ConversionYield

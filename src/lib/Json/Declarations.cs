@@ -33,8 +33,9 @@ namespace IncrementalSociety.Json
 
 	public class PopulationNeeds
 	{
-		public string Resource { get; set; }
-		public double Amount { get; set; }
+		[JsonProperty ("resource")]
+		public Yield[] Resource;
+
 		[JsonProperty ("missing_power")]
 		public double MissingPower { get; set; }
 	}

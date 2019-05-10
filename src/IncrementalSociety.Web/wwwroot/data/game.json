@@ -1,18 +1,21 @@
 {
 	"population_needs": [
 		{
-			"resource": "water",
-			"amount": 1,
+			"resource": [ 
+					{ "Name": "water", "Amount" : 1 }
+			],
 			"missing_power": 1
 		},
 		{
-			"resource": "Food",
-			"amount": 2,
+			"resource": [ 
+					{ "Name": "Food", "Amount" : 0.5 }
+			],
 			"missing_power": 0.5
 		},
 		{
-			"resource": "Wood",
-			"amount": 0.25,
+			"resource": [ 
+					{ "Name": "Wood", "Amount" : 0.25 }
+			],
 			"missing_power": 0.25
 		}
 	],

@@ -85,5 +85,14 @@ namespace IncrementalSociety.Tests
 			Assert.True (result.HasMoreThan (ImmutableDictionary<string, double>.Empty));
 		}
 
+		[Fact]
+		public void Multiply ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			result.Add ("Water", 2);
+			result.Multiply (2.5);
+			Assert.Equal (2.5, result["Food"], 1);
+			Assert.Equal (5, result["Water"], 1);
+		}
 	}
 }

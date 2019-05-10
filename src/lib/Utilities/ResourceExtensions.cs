@@ -33,6 +33,12 @@ namespace IncrementalSociety.Utilities
 			}
 		}
 
+		public static void Multiply (this ImmutableDictionary<string, double>.Builder left, double right)
+		{
+			foreach (var resourceName in left.Keys.ToList ()) 
+				left[resourceName] = left[resourceName] * right;
+		}
+
 		public static bool HasMoreThan (this ImmutableDictionary<string, double> left, IDictionary<string, double> right)
 		{
 			ImmutableDictionary<string, double>.Builder remain = left.ToBuilder ();

@@ -80,7 +80,7 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
 			var building = FindBuilding (name);
-			return TotalYieldResources (building.Yield);
+			return Yields.Total (building.Yield);
 		}
 
 		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
@@ -90,14 +90,6 @@ namespace IncrementalSociety
 			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
 				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
 			return conversion;
-		}
-		
-		public ImmutableDictionary<string, double> TotalYieldResources (Yield [] yields)
-		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var yield in yields.AsNotNull ())
-				resources.Add (Yields.From (yield));
-			return resources.ToImmutable ();
 		}
 
 		IEnumerable<string> AllBuildings (GameState state)

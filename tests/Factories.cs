@@ -94,18 +94,17 @@ namespace IncrementalSociety.Tests
 		const string GameJSON = @"{
 			""population_needs"": [
 			{
-				""resource"": ""water"",
-				""amount"": 1,
+				""resource"": [ 
+					{ ""Name"": ""water"", ""Amount"" : 1 }
+				],
 				""missing_power"": 1
 			}],
 			""region_capacity"" :  2
 		}";
 
-		public static ResourceEngine CreateResourceEngine ()
+		static JsonLoader CreateJsonLoader ()
 		{
-			var resources = new JsonLoader ("", BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
-			ResourceEngine engine = new ResourceEngine (resources);
-			return engine;
+			return new JsonLoader ("", BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
 		}
 
 		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)
@@ -126,9 +125,19 @@ namespace IncrementalSociety.Tests
 			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 1000, 2000);
 		}
 
+		public static ResourceEngine CreateResourceEngine ()
+		{
+			return new ResourceEngine (CreateJsonLoader ());
+		}
+
 		public static BuildingEngine CreateBuildingEngine ()
 		{
 			return new BuildingEngine (CreateResourceEngine ());
+		}
+
+		public static PopulationEngine CreatePopEngine ()
+		{
+			return new PopulationEngine (CreateJsonLoader ());
 		}
 	}
 }

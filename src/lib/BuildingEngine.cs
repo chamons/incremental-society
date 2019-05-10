@@ -12,9 +12,12 @@ namespace IncrementalSociety
 	public class BuildingEngine
 	{
 		ResourceEngine ResourceEngine;
+		YieldCache Yields;
+
 		public BuildingEngine (ResourceEngine engine)
 		{
 			ResourceEngine = engine;
+			Yields = new YieldCache ();
 		}
 
 		public GameState Build (GameState state, string regionName, int regionIndex, string buildingName)
@@ -29,7 +32,7 @@ namespace IncrementalSociety
 			if (!building.ValidRegions.Contains (area.Type.ToString()))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
-			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			var buildingTotalCost = Yields.Total (building.Cost);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
@@ -43,7 +46,7 @@ namespace IncrementalSociety
 		public bool CanAffordBuilding (GameState state, string buildingName)
 		{
 			var building = ResourceEngine.FindBuilding (buildingName);
-			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			var buildingTotalCost = Yields.Total (building.Cost);
 			return state.Resources.HasMoreThan (buildingTotalCost);
 		}
 

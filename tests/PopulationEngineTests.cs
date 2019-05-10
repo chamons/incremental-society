@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
@@ -12,7 +13,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsRequireResourcesEachTick ()
 		{
-
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			var reqs = engine.GetFullRequirementsForNextTick (state);
+			Assert.Equal (1000, reqs.AmountOf ("water"));
+			state = state.WithPopulation (2000);
+			reqs = engine.GetFullRequirementsForNextTick (state);
+			Assert.Equal (2000, reqs.AmountOf ("water"));
 		}
 
 		[Fact]

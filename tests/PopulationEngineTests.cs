@@ -37,7 +37,20 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsDoNotIncreaseLinearly ()
 		{
+			var engine = Factories.CreatePopEngine ();
 
+			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (1000));
+			Assert.Equal (2, engine.GetPopUnitsForTotalPopulation (2000));
+			Assert.Equal (4, engine.GetPopUnitsForTotalPopulation (4000));
+			Assert.Equal (10, engine.GetPopUnitsForTotalPopulation (10000));
+			Assert.Equal (11, engine.GetPopUnitsForTotalPopulation (12000));
+			Assert.Equal (15, engine.GetPopUnitsForTotalPopulation (20000));
+			Assert.Equal (16, engine.GetPopUnitsForTotalPopulation (25000));
+			Assert.Equal (19, engine.GetPopUnitsForTotalPopulation (40000));
+			Assert.Equal (20, engine.GetPopUnitsForTotalPopulation (50000));
+			Assert.Equal (25, engine.GetPopUnitsForTotalPopulation (100000));
+			Assert.Equal (26, engine.GetPopUnitsForTotalPopulation (200000));
+			Assert.Equal (28, engine.GetPopUnitsForTotalPopulation (400000));
 		}
 
 		[Fact]

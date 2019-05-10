@@ -34,6 +34,21 @@ namespace IncrementalSociety
 			return amount.ToImmutable ();
 		}
 
+		public int GetPopUnitsForTotalPopulation (double population)
+		{
+			if (population < 10000) {
+				return (int)Math.Round (population / 1000);
+			} else if (population < 20000) {
+				return 10 + (int)Math.Round ((population - 10000) / 2000);
+			} else if (population < 40000) {
+				return 15 + (int)Math.Round ((population - 20000) / 5000);
+			} else if (population < 100000) {
+				return 19 + (int)Math.Round ((population - 40000) / 10000);
+			} else {
+				return 25 + (int)Math.Round ((population - 100000) / 100000);
+			}
+		}
+
 		public static double GetGrowthRate (double popSize, double popCap)
 		{
 			// Logistic growth

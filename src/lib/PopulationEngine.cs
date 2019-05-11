@@ -71,16 +71,20 @@ namespace IncrementalSociety
 
 		public int GetPopUnitsForTotalPopulation (double population)
 		{
-			if (population < 10000) {
-				return (int)Math.Round (population / 1000);
-			} else if (population < 20000) {
-				return 10 + (int)Math.Round ((population - 10000) / 2000);
-			} else if (population < 40000) {
-				return 15 + (int)Math.Round ((population - 20000) / 5000);
-			} else if (population < 100000) {
-				return 19 + (int)Math.Round ((population - 40000) / 10000);
+			if (population < 1000) {
+				return (int)Math.Round (population / 100);
+			} else if (population < 2000) {
+				return 10 + (int)Math.Round ((population - 1000) / 200);
+			} else if (population < 4000) {
+				return 15 + (int)Math.Round ((population - 2000) / 500);
+			} else if (population < 10000) {
+				return 19 + (int)Math.Round ((population - 4000) / 1000);
+			} else if (population < 50000) {
+				return 25 + (int)Math.Round ((population - 10000) / 5000);
+			} else if (population< 100000) {
+				return 32 + (int)Math.Round ((population - 50000) / 10000);
 			} else {
-				return 25 + (int)Math.Round ((population - 100000) / 100000);
+				return 37 + (int)Math.Round ((population - 100000) / 50000);
 			}
 		}
 

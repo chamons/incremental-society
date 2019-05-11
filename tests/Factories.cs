@@ -96,7 +96,7 @@ namespace IncrementalSociety.Tests
 				""Name"": ""Water"", ""Amount"" : 1,
 			}],
 			""region_capacity"" :  2,
-			""min_population"" :  1000
+			""min_population"" :  100
 		}";
 
 		static JsonLoader CreateJsonLoader ()
@@ -119,7 +119,7 @@ namespace IncrementalSociety.Tests
 		static GameState CreateGameState (Area area)
 		{
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 1500, 2000);
+			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 150, 200);
 		}
 
 		public static ResourceEngine CreateResourceEngine ()

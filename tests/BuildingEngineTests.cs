@@ -104,6 +104,12 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void PopsProvideBuildingCapacity ()
+		{
+
+		}
+
+		[Fact]
 		public void CanNotBuildIfNotEnoughPops ()
 		{
 

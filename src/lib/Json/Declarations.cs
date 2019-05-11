@@ -31,22 +31,16 @@ namespace IncrementalSociety.Json
 		public List<RegionDeclaration> Regions { get; set; }
 	}
 
-	public class PopulationNeeds
-	{
-		[JsonProperty ("resource")]
-		public Yield[] Resource;
-
-		[JsonProperty ("missing_power")]
-		public double MissingPower { get; set; }
-	}
-
 	public class GameDeclarations
 	{
 		[JsonProperty ("population_needs")]
-		public List<PopulationNeeds> PopulationNeeds { get; set; }
+		public Yield[] PopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
 		public int RegionCapacity { get; set; }
+
+		[JsonProperty ("min_population")]
+		public int MinPopulation { get; set; }
 	}
 
 	public partial class BuildingDeclarations

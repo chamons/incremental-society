@@ -16,16 +16,10 @@ namespace IncrementalSociety.Tests
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState ();
 			var reqs = engine.GetFullRequirementsForNextTick (state);
-			Assert.Equal (1000, reqs.AmountOf ("water"));
+			Assert.Equal (1500, reqs.AmountOf ("Water"));
 			state = state.WithPopulation (2000);
 			reqs = engine.GetFullRequirementsForNextTick (state);
-			Assert.Equal (2000, reqs.AmountOf ("water"));
-		}
-
-		[Fact]
-		public void PopsProvideBuildingCapacity ()
-		{
-
+			Assert.Equal (2000, reqs.AmountOf ("Water"));
 		}
 
 		[Fact]
@@ -70,13 +64,23 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsGrowToCapIfNeedsMet ()
 		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 1500.0));
 
+			double popBefore = state.Population;
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population > popBefore);
 		}
 
 		[Fact]
 		public void PopsDecreaseIfNeedsNotMet ()
 		{
-
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			double popBefore = state.Population;
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population < popBefore);
 		}
 
 		[Fact]
@@ -86,13 +90,18 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void PopsDecreaseGlobalEffeciencyIfTooFew ()
+		public void PopsHaveHardMinimumLowerLimit ()
 		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			state = state.WithPopulation (1000);
 
+			state = engine.ProcessTick (state);
+			Assert.Equal (1000, state.Population);
 		}
 
 		[Fact]
-		public void PopsHaveHardMinimumLowerLimit ()
+		public void PopsDecreaseGlobalEffeciencyIfTooFew ()
 		{
 
 		}

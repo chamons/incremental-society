@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
@@ -11,20 +12,22 @@ namespace IncrementalSociety
 	public class PopulationEngine
 	{
 		ImmutableDictionary<string, double> PopNeed;
+		double PopMin;
 		YieldCache Yields;
 
 		public PopulationEngine (JsonLoader json)
 		{
 			Yields = new YieldCache ();
-			PopNeed = CalculatePopNeed (json);
+			LoadAndCalculatePopNeed (json);
 		}
 
-		ImmutableDictionary<string, double> CalculatePopNeed (JsonLoader json)
+		void LoadAndCalculatePopNeed (JsonLoader json)
 		{
 			var totalNeed = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var need in json.Game.PopulationNeeds)
-				totalNeed.Add (Yields.Total (need.Resource));
-			return totalNeed.ToImmutable ();
+			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
+			PopNeed = totalNeed.ToImmutable ();
+
+			PopMin = json.Game.MinPopulation;
 		}
 
 		public ImmutableDictionary<string, double> GetFullRequirementsForNextTick (GameState state)
@@ -33,6 +36,38 @@ namespace IncrementalSociety
 			amount.Multiply (state.Population);
 			return amount.ToImmutable ();
 		}
+
+		public GameState ProcessTick (GameState state)
+		{
+			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state))) {
+				return GrowAtRate (state, GetGrowthRate (state.Population, state.PopulationCap), state.PopulationCap);
+			}
+			else {
+				double effectivePopCap = FindEffectivePopCap (state);
+				return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
+			}
+		}
+
+		string FindMostMissingResource (GameState state)
+		{
+			var delta = state.Resources.ToBuilder ();
+			delta.Subtract (GetFullRequirementsForNextTick (state));
+			foreach (var need in PopNeed)
+				delta[need.Key] = delta.AmountOf (need.Key) / need.Value;
+			return delta.OrderBy (x => x.Value).Select (x => x.Key).First ();
+		}
+
+		double FindEffectivePopCap (GameState state)
+		{
+			string mostMissingResource = FindMostMissingResource (state);
+
+			var delta = state.Resources.ToBuilder ();
+			delta.Subtract (GetFullRequirementsForNextTick (state));
+			double peopleShort = delta.AmountOf (mostMissingResource) / PopNeed.AmountOf (mostMissingResource);
+			return state.Population + peopleShort;
+		}
+
+		GameState GrowAtRate (GameState state, double rate, double cap) => state.WithPopulation (MathUtilities.Clamp (state.Population + rate, PopMin, cap));
 
 		public int GetPopUnitsForTotalPopulation (double population)
 		{

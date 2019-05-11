@@ -92,14 +92,11 @@ namespace IncrementalSociety.Tests
 ";
 
 		const string GameJSON = @"{
-			""population_needs"": [
-			{
-				""resource"": [ 
-					{ ""Name"": ""water"", ""Amount"" : 1 }
-				],
-				""missing_power"": 1
+			""population_needs"": [	{
+				""Name"": ""Water"", ""Amount"" : 1,
 			}],
-			""region_capacity"" :  2
+			""region_capacity"" :  2,
+			""min_population"" :  1000
 		}";
 
 		static JsonLoader CreateJsonLoader ()
@@ -122,7 +119,7 @@ namespace IncrementalSociety.Tests
 		static GameState CreateGameState (Area area)
 		{
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 1000, 2000);
+			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> (), 1500, 2000);
 		}
 
 		public static ResourceEngine CreateResourceEngine ()

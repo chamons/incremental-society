@@ -50,7 +50,7 @@ namespace IncrementalSociety
 
 				// Find the best conversion of that type that is enabled
 				activeConversions.Clear ();
-				foreach (var building in AllBuildings (state))
+				foreach (var building in state.AllBuildings ())
 					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
 						activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (leastResource)));
 
@@ -67,7 +67,7 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var building in AllBuildings (state) ) {
+			foreach (var building in state.AllBuildings ()) {
 				additional.Add (GetBuildingResources (building));
 
 				var conversions = GetBuildingConversionResources (building);
@@ -92,21 +92,13 @@ namespace IncrementalSociety
 			return conversion;
 		}
 
-		IEnumerable<string> AllBuildings (GameState state)
-		{
-			foreach (var region in state.Regions)
-				foreach (var area in region.Areas)
-					foreach (var building in area.Buildings)
-						yield return building;
-		}
-
 		public bool IsConversionEnabled (GameState state, string name) => !state.DisabledConversions.Contains (name);
 
 		public List<(string Name, bool Enabled)> GetConversions (GameState state)
 		{
 			var consideredConversions = new HashSet<string> ();
 			var allConversions = new List<(string Conversion, bool Enabled)> ();
-			foreach (var building in AllBuildings (state)) {
+			foreach (var building in state.AllBuildings()) {
 				foreach (var conversion in GetBuildingConversionResources (building)) {
 					if (!consideredConversions.Contains (conversion.Name)) {
 						consideredConversions.Add (conversion.Name);

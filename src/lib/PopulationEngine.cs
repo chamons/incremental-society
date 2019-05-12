@@ -11,12 +11,14 @@ namespace IncrementalSociety
 {
 	public class PopulationEngine
 	{
+		ResourceEngine ResourceEngine;
 		ImmutableDictionary<string, double> PopNeed;
 		double PopMin;
 		YieldCache Yields;
 
-		public PopulationEngine (JsonLoader json)
+		public PopulationEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
+			ResourceEngine = resourceEngine;
 			Yields = new YieldCache ();
 			LoadAndCalculatePopNeed (json);
 		}
@@ -67,7 +69,39 @@ namespace IncrementalSociety
 			return state.Population + peopleShort;
 		}
 
-		GameState GrowAtRate (GameState state, double rate, double cap) => state.WithPopulation (MathUtilities.Clamp (state.Population + rate, PopMin, cap));
+		GameState GrowAtRate (GameState state, double rate, double cap)
+		{
+			if (rate > 0)
+				return state.WithPopulation (Math.Min (state.Population + rate, cap));
+			else
+				return state.WithPopulation (Math.Max (state.Population + rate, PopMin));
+		}
+
+		public bool CanIncreasePopulationCap (GameState state)
+		{
+			double nextBreakpoint = GetNextPopBreakpoint (state.PopulationCap);
+			double builtPopRoom = state.AllBuildings ().Sum (x => ResourceEngine.FindBuilding (x).HousingCapacity);
+			return builtPopRoom >= nextBreakpoint;
+		}
+
+		public GameState IncreasePopulationCap (GameState state)
+		{
+			if (!CanIncreasePopulationCap (state))
+				throw new InvalidOperationException ($"Unable to decrease pop cap {state.PopulationCap}");
+			return state.WithPopulationCap (GetNextPopBreakpoint (state.PopulationCap));
+		}
+
+		public bool CanDecreasePopulationCap (GameState state)
+		{
+			return state.PopulationCap != PopMin;
+		}
+
+		public GameState DecreasePopulationCap (GameState state)
+		{
+			if (!CanDecreasePopulationCap (state))
+				throw new InvalidOperationException ($"Unable to decrease pop cap {state.PopulationCap}");
+			return state.WithPopulationCap (GetPreviousPopBreakpoint (state.PopulationCap));
+		}
 
 		public int GetPopUnitsForTotalPopulation (double population)
 		{
@@ -86,6 +120,45 @@ namespace IncrementalSociety
 			} else {
 				return 37 + (int)Math.Round ((population - 100000) / 50000);
 			}
+		}
+
+		double GetNextPopBreakpoint (double current)
+		{
+			if (current < 1000)
+				return current + 100;
+			else if (current < 2000)
+				return current + 200;
+			else if (current < 4000)
+				return current + 500;
+			else if (current < 10000)
+				return current + 1000;
+			else if (current < 50000)
+				return current + 5000;
+			else if (current < 100000)
+				return current + 10000;
+			else
+				return current + 50000;
+		}
+
+		double GetPreviousPopBreakpoint (double current)
+		{
+			if (current == PopMin)
+				return current;
+
+			if (current <= 1000)
+				return current - 100;
+			else if (current <= 2000)
+				return current - 200;
+			else if (current <= 4000)
+				return current - 500;
+			else if (current <= 10000)
+				return current - 1000;
+			else if (current <= 50000)
+				return current - 5000;
+			else if (current <= 100000)
+				return current - 10000;
+			else
+				return current - 50000;
 		}
 
 		public static double GetGrowthRate (double popSize, double popCap)

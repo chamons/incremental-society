@@ -134,7 +134,7 @@ namespace IncrementalSociety.Tests
 
 		public static PopulationEngine CreatePopEngine ()
 		{
-			return new PopulationEngine (CreateJsonLoader ());
+			return new PopulationEngine (CreateResourceEngine(), CreateJsonLoader ());
 		}
 	}
 }

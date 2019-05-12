@@ -97,15 +97,38 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void PopsRequireHousingToExpandCap ()
+		public void CanNotDecreasePopCapBelowMinimum ()
 		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 2).WithPopulationCap (100);
 
+			Assert.False(engine.CanDecreasePopulationCap (state));
+			Assert.Throws<InvalidOperationException> (() => engine.DecreasePopulationCap (state));
 		}
 
 		[Fact]
-		public void PopsDecreaseIfOverHousingCap ()
+		public void PopsRequireHousingToExpandCap ()
 		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
 
+			Assert.False (engine.CanIncreasePopulationCap (state));
+			Assert.Throws<InvalidOperationException> (() => engine.IncreasePopulationCap (state));
+
+			state = Factories.CreateGameState (camps: 2);
+			Assert.True (engine.CanIncreasePopulationCap (state));
+			state = engine.IncreasePopulationCap (state);
+			Assert.Equal (300, state.PopulationCap);
+		}
+
+		[Fact]
+		public void PopsDecreaseIfOverCap ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 2).WithPopulation (300);
+			double popBefore = state.Population;
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population < popBefore);
 		}
 
 		[Fact]

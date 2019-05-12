@@ -167,6 +167,7 @@ namespace IncrementalSociety.Tests
 			state = Factories.CreateGameState (camps: 2);
 			double lessEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.True (lessEfficiency < baseEfficiency);
+			Assert.True (lessEfficiency != 0);
 		}
 	}
 }

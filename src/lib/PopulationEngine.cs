@@ -180,7 +180,7 @@ namespace IncrementalSociety
 			if (totalPopCount >= buildingCount)
 				return 1.0;
 			else
-				return 1.0 - ((double)(buildingCount - totalPopCount) / (double)totalPopCount);
+				return 1.0 - ((double)(buildingCount - totalPopCount) / (double)buildingCount);
 		}
 	}
 }

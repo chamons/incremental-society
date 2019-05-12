@@ -13,7 +13,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 1);
-			state = engine.AddTickOfResources (state);
+			state = engine.AddTickOfResources (state, 1.0);
 			Assert.True (state.Resources["Food"] > 0.0);
 			Assert.True (state.Resources["Water"] > 0.0);
 		}
@@ -23,7 +23,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (workshops: 1);
-			state = engine.AddTickOfResources (state);
+			state = engine.AddTickOfResources (state, 1.0);
 			Assert.False (state.Resources.ContainsKey ("Charcoal"));
 			Assert.Contains (state.DisabledConversions, x => x == "Conversion");
 		}
@@ -34,7 +34,7 @@ namespace IncrementalSociety.Tests
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (workshops: 1, smokers: 1);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Charcoal", 10.0));
-			state = engine.AddTickOfResources (state);
+			state = engine.AddTickOfResources (state, 1.0);
 			Assert.True (state.Resources["Food"] > 0.0);
 			Assert.Single (state.DisabledConversions);
 			Assert.Contains (state.DisabledConversions, x => x == "Conversion");
@@ -45,7 +45,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 1);
-			var resources = engine.CalculateAdditionalNextTick (state);
+			var resources = engine.CalculateAdditionalNextTick (state, 1.0);
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);
 		}
@@ -55,7 +55,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 1);
-			var baseResources = engine.CalculateAdditionalNextTick (state);
+			var baseResources = engine.CalculateAdditionalNextTick (state, 1.0);
 			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
 			var lessResources = engine.CalculateAdditionalNextTick (state, .9);
 			Assert.True (baseResources.HasMoreThan (lessResources));
@@ -67,7 +67,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 1, workshops: 1);
-			var resources = engine.CalculateAdditionalNextTick (state);
+			var resources = engine.CalculateAdditionalNextTick (state, 1.0);
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);
 			Assert.True (resources["Wood"] < 0.0);
@@ -79,7 +79,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (workshops: 1);
-			var baseResources = engine.CalculateAdditionalNextTick (state);
+			var baseResources = engine.CalculateAdditionalNextTick (state, 1.0);
 			var lessResources = engine.CalculateAdditionalNextTick (state, .9);
 			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
 
@@ -94,7 +94,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions ("Conversion".Yield ());
-			var resources = engine.CalculateAdditionalNextTick (state);
+			var resources = engine.CalculateAdditionalNextTick (state, 1.0);
 			Assert.Empty (resources);
 		}
 

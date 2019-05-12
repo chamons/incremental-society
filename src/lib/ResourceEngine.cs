@@ -32,7 +32,7 @@ namespace IncrementalSociety
 			return building;
 		}
 		
-		public GameState AddTickOfResources (GameState state, double efficiency = 1.0)
+		public GameState AddTickOfResources (GameState state, double efficiency)
 		{
 			var activeConversions = new List<(string Conversion, double LeastAmount)> ();
 			do {
@@ -64,7 +64,7 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state, double efficiency = 1.0)
+		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var building in state.AllBuildings ()) {

@@ -85,7 +85,8 @@ namespace IncrementalSociety
 
 		public GameState ProcessTick (GameState state)
 		{
-			return ResourceEngine.AddTickOfResources (state);
+			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
+			return ResourceEngine.AddTickOfResources (state, efficiency);
 		}
 
 		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)

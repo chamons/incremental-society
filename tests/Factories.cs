@@ -129,7 +129,7 @@ namespace IncrementalSociety.Tests
 
 		public static BuildingEngine CreateBuildingEngine ()
 		{
-			return new BuildingEngine (CreateResourceEngine ());
+			return new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
 		}
 
 		public static PopulationEngine CreatePopEngine ()

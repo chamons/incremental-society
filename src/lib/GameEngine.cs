@@ -11,18 +11,20 @@ namespace IncrementalSociety
 	{
 		public int RegionCapacity { get; private set; }
 
+		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
-			return new GameEngine (new ResourceEngine (loader));
+			return new GameEngine (loader, new ResourceEngine (loader));
 		}
 
-		public GameEngine (ResourceEngine resourceEngine)
+		public GameEngine (JsonLoader loader, ResourceEngine resourceEngine)
 		{
 			ResourceEngine = resourceEngine;
-			BuildingEngine = new BuildingEngine (ResourceEngine);
+			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
+			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 

@@ -11,12 +11,14 @@ namespace IncrementalSociety
 {
 	public class BuildingEngine
 	{
+		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		YieldCache Yields;
 
-		public BuildingEngine (ResourceEngine engine)
+		public BuildingEngine (ResourceEngine engine, PopulationEngine populationEngine)
 		{
 			ResourceEngine = engine;
+			PopulationEngine = populationEngine;
 			Yields = new YieldCache ();
 		}
 
@@ -61,6 +63,11 @@ namespace IncrementalSociety
 
 			var newArea = area.WithBuildings (area.Buildings.Remove (buildingName));
 			return UpdateStateWithArea (state, area, newArea, region);
+		}
+
+		public int AdditionalBuildingSlotsAvailable (GameState state)
+		{
+			return PopulationEngine.GetPopUnitsForTotalPopulation (state.Population) - state.AllBuildings ().Count ();
 		}
 
 		GameState UpdateStateWithArea (GameState state, Area area, Area newArea, Region region)

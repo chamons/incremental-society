@@ -39,6 +39,8 @@ namespace IncrementalSociety.Model
 	[With]
 	public class GameState
 	{
+		int Version;
+
 		Age Age;
 
 		List<Region> Regions;

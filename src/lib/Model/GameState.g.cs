@@ -66,6 +66,7 @@ namespace IncrementalSociety.Model
 
 	public partial class GameState
 	{
+		public int Version { get; }
 		public Age Age { get; }
 		public ImmutableArray<Region> Regions { get; }
 		public ImmutableDictionary<string, double> Resources { get; }
@@ -73,8 +74,9 @@ namespace IncrementalSociety.Model
 		public double PopulationCap { get; }
 		public ImmutableArray<string> DisabledConversions { get; }
 
-		public GameState (Age age, IEnumerable<Region> regions, IDictionary<string, double> resources, double population, double populationCap, IEnumerable<string> disabledConversions = null)
+		public GameState (int version, Age age, IEnumerable<Region> regions, IDictionary<string, double> resources, double population, double populationCap, IEnumerable<string> disabledConversions = null)
 		{
+			Version = version;
 			Age = age;
 			Regions = ImmutableArray.CreateRange (regions ?? Array.Empty<Region> ());
 			Resources = resources.ToImmutableDictionary ();
@@ -83,34 +85,39 @@ namespace IncrementalSociety.Model
 			DisabledConversions = ImmutableArray.CreateRange (disabledConversions ?? Array.Empty<string> ());
 		}
 
+		public GameState WithVersion (int version)
+		{
+			return new GameState (version, Age, Regions, Resources, Population, PopulationCap, DisabledConversions);
+		}
+
 		public GameState WithAge (Age age)
 		{
-			return new GameState (age, Regions, Resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, age, Regions, Resources, Population, PopulationCap, DisabledConversions);
 		}
 
 		public GameState WithRegions (IEnumerable<Region> regions)
 		{
-			return new GameState (Age, regions, Resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, regions, Resources, Population, PopulationCap, DisabledConversions);
 		}
 
 		public GameState WithResources (IDictionary<string, double> resources)
 		{
-			return new GameState (Age, Regions, resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, resources, Population, PopulationCap, DisabledConversions);
 		}
 
 		public GameState WithPopulation (double population)
 		{
-			return new GameState (Age, Regions, Resources, population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, Resources, population, PopulationCap, DisabledConversions);
 		}
 
 		public GameState WithPopulationCap (double populationCap)
 		{
-			return new GameState (Age, Regions, Resources, Population, populationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, Resources, Population, populationCap, DisabledConversions);
 		}
 
 		public GameState WithDisabledConversions (IEnumerable<string> disabledConversions)
 		{
-			return new GameState (Age, Regions, Resources, Population, PopulationCap, disabledConversions);
+			return new GameState (Version, Age, Regions, Resources, Population, PopulationCap, disabledConversions);
 		}
 	}
 }

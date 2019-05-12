@@ -64,14 +64,15 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsGrowRateBasedOnSpaceToCap ()
 		{
-			double lowRate = PopulationEngine.GetGrowthRate (100, 200);
-			double mideRate = PopulationEngine.GetGrowthRate (150, 200);
-			double highRate = PopulationEngine.GetGrowthRate (190, 200);
+			var engine = Factories.CreatePopEngine ();
+			double lowRate = engine.GetGrowthRate (100, 200);
+			double mideRate = engine.GetGrowthRate (150, 200);
+			double highRate = engine.GetGrowthRate (190, 200);
 			Assert.True (lowRate > mideRate && mideRate > highRate);
 
-			double lowOverRate = PopulationEngine.GetGrowthRate (200, 100);
-			double mideOverRate = PopulationEngine.GetGrowthRate (150, 100);
-			double highOverRate = PopulationEngine.GetGrowthRate (110, 100);
+			double lowOverRate = engine.GetGrowthRate (200, 100);
+			double mideOverRate = engine.GetGrowthRate (150, 100);
+			double highOverRate = engine.GetGrowthRate (110, 100);
 			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
 		}
 
@@ -144,8 +145,28 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void PopulationEfficiencyRatios ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			double baseValue = engine.GetPopulationEfficiency (4, 5);
+			double someOverValue = engine.GetPopulationEfficiency (6, 5);
+			double moreOverValue = engine.GetPopulationEfficiency (7, 5);
+			Assert.Equal (1.0, baseValue);
+			Assert.True (baseValue > someOverValue);
+			Assert.True (someOverValue > moreOverValue);
+		}
+
+		[Fact]
 		public void MoreBuildingsThanPopsReducesEfficiency ()
 		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
+			double baseEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.Equal (1.0, baseEfficiency);
+
+			state = Factories.CreateGameState (camps: 2);
+			double lessEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.True (lessEfficiency < baseEfficiency);
 		}
 	}
 }

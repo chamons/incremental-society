@@ -97,7 +97,8 @@ namespace IncrementalSociety
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
-			return ResourceEngine.CalculateAdditionalNextTick (state);
+			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
+			return ResourceEngine.CalculateAdditionalNextTick (state, efficiency);
 		}
 		
 		public ImmutableDictionary<string, double> GetBuildingResources (string building)

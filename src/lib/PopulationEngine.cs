@@ -161,11 +161,26 @@ namespace IncrementalSociety
 				return current - 50000;
 		}
 
-		public static double GetGrowthRate (double popSize, double popCap)
+		public double GetGrowthRate (double popSize, double popCap)
 		{
 			// Logistic growth
 			const double R = .05;
 			return R * ((popCap - popSize) / popSize) * popSize;
+		}
+
+		public double GetPopulationEfficiency (GameState state)
+		{
+			int buildingCount = state.AllBuildings ().Count ();
+			int totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
+			return GetPopulationEfficiency (buildingCount, totalPopCount);
+		}
+
+		public double GetPopulationEfficiency (int buildingCount, int totalPopCount)
+		{
+			if (totalPopCount >= buildingCount)
+				return 1.0;
+			else
+				return 1.0 - ((double)(buildingCount - totalPopCount) / (double)totalPopCount);
 		}
 	}
 }

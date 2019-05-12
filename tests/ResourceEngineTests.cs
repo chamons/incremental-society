@@ -53,7 +53,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AdditionalResourceNextTickWithEfficiency ()
 		{
-			
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (camps: 1);
+			var baseResources = engine.CalculateAdditionalNextTick (state);
+			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
+			var lessResources = engine.CalculateAdditionalNextTick (state, .9);
+			Assert.True (baseResources.HasMoreThan (lessResources));
+			Assert.True (extraResources.HasMoreThan (baseResources));
 		}
 
 		[Fact]
@@ -71,6 +77,16 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AdditionalResourceNextTickWithConversionsAndEfficiency ()
 		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (workshops: 1);
+			var baseResources = engine.CalculateAdditionalNextTick (state);
+			var lessResources = engine.CalculateAdditionalNextTick (state, .9);
+			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
+
+			Assert.True (baseResources.AmountOf("Charcoal") > lessResources.AmountOf ("Charcoal"));
+			Assert.True (baseResources.AmountOf("Wood") < lessResources.AmountOf ("Wood"));
+			Assert.True (extraResources.AmountOf ("Charcoal") > baseResources.AmountOf ("Charcoal"));
+			Assert.True (extraResources.AmountOf ("Wood") < baseResources.AmountOf ("Wood"));
 		}
 
 		[Fact]
@@ -118,11 +134,6 @@ namespace IncrementalSociety.Tests
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			var conversions = engine.GetConversions (state);
 			Assert.Single (conversions);
-		}
-
-		[Fact]
-		public void LowerEfficiencyShouldAffectProduction ()
-		{
 		}
 	}
 }

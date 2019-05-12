@@ -86,6 +86,13 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void CompareTwoResourceOneNegative ()
+		{
+			var result = Immutable.CreateDictionary ("Food", -1.0);
+			Assert.True (result.HasMoreThan (Immutable.CreateDictionary ("Food", -10.0)));
+		}
+
+		[Fact]
 		public void Multiply ()
 		{
 			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);

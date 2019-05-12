@@ -61,15 +61,18 @@ namespace IncrementalSociety.Web.Services
 		{
 			Loader = await LoadXML ();
 
-			string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
-			if (!string.IsNullOrEmpty (serializedState) && serializedState != "null") {
-				State = JsonConvert.DeserializeObject<GameState> (serializedState);
-				if (State.Version != GameEngine.CurrentVersion)
-					State = GameEngine.CreateNewGame ();
+			try {
+				string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
+				if (!string.IsNullOrEmpty (serializedState) && serializedState != "null") {
+					State = JsonConvert.DeserializeObject<GameState> (serializedState);
+					if (State.Version != GameEngine.CurrentVersion)
+						State = null;
+				}
 			}
-			else {
+			catch (JSException) {
+			}
+			if (State == null)
 				State = GameEngine.CreateNewGame ();
-			}
 			Engine = GameEngine.Create (Loader);
 			Loaded = true;
 		}

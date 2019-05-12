@@ -11,5 +11,5 @@
 		}
 	],
 	"region_capacity": 3,
-	"min_population" :  100.0
+	"min_population" : 100
 }

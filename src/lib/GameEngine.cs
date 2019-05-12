@@ -36,10 +36,10 @@ namespace IncrementalSociety
 			switch (action)
 			{
 				case "Grow Population Cap":
-					Console.WriteLine ("Grow Population Cap");
+					state = PopulationEngine.IncreasePopulationCap (state);
 					break;
 				case "Lower Population Cap":
-					Console.WriteLine ("Lower Population Cap");
+					state = PopulationEngine.DecreasePopulationCap (state);
 					break;
 				case "Build District":
 				{

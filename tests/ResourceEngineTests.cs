@@ -49,7 +49,13 @@ namespace IncrementalSociety.Tests
 			Assert.True (resources["Food"] > 0.0);
 			Assert.True (resources["Water"] > 0.0);
 		}
-		
+
+		[Fact]
+		public void AdditionalResourceNextTickWithEfficiency ()
+		{
+			
+		}
+
 		[Fact]
 		public void AdditionalResourceNextTickWithConversions ()
 		{
@@ -61,7 +67,12 @@ namespace IncrementalSociety.Tests
 			Assert.True (resources["Wood"] < 0.0);
 			Assert.True (resources["Charcoal"] > 0.0);
 		}
-		
+
+		[Fact]
+		public void AdditionalResourceNextTickWithConversionsAndEfficiency ()
+		{
+		}
+
 		[Fact]
 		public void AdditionalResourceNextTickWithConversionsDisabled ()
 		{
@@ -109,9 +120,8 @@ namespace IncrementalSociety.Tests
 			Assert.Single (conversions);
 		}
 
-
 		[Fact]
-		public void UnderPopulationShouldAffectProduction ()
+		public void LowerEfficiencyShouldAffectProduction ()
 		{
 		}
 	}

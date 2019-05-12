@@ -142,5 +142,10 @@ namespace IncrementalSociety.Tests
 			state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 		}
+
+		[Fact]
+		public void MoreBuildingsThanPopsReducesEfficiency ()
+		{
+		}
 	}
 }

@@ -102,7 +102,9 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
 			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
-			return ResourceEngine.CalculateAdditionalNextTick (state, efficiency);
+			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, efficiency).ToBuilder ();
+			nextTickResources.Subtract (PopulationEngine.GetFullConsumedResources (state));
+			return nextTickResources.ToImmutable (); 
 		}
 		
 		public ImmutableDictionary<string, double> GetBuildingResources (string building)
@@ -125,7 +127,7 @@ namespace IncrementalSociety
 		{
 			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement", "Gathering Camp" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
-			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Wood", 50 } };
+			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Water", 100 }, { "Wood", 50 } };
 			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 200, 200);
 		}
 	}

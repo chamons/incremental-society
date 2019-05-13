@@ -43,17 +43,34 @@ namespace IncrementalSociety
 
 		public GameState ProcessTick (GameState state)
 		{
-			double effectivePopCap;
-			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state)))
-				effectivePopCap = state.PopulationCap;
-			else
-				effectivePopCap = FindEffectivePopCap (state);
-			
-			var consumedResources = GetRequirementsForPopulation (Math.Min (state.Population, effectivePopCap));
+			double effectivePopCap = FindEffectiveCap (state);
+			state = ConsumeResources (state, GetConsumedResources (state, effectivePopCap));
+			return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
+		}
+
+		GameState ConsumeResources (GameState state, ImmutableDictionary<string, double> consumedResources)
+		{
 			var currentResources = state.Resources.ToBuilder ();
 			currentResources.Subtract (consumedResources);
-			state = state.WithResources (currentResources);
-			return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
+			return state.WithResources (currentResources);
+		}
+
+		public ImmutableDictionary<string, double> GetFullConsumedResources (GameState state)
+		{
+			return GetConsumedResources (state, state.Population);
+		}
+
+		ImmutableDictionary<string, double> GetConsumedResources (GameState state, double effectivePopCap)
+		{
+			return GetRequirementsForPopulation (Math.Min (state.Population, effectivePopCap));
+		}
+
+		double FindEffectiveCap (GameState state)
+		{
+			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state)))
+				return state.PopulationCap;
+			else
+				return FindEffectivePopCap (state);
 		}
 
 		string FindMostMissingResource (GameState state)
@@ -93,7 +110,7 @@ namespace IncrementalSociety
 		public GameState IncreasePopulationCap (GameState state)
 		{
 			if (!CanIncreasePopulationCap (state))
-				throw new InvalidOperationException ($"Unable to decrease pop cap {state.PopulationCap}");
+				throw new InvalidOperationException ($"Unable to increase pop cap {state.PopulationCap}");
 			return state.WithPopulationCap (GetNextPopBreakpoint (state.PopulationCap));
 		}
 

@@ -11,6 +11,21 @@ namespace IncrementalSociety.Tests
 	public class PopulationEngineTests
 	{
 		[Fact]
+		public void GetFullConsumedResourcesForPop ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			state = state.WithPopulation (100);
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
+
+			var reqs = engine.GetFullConsumedResources (state);
+			Assert.Equal (100, reqs.AmountOf ("Water"));
+			
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 0.0));
+			reqs = engine.GetFullConsumedResources (state);
+			Assert.Equal (100, reqs.AmountOf ("Water"));
+		}
+		[Fact]
 		public void PopsRequireResourcesEachTick ()
 		{
 			var engine = Factories.CreatePopEngine ();

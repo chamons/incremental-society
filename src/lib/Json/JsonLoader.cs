@@ -10,9 +10,6 @@ namespace IncrementalSociety.Json
 {
 	public class JsonLoader
 	{
-		public string ActionsJSON { get; }
-		public ActionDeclarations Actions { get; }
-
 		public string BuildingsJSON { get; }
 		public BuildingDeclarations Buildings { get; }
 
@@ -25,11 +22,8 @@ namespace IncrementalSociety.Json
 		public string ResourcesJSON { get; }
 		public ResourceDeclarations Resources { get; }
 
-		public JsonLoader (string actions, string buildings, string game, string regions, string resources)
+		public JsonLoader (string buildings, string game, string regions, string resources)
 		{
-			ActionsJSON = actions;
-			Actions = JsonConvert.DeserializeObject<ActionDeclarations> (ActionsJSON);
-
 			BuildingsJSON = buildings;
 			Buildings = JsonConvert.DeserializeObject<BuildingDeclarations> (BuildingsJSON);
 

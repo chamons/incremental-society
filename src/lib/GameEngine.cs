@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
+using IncrementalSociety.Utilities;
 using Newtonsoft.Json;
 
 namespace IncrementalSociety
@@ -86,7 +88,8 @@ namespace IncrementalSociety
 		public GameState ProcessTick (GameState state)
 		{
 			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
-			return ResourceEngine.AddTickOfResources (state, efficiency);
+			state = ResourceEngine.AddTickOfResources (state, efficiency);
+			return PopulationEngine.ProcessTick (state);
 		}
 
 		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
@@ -106,6 +109,15 @@ namespace IncrementalSociety
 		{
 			return ResourceEngine.GetBuildingResources (building);
 		}
+		
+		public int GetBuildingTotal (GameState state) => state.AllBuildings ().Count ();
+		public int GetMaxBuildings (GameState state) => PopulationEngine.GetPopUnitsForTotalPopulation (state.Population);
+		public double GetHousingCapacity (GameState state) => PopulationEngine.GetHousingCapacity (state);
+		
+		public bool CanIncreasePopulationCap (GameState state) => PopulationEngine.CanIncreasePopulationCap (state); 
+		public bool CanDecreasePopulationCap (GameState state) => PopulationEngine.CanDecreasePopulationCap (state); 
+		public double GetPopCapDecrementAmount (GameState state) => PopulationEngine.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public double GetPopCapIncrementAmount (GameState state) => PopulationEngine.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 
 		public const int CurrentVersion = 1; 
 

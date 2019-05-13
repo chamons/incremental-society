@@ -101,7 +101,7 @@ namespace IncrementalSociety.Tests
 
 		static JsonLoader CreateJsonLoader ()
 		{
-			return new JsonLoader ("", BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
+			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
 		}
 
 		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)

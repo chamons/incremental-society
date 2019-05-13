@@ -79,13 +79,12 @@ namespace IncrementalSociety.Web.Services
 
 		async Task<JsonLoader> LoadXML ()
 		{
-			string actionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/actions.json");
 			string buildingsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/buildings.json");
 			string gameJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/game.json");
 			string regionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/regions.json");
 			string resourcesJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/resources.json");
 
-			return new JsonLoader (actionsJson, buildingsJson, gameJson, regionsJson, resourcesJson);
+			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson);
 		}
 
 		// Shared between multiple consumers

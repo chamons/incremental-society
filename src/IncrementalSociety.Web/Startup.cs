@@ -11,6 +11,7 @@ namespace IncrementalSociety.Web
 			services.AddSingleton<ActionService> ();
 			services.AddSingleton<BuildingService> ();
 			services.AddSingleton<GameService> ();
+			services.AddSingleton<PopulationService> ();
 			services.AddSingleton<StyleService> ();
 			services.AddSingleton<ExceptionNotificationService> ();
 		}

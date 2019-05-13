@@ -93,9 +93,4 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("Amount")]
 		public double Amount { get; set; }
 	}
-
-	public class ActionDeclarations
-	{
-		public List<string> Actions { get; set; }
-	}
 }

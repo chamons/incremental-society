@@ -32,10 +32,7 @@ namespace IncrementalSociety.Web.Services
 
 		void ResetActionList ()
 		{
-			Actions = new List<string> (GameService.Loader.Actions.Actions);
-			Actions.Add (BuildText);
-			Actions.Add (DestroyText);
-			Actions.Add (NewGameText);
+			Actions = new List <string> () { BuildText, DestroyText, NewGameText };
 		}
 
 		void ReplaceActionWithCancel ()

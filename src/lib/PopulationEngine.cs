@@ -77,11 +77,11 @@ namespace IncrementalSociety
 				return state.WithPopulation (Math.Max (state.Population + rate, PopMin));
 		}
 
+		public double GetHousingCapacity (GameState state) => state.AllBuildings ().Sum (x => ResourceEngine.FindBuilding (x).HousingCapacity);
+
 		public bool CanIncreasePopulationCap (GameState state)
 		{
-			double nextBreakpoint = GetNextPopBreakpoint (state.PopulationCap);
-			double builtPopRoom = state.AllBuildings ().Sum (x => ResourceEngine.FindBuilding (x).HousingCapacity);
-			return builtPopRoom >= nextBreakpoint;
+			return GetHousingCapacity (state) >= GetNextPopBreakpoint (state.PopulationCap);
 		}
 
 		public GameState IncreasePopulationCap (GameState state)
@@ -122,7 +122,7 @@ namespace IncrementalSociety
 			}
 		}
 
-		double GetNextPopBreakpoint (double current)
+		public double GetNextPopBreakpoint (double current)
 		{
 			if (current < 1000)
 				return current + 100;
@@ -140,7 +140,7 @@ namespace IncrementalSociety
 				return current + 50000;
 		}
 
-		double GetPreviousPopBreakpoint (double current)
+		public double GetPreviousPopBreakpoint (double current)
 		{
 			if (current == PopMin)
 				return current;

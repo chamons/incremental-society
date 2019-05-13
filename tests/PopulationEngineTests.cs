@@ -23,6 +23,17 @@ namespace IncrementalSociety.Tests
 			reqs = engine.GetFullRequirementsForNextTick (state);
 			Assert.Equal (200, reqs.AmountOf ("Water"));
 		}
+		
+		[Fact]
+		public void PopsActuallyConsumeResourcesOnTick ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState ();
+			state = state.WithPopulation (100);
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
+			state = engine.ProcessTick(state);
+			Assert.Equal (100, state.Resources.AmountOf ("Water"));
+		}
 
 		[Fact]
 		public void PopsDoNotIncreaseLinearly ()

@@ -20,7 +20,7 @@
 	
 	int CurrentBuildings => PopulationService.CurrentBuildings;
 	int MaxBuildings => PopulationService.MaxBuildings;
-	bool OverBuilt => CurrentBuildings < MaxBuildings;
+	bool OverBuilt => CurrentBuildings > MaxBuildings;
 
 	protected override void OnInit ()
 	{

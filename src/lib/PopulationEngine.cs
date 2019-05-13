@@ -32,22 +32,28 @@ namespace IncrementalSociety
 			PopMin = json.Game.MinPopulation;
 		}
 
-		public ImmutableDictionary<string, double> GetFullRequirementsForNextTick (GameState state)
+		public ImmutableDictionary<string, double> GetFullRequirementsForNextTick (GameState state) => GetRequirementsForPopulation (state.Population);
+
+		public ImmutableDictionary<string, double> GetRequirementsForPopulation (double population)
 		{
 			var amount = PopNeed.ToBuilder ();
-			amount.Multiply (state.Population);
+			amount.Multiply (population);
 			return amount.ToImmutable ();
 		}
 
 		public GameState ProcessTick (GameState state)
 		{
-			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state))) {
-				return GrowAtRate (state, GetGrowthRate (state.Population, state.PopulationCap), state.PopulationCap);
-			}
-			else {
-				double effectivePopCap = FindEffectivePopCap (state);
-				return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
-			}
+			double effectivePopCap;
+			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state)))
+				effectivePopCap = state.PopulationCap;
+			else
+				effectivePopCap = FindEffectivePopCap (state);
+			
+			var consumedResources = GetRequirementsForPopulation (Math.Min (state.Population, effectivePopCap));
+			var currentResources = state.Resources.ToBuilder ();
+			currentResources.Subtract (consumedResources);
+			state = state.WithResources (currentResources);
+			return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
 		}
 
 		string FindMostMissingResource (GameState state)

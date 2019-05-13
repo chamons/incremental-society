@@ -14,6 +14,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Water"",
+	    			""basic"": true
 			},
 			{
 				""name"": ""Charcoal"",

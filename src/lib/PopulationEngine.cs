@@ -32,72 +32,103 @@ namespace IncrementalSociety
 			PopMin = json.Game.MinPopulation;
 		}
 
-		public ImmutableDictionary<string, double> GetFullRequirementsForNextTick (GameState state) => GetRequirementsForPopulation (state.Population);
-
-		public ImmutableDictionary<string, double> GetRequirementsForPopulation (double population)
+		public ImmutableDictionary<string, double> GetRequirementsForPopulation (GameState state)
 		{
 			var amount = PopNeed.ToBuilder ();
-			amount.Multiply (population);
+			amount.Multiply (state.Population);
 			return amount.ToImmutable ();
 		}
 
 		public GameState ProcessTick (GameState state)
 		{
+			// Step 0 - Determine how many people our income supports
 			double effectivePopCap = FindEffectiveCap (state);
-			state = ConsumeResources (state, GetConsumedResources (state, effectivePopCap));
-			return GrowAtRate (state, GetGrowthRate (state.Population, effectivePopCap), state.PopulationCap);
+			
+			// Step 1 - Determine how many resources we need for our current population
+			var neededResource = GetRequirementsForPopulation (state);
+			
+			// Step 2 - Consume if we have enough, else consume as much as we can
+			bool starved = !state.Resources.HasMoreThan (neededResource);
+			state = ConsumeResources (state, neededResource);
+			
+			// Step 3a Get new desired growth rate
+			double growthRate = GetGrowthRate (state.Population, effectivePopCap);
+			
+			// Step 3b If we starved some people, multiple negative by x5
+			if (starved)
+				growthRate *= 5;
+			
+			// Step 3c If less than 1 person round "up/down" to prevent very small changes from taking forever
+			if (growthRate < 0)
+				growthRate = Math.Min (growthRate, -1);
+			else
+				growthRate = Math.Max (growthRate, 1);
+			
+			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
+			if (growthRate > 0 && state.Population + growthRate < effectivePopCap)
+				return state;
+
+			// Step 4 Grow!
+			return GrowAtRate (state, growthRate, effectivePopCap);
 		}
 
 		GameState ConsumeResources (GameState state, ImmutableDictionary<string, double> consumedResources)
 		{
 			var currentResources = state.Resources.ToBuilder ();
 			currentResources.Subtract (consumedResources);
+			
+			// Don't go negative when consuming population resources
+			foreach (var resource in consumedResources.Keys.Where (x => currentResources[x] < 0).ToList ())
+				currentResources [resource] = 0;
+
 			return state.WithResources (currentResources);
 		}
 
-		public ImmutableDictionary<string, double> GetFullConsumedResources (GameState state)
+		public double FindEffectiveCap (GameState state)
 		{
-			return GetConsumedResources (state, state.Population);
-		}
-
-		ImmutableDictionary<string, double> GetConsumedResources (GameState state, double effectivePopCap)
-		{
-			return GetRequirementsForPopulation (Math.Min (state.Population, effectivePopCap));
-		}
-
-		double FindEffectiveCap (GameState state)
-		{
-			if (state.Resources.HasMoreThan (GetFullRequirementsForNextTick (state)))
+			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
+			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state)))
 				return state.PopulationCap;
 			else
-				return FindEffectivePopCap (state);
+				return FindEffectivePopCap (state, resourcesPerTick);
+		}
+		
+		public bool IsPopulationStarving (GameState state) 
+		{
+			var neededResource = GetRequirementsForPopulation (state);
+			var nextTickResources = state.Resources.ToBuilder ();
+			nextTickResources.Add (ResourceEngine.CalculateAdditionalNextTick (state, 1.0));
+			return !nextTickResources.ToImmutable ().HasMoreThan (neededResource);
 		}
 
-		string FindMostMissingResource (GameState state)
+		string FindMostMissingResource (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
 		{
-			var delta = state.Resources.ToBuilder ();
-			delta.Subtract (GetFullRequirementsForNextTick (state));
+			var delta = resourcesPerTick.ToBuilder ();
+			delta.Subtract (GetRequirementsForPopulation (state));
 			foreach (var need in PopNeed)
 				delta[need.Key] = delta.AmountOf (need.Key) / need.Value;
 			return delta.OrderBy (x => x.Value).Select (x => x.Key).First ();
 		}
 
-		double FindEffectivePopCap (GameState state)
+		double FindEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
 		{
-			string mostMissingResource = FindMostMissingResource (state);
+			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
 
-			var delta = state.Resources.ToBuilder ();
-			delta.Subtract (GetFullRequirementsForNextTick (state));
+			var delta = resourcesPerTick.ToBuilder ();
+			delta.Subtract (GetRequirementsForPopulation (state));
 			double peopleShort = delta.AmountOf (mostMissingResource) / PopNeed.AmountOf (mostMissingResource);
 			return state.Population + peopleShort;
 		}
 
 		GameState GrowAtRate (GameState state, double rate, double cap)
 		{
+			double newPopulation;
 			if (rate > 0)
-				return state.WithPopulation (Math.Min (state.Population + rate, cap));
+				newPopulation = Math.Min (state.Population + rate, cap);
 			else
-				return state.WithPopulation (Math.Max (state.Population + rate, PopMin));
+				newPopulation = Math.Max (state.Population + rate, PopMin);
+
+			return state.WithPopulation (newPopulation);
 		}
 
 		public double GetHousingCapacity (GameState state) => state.AllBuildings ().Sum (x => ResourceEngine.FindBuilding (x).HousingCapacity);

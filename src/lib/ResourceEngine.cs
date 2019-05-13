@@ -13,13 +13,15 @@ namespace IncrementalSociety
 	{
 		JsonLoader Json;
 		YieldCache Yields;
-		
+		HashSet<string> BasicResources;
+
 		public int RegionCapacity => Json.Game.RegionCapacity;
 		
 		public ResourceEngine (JsonLoader json)
 		{
 			Json = json;
 			Yields = new YieldCache ();
+			BasicResources = new HashSet <string> (json.Resources.Resources.Where (x => x.Basic).Select (x => x.Name)); 
 		}
 		
 		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
@@ -70,11 +72,15 @@ namespace IncrementalSociety
 			foreach (var building in state.AllBuildings ()) {
 				additional.Add (GetBuildingResources (building));
 
+				if (efficiency != 1) {
+					foreach (var nonBasicResource in additional.Keys.Where (x => !BasicResources.Contains (x)).ToList ())
+						additional[nonBasicResource] = additional[nonBasicResource] * efficiency;
+				}
+
 				var conversions = GetBuildingConversionResources (building);
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
 					additional.Add (conversion.Resources);
 			}
-			additional.Multiply (efficiency);
 			return additional.ToImmutable ();
 		}
 

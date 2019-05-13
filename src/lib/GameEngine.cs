@@ -85,10 +85,18 @@ namespace IncrementalSociety
 			return ResourceEngine.GetBuildingConversionResources (name);
 		}
 
+		public double GetEfficiencyOfNonBasicGoods (GameState state)
+		{
+			if (IsPopulationStarving (state))
+				return 0;
+			return PopulationEngine.GetPopulationEfficiency (state);
+		}
+		
+		public double FindEffectivePopulationCap (GameState state) => PopulationEngine.FindEffectiveCap (state);
+
 		public GameState ProcessTick (GameState state)
 		{
-			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
-			state = ResourceEngine.AddTickOfResources (state, efficiency);
+			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
 			return PopulationEngine.ProcessTick (state);
 		}
 
@@ -101,9 +109,8 @@ namespace IncrementalSociety
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
-			double efficiency = PopulationEngine.GetPopulationEfficiency (state);
-			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, efficiency).ToBuilder ();
-			nextTickResources.Subtract (PopulationEngine.GetFullConsumedResources (state));
+			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiencyOfNonBasicGoods (state)).ToBuilder ();
+			nextTickResources.Subtract (PopulationEngine.GetRequirementsForPopulation (state));
 			return nextTickResources.ToImmutable (); 
 		}
 		
@@ -122,6 +129,7 @@ namespace IncrementalSociety
 		public bool CanDecreasePopulationCap (GameState state) => PopulationEngine.CanDecreasePopulationCap (state); 
 		public double GetPopCapDecrementAmount (GameState state) => PopulationEngine.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public double GetPopCapIncrementAmount (GameState state) => PopulationEngine.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
 
 		public const int CurrentVersion = 1; 
 
@@ -129,7 +137,7 @@ namespace IncrementalSociety
 		{
 			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement", "Gathering Camp" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
-			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Water", 100 }, { "Wood", 50 } };
+			var resources = new Dictionary<string, double> { { "Food", 50 }, { "Water", 100 }, { "Wood", 50 } };
 			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 200, 200);
 		}
 	}

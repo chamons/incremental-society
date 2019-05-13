@@ -83,10 +83,11 @@ namespace IncrementalSociety.Tests
 			var lessResources = engine.CalculateAdditionalNextTick (state, .9);
 			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
 
-			Assert.True (baseResources.AmountOf("Charcoal") > lessResources.AmountOf ("Charcoal"));
-			Assert.True (baseResources.AmountOf("Wood") < lessResources.AmountOf ("Wood"));
-			Assert.True (extraResources.AmountOf ("Charcoal") > baseResources.AmountOf ("Charcoal"));
-			Assert.True (extraResources.AmountOf ("Wood") < baseResources.AmountOf ("Wood"));
+			// Conversions should ignore efficiency
+			Assert.Equal (baseResources.AmountOf("Charcoal"), lessResources.AmountOf ("Charcoal"));
+			Assert.Equal (baseResources.AmountOf("Wood"), lessResources.AmountOf ("Wood"));
+			Assert.Equal (extraResources.AmountOf ("Charcoal"), baseResources.AmountOf ("Charcoal"));
+			Assert.Equal (extraResources.AmountOf ("Wood"), baseResources.AmountOf ("Wood"));
 		}
 
 		[Fact]

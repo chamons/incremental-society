@@ -1,13 +1,16 @@
 {
     "resources": [
         {
-            "name": "Food"
+            "name": "Food",
+            "basic": true
         },
         {
-            "name": "Water"
+            "name": "Water",
+            "basic": true
         },
         {
-            "name": "Wood"
+            "name": "Wood",
+            "basic": true
         },
         {
             "name": "Clay"

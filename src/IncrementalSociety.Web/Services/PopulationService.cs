@@ -18,6 +18,8 @@ namespace IncrementalSociety.Web.Services
 		public int CurrentBuildings => GameService.Engine.GetBuildingTotal (State);
 		public int MaxBuildings => GameService.Engine.GetMaxBuildings (State);
 		public double CurrentHousing => GameService.Engine.GetHousingCapacity (State);
+		public double Efficiency => GameService.Engine.GetEfficiencyOfNonBasicGoods (State);
+		public double EffectiveCap => GameService.Engine.FindEffectivePopulationCap (State);
 
 		public bool CanDecrement => GameService.Engine.CanDecreasePopulationCap (State);
 		public bool CanIncrement => GameService.Engine.CanIncreasePopulationCap (State);
@@ -28,5 +30,6 @@ namespace IncrementalSociety.Web.Services
 			}
 		}
 		public string CapIncrementAmount => "+" + GameService.Engine.GetPopCapIncrementAmount (State);
+		public bool IsPopulationStarving => GameService.Engine.IsPopulationStarving (State);
 	}
 }

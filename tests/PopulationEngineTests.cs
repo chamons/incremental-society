@@ -11,31 +11,16 @@ namespace IncrementalSociety.Tests
 	public class PopulationEngineTests
 	{
 		[Fact]
-		public void GetFullConsumedResourcesForPop ()
-		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
-			state = state.WithPopulation (100);
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
-
-			var reqs = engine.GetFullConsumedResources (state);
-			Assert.Equal (100, reqs.AmountOf ("Water"));
-			
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 0.0));
-			reqs = engine.GetFullConsumedResources (state);
-			Assert.Equal (100, reqs.AmountOf ("Water"));
-		}
-		[Fact]
-		public void PopsRequireResourcesEachTick ()
+		public void GetRequiredResourcesForPop ()
 		{
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState ();
 			state = state.WithPopulation (100);
 
-			var reqs = engine.GetFullRequirementsForNextTick (state);
+			var reqs = engine.GetRequirementsForPopulation (state);
 			Assert.Equal (100, reqs.AmountOf ("Water"));
 			state = state.WithPopulation (200);
-			reqs = engine.GetFullRequirementsForNextTick (state);
+			reqs = engine.GetRequirementsForPopulation (state);
 			Assert.Equal (200, reqs.AmountOf ("Water"));
 		}
 		
@@ -168,6 +153,7 @@ namespace IncrementalSociety.Tests
 
 			state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
+			Assert.True (engine.IsPopulationStarving (state));
 		}
 
 		[Fact]

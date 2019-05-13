@@ -4,9 +4,14 @@
 @inject PopulationService PopulationService
 
 <div id="PopStats">
-	Population: @Population / @PopulationCap
+	Population: @Population / @PopulationCap (@PopulationService.EffectiveCap)
+	@if (PopulationService.IsPopulationStarving)
+	{
+		<div class="red">Population is starving and can not shrink further! All non-crtiical resource collection haulted.</div>
+	}
 	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>
+	<div>Efficiency: @PopulationService.Efficiency</div>
 	<button class="@(@PopulationService.CanDecrement ? "disabled" : "")" onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
 	<button class="@(@PopulationService.CanIncrement ? "disabled" : "")" onclick="@Increment">@PopulationService.CapIncrementAmount</button>
 </div>
@@ -17,7 +22,7 @@
 	double Population => Round (GameService.State.Population);
 	double PopulationCap => Round (GameService.State.PopulationCap);
 	double CurrentHousing => Round (PopulationService.CurrentHousing);
-	
+
 	int CurrentBuildings => PopulationService.CurrentBuildings;
 	int MaxBuildings => PopulationService.MaxBuildings;
 	bool OverBuilt => CurrentBuildings > MaxBuildings;

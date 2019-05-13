@@ -103,6 +103,11 @@
 			"name": "Crude Settlement",
 			"prevent_destory": true,
 			"valid_regions": [ "Plains", "Forest" ],
+			"yield": [
+				{ "Name": "Food", "Amount" : 5 },
+				{ "Name": "Water", "Amount" : 2 },
+				{ "Name": "Wood", "Amount" : 1 }
+			],
 			"conversion_yield": [
 				{
 					"name": "Research",

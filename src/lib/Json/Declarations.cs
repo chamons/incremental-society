@@ -8,7 +8,7 @@ namespace IncrementalSociety.Json
 	public class ResourceDeclaration
 	{
 		public string Name { get; set; }
-		public string Type { get; set; }
+		public bool Basic { get; set; }
 		[JsonProperty ("Image_has_age_prefix")]
 		public bool ImageHasAgePrefix { get; set; }
 	}

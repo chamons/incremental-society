@@ -53,6 +53,9 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
+		
+		[JsonProperty ("prevent_destory")]
+		public bool PreventDestroy { get; set; }
 
 		[JsonProperty ("valid_regions")]
 		public string[] ValidRegions { get; set; }

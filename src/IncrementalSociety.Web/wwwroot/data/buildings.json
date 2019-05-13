@@ -101,6 +101,7 @@
 		},
 		{
 			"name": "Crude Settlement",
+			"prevent_destory": true,
 			"valid_regions": [ "Plains", "Forest" ],
 			"conversion_yield": [
 				{

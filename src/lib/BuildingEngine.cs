@@ -60,6 +60,11 @@ namespace IncrementalSociety
 				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} for but invalid index {buildingIndex}");
 
 			string buildingName = area.Buildings[buildingIndex];
+			
+			var building = ResourceEngine.FindBuilding (buildingName);
+			if (building.PreventDestroy)
+				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} but {buildingName} is marked unable to destory");
+
 
 			var newArea = area.WithBuildings (area.Buildings.Remove (buildingName));
 			return UpdateStateWithArea (state, area, newArea, region);

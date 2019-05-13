@@ -17,6 +17,8 @@ namespace IncrementalSociety.Web.Services
 			GameService = gameService;
 		}
 
+		public bool CanDestoryBuilding (string buildingName) => GameService.Engine.CanDestoryBuilding (buildingName);
+
 		public void OnBuildAreaSelection (Area area)
 		{
 			var region = State.Regions.First (x => x.Areas.Contains (area));

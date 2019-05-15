@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
@@ -74,6 +75,13 @@ namespace IncrementalSociety.Tests
 				]
 			},
 			{
+				""name"": ""Watering Hole"",
+				""valid_regions"": [""Plains""],
+				""yield"": [
+					{ ""Name"": ""Water"", ""Amount"" : 1.7 }
+				]
+			},
+			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}
@@ -94,7 +102,7 @@ namespace IncrementalSociety.Tests
 
 		const string GameJSON = @"{
 			""population_needs"": [	{
-				""Name"": ""Water"", ""Amount"" : 1,
+				""Name"": ""Water"", ""Amount"" : .01,
 			}],
 			""region_capacity"" :  2,
 			""min_population"" :  100
@@ -105,7 +113,7 @@ namespace IncrementalSociety.Tests
 			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
 		}
 
-		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)
+		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)
 		{
 			var buildings = new List<string> ();
 			for (int i = 0 ; i < camps ; ++i)
@@ -114,6 +122,8 @@ namespace IncrementalSociety.Tests
 				buildings.Add ("Workshop");
 			for (int i = 0 ; i < smokers ; ++i)
 				buildings.Add ("Smoker");
+			for (int i = 0 ; i < holes ; ++i)
+				buildings.Add ("Watering Hole");
 			return CreateGameState (new Area (AreaType.Plains, buildings));
 		}
 

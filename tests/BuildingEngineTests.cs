@@ -97,10 +97,11 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.Equal (3, buildings.Count);
+			Assert.Equal (4, buildings.Count);
 			Assert.Contains (buildings, x => x.BuildingName == "Gathering Camp");
 			Assert.Contains (buildings, x => x.BuildingName == "Workshop");
 			Assert.Contains (buildings, x => x.BuildingName == "Smoker");
+			Assert.Contains (buildings, x => x.BuildingName == "Watering Hole");
 		}
 
 		[Fact]

@@ -13,6 +13,7 @@ namespace IncrementalSociety
 	{
 		ResourceEngine ResourceEngine;
 		ImmutableDictionary<string, double> PopNeed;
+		HashSet <string> PopNeedNames;
 		double PopMin;
 		YieldCache Yields;
 
@@ -28,14 +29,17 @@ namespace IncrementalSociety
 			var totalNeed = ImmutableDictionary.CreateBuilder<string, double> ();
 			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
 			PopNeed = totalNeed.ToImmutable ();
+			PopNeedNames = new HashSet<string> (PopNeed.Keys);
 
 			PopMin = json.Game.MinPopulation;
 		}
+		
+		public ImmutableDictionary<string, double> GetRequirementsForPopulation (GameState state) => GetRequirementsForPopulation (state.Population);
 
-		public ImmutableDictionary<string, double> GetRequirementsForPopulation (GameState state)
+		public ImmutableDictionary<string, double> GetRequirementsForPopulation (double population)
 		{
 			var amount = PopNeed.ToBuilder ();
-			amount.Multiply (state.Population);
+			amount.Multiply (population);
 			return amount.ToImmutable ();
 		}
 
@@ -43,6 +47,11 @@ namespace IncrementalSociety
 		{
 			// Step 0 - Determine how many people our income supports
 			double effectivePopCap = FindEffectiveCap (state);
+
+#if DEBUG
+			if (!effectivePopCap.HasValue())
+				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
+#endif
 			
 			// Step 1 - Determine how many resources we need for our current population
 			var neededResource = GetRequirementsForPopulation (state);
@@ -65,7 +74,7 @@ namespace IncrementalSociety
 				growthRate = Math.Max (growthRate, 1);
 			
 			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
-			if (growthRate > 0 && state.Population + growthRate < effectivePopCap)
+			if (growthRate > 0 && state.Population + growthRate > effectivePopCap)
 				return state;
 
 			// Step 4 Grow!
@@ -87,7 +96,8 @@ namespace IncrementalSociety
 		public double FindEffectiveCap (GameState state)
 		{
 			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
-			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state)))
+
+			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state.PopulationCap)))
 				return state.PopulationCap;
 			else
 				return FindEffectivePopCap (state, resourcesPerTick);
@@ -107,7 +117,7 @@ namespace IncrementalSociety
 			delta.Subtract (GetRequirementsForPopulation (state));
 			foreach (var need in PopNeed)
 				delta[need.Key] = delta.AmountOf (need.Key) / need.Value;
-			return delta.OrderBy (x => x.Value).Select (x => x.Key).First ();
+			return delta.OrderBy (x => x.Value).Select (x => x.Key).Where (x => PopNeedNames.Contains (x)).First ();
 		}
 
 		double FindEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)

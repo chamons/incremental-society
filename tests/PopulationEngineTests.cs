@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
 
+using Newtonsoft.Json;
 using Xunit;
 
 namespace IncrementalSociety.Tests
@@ -18,10 +21,10 @@ namespace IncrementalSociety.Tests
 			state = state.WithPopulation (100);
 
 			var reqs = engine.GetRequirementsForPopulation (state);
-			Assert.Equal (100, reqs.AmountOf ("Water"));
+			Assert.Equal (1, reqs.AmountOf ("Water"));
 			state = state.WithPopulation (200);
 			reqs = engine.GetRequirementsForPopulation (state);
-			Assert.Equal (200, reqs.AmountOf ("Water"));
+			Assert.Equal (2, reqs.AmountOf ("Water"));
 		}
 		
 		[Fact]
@@ -30,9 +33,9 @@ namespace IncrementalSociety.Tests
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState ();
 			state = state.WithPopulation (100);
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 2.0));
 			state = engine.ProcessTick(state);
-			Assert.Equal (100, state.Resources.AmountOf ("Water"));
+			Assert.Equal (1, state.Resources.AmountOf ("Water"));
 		}
 
 		[Fact]
@@ -88,10 +91,10 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void PopsGrowToCapIfNeedsMet ()
+		public void PopsGrowIfNeedsMet ()
 		{
 			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
+			var state = Factories.CreateGameState (camps: 1);
 			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
 
 			double popBefore = state.Population;
@@ -180,6 +183,39 @@ namespace IncrementalSociety.Tests
 			double lessEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.True (lessEfficiency < baseEfficiency);
 			Assert.True (lessEfficiency != 0);
+		}
+
+		[Fact]
+		public void ProcessTickGrows ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
+			state = state.WithPopulation (100).WithPopulationCap (200);
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population > 100 && state.Population < 200);
+		}
+
+		[Fact]
+		public void ProcessTickShrinkThenGrows ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (smokers: 1);
+			state = state.WithPopulation (100).WithPopulationCap (200);
+			state = state.WithResources (Immutable.CreateDictionary ("Water", 1.0));
+			
+			// Make sure Charcoal conversion doesn't get selected 
+			state = state.WithResources (Immutable.CreateDictionary ("Charcoal", 20.0));
+
+			for (int i = 0 ; i < 10; ++i)
+				state = engine.ProcessTick (state);
+			Assert.True (state.Population < 102);
+
+			var buildingEngine  = Factories.CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
+
+			for (int i = 0 ; i < 10; ++i)
+				state = engine.ProcessTick (state);
+			Assert.True (state.Population > 160);
 		}
 	}
 }

@@ -7,7 +7,7 @@
 	Population: @Population / @PopulationCap (@PopulationService.EffectiveCap)
 	@if (PopulationService.IsPopulationStarving)
 	{
-		<div class="red">Population is starving and can not shrink further! All non-crtiical resource collection haulted.</div>
+		<div class="red">Population is starving and can not shrink further! All non-critical resource collection haulted.</div>
 	}
 	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>

@@ -12,8 +12,8 @@
 	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>
 	<div>Efficiency: @PopulationService.Efficiency</div>
-	<button class="@(@PopulationService.CanDecrement ? "disabled" : "")" onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
-	<button class="@(@PopulationService.CanIncrement ? "disabled" : "")" onclick="@Increment">@PopulationService.CapIncrementAmount</button>
+	<button disabled=@(!@PopulationService.CanDecrement) onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
+	<button disabled=@(!@PopulationService.CanIncrement) onclick="@Increment">@PopulationService.CapIncrementAmount</button>
 </div>
 @functions {
 

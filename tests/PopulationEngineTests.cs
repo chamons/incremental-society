@@ -89,6 +89,26 @@ namespace IncrementalSociety.Tests
 			double highOverRate = engine.GetGrowthRate (110, 100);
 			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
 		}
+		
+		[Fact]
+		public void GetHousingCapactiy ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
+			Assert.Equal (200, engine.GetHousingCapacity (state));
+			state = Factories.CreateGameState (camps: 2);
+			Assert.Equal (400, engine.GetHousingCapacity (state));
+		}
+
+		[Fact]
+		public void GetNextAndPreviousBreakpoint ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			Assert.Equal (200, engine.GetNextPopBreakpoint (100)); 
+			Assert.Equal (100, engine.GetPreviousPopBreakpoint (100)); 
+			Assert.Equal (900, engine.GetPreviousPopBreakpoint (1000)); 
+			Assert.Equal (1200, engine.GetNextPopBreakpoint (1000)); 
+		}
 
 		[Fact]
 		public void PopsGrowIfNeedsMet ()

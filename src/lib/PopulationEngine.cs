@@ -66,12 +66,22 @@ namespace IncrementalSociety
 			// Step 3b If we starved some people, multiple negative by x5
 			if (starved)
 				growthRate *= 5;
-			
-			// Step 3c If less than 1 person round "up/down" to prevent very small changes from taking forever
-			if (growthRate < 0)
-				growthRate = Math.Min (growthRate, -1);
-			else
-				growthRate = Math.Max (growthRate, 1);
+
+			// Step 3c Tweak the growth rate to be "nicer":
+			// - If we're within one of the cap, round our rate to make a nice whole number
+			// - Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
+			if (growthRate < 0) {
+				if (state.Population - effectivePopCap < 1)
+					growthRate = effectivePopCap - state.Population; 
+				else
+					growthRate = Math.Min (growthRate, -1);
+			}
+			else {
+				if (effectivePopCap - state.Population < 1)
+					growthRate = state.Population - effectivePopCap ; 
+				else
+					growthRate = Math.Max (growthRate, 1);
+			}
 			
 			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
 			if (growthRate > 0 && state.Population + growthRate > effectivePopCap)

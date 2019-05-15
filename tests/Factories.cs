@@ -77,6 +77,7 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Watering Hole"",
 				""valid_regions"": [""Plains""],
+				""prevent_destory"": true,
 				""yield"": [
 					{ ""Name"": ""Water"", ""Amount"" : 1.7 }
 				]

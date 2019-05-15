@@ -90,6 +90,14 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Destroy (state, state.Regions[0].Name, 0, 1));
 		}
+		
+		[Fact]
+		public void CanNotDestoryProtectedBuildings ()
+		{
+			GameState state = Factories.CreateGameState (holes: 1);
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.Throws<InvalidOperationException> (() => engine.Destroy (state, state.Regions[0].Name, 0, 0));
+		}
 
 		[Fact]
 		public void ReturnsOnlyValidBuildingsForArea ()

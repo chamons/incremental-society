@@ -213,6 +213,9 @@ namespace IncrementalSociety.Tests
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population > 100 && state.Population < 200);
+			for (int i = 0 ; i < 20; ++i)
+				state = engine.ProcessTick (state);
+			Assert.Equal (200, state.Population);
 		}
 
 		[Fact]
@@ -226,16 +229,16 @@ namespace IncrementalSociety.Tests
 			// Make sure Charcoal conversion doesn't get selected 
 			state = state.WithResources (Immutable.CreateDictionary ("Charcoal", 20.0));
 
-			for (int i = 0 ; i < 10; ++i)
+			for (int i = 0 ; i < 20; ++i)
 				state = engine.ProcessTick (state);
-			Assert.True (state.Population < 102);
+			Assert.Equal (100, state.Population);
 
 			var buildingEngine  = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
-			for (int i = 0 ; i < 10; ++i)
+			for (int i = 0 ; i < 20; ++i)
 				state = engine.ProcessTick (state);
-			Assert.True (state.Population > 160);
+			Assert.Equal (170, state.Population);
 		}
 	}
 }

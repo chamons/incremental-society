@@ -78,7 +78,7 @@ namespace IncrementalSociety
 			}
 			else {
 				if (effectivePopCap - state.Population < 1)
-					growthRate = state.Population - effectivePopCap ; 
+					growthRate = effectivePopCap - state.Population; 
 				else
 					growthRate = Math.Max (growthRate, 1);
 			}

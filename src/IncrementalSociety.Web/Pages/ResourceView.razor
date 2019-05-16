@@ -29,11 +29,7 @@
 
 	// Round to three places for display
 	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name) => Math.Round (resources.AmountOf (name), 3);
-	
-	public double GetResourceStroage (GameState state, string name)
-	{
-		return ResourceStorage.AmountOf (name);
-	}
+	public double GetResourceStroage (GameState state, string name) => ResourceStorage.AmountOf (name);
 
 	protected override void OnInit ()
 	{

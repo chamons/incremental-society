@@ -113,11 +113,9 @@ namespace IncrementalSociety
 			return additional.ToImmutable ();
 		}
 
-		public ImmutableDictionary<string, double> GetBuildingResources (string name)
-		{
-			var building = FindBuilding (name);
-			return Yields.Total (building.Yield);
-		}
+		public ImmutableDictionary<string, double> GetBuildingResources (string name) => Yields.Total (FindBuilding (name).Yield);
+		public ImmutableDictionary<string, double> GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
+		public ImmutableDictionary<string, double> GetBuildingStorage (string name) => Yields.Total (FindBuilding (name).Storage);
 
 		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
 		{

@@ -7,11 +7,21 @@
 
 <div>
 	<div class="d-flex flex-column building" style="background-color:@BackgroundColor;" onclick=@OnClick>
-		<p class="building-title" >@BuildingName</p>
+		<p class="building-title">@BuildingName</p>
 		@if (HasBuilding) {
 			@if (Resources.AsNotNull ().Any ()) {
 				<div class="d-flex flex-wrap resource-line">
 				@foreach (var res in Resources.AsNotNull ()) {
+					<div class="building-resource d-flex align-items-center">
+						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
+						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
+					</div>
+				}
+				</div>
+			}
+			@if (SecondaryResources.AsNotNull ().Any ()) {
+				<div class="d-flex flex-wrap resource-line gray">
+				@foreach (var res in SecondaryResources.AsNotNull ()) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
 						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
@@ -42,6 +52,9 @@
 	
 	[Parameter]
 	List<(bool Enabled, ImmutableDictionary<string, double> Resources)> Conversions { get; set; }
+	
+	[Parameter]
+	ImmutableDictionary<string, double> SecondaryResources { get; set; }
 	
 	[Parameter]
 	string BackgroundColor { get; set; }

@@ -1,3 +1,5 @@
+@using System.Collections.Immutable
+
 @using IncrementalSociety.Web.Services
 @using IncrementalSociety.Model
 
@@ -15,13 +17,14 @@
 					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
-					@foreach (var building in GameService.Engine.GetValidBuildingsForArea (@Area))
+					@foreach (string building in GameService.Engine.GetValidBuildingsForArea (@Area))
 					{
 						<BuildingView 
-							BuildingName="@building.BuildingName"
-							Resources="@building.Cost"
-							BackgroundColor="@BuildingBackgroundColor(building.BuildingName)"
-							OnClick="@(() => OnSelection(@building.BuildingName))"
+							BuildingName="@building"
+							Resources="@GetBuildingCost(@building)"
+							SecondaryResources="@GetBuildingStorage(@building)"
+							BackgroundColor="@BuildingBackgroundColor(building)"
+							OnClick="@(() => OnSelection(@building))"
 							ColorResourcesAsDelta=false />
 					}	
 				</div>
@@ -36,6 +39,9 @@
 	int AreaIndex { get; set; }
 	Area Area => Region.Areas[AreaIndex];
 	string AreaName => Area.Type.ToString ();
+
+	ImmutableDictionary<string, double> GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
+	ImmutableDictionary<string, double> GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (name);
 
 	protected override void OnInit ()
 	{

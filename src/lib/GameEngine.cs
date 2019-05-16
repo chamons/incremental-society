@@ -102,10 +102,7 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
-		{
-			return BuildingEngine.GetValidBuildingsForArea (area);
-		}
+		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
 		
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 
@@ -116,10 +113,9 @@ namespace IncrementalSociety
 			return nextTickResources.ToImmutable (); 
 		}
 		
-		public ImmutableDictionary<string, double> GetBuildingResources (string building)
-		{
-			return ResourceEngine.GetBuildingResources (building);
-		}
+		public ImmutableDictionary<string, double> GetBuildingResources (string building) => ResourceEngine.GetBuildingResources (building);
+		public ImmutableDictionary<string, double> GetBuildingCost (string building) => ResourceEngine.GetBuildingCost(building);
+		public ImmutableDictionary<string, double> GetBuildingStorage (string building) => ResourceEngine.GetBuildingStorage (building);
 		
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 		

@@ -113,16 +113,6 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void PopsProvideBuildingCapacity ()
-		{
-			GameState state = Factories.CreateGameState ().WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
-			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			Assert.Equal (1, engine.AdditionalBuildingSlotsAvailable (state));
-			state = engine.Build (state, state.Regions[0].Name, 0, "Workshop");
-			Assert.Equal (0, engine.AdditionalBuildingSlotsAvailable (state));
-		}
-
-		[Fact]
 		public void CanNotBuildIfNotEnoughPops ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);

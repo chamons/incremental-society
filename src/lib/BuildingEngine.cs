@@ -70,11 +70,6 @@ namespace IncrementalSociety
 			return UpdateStateWithArea (state, area, newArea, region);
 		}
 
-		public int AdditionalBuildingSlotsAvailable (GameState state)
-		{
-			return PopulationEngine.GetPopUnitsForTotalPopulation (state.Population) - state.AllBuildings ().Count ();
-		}
-
 		GameState UpdateStateWithArea (GameState state, Area area, Area newArea, Region region)
 		{
 			var newAreas = region.Areas.Replace (area, newArea);

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.IO;
 
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
-using Xunit;
 
 namespace IncrementalSociety.Tests
 {
@@ -16,6 +15,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Water"",
+	    			""basic"": true
 			},
 			{
 				""name"": ""Charcoal"",
@@ -37,7 +37,8 @@ namespace IncrementalSociety.Tests
 				],
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 },
-				]
+				],
+				""housing_capacity"": 200
 			},
 			{
 				""name"": ""Workshop"",
@@ -55,7 +56,8 @@ namespace IncrementalSociety.Tests
 				],
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 }
-				]
+				],
+				""housing_capacity"": 50
 			},
 			{
 				""name"": ""Smoker"",
@@ -70,6 +72,14 @@ namespace IncrementalSociety.Tests
 							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
 						]
 					}
+				]
+			},
+			{
+				""name"": ""Watering Hole"",
+				""valid_regions"": [""Plains""],
+				""prevent_destory"": true,
+				""yield"": [
+					{ ""Name"": ""Water"", ""Amount"" : 1.7 }
 				]
 			},
 			{
@@ -91,16 +101,20 @@ namespace IncrementalSociety.Tests
 	}
 ";
 
-		const string GameJSON = @"{ ""region_capacity"" :  2 }";
+		const string GameJSON = @"{
+			""population_needs"": [	{
+				""Name"": ""Water"", ""Amount"" : .01,
+			}],
+			""region_capacity"" :  2,
+			""min_population"" :  100
+		}";
 
-		public static ResourceEngine CreateResourceEngine ()
+		static JsonLoader CreateJsonLoader ()
 		{
-			var resources = new JsonLoader ("", BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
-			ResourceEngine engine = new ResourceEngine (resources);
-			return engine;
+			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
 		}
 
-		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0)
+		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)
 		{
 			var buildings = new List<string> ();
 			for (int i = 0 ; i < camps ; ++i)
@@ -109,18 +123,30 @@ namespace IncrementalSociety.Tests
 				buildings.Add ("Workshop");
 			for (int i = 0 ; i < smokers ; ++i)
 				buildings.Add ("Smoker");
+			for (int i = 0 ; i < holes ; ++i)
+				buildings.Add ("Watering Hole");
 			return CreateGameState (new Area (AreaType.Plains, buildings));
 		}
 
 		static GameState CreateGameState (Area area)
 		{
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (Age.Stone, region.Yield(), new Dictionary<string, double> ());
+			return new GameState (1, Age.Stone, region.Yield(), new Dictionary<string, double> (), 150, 200);
+		}
+
+		public static ResourceEngine CreateResourceEngine ()
+		{
+			return new ResourceEngine (CreateJsonLoader ());
 		}
 
 		public static BuildingEngine CreateBuildingEngine ()
 		{
-			return new BuildingEngine (CreateResourceEngine ());
+			return new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
+		}
+
+		public static PopulationEngine CreatePopEngine ()
+		{
+			return new PopulationEngine (CreateResourceEngine(), CreateJsonLoader ());
 		}
 	}
 }

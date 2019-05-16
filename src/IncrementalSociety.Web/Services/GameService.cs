@@ -61,10 +61,17 @@ namespace IncrementalSociety.Web.Services
 		{
 			Loader = await LoadXML ();
 
-			string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
-			if (!string.IsNullOrEmpty (serializedState))
-				State = JsonConvert.DeserializeObject<GameState> (serializedState);
-			else
+			try {
+				string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
+				if (!string.IsNullOrEmpty (serializedState) && serializedState != "null") {
+					State = JsonConvert.DeserializeObject<GameState> (serializedState);
+					if (State.Version != GameEngine.CurrentVersion)
+						State = null;
+				}
+			}
+			catch (JSException) {
+			}
+			if (State == null)
 				State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create (Loader);
 			Loaded = true;
@@ -72,13 +79,12 @@ namespace IncrementalSociety.Web.Services
 
 		async Task<JsonLoader> LoadXML ()
 		{
-			string actionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/actions.json");
 			string buildingsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/buildings.json");
 			string gameJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/game.json");
 			string regionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/regions.json");
 			string resourcesJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/resources.json");
 
-			return new JsonLoader (actionsJson, buildingsJson, gameJson, regionsJson, resourcesJson);
+			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson);
 		}
 
 		// Shared between multiple consumers

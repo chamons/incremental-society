@@ -28,6 +28,7 @@
 	string Building { get; set; }
 	
 	bool HasBuilding => !String.IsNullOrEmpty (Building);
+	bool CanDestory => HasBuilding && BuildingService.CanDestoryBuilding (Building);
 
 	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.Engine.GetBuildingResources (Building) : null;
 	bool IsConversionEnabled (string name) => GameService.Engine.IsConversionEnabled (GameService.State, name);
@@ -59,7 +60,7 @@
 			switch (GameService.CurrentUIState) 
 			{
 				case GameUIState.SelectBuildingToDestory:
-					return HasBuilding ? "gray" : "white"; 
+					return CanDestory ? "gray" : "white"; 
 				default:
 					return "white";	
 			}
@@ -71,7 +72,7 @@
 		switch (GameService.CurrentUIState) 
 		{
 			case GameUIState.SelectBuildingToDestory:
-				if (HasBuilding) {
+				if (CanDestory) {
 					BuildingService.OnDestroySelection (Area, Index);
 				}
 				break;

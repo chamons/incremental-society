@@ -2,17 +2,15 @@
     "resources": [
         {
             "name": "Food",
-            "type": "Cap"
-        },
-        {
-            "name": "Preserved Food"
+            "basic": true
         },
         {
             "name": "Water",
-            "type": "Cap"
+            "basic": true
         },
         {
-            "name": "Wood"
+            "name": "Wood",
+            "basic": true
         },
         {
             "name": "Clay"

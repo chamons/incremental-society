@@ -8,7 +8,7 @@ namespace IncrementalSociety.Json
 	public class ResourceDeclaration
 	{
 		public string Name { get; set; }
-		public string Type { get; set; }
+		public bool Basic { get; set; }
 		[JsonProperty ("Image_has_age_prefix")]
 		public bool ImageHasAgePrefix { get; set; }
 	}
@@ -31,23 +31,16 @@ namespace IncrementalSociety.Json
 		public List<RegionDeclaration> Regions { get; set; }
 	}
 
-	public class PopulationNeeds
-	{
-		public string Resource { get; set; }
-		public double Amount { get; set; }
-		[JsonProperty ("missing_effect")]
-		public string MissingEffect { get; set; }
-		[JsonProperty ("missing_power")]
-		public double MissingPower { get; set; }
-	}
-
 	public class GameDeclarations
 	{
 		[JsonProperty ("population_needs")]
-		public List<PopulationNeeds> PopulationNeeds { get; set; }
+		public Yield[] PopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
 		public int RegionCapacity { get; set; }
+
+		[JsonProperty ("min_population")]
+		public int MinPopulation { get; set; }
 	}
 
 	public partial class BuildingDeclarations
@@ -60,6 +53,9 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
+		
+		[JsonProperty ("prevent_destory")]
+		public bool PreventDestroy { get; set; }
 
 		[JsonProperty ("valid_regions")]
 		public string[] ValidRegions { get; set; }
@@ -75,6 +71,9 @@ namespace IncrementalSociety.Json
 		
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
+
+		[JsonProperty ("housing_capacity")]
+		public int HousingCapacity { get; set; }
 	}
 
 	public partial class ConversionYield
@@ -96,15 +95,5 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("Amount")]
 		public double Amount { get; set; }
-	}
-
-	public class GameAction
-	{
-		public string Name { get; set; }
-	}
-
-	public class ActionDeclarations
-	{
-		public List<GameAction> Actions { get; set; }
 	}
 }

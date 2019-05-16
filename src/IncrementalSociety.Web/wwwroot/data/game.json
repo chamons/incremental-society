@@ -1,23 +1,15 @@
 {
 	"population_needs": [
 		{
-			"resource": "water",
-			"amount": 1,
-			"missing_effect": "Health",
-			"missing_power": 1
+			"Name": "Water", "Amount" : 0.02
 		},
 		{
-			"resource": "Food",
-			"amount": 2,
-			"missing_effect": "Health",
-			"missing_power": 0.5
+			"Name": "Food", "Amount" : 0.05
 		},
 		{
-			"resource": "Wood",
-			"amount": 0.25,
-			"missing_effect": "Health",
-			"missing_power": 0.25
+			"Name": "Wood", "Amount" : 0.01
 		}
 	],
-	"region_capacity" :  3
+	"region_capacity": 3,
+	"min_population" : 100
 }

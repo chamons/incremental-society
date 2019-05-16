@@ -30,7 +30,7 @@
 
 	void OnUIStateChanged (object sender, GameUIStateChangedEventArgs args)
 	{
-		if (GameService.CurrentUIState == GameUIState.InternalError) {
+		if (GameService.CurrentUIState == GameUIState.InternalError && args.Options != null && args.Options.ContainsKey ("Exception")) {
 			Exception = ((string)args.Options["Exception"]);
 			StateHasChanged ();
 			GameService.SetUIState (GameUIState.Default);

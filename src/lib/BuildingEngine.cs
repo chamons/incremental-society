@@ -11,10 +11,15 @@ namespace IncrementalSociety
 {
 	public class BuildingEngine
 	{
+		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
-		public BuildingEngine (ResourceEngine engine)
+		YieldCache Yields;
+
+		public BuildingEngine (ResourceEngine engine, PopulationEngine populationEngine)
 		{
 			ResourceEngine = engine;
+			PopulationEngine = populationEngine;
+			Yields = new YieldCache ();
 		}
 
 		public GameState Build (GameState state, string regionName, int regionIndex, string buildingName)
@@ -29,7 +34,7 @@ namespace IncrementalSociety
 			if (!building.ValidRegions.Contains (area.Type.ToString()))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
-			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			var buildingTotalCost = Yields.Total (building.Cost);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
@@ -43,7 +48,7 @@ namespace IncrementalSociety
 		public bool CanAffordBuilding (GameState state, string buildingName)
 		{
 			var building = ResourceEngine.FindBuilding (buildingName);
-			var buildingTotalCost = ResourceEngine.TotalYieldResources (building.Cost);
+			var buildingTotalCost = Yields.Total (building.Cost);
 			return state.Resources.HasMoreThan (buildingTotalCost);
 		}
 
@@ -55,6 +60,11 @@ namespace IncrementalSociety
 				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} for but invalid index {buildingIndex}");
 
 			string buildingName = area.Buildings[buildingIndex];
+			
+			var building = ResourceEngine.FindBuilding (buildingName);
+			if (building.PreventDestroy)
+				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} but {buildingName} is marked unable to destory");
+
 
 			var newArea = area.WithBuildings (area.Buildings.Remove (buildingName));
 			return UpdateStateWithArea (state, area, newArea, region);

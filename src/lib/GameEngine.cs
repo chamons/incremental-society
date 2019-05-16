@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
+using IncrementalSociety.Utilities;
 using Newtonsoft.Json;
 
 namespace IncrementalSociety
@@ -11,18 +13,20 @@ namespace IncrementalSociety
 	{
 		public int RegionCapacity { get; private set; }
 
+		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
-			return new GameEngine (new ResourceEngine (loader));
+			return new GameEngine (loader, new ResourceEngine (loader));
 		}
 
-		public GameEngine (ResourceEngine resourceEngine)
+		public GameEngine (JsonLoader loader, ResourceEngine resourceEngine)
 		{
 			ResourceEngine = resourceEngine;
-			BuildingEngine = new BuildingEngine (ResourceEngine);
+			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
+			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 
@@ -33,8 +37,11 @@ namespace IncrementalSociety
 #endif
 			switch (action)
 			{
-				case "Grow Population":
-					Console.WriteLine ("Grow Population");
+				case "Grow Population Cap":
+					state = PopulationEngine.IncreasePopulationCap (state);
+					break;
+				case "Lower Population Cap":
+					state = PopulationEngine.DecreasePopulationCap (state);
 					break;
 				case "Build District":
 				{
@@ -78,9 +85,19 @@ namespace IncrementalSociety
 			return ResourceEngine.GetBuildingConversionResources (name);
 		}
 
+		public double GetEfficiencyOfNonBasicGoods (GameState state)
+		{
+			if (IsPopulationStarving (state))
+				return 0;
+			return PopulationEngine.GetPopulationEfficiency (state);
+		}
+		
+		public double FindEffectivePopulationCap (GameState state) => PopulationEngine.FindEffectiveCap (state);
+
 		public GameState ProcessTick (GameState state)
 		{
-			return ResourceEngine.AddTickOfResources (state);
+			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
+			return PopulationEngine.ProcessTick (state);
 		}
 
 		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
@@ -92,20 +109,36 @@ namespace IncrementalSociety
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
-			return ResourceEngine.CalculateAdditionalNextTick (state);
+			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiencyOfNonBasicGoods (state)).ToBuilder ();
+			nextTickResources.Subtract (PopulationEngine.GetRequirementsForPopulation (state));
+			return nextTickResources.ToImmutable (); 
 		}
 		
 		public ImmutableDictionary<string, double> GetBuildingResources (string building)
 		{
 			return ResourceEngine.GetBuildingResources (building);
 		}
+		
+		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
+		
+		public int GetBuildingTotal (GameState state) => state.AllBuildings ().Count ();
+		public int GetMaxBuildings (GameState state) => PopulationEngine.GetPopUnitsForTotalPopulation (state.Population);
+		public double GetHousingCapacity (GameState state) => PopulationEngine.GetHousingCapacity (state);
+		
+		public bool CanIncreasePopulationCap (GameState state) => PopulationEngine.CanIncreasePopulationCap (state); 
+		public bool CanDecreasePopulationCap (GameState state) => PopulationEngine.CanDecreasePopulationCap (state); 
+		public double GetPopCapDecrementAmount (GameState state) => PopulationEngine.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public double GetPopCapIncrementAmount (GameState state) => PopulationEngine.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
+
+		public const int CurrentVersion = 1; 
 
 		public static GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Workshop" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
+			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement", "Gathering Camp" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
-			var resources = new Dictionary<string, double> { { "Food", 100 }, { "Wood", 50 } };
-			return new GameState (Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources);
+			var resources = new Dictionary<string, double> { { "Food", 50 }, { "Water", 100 }, { "Wood", 50 } };
+			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 200, 200);
 		}
 	}
 }

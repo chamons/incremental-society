@@ -1,0 +1,44 @@
+@using IncrementalSociety.Web.Services
+
+@inject GameService GameService
+@inject PopulationService PopulationService
+
+<div id="PopStats">
+	Population: @Population / @PopulationCap (@PopulationService.EffectiveCap)
+	@if (PopulationService.IsPopulationStarving)
+	{
+		<div class="red">Population is starving and can not shrink further! All non-critical resource collection haulted.</div>
+	}
+	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
+	<div>Current Housing: @CurrentHousing</div>
+	<div>Efficiency: @PopulationService.Efficiency</div>
+	<button disabled=@(!@PopulationService.CanDecrement) onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
+	<button disabled=@(!@PopulationService.CanIncrement) onclick="@Increment">@PopulationService.CapIncrementAmount</button>
+</div>
+@functions {
+
+	double Round (double d) => Math.Round (d, 3);
+
+	double Population => Round (GameService.State.Population);
+	double PopulationCap => Round (GameService.State.PopulationCap);
+	double CurrentHousing => Round (PopulationService.CurrentHousing);
+
+	int CurrentBuildings => PopulationService.CurrentBuildings;
+	int MaxBuildings => PopulationService.MaxBuildings;
+	bool OverBuilt => CurrentBuildings > MaxBuildings;
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
+
+	void Decrement ()
+	{
+		GameService.ApplyAction ("Lower Population Cap", new string[] {});
+	}
+	
+	void Increment ()
+	{
+		GameService.ApplyAction ("Grow Population Cap", new string[] {});
+	}
+}

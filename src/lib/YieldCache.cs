@@ -45,6 +45,21 @@ namespace IncrementalSociety
 			}
 		}
 
+		public ImmutableDictionary<string, double> Total (Yield yield)
+		{
+			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			resources.Add (From (yield));
+			return resources.ToImmutable ();
+		}
+
+		public ImmutableDictionary<string, double> Total (Yield[] yields)
+		{
+			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			foreach (var yield in yields.AsNotNull ())
+				resources.Add (From (yield));
+			return resources.ToImmutable ();
+		}
+
 		static ImmutableDictionary<string, double> Convert (Yield yield)
 		{
 			var resources = ImmutableDictionary.CreateBuilder<string, double> ();

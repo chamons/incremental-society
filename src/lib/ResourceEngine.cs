@@ -13,13 +13,15 @@ namespace IncrementalSociety
 	{
 		JsonLoader Json;
 		YieldCache Yields;
-		
+		HashSet<string> BasicResources;
+
 		public int RegionCapacity => Json.Game.RegionCapacity;
 		
 		public ResourceEngine (JsonLoader json)
 		{
 			Json = json;
 			Yields = new YieldCache ();
+			BasicResources = new HashSet <string> (json.Resources.Resources.Where (x => x.Basic).Select (x => x.Name)); 
 		}
 		
 		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
@@ -32,12 +34,12 @@ namespace IncrementalSociety
 			return building;
 		}
 		
-		public GameState AddTickOfResources (GameState state)
+		public GameState AddTickOfResources (GameState state, double efficiency)
 		{
 			var activeConversions = new List<(string Conversion, double LeastAmount)> ();
 			do {
 				// Determine next tick
-				var tickOfResources = CalculateAdditionalNextTick (state);
+				var tickOfResources = CalculateAdditionalNextTick (state, efficiency);
 				var newResources = state.Resources.ToBuilder ();
 				newResources.Add (tickOfResources);
 
@@ -50,7 +52,7 @@ namespace IncrementalSociety
 
 				// Find the best conversion of that type that is enabled
 				activeConversions.Clear ();
-				foreach (var building in AllBuildings (state))
+				foreach (var building in state.AllBuildings ())
 					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
 						activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (leastResource)));
 
@@ -64,11 +66,16 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state)
+		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var building in AllBuildings (state) ) {
+			foreach (var building in state.AllBuildings ()) {
 				additional.Add (GetBuildingResources (building));
+
+				if (efficiency != 1) {
+					foreach (var nonBasicResource in additional.Keys.Where (x => !BasicResources.Contains (x)).ToList ())
+						additional[nonBasicResource] = additional[nonBasicResource] * efficiency;
+				}
 
 				var conversions = GetBuildingConversionResources (building);
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
@@ -80,7 +87,7 @@ namespace IncrementalSociety
 		public ImmutableDictionary<string, double> GetBuildingResources (string name)
 		{
 			var building = FindBuilding (name);
-			return TotalYieldResources (building.Yield);
+			return Yields.Total (building.Yield);
 		}
 
 		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
@@ -91,22 +98,6 @@ namespace IncrementalSociety
 				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
 			return conversion;
 		}
-		
-		public ImmutableDictionary<string, double> TotalYieldResources (Yield [] yields)
-		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-			foreach (var yield in yields.AsNotNull ())
-				resources.Add (Yields.From (yield));
-			return resources.ToImmutable ();
-		}
-
-		IEnumerable<string> AllBuildings (GameState state)
-		{
-			foreach (var region in state.Regions)
-				foreach (var area in region.Areas)
-					foreach (var building in area.Buildings)
-						yield return building;
-		}
 
 		public bool IsConversionEnabled (GameState state, string name) => !state.DisabledConversions.Contains (name);
 
@@ -114,7 +105,7 @@ namespace IncrementalSociety
 		{
 			var consideredConversions = new HashSet<string> ();
 			var allConversions = new List<(string Conversion, bool Enabled)> ();
-			foreach (var building in AllBuildings (state)) {
+			foreach (var building in state.AllBuildings()) {
 				foreach (var conversion in GetBuildingConversionResources (building)) {
 					if (!consideredConversions.Contains (conversion.Name)) {
 						consideredConversions.Add (conversion.Name);

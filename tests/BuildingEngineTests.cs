@@ -15,17 +15,17 @@ namespace IncrementalSociety.Tests
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			state = engine.Build (state, state.Regions[0].Name, 0, "Workshop");
-			Assert.Equal (2, state.Regions[0].Areas[0].Buildings.Length); 
-			Assert.Equal (0, state.Resources["Wood"]); 
+			Assert.Equal (2, state.Regions[0].Areas[0].Buildings.Length);
+			Assert.Equal (0, state.Resources["Wood"]);
 		}
-		
+
 		[Fact]
 		public void BuildBuildingWhereNoRoom ()
 		{
 			GameState state = Factories.CreateGameState (camps: 2);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			
+
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
 		}
 
@@ -37,7 +37,7 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Mine"));
 		}
-		
+
 		[Fact]
 		public void BuildBuildingInvalidBuildingName ()
 		{
@@ -46,7 +46,7 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Invalid"));
 		}
-		
+
 		[Fact]
 		public void BuildBuildingWithoutResourcs ()
 		{
@@ -54,9 +54,9 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
 		}
-		
+
 		[Fact]
-		public void CanAffordBuilding()
+		public void CanAffordBuilding ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
@@ -71,18 +71,18 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			state = engine.Destroy (state, state.Regions[0].Name, 0, 0);
-			Assert.Empty (state.Regions[0].Areas[0].Buildings); 
+			Assert.Empty (state.Regions[0].Areas[0].Buildings);
 		}
-		
+
 		[Fact]
 		public void DestoryOnlyOneCopy ()
 		{
 			GameState state = Factories.CreateGameState (camps: 2);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			state = engine.Destroy (state, state.Regions[0].Name, 0, 0);
-			Assert.Single (state.Regions[0].Areas[0].Buildings); 
+			Assert.Single (state.Regions[0].Areas[0].Buildings);
 		}
-		
+
 		[Fact]
 		public void DestoryNonExistantBuilding ()
 		{
@@ -92,15 +92,33 @@ namespace IncrementalSociety.Tests
 		}
 		
 		[Fact]
+		public void CanNotDestoryProtectedBuildings ()
+		{
+			GameState state = Factories.CreateGameState (holes: 1);
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.Throws<InvalidOperationException> (() => engine.Destroy (state, state.Regions[0].Name, 0, 0));
+		}
+
+		[Fact]
 		public void ReturnsOnlyValidBuildingsForArea ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.Equal (3, buildings.Count);
+			Assert.Equal (4, buildings.Count);
 			Assert.Contains (buildings, x => x.BuildingName == "Gathering Camp");
 			Assert.Contains (buildings, x => x.BuildingName == "Workshop");
 			Assert.Contains (buildings, x => x.BuildingName == "Smoker");
+			Assert.Contains (buildings, x => x.BuildingName == "Watering Hole");
+		}
+
+		[Fact]
+		public void CanNotBuildIfNotEnoughPops ()
+		{
+			GameState state = Factories.CreateGameState (camps: 1);
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.False (engine.CanAffordBuilding (state, "Workshop"));
+			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
 		}
 	}
 }

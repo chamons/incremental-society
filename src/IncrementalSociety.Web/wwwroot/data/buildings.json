@@ -1,6 +1,28 @@
 {
 	"buildings": [
 		{
+			"name": "Crude Settlement",
+			"prevent_destory": true,
+			"valid_regions": [ "Plains", "Forest" ],
+			"storage": [
+				{ "Name": "Food", "Amount" : 200 },
+				{ "Name": "Water", "Amount" : 100 },
+				{ "Name": "Wood", "Amount" : 200 },
+				{ "Name": "Knowledge", "Amount" : 100 }
+			],
+			"yield": [
+				{ "Name": "Food", "Amount" : 10 },
+				{ "Name": "Water", "Amount" : 4 },
+				{ "Name": "Wood", "Amount" : 2 }
+			],
+			"cost": [
+				{ "Name": "Tools", "Amount": 10 },
+				{ "Name": "Stone", "Amount": 100 },
+			{ "Name": "Wood", "Amount": 200 }
+			],
+			"housing_capacity": 200
+		},
+		{
 			"name": "Gathering Camp",
 			"valid_regions": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
@@ -97,41 +119,6 @@
 				{ "Name": "Wood", "Amount" : 10 },
 				{ "Name": "Stone", "Amount" : 10 }
 			]
-
-		},
-		{
-			"name": "Crude Settlement",
-			"prevent_destory": true,
-			"valid_regions": [ "Plains", "Forest" ],
-			"storage": [
-				{ "Name": "Food", "Amount" : 200 },
-				{ "Name": "Water", "Amount" : 100 },
-				{ "Name": "Wood", "Amount" : 200 },
-				{ "Name": "Stone", "Amount" : 200 },
-				{ "Name": "Clay", "Amount" : 200 },
-				{ "Name": "Bricks", "Amount" : 200 },
-				{ "Name": "Tools", "Amount" : 200 },
-				{ "Name": "Charcoal", "Amount" : 200 },
-				{ "Name": "Knowledge", "Amount" : 100 }
-			],
-			"yield": [
-				{ "Name": "Food", "Amount" : 5 },
-				{ "Name": "Water", "Amount" : 2 },
-				{ "Name": "Wood", "Amount" : 1 }
-			],
-			"conversion_yield": [
-				{
-					"name": "Research",
-					"cost": [ 
-						{ "Name": "Wood", "Amount" : 5 },
-						{ "Name": "Stone", "Amount" : 5 }
-					],
-					"provides": [ 
-						{ "Name": "Knowledge", "Amount" : 0.5 }
-					]
-				}
-			],
-			"housing_capacity": 200
 		}
 	]
 }

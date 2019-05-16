@@ -38,6 +38,11 @@ namespace IncrementalSociety.Tests
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 },
 				],
+				""storage"": [
+					{ ""Name"": ""Food"", ""Amount"" : 500 },
+					{ ""Name"": ""Water"", ""Amount"" : 400 },
+					{ ""Name"": ""Wood"", ""Amount"" : 50 },
+				],
 				""housing_capacity"": 200
 			},
 			{
@@ -57,6 +62,9 @@ namespace IncrementalSociety.Tests
 				""cost"": [
 					{ ""Name"": ""Wood"", ""Amount"" : 10 }
 				],
+				""storage"": [
+					{ ""Name"": ""Charcoal"", ""Amount"" : 50 },
+				],
 				""housing_capacity"": 50
 			},
 			{
@@ -72,7 +80,10 @@ namespace IncrementalSociety.Tests
 							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
 						]
 					}
-				]
+				],
+				""storage"": [
+					{ ""Name"": ""Food"", ""Amount"" : 500 },
+				],
 			},
 			{
 				""name"": ""Watering Hole"",

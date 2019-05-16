@@ -97,13 +97,12 @@ namespace IncrementalSociety
 		public GameState ProcessTick (GameState state)
 		{
 			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
-			return PopulationEngine.ProcessTick (state);
+			state = PopulationEngine.ProcessTick (state);
+			state = ResourceEngine.ConstrainResourcesToStorage (state);
+			return state;
 		}
 
-		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
-		{
-			return BuildingEngine.GetValidBuildingsForArea (area);
-		}
+		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
 		
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 
@@ -114,10 +113,9 @@ namespace IncrementalSociety
 			return nextTickResources.ToImmutable (); 
 		}
 		
-		public ImmutableDictionary<string, double> GetBuildingResources (string building)
-		{
-			return ResourceEngine.GetBuildingResources (building);
-		}
+		public ImmutableDictionary<string, double> GetBuildingResources (string building) => ResourceEngine.GetBuildingResources (building);
+		public ImmutableDictionary<string, double> GetBuildingCost (string building) => ResourceEngine.GetBuildingCost(building);
+		public ImmutableDictionary<string, double> GetBuildingStorage (string building) => ResourceEngine.GetBuildingStorage (building);
 		
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 		
@@ -130,6 +128,8 @@ namespace IncrementalSociety
 		public double GetPopCapDecrementAmount (GameState state) => PopulationEngine.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public double GetPopCapIncrementAmount (GameState state) => PopulationEngine.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
+
+		public ImmutableDictionary<string, double> GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
 
 		public const int CurrentVersion = 1; 
 

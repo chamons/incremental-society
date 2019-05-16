@@ -106,10 +106,10 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
 			Assert.Equal (4, buildings.Count);
-			Assert.Contains (buildings, x => x.BuildingName == "Gathering Camp");
-			Assert.Contains (buildings, x => x.BuildingName == "Workshop");
-			Assert.Contains (buildings, x => x.BuildingName == "Smoker");
-			Assert.Contains (buildings, x => x.BuildingName == "Watering Hole");
+			Assert.Contains (buildings, x => x == "Gathering Camp");
+			Assert.Contains (buildings, x => x == "Workshop");
+			Assert.Contains (buildings, x => x == "Smoker");
+			Assert.Contains (buildings, x => x == "Watering Hole");
 		}
 
 		[Fact]

@@ -103,6 +103,17 @@
 			"name": "Crude Settlement",
 			"prevent_destory": true,
 			"valid_regions": [ "Plains", "Forest" ],
+			"storage": [
+				{ "Name": "Food", "Amount" : 200 },
+				{ "Name": "Water", "Amount" : 100 },
+				{ "Name": "Wood", "Amount" : 200 },
+				{ "Name": "Stone", "Amount" : 200 },
+				{ "Name": "Clay", "Amount" : 200 },
+				{ "Name": "Bricks", "Amount" : 200 },
+				{ "Name": "Tools", "Amount" : 200 },
+				{ "Name": "Charcoal", "Amount" : 200 },
+				{ "Name": "Knowledge", "Amount" : 100 }
+			],
 			"yield": [
 				{ "Name": "Food", "Amount" : 5 },
 				{ "Name": "Water", "Amount" : 2 },

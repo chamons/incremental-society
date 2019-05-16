@@ -12,7 +12,7 @@
 		BuildingName="@Building"
 		Resources="@Resources"
 		Conversions="@Conversions"
-		BackgroundColor="@BackgroundColor"
+		Disabled="@IsDisabled"
 		OnClick="OnClick"
 		ColorResourcesAsDelta=true />
 </div>
@@ -53,16 +53,16 @@
 		}
 	}
 
-	string BackgroundColor
+	bool IsDisabled
 	{
 		get
 		{
 			switch (GameService.CurrentUIState) 
 			{
 				case GameUIState.SelectBuildingToDestory:
-					return CanDestory ? "gray" : "white"; 
+					return CanDestory; 
 				default:
-					return "white";	
+					return false;	
 			}
 		}
 	}

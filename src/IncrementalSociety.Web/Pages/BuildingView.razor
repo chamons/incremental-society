@@ -6,7 +6,7 @@
 @inject StyleService StyleService
 
 <div>
-	<div class="d-flex flex-column building" style="background-color:@BackgroundColor;" onclick=@OnClick>
+	<div class="d-flex flex-column building @BuildingStyleClass" onclick=@OnClick>
 		<p class="building-title">@BuildingName</p>
 		@if (HasBuilding) {
 			@if (Resources.AsNotNull ().Any ()) {
@@ -20,7 +20,7 @@
 				</div>
 			}
 			@if (SecondaryResources.AsNotNull ().Any ()) {
-				<div class="d-flex flex-wrap resource-line gray">
+				<div class="d-flex flex-wrap resource-line secondary-resources">
 				@foreach (var res in SecondaryResources.AsNotNull ()) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
@@ -57,7 +57,7 @@
 	ImmutableDictionary<string, double> SecondaryResources { get; set; }
 	
 	[Parameter]
-	string BackgroundColor { get; set; }
+	bool Disabled { get; set; }
 	
 	[Parameter]
 	Action OnClick { get; set; }
@@ -68,6 +68,7 @@
 	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
 	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
 	string ConversionBackgroundColor (bool enabled) => enabled ? "white" : "darkred";
+	string BuildingStyleClass => Disabled ? "disabled" : "";
 
 	protected override void OnInit ()
 	{

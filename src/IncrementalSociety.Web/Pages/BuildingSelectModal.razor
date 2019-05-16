@@ -23,7 +23,7 @@
 							BuildingName="@building"
 							Resources="@GetBuildingCost(@building)"
 							SecondaryResources="@GetBuildingStorage(@building)"
-							BackgroundColor="@BuildingBackgroundColor(building)"
+							Disabled="@(!@CanBuild(@building))"
 							OnClick="@(() => OnSelection(@building))"
 							ColorResourcesAsDelta=false />
 					}	

@@ -90,6 +90,7 @@ namespace IncrementalSociety.Web.Services
 		// Shared between multiple consumers
 		public List<(string Name, bool Enabled)> Conversions => Engine.GetConversions (State);
 		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
+		public ImmutableDictionary<string, double> GetResourceStorage () => Engine.GetResourceStorage (State);
 
 		public void OnTick ()
 		{

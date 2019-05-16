@@ -1,5 +1,6 @@
 @using System.Collections.Immutable
 
+@using IncrementalSociety.Model
 @using IncrementalSociety.Json
 @using IncrementalSociety.Web.Services
 @using IncrementalSociety.Utilities
@@ -14,7 +15,7 @@
 	{
 		<li class="d-flex align-items-center resource-list-item">
 			<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
-			@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name))
+			@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @(GetResourceStroage (GameService.State, resource.Name))
 			<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 		</li>
 	}
@@ -24,18 +25,30 @@
 	public IEnumerable<ResourceDeclaration> Resources => GameService.Loader.Resources.Resources;
 
 	public ImmutableDictionary<string, double> NextTickResources;
+	public ImmutableDictionary<string, double> ResourceStorage;
 
 	// Round to three places for display
 	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name) => Math.Round (resources.AmountOf (name), 3);
+	
+	public double GetResourceStroage (GameState state, string name)
+	{
+		return ResourceStorage.AmountOf (name);
+	}
 
 	protected override void OnInit ()
 	{
 		GameService.CurrentUIStateChanged += (o, e) =>
 		{
-			NextTickResources = GameService.GetNextTickResources ();
+			Update ();
 			StateHasChanged ();
 		};
 
+		Update ();
+	}
+
+	void Update ()
+	{
 		NextTickResources = GameService.GetNextTickResources ();
+		ResourceStorage = GameService.GetResourceStorage ();
 	}
 }

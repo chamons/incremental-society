@@ -29,6 +29,19 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void ConstrainResourcesToStorageRespectsLimits ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			
+			GameState state = Factories.CreateGameState (camps: 2);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Food", 1000.0));
+			state = engine.AddTickOfResources (state, 1.0);
+			state = engine.ConstrainResourcesToStorage (state);
+			Assert.Equal (1000, state.Resources.AmountOf ("Food"));
+			Assert.Equal (4, state.Resources.AmountOf ("Water"));
+		}
+
+		[Fact]
 		public void DisablesOnlyOneConversionWhenShort ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
@@ -135,6 +148,29 @@ namespace IncrementalSociety.Tests
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			var conversions = engine.GetConversions (state);
 			Assert.Single (conversions);
+		}
+
+		[Fact]
+		public void ResourceStorageBasedOnBuildings ()
+		{
+			GameState state = Factories.CreateGameState (camps: 2);
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			var storage = engine.GetResourceStorage (state);
+			Assert.Equal (1000, storage.AmountOf ("Food"));
+			Assert.Equal (800, storage.AmountOf ("Water"));
+			Assert.Equal (100, storage.AmountOf ("Wood"));
+		}
+
+		[Fact]
+		public void NegativeResourcesShouldStillAllowTicks ()
+		{
+			ResourceEngine engine = Factories.CreateResourceEngine ();
+			GameState state = Factories.CreateGameState (camps: 2);
+			state = state.WithResources (Immutable.CreateBuilderDictionary ("Food", -1000.0));
+
+			state = engine.AddTickOfResources (state, 1.0);
+			Assert.Equal (-996, state.Resources.AmountOf ("Food"));
+			Assert.Equal (4, state.Resources.AmountOf ("Water"));
 		}
 	}
 }

@@ -97,7 +97,9 @@ namespace IncrementalSociety
 		public GameState ProcessTick (GameState state)
 		{
 			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
-			return PopulationEngine.ProcessTick (state);
+			state = PopulationEngine.ProcessTick (state);
+			state = ResourceEngine.ConstrainResourcesToStorage (state);
+			return state;
 		}
 
 		public List<(string BuildingName, ImmutableDictionary<string, double> Cost)> GetValidBuildingsForArea (Area area)
@@ -130,6 +132,8 @@ namespace IncrementalSociety
 		public double GetPopCapDecrementAmount (GameState state) => PopulationEngine.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public double GetPopCapIncrementAmount (GameState state) => PopulationEngine.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
+
+		public ImmutableDictionary<string, double> GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
 
 		public const int CurrentVersion = 1; 
 

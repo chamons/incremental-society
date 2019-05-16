@@ -36,34 +36,63 @@ namespace IncrementalSociety
 		
 		public GameState AddTickOfResources (GameState state, double efficiency)
 		{
-			var activeConversions = new List<(string Conversion, double LeastAmount)> ();
+			ImmutableDictionary<string, double>.Builder newResources = null; 
 			do {
 				// Determine next tick
 				var tickOfResources = CalculateAdditionalNextTick (state, efficiency);
-				var newResources = state.Resources.ToBuilder ();
+				newResources = state.Resources.ToBuilder ();
 				newResources.Add (tickOfResources);
 
 				// If we're all positive, then go with that
 				if (!newResources.Keys.Any(x => newResources[x] < 0))
-					return state.WithResources (newResources.ToImmutable ());
-			
-				// Find the largets negative resource
-				var leastResource = newResources.OrderBy (x => x.Value).First().Key;
+					break;
 
-				// Find the best conversion of that type that is enabled
-				activeConversions.Clear ();
+				string conversion = FindConversionToDisable (state, newResources.ToImmutable ());
+
+				// Disable that conversion if found, else break;
+				if (conversion != null)
+					state = state.WithDisabledConversions (state.DisabledConversions.Add (conversion));
+				else
+					break;
+			}
+			while (true);
+
+			return state.WithResources (newResources.ToImmutable ());
+		}
+
+		public GameState ConstrainResourcesToStorage (GameState state)
+		{
+			ImmutableDictionary<string, double>.Builder resources = state.Resources.ToBuilder ();
+			ImmutableDictionary<string, double> resourceStorage = GetResourceStorage (state);
+
+			foreach (var resource in resources.Keys.ToList ()) {
+				double storage = resourceStorage.AmountOf (resource);
+				if (resources[resource] > storage)
+					resources[resource] = storage;
+			}
+			return state.WithResources (resources);
+		}
+
+		string FindConversionToDisable (GameState state, ImmutableDictionary <string, double> newResources)
+		{
+			foreach (string missingResource in newResources.Where (x => x.Value < 0).Select (x => x.Key).OrderBy (x => x)) {
+				var conversions = GetConversions (state, missingResource);
+				if (conversions.Count <= 0)
+					break;
+
+				return conversions.OrderBy (x => x.Amount).Select (x => x.Conversion).First();
+			}
+			return null;
+		}
+
+		List<(string Conversion, double Amount)> GetConversions (GameState state, string missingResource)
+		{
+				var activeConversions = new List<(string Conversion, double Amount)> ();
 				foreach (var building in state.AllBuildings ())
 					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
-						activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (leastResource)));
-
-				string bestConversion = activeConversions.OrderBy (x => x.LeastAmount).First ().Conversion;
-
-				// Disable that conversion
-				state = state.WithDisabledConversions (state.DisabledConversions.Add (bestConversion));
-			}
-			while (activeConversions.Count > 0);
-			
-			return state;
+						if (conversion.Resources.AmountOf (missingResource) < 0)
+							activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (missingResource)));
+				return activeConversions;
 		}
 
 		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state, double efficiency)
@@ -114,6 +143,14 @@ namespace IncrementalSociety
 				}
 			}
 			return allConversions;
+		}
+
+		public ImmutableDictionary<string, double> GetResourceStorage (GameState state)
+		{	
+			var storage = ImmutableDictionary.CreateBuilder <string, double> ();
+			foreach (var yields in state.AllBuildings ().Select (x => FindBuilding (x).Storage))
+				storage.Add (Yields.Total (yields));
+			return storage.ToImmutable ();
 		}
 	}
 }

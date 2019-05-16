@@ -69,6 +69,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
 		
+		[JsonProperty ("storage", NullValueHandling = NullValueHandling.Ignore)]
+		public Yield[] Storage { get; set; }
+		
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
 

@@ -94,6 +94,11 @@ namespace IncrementalSociety.Tests
 				]
 			},
 			{
+				""name"": ""Impossible"",
+				""valid_regions"": [""Plains""],
+				""prevent_build"" : true
+			},
+			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}

@@ -105,6 +105,7 @@ namespace IncrementalSociety
 		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
 		
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
+		public bool AbleToBuild (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventBuild;
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{

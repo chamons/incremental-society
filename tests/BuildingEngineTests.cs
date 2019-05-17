@@ -56,6 +56,14 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void BuildBuildingMarkedUnable ()
+		{
+			GameState state = Factories.CreateGameState ();
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Impossible"));
+		}
+
+		[Fact]
 		public void CanAffordBuilding ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
@@ -109,7 +117,6 @@ namespace IncrementalSociety.Tests
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");
-			Assert.Contains (buildings, x => x == "Watering Hole");
 		}
 
 		[Fact]

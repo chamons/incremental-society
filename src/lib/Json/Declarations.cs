@@ -54,6 +54,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("name")]
 		public string Name { get; set; }
 		
+		[JsonProperty ("prevent_build")]
+		public bool PreventBuild { get; set; }
+		
 		[JsonProperty ("prevent_destory")]
 		public bool PreventDestroy { get; set; }
 

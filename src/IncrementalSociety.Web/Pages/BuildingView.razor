@@ -30,7 +30,7 @@
 				</div>
 			}
 			@foreach (var conversion in Conversions.AsNotNull ()) {
-				<div class="d-flex flex-wrap resource-line" style="background-color:@ConversionBackgroundColor(conversion.Enabled);">
+				<div class="d-flex flex-wrap resource-line @ConversionClass(conversion.Enabled)">
 				@foreach (var res in conversion.Resources) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.Key)" />
@@ -67,7 +67,7 @@
 
 	bool HasBuilding => !String.IsNullOrEmpty (BuildingName);
 	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
-	string ConversionBackgroundColor (bool enabled) => enabled ? "white" : "darkred";
+	string ConversionClass (bool enabled) => enabled ? "conversion-enabled" : "conversion-disabled";
 	string BuildingStyleClass => Disabled ? "disabled" : "";
 
 	protected override void OnInit ()

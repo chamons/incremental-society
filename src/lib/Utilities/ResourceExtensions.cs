@@ -35,6 +35,8 @@ namespace IncrementalSociety.Utilities
 
 		public static void Multiply (this ImmutableDictionary<string, double>.Builder left, double right)
 		{
+			if (right == 1)
+				return;
 			foreach (var resourceName in left.Keys.ToList ()) 
 				left[resourceName] = left[resourceName] * right;
 		}

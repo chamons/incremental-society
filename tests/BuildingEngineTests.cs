@@ -39,12 +39,12 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void BuildBuildingInvalidBuildingName ()
+		public void BuildBuildingValidAnywhere ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Invalid"));
+			engine.Build (state, state.Regions[0].Name, 0, "Any");
 		}
 
 		[Fact]
@@ -113,7 +113,7 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.Equal (4, buildings.Count);
+			Assert.Equal (5, buildings.Count);
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");

@@ -99,6 +99,10 @@ namespace IncrementalSociety.Tests
 				""prevent_build"" : true
 			},
 			{
+				""name"": ""Any"",
+				""valid_regions"": [""Any""]
+			},
+			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}

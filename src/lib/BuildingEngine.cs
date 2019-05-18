@@ -34,7 +34,7 @@ namespace IncrementalSociety
 			if (building.PreventBuild)
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} but {buildingName} is marked unable to build");
 
-			if (!building.ValidRegions.Contains (area.Type.ToString()))
+			if (!BuildingValidForArea (building, area))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 			
 			var buildingTotalCost = Yields.Total (building.Cost);
@@ -80,10 +80,15 @@ namespace IncrementalSociety
 			var newRegions = state.Regions.Replace (region, newRegion);
 			return state.WithRegions (newRegions);
 		}
+
+		bool BuildingValidForArea (Building building, Area area)
+		{
+			return building.ValidRegions.Contains ("Any") || building.ValidRegions.Contains (area.Type.ToString ());
+		}
 		
 		public List<string> GetValidBuildingsForArea (Area area)
 		{
-			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => !x.PreventBuild && x.ValidRegions.Contains (area.Type.ToString ()));
+			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => !x.PreventBuild && BuildingValidForArea (x, area));
 			return buildings.Select (b => b.Name).ToList ();
 		}
 	}

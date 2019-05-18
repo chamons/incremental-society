@@ -56,7 +56,7 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void BuildBuildingMarkedUnable ()
+		public void CannotBuildBuildingMarkedUnable ()
 		{
 			GameState state = Factories.CreateGameState ();
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
@@ -113,19 +113,10 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.Equal (5, buildings.Count);
+			Assert.True (buildings.Count > 5);
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");
-		}
-
-		[Fact]
-		public void CanNotBuildIfNotEnoughPops ()
-		{
-			GameState state = Factories.CreateGameState (camps: 1);
-			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			Assert.False (engine.CanAffordBuilding (state, "Workshop"));
-			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
 		}
 	}
 }

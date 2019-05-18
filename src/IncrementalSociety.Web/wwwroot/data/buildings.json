@@ -4,6 +4,7 @@
 			"name": "Crude Settlement",
 			"prevent_build": true,
 			"prevent_destory": true,
+			"does_not_require_job" : true,
 			"valid_regions": [ "Any" ],
 			"storage": [
 				{ "Name": "Food", "Amount" : 200 },
@@ -17,10 +18,11 @@
 				{ "Name": "Water", "Amount" : 4 },
 				{ "Name": "Wood", "Amount" : 2 }
 			],
-			"housing_capacity": 300
+			"housing_capacity": 200
 		},
 		{
 			"name": "Huts",
+			"does_not_require_job" : true,
 			"valid_regions": [ "Plains", "Forest" ],
 			"cost": [
 				{

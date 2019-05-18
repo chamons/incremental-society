@@ -206,6 +206,21 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void SomeBuildingsDoNotDecreaseEfficiency ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
+			double baseEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.Equal (1.0, baseEfficiency);
+
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "NoJob");
+			
+			double afterEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.Equal (1.0, afterEfficiency);
+		}
+
+		[Fact]
 		public void ProcessTickGrows ()
 		{
 			var engine = Factories.CreatePopEngine ();
@@ -233,7 +248,7 @@ namespace IncrementalSociety.Tests
 				state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 
-			var buildingEngine  = Factories.CreateBuildingEngine ();
+			var buildingEngine = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
 			for (int i = 0 ; i < 40; ++i)

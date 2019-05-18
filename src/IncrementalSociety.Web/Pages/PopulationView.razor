@@ -9,7 +9,7 @@
 	{
 		<div class="red">Population is starving and can not shrink further! All non-critical resource collection haulted.</div>
 	}
-	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
+	<div class="@(@OverBuilt ? "red" : "")">Jobs: @BuildingJobCount / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>
 	<div>Efficiency: @Efficiency</div>
 	<button disabled=@(!@PopulationService.CanDecrement) onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
@@ -25,8 +25,8 @@
 	double MaxBuildings => Round (PopulationService.MaxBuildings);
 	double Efficiency => Round (PopulationService.Efficiency);
 
-	int CurrentBuildings => PopulationService.CurrentBuildings;
-	bool OverBuilt => CurrentBuildings > MaxBuildings;
+	int BuildingJobCount => PopulationService.BuildingJobCount;
+	bool OverBuilt => BuildingJobCount > MaxBuildings;
 
 	protected override void OnInit ()
 	{

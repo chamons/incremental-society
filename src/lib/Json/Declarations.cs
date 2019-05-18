@@ -59,6 +59,9 @@ namespace IncrementalSociety.Json
 		
 		[JsonProperty ("prevent_destory")]
 		public bool PreventDestroy { get; set; }
+		
+		[JsonProperty ("does_not_require_job")]
+		public bool DoesNotRequireJob { get; set; }
 
 		[JsonProperty ("valid_regions")]
 		public string[] ValidRegions { get; set; }

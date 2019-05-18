@@ -120,6 +120,7 @@ namespace IncrementalSociety
 		
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 		
+		public int GetBuildingJobCount (GameState state) => PopulationEngine.GetBuildingJobCount (state);
 		public int GetBuildingTotal (GameState state) => state.AllBuildings ().Count ();
 		public double GetMaxBuildings (GameState state) => PopulationEngine.GetPopUnitsForTotalPopulation (state.Population);
 		public double GetHousingCapacity (GameState state) => PopulationEngine.GetHousingCapacity (state);

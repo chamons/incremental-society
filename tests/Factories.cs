@@ -105,7 +105,12 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
-			}
+			},
+			{
+				""name"": ""NoJob"",
+				""valid_regions"": [""Any""],
+				""does_not_require_job"": true
+			},
 		]
 		}";
 

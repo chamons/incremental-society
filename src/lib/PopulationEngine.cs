@@ -242,10 +242,15 @@ namespace IncrementalSociety
 			const double R = .025;
 			return R * ((popCap - popSize) / popSize) * popSize;
 		}
+		
+		public int GetBuildingJobCount (GameState state)
+		{
+			return state.AllBuildings ().Where (x => !ResourceEngine.FindBuilding (x).DoesNotRequireJob).Count ();
+		}
 
 		public double GetPopulationEfficiency (GameState state)
 		{
-			int buildingCount = state.AllBuildings ().Count ();
+			int buildingCount = GetBuildingJobCount (state);
 			double totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
 			return GetPopulationEfficiency (buildingCount, totalPopCount);
 		}

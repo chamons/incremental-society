@@ -178,22 +178,22 @@ namespace IncrementalSociety
 			return state.WithPopulationCap (GetPreviousPopBreakpoint (state.PopulationCap));
 		}
 
-		public int GetPopUnitsForTotalPopulation (double population)
+		public double GetPopUnitsForTotalPopulation (double population)
 		{
 			if (population < 1000) {
-				return (int)Math.Floor (population / 100);
+				return population / 100;
 			} else if (population < 2000) {
-				return 10 + (int)Math.Floor ((population - 1000) / 200);
+				return 10 + (population - 1000) / 200;
 			} else if (population < 4000) {
-				return 15 + (int)Math.Floor ((population - 2000) / 500);
+				return 15 + (population - 2000) / 500;
 			} else if (population < 10000) {
-				return 19 + (int)Math.Floor ((population - 4000) / 1000);
+				return 19 + (population - 4000) / 1000;
 			} else if (population < 50000) {
-				return 25 + (int)Math.Floor ((population - 10000) / 5000);
+				return 25 + (population - 10000) / 5000;
 			} else if (population< 100000) {
-				return 32 + (int)Math.Floor ((population - 50000) / 10000);
+				return 32 + (population - 50000) / 10000;
 			} else {
-				return 37 + (int)Math.Floor ((population - 100000) / 50000);
+				return 37 + (population - 100000) / 50000;
 			}
 		}
 
@@ -246,11 +246,11 @@ namespace IncrementalSociety
 		public double GetPopulationEfficiency (GameState state)
 		{
 			int buildingCount = state.AllBuildings ().Count ();
-			int totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
+			double totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
 			return GetPopulationEfficiency (buildingCount, totalPopCount);
 		}
 
-		public double GetPopulationEfficiency (int buildingCount, int totalPopCount)
+		public double GetPopulationEfficiency (int buildingCount, double totalPopCount)
 		{
 			if (totalPopCount >= buildingCount)
 				return 1.0;

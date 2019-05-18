@@ -11,7 +11,7 @@
 	}
 	<div class="@(@OverBuilt ? "red" : "")">Buildings: @CurrentBuildings / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>
-	<div>Efficiency: @PopulationService.Efficiency</div>
+	<div>Efficiency: @Efficiency</div>
 	<button disabled=@(!@PopulationService.CanDecrement) onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
 	<button disabled=@(!@PopulationService.CanIncrement) onclick="@Increment">@PopulationService.CapIncrementAmount</button>
 </div>
@@ -22,9 +22,10 @@
 	double Population => Round (GameService.State.Population);
 	double PopulationCap => Round (GameService.State.PopulationCap);
 	double CurrentHousing => Round (PopulationService.CurrentHousing);
+	double MaxBuildings => Round (PopulationService.MaxBuildings);
+	double Efficiency => Round (PopulationService.Efficiency);
 
 	int CurrentBuildings => PopulationService.CurrentBuildings;
-	int MaxBuildings => PopulationService.MaxBuildings;
 	bool OverBuilt => CurrentBuildings > MaxBuildings;
 
 	protected override void OnInit ()

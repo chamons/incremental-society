@@ -17,8 +17,8 @@
 		if (storage > 0) {
 			<li class="d-flex align-items-center resource-list-item">
 				<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
-				@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @storage 
-				<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
+				@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @storage  
+				<div class="resource-delta @StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 			</li>
 		}
 	}

@@ -16,7 +16,7 @@ namespace IncrementalSociety.Web.Services
 		}
 
 		public int CurrentBuildings => GameService.Engine.GetBuildingTotal (State);
-		public int MaxBuildings => GameService.Engine.GetMaxBuildings (State);
+		public double MaxBuildings => GameService.Engine.GetMaxBuildings (State);
 		public double CurrentHousing => GameService.Engine.GetHousingCapacity (State);
 		public double Efficiency => GameService.Engine.GetEfficiencyOfNonBasicGoods (State);
 		public double EffectiveCap => GameService.Engine.FindEffectivePopulationCap (State);

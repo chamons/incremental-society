@@ -45,7 +45,7 @@ namespace IncrementalSociety.Tests
 
 			// +100
 			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (100));
-			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (150));
+			Assert.Equal (1.5, engine.GetPopUnitsForTotalPopulation (150));
 			Assert.Equal (2, engine.GetPopUnitsForTotalPopulation (200));
 			Assert.Equal (4, engine.GetPopUnitsForTotalPopulation (400));
 			Assert.Equal (10, engine.GetPopUnitsForTotalPopulation (1000));

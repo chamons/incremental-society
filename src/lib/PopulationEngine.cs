@@ -67,7 +67,7 @@ namespace IncrementalSociety
 				growthRate *= 5;
 
 			// Step 3c Tweak the growth rate to be "nicer":
-			// - If we're within one of the cap, round our rate to make a nice .5
+			// - If we're within one of the cap, round our rate to make a nice .25
 			// - Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
 			const double MinGrowth = 0.25;
 			if (growthRate < 0) {

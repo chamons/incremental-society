@@ -94,6 +94,11 @@ namespace IncrementalSociety.Tests
 				]
 			},
 			{
+				""name"": ""Housing"",
+				""valid_regions"": [""Plains""],
+				""housing_capacity"": 200
+			},
+			{
 				""name"": ""Impossible"",
 				""valid_regions"": [""Plains""],
 				""prevent_build"" : true
@@ -130,7 +135,7 @@ namespace IncrementalSociety.Tests
 			""population_needs"": [	{
 				""Name"": ""Water"", ""Amount"" : .01,
 			}],
-			""region_capacity"" :  2,
+			""region_capacity"" :  3,
 			""min_population"" :  100
 		}";
 

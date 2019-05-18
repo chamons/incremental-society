@@ -45,13 +45,15 @@ namespace IncrementalSociety
 
 		public GameState ProcessTick (GameState state)
 		{
-			// Step 0 - Determine how many people our income supports
+			// Step 0a - Determine how many people our income supports
 			double effectivePopCap = FindEffectiveCap (state);
-
 #if DEBUG
 			if (!effectivePopCap.HasValue())
 				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
 #endif
+			
+			// Step 0b - If our housing is lower than income, use that as effective cap
+			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
 			
 			// Step 1 - Determine how many resources we need for our current population
 			var neededResource = GetRequirementsForPopulation (state);

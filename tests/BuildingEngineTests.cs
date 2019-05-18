@@ -22,7 +22,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingWhereNoRoom ()
 		{
-			GameState state = Factories.CreateGameState (camps: 2);
+			GameState state = Factories.CreateGameState (camps: 3);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 

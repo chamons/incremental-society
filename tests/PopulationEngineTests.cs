@@ -168,6 +168,23 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void PopsDecreaseIfHousingDestoryed ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (holes: 1).WithPopulation (150);
+			
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+		
+			double popBefore = state.Population;
+
+			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 1);
+
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population < popBefore);
+		}
+
+		[Fact]
 		public void PopsHaveHardMinimumLowerLimit ()
 		{
 			var engine = Factories.CreatePopEngine ();
@@ -237,7 +254,10 @@ namespace IncrementalSociety.Tests
 		public void ProcessTickShrinkThenGrows ()
 		{
 			var engine = Factories.CreatePopEngine ();
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			
 			var state = Factories.CreateGameState (smokers: 1);
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = state.WithResources (Immutable.CreateDictionary ("Water", 1.0));
 			
@@ -248,7 +268,6 @@ namespace IncrementalSociety.Tests
 				state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 
-			var buildingEngine = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
 			for (int i = 0 ; i < 40; ++i)

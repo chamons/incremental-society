@@ -45,15 +45,12 @@ namespace IncrementalSociety
 
 		public GameState ProcessTick (GameState state)
 		{
-			// Step 0a - Determine how many people our income supports
+			// Step 0 - Determine how many people our income and housing supports
 			double effectivePopCap = FindEffectiveCap (state);
 #if DEBUG
 			if (!effectivePopCap.HasValue())
 				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
 #endif
-			
-			// Step 0b - If our housing is lower than income, use that as effective cap
-			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
 			
 			// Step 1 - Determine how many resources we need for our current population
 			var neededResource = GetRequirementsForPopulation (state);
@@ -110,10 +107,15 @@ namespace IncrementalSociety
 		{
 			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
 
+			double effectivePopCap;
 			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state.PopulationCap)))
-				return state.PopulationCap;
+				effectivePopCap = state.PopulationCap;
 			else
-				return FindEffectivePopCap (state, resourcesPerTick);
+				effectivePopCap = FindResourceEffectivePopCap (state, resourcesPerTick);
+
+			// If our housing is lower than income, use that as effective cap
+			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
+			return effectivePopCap;
 		}
 		
 		public bool IsPopulationStarving (GameState state) 
@@ -133,7 +135,7 @@ namespace IncrementalSociety
 			return delta.OrderBy (x => x.Value).Select (x => x.Key).Where (x => PopNeedNames.Contains (x)).First ();
 		}
 
-		double FindEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
+		double FindResourceEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
 		{
 			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
 

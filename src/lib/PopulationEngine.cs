@@ -239,7 +239,7 @@ namespace IncrementalSociety
 		public double GetGrowthRate (double popSize, double popCap)
 		{
 			// Logistic growth
-			const double R = .015;
+			const double R = .025;
 			return R * ((popCap - popSize) / popSize) * popSize;
 		}
 

@@ -40,6 +40,31 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void AddWithMultiplyTwoResourcesDifferentItems ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			result.AddWithMultiply (Immutable.CreateDictionary ("Water", 1.0), .5);
+			Assert.Equal (1, result["Food"]);
+			Assert.Equal (.5, result["Water"]);
+		}
+
+		[Fact]
+		public void AddWithMultiplyTwoResourcesWithSameItems ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			result.AddWithMultiply (Immutable.CreateDictionary ("Food", 1.0), .5);
+			Assert.Equal (1.5, result["Food"]);
+		}
+
+		[Fact]
+		public void AddAndMultiplyTwoResourceOneEmpty ()
+		{
+			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);
+			result.AddWithMultiply (ImmutableDictionary<string, double>.Empty, .5);
+			Assert.Equal (1, result["Food"]);
+		}
+
+		[Fact]
 		public void SubtractTwoResourcesDifferentItems ()
 		{
 			var result = Immutable.CreateBuilderDictionary ("Food", 1.0);

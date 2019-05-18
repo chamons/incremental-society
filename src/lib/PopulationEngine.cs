@@ -68,19 +68,20 @@ namespace IncrementalSociety
 				growthRate *= 5;
 
 			// Step 3c Tweak the growth rate to be "nicer":
-			// - If we're within one of the cap, round our rate to make a nice whole number
+			// - If we're within one of the cap, round our rate to make a nice .5
 			// - Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
+			const double MinGrowth = 0.25;
 			if (growthRate < 0) {
-				if (state.Population - effectivePopCap < 1)
+				if (state.Population - effectivePopCap < MinGrowth)
 					growthRate = effectivePopCap - state.Population; 
 				else
-					growthRate = Math.Min (growthRate, -1);
+					growthRate = Math.Min (growthRate, -MinGrowth);
 			}
 			else {
-				if (effectivePopCap - state.Population < 1)
+				if (effectivePopCap - state.Population < MinGrowth)
 					growthRate = effectivePopCap - state.Population; 
 				else
-					growthRate = Math.Max (growthRate, 1);
+					growthRate = Math.Max (growthRate, MinGrowth);
 			}
 			
 			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
@@ -238,7 +239,7 @@ namespace IncrementalSociety
 		public double GetGrowthRate (double popSize, double popCap)
 		{
 			// Logistic growth
-			const double R = .05;
+			const double R = .025;
 			return R * ((popCap - popSize) / popSize) * popSize;
 		}
 

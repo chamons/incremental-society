@@ -30,13 +30,13 @@
 					"Amount": 100
 				}
 			],
-			"housing_capacity": 200
+			"housing_capacity": 300
 		},
 		{
 			"name": "Gathering Camp",
 			"valid_regions": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
-				{ "Name": "Food", "Amount" : 4 },
+				{ "Name": "Food", "Amount" : 5 },
 				{ "Name": "Water", "Amount" : 3 },
 				{ "Name": "Stone", "Amount" : 0.1 },
 				{ "Name": "Wood", "Amount" : 1 }
@@ -46,8 +46,7 @@
 					"Name": "Wood",
 					"Amount": 50
 				}
-			],
-			"housing_capacity": 50
+			]
 		},
 		{
 			"name": "Clay Pit",
@@ -89,11 +88,13 @@
 						{ "Name": "Tools", "Amount" : 0.1 }
 					]
 				}
-
+			],
+			"storage": [ 
+				{ "Name": "Tools", "Amount" : 100 }
 			],
 			"cost": [
 				{ "Name": "Wood", "Amount" : 100 },
-				{ "Name": "Bricks", "Amount" : 100 }
+				{ "Name": "Bricks", "Amount" : 50 }
 			],
 			"housing_capacity": 50
 		}

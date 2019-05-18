@@ -10,6 +10,6 @@
 			"Name": "Wood", "Amount" : 0.01
 		}
 	],
-	"region_capacity": 3,
+	"region_capacity": 2,
 	"min_population" : 100
 }

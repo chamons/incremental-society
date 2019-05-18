@@ -22,7 +22,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingWhereNoRoom ()
 		{
-			GameState state = Factories.CreateGameState (camps: 2);
+			GameState state = Factories.CreateGameState (camps: 3);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 
@@ -39,12 +39,12 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void BuildBuildingInvalidBuildingName ()
+		public void BuildBuildingValidAnywhere ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
 			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Invalid"));
+			engine.Build (state, state.Regions[0].Name, 0, "Any");
 		}
 
 		[Fact]
@@ -53,6 +53,14 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
+		}
+
+		[Fact]
+		public void CannotBuildBuildingMarkedUnable ()
+		{
+			GameState state = Factories.CreateGameState ();
+			BuildingEngine engine = Factories.CreateBuildingEngine ();
+			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Impossible"));
 		}
 
 		[Fact]
@@ -105,20 +113,10 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.Equal (4, buildings.Count);
+			Assert.True (buildings.Count > 5);
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");
-			Assert.Contains (buildings, x => x == "Watering Hole");
-		}
-
-		[Fact]
-		public void CanNotBuildIfNotEnoughPops ()
-		{
-			GameState state = Factories.CreateGameState (camps: 1);
-			BuildingEngine engine = Factories.CreateBuildingEngine ();
-			Assert.False (engine.CanAffordBuilding (state, "Workshop"));
-			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
 		}
 	}
 }

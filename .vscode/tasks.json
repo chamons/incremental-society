@@ -7,21 +7,10 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/tests/incremental-society.tests.csproj"
             ],
             "problemMatcher": "$tsc"
         },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/tests/incremental-society.tests.csproj"
-            ],
-            "problemMatcher": "$tsc"
-        },
-        {
+       {
             "label": "watch",
             "command": "dotnet",
             "type": "process",

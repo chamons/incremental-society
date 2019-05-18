@@ -99,12 +99,7 @@ namespace IncrementalSociety
 		{
 			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
 			foreach (var building in state.AllBuildings ()) {
-				additional.Add (GetBuildingResources (building));
-
-				if (efficiency != 1) {
-					foreach (var nonBasicResource in additional.Keys.Where (x => !BasicResources.Contains (x)).ToList ())
-						additional[nonBasicResource] = additional[nonBasicResource] * efficiency;
-				}
+				additional.AddWithMultiply (GetBuildingResources (building), efficiency);
 
 				var conversions = GetBuildingConversionResources (building);
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))

@@ -105,6 +105,7 @@ namespace IncrementalSociety
 		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
 		
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
+		public bool AbleToBuild (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventBuild;
 
 		public ImmutableDictionary<string, double> GetResourcesNextTick (GameState state)
 		{
@@ -119,8 +120,9 @@ namespace IncrementalSociety
 		
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 		
+		public int GetBuildingJobCount (GameState state) => PopulationEngine.GetBuildingJobCount (state);
 		public int GetBuildingTotal (GameState state) => state.AllBuildings ().Count ();
-		public int GetMaxBuildings (GameState state) => PopulationEngine.GetPopUnitsForTotalPopulation (state.Population);
+		public double GetMaxBuildings (GameState state) => PopulationEngine.GetPopUnitsForTotalPopulation (state.Population);
 		public double GetHousingCapacity (GameState state) => PopulationEngine.GetHousingCapacity (state);
 		
 		public bool CanIncreasePopulationCap (GameState state) => PopulationEngine.CanIncreasePopulationCap (state); 
@@ -135,10 +137,9 @@ namespace IncrementalSociety
 
 		public static GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement", "Gathering Camp" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
-			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
+			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
 			var resources = new Dictionary<string, double> { { "Food", 50 }, { "Water", 100 }, { "Wood", 50 } };
-			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 200, 200);
+			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200);
 		}
 	}
 }

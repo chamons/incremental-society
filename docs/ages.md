@@ -2,7 +2,7 @@
 
 - Stone Age
     - Enough food and heat to survive
-    - Domestication of animals / plants
+    - Domestication of animals / plants / fishing
     - Late stone age introduction of trade
 - Bronze Age
     - First exploration and warfare expansion

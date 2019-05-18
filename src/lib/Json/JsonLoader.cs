@@ -68,13 +68,15 @@ namespace IncrementalSociety.Json
 		void ValidateResource (string name)
 		{
 			if (!Resources.Resources.Any (x => x.Name == name))
-				throw new InvalidOperationException ($"JSON failed validation, unable to find resource - {name}");
+				throw new InvalidOperationException ($"JSON failed validation, unable to find resource - '{name}'");
 		}
 
 		void ValidateRegion (string name)
 		{
+			if (name == "Any")
+				return;
 			if (!Regions.Regions.Any (x => x.Name == name))
-				throw new InvalidOperationException ($"JSON failed validation, unable to find region - {name}");
+				throw new InvalidOperationException ($"JSON failed validation, unable to find region - '{name}'");
 		}
 	}
 }

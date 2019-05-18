@@ -69,8 +69,8 @@ namespace IncrementalSociety.Web.Services
 						State = null;
 				}
 			}
-			catch (JSException) {
-			}
+			catch (JSException) {}
+
 			if (State == null)
 				State = GameEngine.CreateNewGame ();
 			Engine = GameEngine.Create (Loader);

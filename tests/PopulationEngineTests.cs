@@ -45,7 +45,7 @@ namespace IncrementalSociety.Tests
 
 			// +100
 			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (100));
-			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (150));
+			Assert.Equal (1.5, engine.GetPopUnitsForTotalPopulation (150));
 			Assert.Equal (2, engine.GetPopUnitsForTotalPopulation (200));
 			Assert.Equal (4, engine.GetPopUnitsForTotalPopulation (400));
 			Assert.Equal (10, engine.GetPopUnitsForTotalPopulation (1000));
@@ -168,6 +168,23 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void PopsDecreaseIfHousingDestoryed ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (holes: 1).WithPopulation (150);
+			
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+		
+			double popBefore = state.Population;
+
+			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 1);
+
+			state = engine.ProcessTick (state);
+			Assert.True (state.Population < popBefore);
+		}
+
+		[Fact]
 		public void PopsHaveHardMinimumLowerLimit ()
 		{
 			var engine = Factories.CreatePopEngine ();
@@ -206,6 +223,21 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void SomeBuildingsDoNotDecreaseEfficiency ()
+		{
+			var engine = Factories.CreatePopEngine ();
+			var state = Factories.CreateGameState (camps: 1);
+			double baseEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.Equal (1.0, baseEfficiency);
+
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "NoJob");
+			
+			double afterEfficiency = engine.GetPopulationEfficiency (state);
+			Assert.Equal (1.0, afterEfficiency);
+		}
+
+		[Fact]
 		public void ProcessTickGrows ()
 		{
 			var engine = Factories.CreatePopEngine ();
@@ -213,7 +245,7 @@ namespace IncrementalSociety.Tests
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population > 100 && state.Population < 200);
-			for (int i = 0 ; i < 20; ++i)
+			for (int i = 0 ; i < 40; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (200, state.Population);
 		}
@@ -222,21 +254,23 @@ namespace IncrementalSociety.Tests
 		public void ProcessTickShrinkThenGrows ()
 		{
 			var engine = Factories.CreatePopEngine ();
+			var buildingEngine = Factories.CreateBuildingEngine ();
+			
 			var state = Factories.CreateGameState (smokers: 1);
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = state.WithResources (Immutable.CreateDictionary ("Water", 1.0));
 			
 			// Make sure Charcoal conversion doesn't get selected 
 			state = state.WithResources (Immutable.CreateDictionary ("Charcoal", 20.0));
 
-			for (int i = 0 ; i < 20; ++i)
+			for (int i = 0 ; i < 40; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 
-			var buildingEngine  = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
-			for (int i = 0 ; i < 20; ++i)
+			for (int i = 0 ; i < 40; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (170, state.Population);
 		}

@@ -45,9 +45,8 @@ namespace IncrementalSociety
 
 		public GameState ProcessTick (GameState state)
 		{
-			// Step 0 - Determine how many people our income supports
+			// Step 0 - Determine how many people our income and housing supports
 			double effectivePopCap = FindEffectiveCap (state);
-
 #if DEBUG
 			if (!effectivePopCap.HasValue())
 				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
@@ -68,19 +67,20 @@ namespace IncrementalSociety
 				growthRate *= 5;
 
 			// Step 3c Tweak the growth rate to be "nicer":
-			// - If we're within one of the cap, round our rate to make a nice whole number
+			// - If we're within one of the cap, round our rate to make a nice .25
 			// - Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
+			const double MinGrowth = 0.25;
 			if (growthRate < 0) {
-				if (state.Population - effectivePopCap < 1)
+				if (state.Population - effectivePopCap < MinGrowth)
 					growthRate = effectivePopCap - state.Population; 
 				else
-					growthRate = Math.Min (growthRate, -1);
+					growthRate = Math.Min (growthRate, -MinGrowth);
 			}
 			else {
-				if (effectivePopCap - state.Population < 1)
+				if (effectivePopCap - state.Population < MinGrowth)
 					growthRate = effectivePopCap - state.Population; 
 				else
-					growthRate = Math.Max (growthRate, 1);
+					growthRate = Math.Max (growthRate, MinGrowth);
 			}
 			
 			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
@@ -107,10 +107,15 @@ namespace IncrementalSociety
 		{
 			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
 
+			double effectivePopCap;
 			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state.PopulationCap)))
-				return state.PopulationCap;
+				effectivePopCap = state.PopulationCap;
 			else
-				return FindEffectivePopCap (state, resourcesPerTick);
+				effectivePopCap = FindResourceEffectivePopCap (state, resourcesPerTick);
+
+			// If our housing is lower than income, use that as effective cap
+			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
+			return effectivePopCap;
 		}
 		
 		public bool IsPopulationStarving (GameState state) 
@@ -130,7 +135,7 @@ namespace IncrementalSociety
 			return delta.OrderBy (x => x.Value).Select (x => x.Key).Where (x => PopNeedNames.Contains (x)).First ();
 		}
 
-		double FindEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
+		double FindResourceEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
 		{
 			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
 
@@ -177,22 +182,22 @@ namespace IncrementalSociety
 			return state.WithPopulationCap (GetPreviousPopBreakpoint (state.PopulationCap));
 		}
 
-		public int GetPopUnitsForTotalPopulation (double population)
+		public double GetPopUnitsForTotalPopulation (double population)
 		{
 			if (population < 1000) {
-				return (int)Math.Floor (population / 100);
+				return population / 100;
 			} else if (population < 2000) {
-				return 10 + (int)Math.Floor ((population - 1000) / 200);
+				return 10 + (population - 1000) / 200;
 			} else if (population < 4000) {
-				return 15 + (int)Math.Floor ((population - 2000) / 500);
+				return 15 + (population - 2000) / 500;
 			} else if (population < 10000) {
-				return 19 + (int)Math.Floor ((population - 4000) / 1000);
+				return 19 + (population - 4000) / 1000;
 			} else if (population < 50000) {
-				return 25 + (int)Math.Floor ((population - 10000) / 5000);
+				return 25 + (population - 10000) / 5000;
 			} else if (population< 100000) {
-				return 32 + (int)Math.Floor ((population - 50000) / 10000);
+				return 32 + (population - 50000) / 10000;
 			} else {
-				return 37 + (int)Math.Floor ((population - 100000) / 50000);
+				return 37 + (population - 100000) / 50000;
 			}
 		}
 
@@ -238,18 +243,23 @@ namespace IncrementalSociety
 		public double GetGrowthRate (double popSize, double popCap)
 		{
 			// Logistic growth
-			const double R = .05;
+			const double R = .025;
 			return R * ((popCap - popSize) / popSize) * popSize;
+		}
+		
+		public int GetBuildingJobCount (GameState state)
+		{
+			return state.AllBuildings ().Where (x => !ResourceEngine.FindBuilding (x).DoesNotRequireJob).Count ();
 		}
 
 		public double GetPopulationEfficiency (GameState state)
 		{
-			int buildingCount = state.AllBuildings ().Count ();
-			int totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
+			int buildingCount = GetBuildingJobCount (state);
+			double totalPopCount = GetPopUnitsForTotalPopulation (state.Population);
 			return GetPopulationEfficiency (buildingCount, totalPopCount);
 		}
 
-		public double GetPopulationEfficiency (int buildingCount, int totalPopCount)
+		public double GetPopulationEfficiency (int buildingCount, double totalPopCount)
 		{
 			if (totalPopCount >= buildingCount)
 				return 1.0;

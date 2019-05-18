@@ -94,9 +94,28 @@ namespace IncrementalSociety.Tests
 				]
 			},
 			{
+				""name"": ""Housing"",
+				""valid_regions"": [""Plains""],
+				""housing_capacity"": 200
+			},
+			{
+				""name"": ""Impossible"",
+				""valid_regions"": [""Plains""],
+				""prevent_build"" : true
+			},
+			{
+				""name"": ""Any"",
+				""valid_regions"": [""Any""]
+			},
+			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
-			}
+			},
+			{
+				""name"": ""NoJob"",
+				""valid_regions"": [""Any""],
+				""does_not_require_job"": true
+			},
 		]
 		}";
 
@@ -116,7 +135,7 @@ namespace IncrementalSociety.Tests
 			""population_needs"": [	{
 				""Name"": ""Water"", ""Amount"" : .01,
 			}],
-			""region_capacity"" :  2,
+			""region_capacity"" :  3,
 			""min_population"" :  100
 		}";
 

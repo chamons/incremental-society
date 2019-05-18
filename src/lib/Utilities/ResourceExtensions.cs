@@ -23,6 +23,16 @@ namespace IncrementalSociety.Utilities
 			}
 		}
 
+		public static void AddWithMultiply (this ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right, double multiply)
+		{
+			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
+			{
+				double leftValue = left.AmountOf (resourceName);
+				double rightValue = right.AmountOf (resourceName);
+				left[resourceName] = leftValue + (rightValue * multiply);
+			}
+		}
+
 		public static void Subtract (this ImmutableDictionary<string, double>.Builder left, IDictionary<string, double> right)
 		{
 			foreach (var resourceName in left.Keys.Union (right.Keys).ToList ())
@@ -35,6 +45,8 @@ namespace IncrementalSociety.Utilities
 
 		public static void Multiply (this ImmutableDictionary<string, double>.Builder left, double right)
 		{
+			if (right == 1)
+				return;
 			foreach (var resourceName in left.Keys.ToList ()) 
 				left[resourceName] = left[resourceName] * right;
 		}

@@ -13,11 +13,14 @@
 <ul id="resource-list">
 	@foreach (var resource in Resources)
 	{
-		<li class="d-flex align-items-center resource-list-item">
-			<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
-			@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @(GetResourceStroage (GameService.State, resource.Name))
-			<div class="@StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
-		</li>
+		double storage = GetResourceStroage (GameService.State, resource.Name);
+		if (storage > 0) {
+			<li class="d-flex align-items-center resource-list-item">
+				<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
+				@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @storage  
+				<div class="resource-delta @StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
+			</li>
+		}
 	}
 </ul>
 

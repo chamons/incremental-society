@@ -53,6 +53,19 @@
 	min-height: 35px
 	max-width: 200px
 
+.secondary-resources
+	background-color: lightgray
+
+.conversion-disabled
+	background-color: darkred 
+
+.building.disabled
+	background-color: gray
+	.secondary-resources .conversion-enabled
+		background-color: gray
+	.resource-line
+		border: 1px solid black 
+
 .building-title
 	margin-bottom: 5px
 
@@ -128,6 +141,9 @@
 	p
 		vertical-align: middle
 
+.resource-delta
+	margin-left: 3px
+
 // Pop 
 #PopStats
 	margin: 10px
@@ -146,9 +162,6 @@
 
 .red
 	color: red
-
-.gray
-	background-color: lightgray  
 
 .clear
 	display: none

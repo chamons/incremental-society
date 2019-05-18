@@ -137,9 +137,8 @@ namespace IncrementalSociety
 		public static GameState CreateNewGame ()
 		{
 			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
-			var mudFlatsRegion = new Region ("Mudflats", new Area[] { new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Swamp), new Area (AreaType.Plains), new Area (AreaType.Desert) });
 			var resources = new Dictionary<string, double> { { "Food", 50 }, { "Water", 100 }, { "Wood", 50 } };
-			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion, mudFlatsRegion }, resources, 200, 200);
+			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200);
 		}
 	}
 }

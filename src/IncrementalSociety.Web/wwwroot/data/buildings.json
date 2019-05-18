@@ -2,12 +2,14 @@
 	"buildings": [
 		{
 			"name": "Crude Settlement",
+			"prevent_build": true,
 			"prevent_destory": true,
-			"valid_regions": [ "Plains", "Forest" ],
+			"valid_regions": [ "Any" ],
 			"storage": [
 				{ "Name": "Food", "Amount" : 200 },
 				{ "Name": "Water", "Amount" : 100 },
 				{ "Name": "Wood", "Amount" : 200 },
+				{ "Name": "Stone", "Amount" : 100 },
 				{ "Name": "Knowledge", "Amount" : 100 }
 			],
 			"yield": [
@@ -15,10 +17,16 @@
 				{ "Name": "Water", "Amount" : 4 },
 				{ "Name": "Wood", "Amount" : 2 }
 			],
+			"housing_capacity": 300
+		},
+		{
+			"name": "Huts",
+			"valid_regions": [ "Plains", "Forest" ],
 			"cost": [
-				{ "Name": "Tools", "Amount": 10 },
-				{ "Name": "Stone", "Amount": 100 },
-			{ "Name": "Wood", "Amount": 200 }
+				{
+					"Name": "Wood",
+					"Amount": 100
+				}
 			],
 			"housing_capacity": 200
 		},
@@ -26,35 +34,44 @@
 			"name": "Gathering Camp",
 			"valid_regions": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
-				{ "Name": "Food", "Amount" : 2 },
-				{ "Name": "Water", "Amount" : 2 },
-				{ "Name": "Stone", "Amount" : 0.5 },
+				{ "Name": "Food", "Amount" : 4 },
+				{ "Name": "Water", "Amount" : 3 },
+				{ "Name": "Stone", "Amount" : 0.1 },
 				{ "Name": "Wood", "Amount" : 1 }
 			],
 			"cost": [
 				{
 					"Name": "Wood",
-					"Amount": 10
+					"Amount": 50
 				}
 			],
 			"housing_capacity": 50
 		},
 		{
-			"name": "Charcoal Pit",
-			"valid_regions": [ "Plains" ],
+			"name": "Clay Pit",
+			"valid_regions": [ "Any" ],
+			"RequiredResource ": "Clay",
+			"yield": [
+				{ "Name": "Clay", "Amount" : 2 }
+			],
 			"conversion_yield": [
 				{
-					"name": "Charcoal Production",
+					"name": "Bricks Production",
 					"cost": [ 
-						{ "Name": "Wood", "Amount" : 1 }
+						{ "Name": "Clay", "Amount" : 1 }
 					],
 					"provides": [ 
-						{ "Name": "Charcoal", "Amount" : 0.5 }
+						{ "Name": "Bricks", "Amount" : 0.25 }
 					]
 				}
 			],
 			"cost": [
-				{ "Name": "Wood", "Amount" : 10 }
+				{ "Name": "Wood", "Amount" : 100 },
+				{ "Name": "Stone", "Amount" : 50 }
+			],
+			"storage": [
+				{ "Name": "Clay", "Amount" : 100 },
+				{ "Name": "Bricks", "Amount" : 100 }
 			]
 		},
 		{
@@ -69,56 +86,14 @@
 					"provides": [ 
 						{ "Name": "Tools", "Amount" : 0.1 }
 					]
-				},
-				{
-					"name": "Wooden Tools Creation",
-					"cost": [ 
-						{ "Name": "Wood", "Amount" : 2 }
-					],
-					"provides": [ 
-						{ "Name": "Tools", "Amount" : 0.1 }
-					]
 				}
+
 			],
 			"cost": [
-				{ "Name": "Wood", "Amount" : 10 },
-				{ "Name": "Stone", "Amount" : 10 }
+				{ "Name": "Wood", "Amount" : 100 },
+				{ "Name": "Bricks", "Amount" : 100 }
 			],
 			"housing_capacity": 50
-		},
-		{
-			"name": "Clay Pit",
-			"valid_regions": [ "Mountain", "Plains", "Forest" ],
-			"RequiredResource ": "Clay",
-			"yield": [
-				{ "Name": "Clay", "Amount" : 2 }
-			],
-			"conversion_yield": [
-				{
-					"name": "Bricks Production",
-					"cost": [ 
-						{ "Name": "Clay", "Amount" : 1 }
-					],
-					"provides": [ 
-						{ "Name": "Bricks", "Amount" : 0.5 }
-					]
-				}
-			],
-			"cost": [
-				{ "Name": "Wood", "Amount" : 10 }
-			]
-		},
-		{
-			"name": "Quarry",
-			"valid_regions": [ "Mountain", "Plains", "Forest" ],
-			"RequiredResource ": "Stone",
-			"yield": [
-				{ "Name": "Stone", "Amount" : 2 }
-			],
-			"cost": [
-				{ "Name": "Wood", "Amount" : 10 },
-				{ "Name": "Stone", "Amount" : 10 }
-			]
 		}
 	]
 }

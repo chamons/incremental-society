@@ -34,7 +34,7 @@ In stone age there are three tiers:
 
 - Start in a small village, just barely making more resources than your current population needs (Food, Water, Food).
 - You are making just T0 resources
-- You have 2 pops, enough for one building.
+- You have 2 or 3 pops, enough for one or two buildings.
 
 - You can initially build a camp or hut, and you will likley need both before moving to T1.
 - Once you have some pop you'll want to work towards a workshop to make tools

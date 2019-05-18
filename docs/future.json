@@ -30,5 +30,37 @@
     "missing_power": 0.5
 }
 
+{
+    "name": "Quarry",
+    "valid_regions": [ "Mountain", "Plains", "Forest" ],
+    "RequiredResource ": "Stone",
+    "yield": [
+        { "Name": "Stone", "Amount" : 2 }
+    ],
+    "cost": [
+        { "Name": "Wood", "Amount" : 10 },
+        { "Name": "Stone", "Amount" : 10 }
+    ]
+}
+
+{
+    "name": "Charcoal Pit",
+    "valid_regions": [ "Plains" ],
+    "conversion_yield": [
+        {
+            "name": "Charcoal Production",
+            "cost": [ 
+                { "Name": "Wood", "Amount" : 1 }
+            ],
+            "provides": [ 
+                { "Name": "Charcoal", "Amount" : 0.5 }
+            ]
+        }
+    ],
+    "cost": [
+        { "Name": "Wood", "Amount" : 10 }
+    ]
+},
+
 "Fertile",
 "Wildlife"

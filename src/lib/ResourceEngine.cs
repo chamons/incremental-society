@@ -13,17 +13,15 @@ namespace IncrementalSociety
 	{
 		JsonLoader Json;
 		YieldCache Yields;
-		HashSet<string> BasicResources;
 
 		public int RegionCapacity => Json.Game.RegionCapacity;
-		
+
 		public ResourceEngine (JsonLoader json)
 		{
 			Json = json;
 			Yields = new YieldCache ();
-			BasicResources = new HashSet <string> (json.Resources.Resources.Where (x => x.Basic).Select (x => x.Name)); 
 		}
-		
+
 		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
 
 		public Building FindBuilding (string name)
@@ -33,10 +31,10 @@ namespace IncrementalSociety
 				throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
 			return building;
 		}
-		
+
 		public GameState AddTickOfResources (GameState state, double efficiency)
 		{
-			ImmutableDictionary<string, double>.Builder newResources = null; 
+			ImmutableDictionary<string, double>.Builder newResources = null;
 			do {
 				// Determine next tick
 				var tickOfResources = CalculateAdditionalNextTick (state, efficiency);
@@ -139,7 +137,7 @@ namespace IncrementalSociety
 		}
 
 		public ImmutableDictionary<string, double> GetResourceStorage (GameState state)
-		{	
+		{
 			var storage = ImmutableDictionary.CreateBuilder <string, double> ();
 			foreach (var yields in state.AllBuildings ().Select (x => FindBuilding (x).Storage))
 				storage.Add (Yields.Total (yields));

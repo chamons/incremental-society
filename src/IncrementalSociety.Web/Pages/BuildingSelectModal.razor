@@ -19,14 +19,14 @@
 				<div class="modal-body">
 					@foreach (string building in GameService.Engine.GetValidBuildingsForArea (@Area))
 					{
-						<BuildingView 
+						<BuildingView
 							BuildingName="@building"
 							Resources="@GetBuildingCost(@building)"
 							SecondaryResources="@GetBuildingStorage(@building)"
 							Disabled="@(!@CanBuild(@building))"
 							OnClick="@(() => OnSelection(@building))"
 							ColorResourcesAsDelta=false />
-					}	
+					}
 				</div>
 			}
 		</div>
@@ -40,8 +40,8 @@
 	Area Area => Region.Areas[AreaIndex];
 	string AreaName => Area.Type.ToString ();
 
-	ImmutableDictionary<string, double> GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
-	ImmutableDictionary<string, double> GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (name);
+	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
+	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (name);
 
 	protected override void OnInit ()
 	{

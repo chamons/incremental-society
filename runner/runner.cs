@@ -24,8 +24,8 @@ namespace IncrementalSociety.Runner
 
 		static void Main(string[] args)
 		{
-			GameState state = GameEngine.CreateNewGame ();
 			GameEngine engine = GameEngine.Create (LoadXML ());
+			GameState state = engine.CreateNewGame ();
 			var start = DateTime.Now;
 
 			int tickCount = 0;

@@ -20,12 +20,12 @@ namespace IncrementalSociety.Web.Services
 		SelectBuildingToDestory,
 		InternalError
 	}
-	
+
 	public class GameUIStateChangedEventArgs : EventArgs
 	{
 		public Dictionary<string, object> Options { get; set; }
 	}
-	
+
 	public class GameService
 	{
 		HttpClient Client;
@@ -34,13 +34,13 @@ namespace IncrementalSociety.Web.Services
 
 		public JsonLoader Loader { get; private set; }
 		public GameEngine Engine { get; private set; }
-		
-		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;  
+
+		public event EventHandler<GameUIStateChangedEventArgs> CurrentUIStateChanged;
 		public GameUIState CurrentUIState { get; private set; } = GameUIState.Default;
 
 		public GameState State { get; private set; }
 		public bool Loaded { get; private set; }
-	
+
 		public GameService (HttpClient client, IUriHelper uriHelper, IJSRuntime jsRuntime, ExceptionNotificationService exceptionNotification)
 		{
 			Client = client;
@@ -60,6 +60,7 @@ namespace IncrementalSociety.Web.Services
 		public async Task Load ()
 		{
 			Loader = await LoadXML ();
+			Engine = GameEngine.Create (Loader);
 
 			try {
 				string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
@@ -72,8 +73,7 @@ namespace IncrementalSociety.Web.Services
 			catch (JSException) {}
 
 			if (State == null)
-				State = GameEngine.CreateNewGame ();
-			Engine = GameEngine.Create (Loader);
+				State = Engine.CreateNewGame ();
 			Loaded = true;
 		}
 
@@ -89,8 +89,8 @@ namespace IncrementalSociety.Web.Services
 
 		// Shared between multiple consumers
 		public List<(string Name, bool Enabled)> Conversions => Engine.GetConversions (State);
-		public ImmutableDictionary<string, double> GetNextTickResources () => Engine.GetResourcesNextTick (State);
-		public ImmutableDictionary<string, double> GetResourceStorage () => Engine.GetResourceStorage (State);
+		public Resources GetNextTickResources () => Engine.GetResourcesNextTick (State);
+		public Resources GetResourceStorage () => Engine.GetResourceStorage (State);
 
 		public void OnTick ()
 		{
@@ -123,7 +123,7 @@ namespace IncrementalSociety.Web.Services
 
 		public void NewGame ()
 		{
-			State = GameEngine.CreateNewGame ();
+			State = Engine.CreateNewGame ();
 			SetUIState (GameUIState.Default);
 		}
 

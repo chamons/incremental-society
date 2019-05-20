@@ -17,7 +17,7 @@
 		if (storage > 0) {
 			<li class="d-flex align-items-center resource-list-item">
 				<img class="img-fluid resource-image" src="@StyleService.GetImageFilename(resource)" />
-				@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @storage  
+				@resource.Name: @(GetResourceCount (GameService.State.Resources, resource.Name)) / @storage
 				<div class="resource-delta @StyleService.GetResourceDeltaClass(GetResourceCount (NextTickResources, resource.Name))">(@(GetResourceCount (NextTickResources, resource.Name)))</div>
 			</li>
 		}
@@ -27,12 +27,12 @@
 @functions {
 	public IEnumerable<ResourceDeclaration> Resources => GameService.Loader.Resources.Resources;
 
-	public ImmutableDictionary<string, double> NextTickResources;
-	public ImmutableDictionary<string, double> ResourceStorage;
+	public Resources NextTickResources;
+	public Resources ResourceStorage;
 
 	// Round to three places for display
-	public double GetResourceCount (ImmutableDictionary<string, double> resources, string name) => Math.Round (resources.AmountOf (name), 3);
-	public double GetResourceStroage (GameState state, string name) => ResourceStorage.AmountOf (name);
+	public double GetResourceCount (Resources resources, string name) => Math.Round (resources[name], 3);
+	public double GetResourceStroage (GameState state, string name) => ResourceStorage[name];
 
 	protected override void OnInit ()
 	{

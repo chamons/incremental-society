@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IncrementalSociety.Tests
 {
-	public class ResourceEngineTests
+	public class ResourceEngineTests : ResourceTestBase
 	{
 		[Fact]
 		public void AddTickOfResources ()
@@ -17,14 +17,14 @@ namespace IncrementalSociety.Tests
 			Assert.True (state.Resources["Food"] > 0.0);
 			Assert.True (state.Resources["Water"] > 0.0);
 		}
-		
+
 		[Fact]
 		public void AddTickOfResourcesWithInvalidConversion ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (workshops: 1);
 			state = engine.AddTickOfResources (state, 1.0);
-			Assert.False (state.Resources.ContainsKey ("Charcoal"));
+			Assert.Equal (0, state.Resources["Charcoal"]);
 			Assert.Contains (state.DisabledConversions, x => x == "Conversion");
 		}
 
@@ -32,13 +32,13 @@ namespace IncrementalSociety.Tests
 		public void ConstrainResourcesToStorageRespectsLimits ()
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
-			
+
 			GameState state = Factories.CreateGameState (camps: 2);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Food", 1000.0));
+			state = state.WithResources (Create ("Food", 1000.0));
 			state = engine.AddTickOfResources (state, 1.0);
 			state = engine.ConstrainResourcesToStorage (state);
-			Assert.Equal (1000, state.Resources.AmountOf ("Food"));
-			Assert.Equal (4, state.Resources.AmountOf ("Water"));
+			Assert.Equal (1000, state.Resources["Food"]);
+			Assert.Equal (4, state.Resources["Water"]);
 		}
 
 		[Fact]
@@ -46,7 +46,7 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (workshops: 1, smokers: 1);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Charcoal", 10.0));
+			state = state.WithResources (Create ("Charcoal", 10.0));
 			state = engine.AddTickOfResources (state, 1.0);
 			Assert.True (state.Resources["Food"] > 0.0);
 			Assert.Single (state.DisabledConversions);
@@ -97,10 +97,10 @@ namespace IncrementalSociety.Tests
 			var extraResources = engine.CalculateAdditionalNextTick (state, 1.1);
 
 			// Conversions should ignore efficiency
-			Assert.Equal (baseResources.AmountOf("Charcoal"), lessResources.AmountOf ("Charcoal"));
-			Assert.Equal (baseResources.AmountOf("Wood"), lessResources.AmountOf ("Wood"));
-			Assert.Equal (extraResources.AmountOf ("Charcoal"), baseResources.AmountOf ("Charcoal"));
-			Assert.Equal (extraResources.AmountOf ("Wood"), baseResources.AmountOf ("Wood"));
+			Assert.Equal (baseResources["Charcoal"], lessResources["Charcoal"]);
+			Assert.Equal (baseResources["Wood"], lessResources["Wood"]);
+			Assert.Equal (extraResources["Charcoal"], baseResources["Charcoal"]);
+			Assert.Equal (extraResources["Wood"], baseResources["Wood"]);
 		}
 
 		[Fact]
@@ -120,7 +120,7 @@ namespace IncrementalSociety.Tests
 			Assert.True (campResources["Food"] > 0.0);
 			Assert.True (campResources["Water"] > 0.0);
 		}
-	
+
 		[Fact]
 		public void ConversionYield ()
 		{
@@ -130,7 +130,7 @@ namespace IncrementalSociety.Tests
 			Assert.True (conversions[0].Resources["Wood"] < 0.0);
 			Assert.True (conversions[0].Resources["Charcoal"] > 0.0);
 		}
-		
+
 		[Fact]
 		public void ReturnsEnabledConversions ()
 		{
@@ -156,9 +156,9 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 2);
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			var storage = engine.GetResourceStorage (state);
-			Assert.Equal (1000, storage.AmountOf ("Food"));
-			Assert.Equal (800, storage.AmountOf ("Water"));
-			Assert.Equal (100, storage.AmountOf ("Wood"));
+			Assert.Equal (1000, storage["Food"]);
+			Assert.Equal (800, storage["Water"]);
+			Assert.Equal (100, storage["Wood"]);
 		}
 
 		[Fact]
@@ -166,11 +166,11 @@ namespace IncrementalSociety.Tests
 		{
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 2);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Food", -1000.0));
+			state = state.WithResources (Create ("Food", -1000.0));
 
 			state = engine.AddTickOfResources (state, 1.0);
-			Assert.Equal (-996, state.Resources.AmountOf ("Food"));
-			Assert.Equal (4, state.Resources.AmountOf ("Water"));
+			Assert.Equal (-996, state.Resources["Food"]);
+			Assert.Equal (4, state.Resources["Water"]);
 		}
 	}
 }

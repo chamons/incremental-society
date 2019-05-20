@@ -11,7 +11,7 @@ using Xunit;
 
 namespace IncrementalSociety.Tests
 {
-	public class PopulationEngineTests
+	public class PopulationEngineTests : ResourceTestBase
 	{
 		[Fact]
 		public void GetRequiredResourcesForPop ()
@@ -21,21 +21,21 @@ namespace IncrementalSociety.Tests
 			state = state.WithPopulation (100);
 
 			var reqs = engine.GetRequirementsForPopulation (state);
-			Assert.Equal (1, reqs.AmountOf ("Water"));
+			Assert.Equal (1, reqs["Water"]);
 			state = state.WithPopulation (200);
 			reqs = engine.GetRequirementsForPopulation (state);
-			Assert.Equal (2, reqs.AmountOf ("Water"));
+			Assert.Equal (2, reqs["Water"]);
 		}
-		
+
 		[Fact]
 		public void PopsActuallyConsumeResourcesOnTick ()
 		{
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState ();
 			state = state.WithPopulation (100);
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 2.0));
+			state = state.WithResources (Create ("Water", 2.0));
 			state = engine.ProcessTick(state);
-			Assert.Equal (1, state.Resources.AmountOf ("Water"));
+			Assert.Equal (1, state.Resources["Water"]);
 		}
 
 		[Fact]
@@ -89,7 +89,7 @@ namespace IncrementalSociety.Tests
 			double highOverRate = engine.GetGrowthRate (110, 100);
 			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
 		}
-		
+
 		[Fact]
 		public void GetHousingCapactiy ()
 		{
@@ -104,10 +104,10 @@ namespace IncrementalSociety.Tests
 		public void GetNextAndPreviousBreakpoint ()
 		{
 			var engine = Factories.CreatePopEngine ();
-			Assert.Equal (200, engine.GetNextPopBreakpoint (100)); 
-			Assert.Equal (100, engine.GetPreviousPopBreakpoint (100)); 
-			Assert.Equal (900, engine.GetPreviousPopBreakpoint (1000)); 
-			Assert.Equal (1200, engine.GetNextPopBreakpoint (1000)); 
+			Assert.Equal (200, engine.GetNextPopBreakpoint (100));
+			Assert.Equal (100, engine.GetPreviousPopBreakpoint (100));
+			Assert.Equal (900, engine.GetPreviousPopBreakpoint (1000));
+			Assert.Equal (1200, engine.GetNextPopBreakpoint (1000));
 		}
 
 		[Fact]
@@ -115,7 +115,7 @@ namespace IncrementalSociety.Tests
 		{
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState (camps: 1);
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 200.0));
+			state = state.WithResources (Create ("Water", 200.0));
 
 			double popBefore = state.Population;
 			state = engine.ProcessTick (state);
@@ -172,10 +172,10 @@ namespace IncrementalSociety.Tests
 		{
 			var engine = Factories.CreatePopEngine ();
 			var state = Factories.CreateGameState (holes: 1).WithPopulation (150);
-			
+
 			var buildingEngine = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
-		
+
 			double popBefore = state.Population;
 
 			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 1);
@@ -232,7 +232,7 @@ namespace IncrementalSociety.Tests
 
 			var buildingEngine = Factories.CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "NoJob");
-			
+
 			double afterEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.Equal (1.0, afterEfficiency);
 		}
@@ -255,14 +255,14 @@ namespace IncrementalSociety.Tests
 		{
 			var engine = Factories.CreatePopEngine ();
 			var buildingEngine = Factories.CreateBuildingEngine ();
-			
+
 			var state = Factories.CreateGameState (smokers: 1);
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 			state = state.WithPopulation (100).WithPopulationCap (200);
-			state = state.WithResources (Immutable.CreateDictionary ("Water", 1.0));
-			
-			// Make sure Charcoal conversion doesn't get selected 
-			state = state.WithResources (Immutable.CreateDictionary ("Charcoal", 20.0));
+			state = state.WithResources (Create ("Water", 1.0));
+
+			// Make sure Charcoal conversion doesn't get selected
+			state = state.WithResources (Create ("Charcoal", 20.0));
 
 			for (int i = 0 ; i < 40; ++i)
 				state = engine.ProcessTick (state);

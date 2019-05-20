@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,20 +8,35 @@ namespace IncrementalSociety
 	public class ResourceConfig
 	{
 		public int ResourceLength;
+		public List<string> ResourceNames;
 		public Dictionary <string, int> Index;
 
-		public ResourceConfig (List<string> resources)
+		public ResourceConfig (IEnumerable<string> resources)
 		{
-			ResourceLength = resources.Count;
+			ResourceNames = resources.ToList ();
+			ResourceLength = ResourceNames.Count;
 			Index = new Dictionary<string, int> ();
 			for (int i = 0 ; i < ResourceLength ; ++i)
-				Index.Add (resources[i], i);
+				Index.Add (ResourceNames[i], i);
 		}
 
 		public Resources Create () => new Resources (this);
+		public Resources.Builder CreateBuilder () => new Resources.Builder (this);
 	}
 
-	public class Resources
+	public struct ResourceItem
+	{
+		public string ResourceName;
+		public double Value;
+
+		public ResourceItem (string resourceName, double value)
+		{
+			ResourceName = resourceName;
+			Value = value;
+		}
+	}
+
+	public class Resources : IEnumerable<ResourceItem>
 	{
 		ResourceConfig Config;
 		double [] Inventory;
@@ -41,19 +57,73 @@ namespace IncrementalSociety
 			Array.Copy (inventory, Inventory, ResourceLength);
 		}
 
-		public virtual double this [string key]
+		public double this [string key]
 		{
 			get => Inventory [Index[key]];
 		}
 
-		public Buidler ToBuilder ()
+		public double this [int index]
 		{
-			return new Buidler (Config, Inventory);
+			get => Inventory [index];
 		}
 
-		public class Buidler : Resources
+		public Builder ToBuilder ()
 		{
-			internal Buidler (ResourceConfig config, double [] inventory) : base (config, inventory) {}
+			return new Builder (Config, Inventory);
+		}
+
+		public Resources Add (Resources right)
+		{
+			var builder = ToBuilder ();
+			builder.Add (right);
+			return builder.ToResources ();
+		}
+
+		public Resources AddWithMultiply (Resources right, double multiply)
+		{
+			var builder = ToBuilder ();
+			builder.AddWithMultiply (right, multiply);
+			return builder;
+		}
+
+		public Resources Subtract (Resources right)
+		{
+			var builder = ToBuilder ();
+			builder.Subtract (right);
+			return builder;
+		}
+
+		public Resources Multiply (double right)
+		{
+			var builder = ToBuilder ();
+			builder.Multiply (right);
+			return builder;
+		}
+
+		public bool HasMoreThan (Resources right)
+		{
+			for (int i = 0 ; i < ResourceLength ; ++i) {
+				if (right.Inventory[i] > Inventory[i])
+					return false;
+			}
+			return true;
+		}
+
+		public IEnumerator<ResourceItem> GetEnumerator()
+		{
+			for (int i = 0 ; i < ResourceLength ; ++i)
+				yield return new ResourceItem (Config.ResourceNames[i], Inventory[i]);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public class Builder : Resources
+		{
+			internal Builder (ResourceConfig config, double [] inventory) : base (config, inventory) {}
+			internal Builder (ResourceConfig config) : base (config) {}
 
 			public new double this [string key]
 			{
@@ -61,9 +131,41 @@ namespace IncrementalSociety
 				set => Inventory [Index[key]] = value;
 			}
 
+			public new double this [int index]
+			{
+				get => Inventory [index];
+				set => Inventory [index] = value;
+			}
+
 			public Resources ToResources ()
 			{
 				return new Resources (Config, Inventory);
+			}
+
+			public new void Add (Resources right)
+			{
+				for (int i = 0 ; i < ResourceLength ; ++i)
+					Inventory[i] = Inventory[i] + right[i];
+			}
+
+			public new void AddWithMultiply (Resources right, double multiply)
+			{
+				for (int i = 0 ; i < ResourceLength ; ++i)
+					Inventory[i] = Inventory[i] + (right[i] * multiply);
+			}
+
+			public new void Subtract (Resources right)
+			{
+				for (int i = 0 ; i < ResourceLength ; ++i)
+					Inventory[i] = Inventory[i] - right[i];
+			}
+
+			public new void Multiply (double right)
+			{
+				if (right == 1)
+					return;
+				for (int i = 0 ; i < ResourceLength ; ++i)
+					Inventory[i] = Inventory[i] * right;
 			}
 		}
 	}

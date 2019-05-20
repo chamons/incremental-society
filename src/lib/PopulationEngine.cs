@@ -12,36 +12,33 @@ namespace IncrementalSociety
 	public class PopulationEngine
 	{
 		ResourceEngine ResourceEngine;
-		ImmutableDictionary<string, double> PopNeed;
+		Resources PopNeed;
 		HashSet <string> PopNeedNames;
 		double PopMin;
 		YieldCache Yields;
 
+		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
+
 		public PopulationEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
-			Yields = new YieldCache ();
+			Yields = new YieldCache (ResourceConfig);
 			LoadAndCalculatePopNeed (json);
 		}
 
 		void LoadAndCalculatePopNeed (JsonLoader json)
 		{
-			var totalNeed = ImmutableDictionary.CreateBuilder<string, double> ();
+			var totalNeed = ResourceConfig.CreateBuilder ();
 			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
-			PopNeed = totalNeed.ToImmutable ();
-			PopNeedNames = new HashSet<string> (PopNeed.Keys);
+			PopNeed = totalNeed.ToResources ();
+			PopNeedNames = new HashSet<string> (ResourceConfig.ResourceNames);
 
 			PopMin = json.Game.MinPopulation;
 		}
-		
-		public ImmutableDictionary<string, double> GetRequirementsForPopulation (GameState state) => GetRequirementsForPopulation (state.Population);
 
-		public ImmutableDictionary<string, double> GetRequirementsForPopulation (double population)
-		{
-			var amount = PopNeed.ToBuilder ();
-			amount.Multiply (population);
-			return amount.ToImmutable ();
-		}
+		public Resources GetRequirementsForPopulation (GameState state) => GetRequirementsForPopulation (state.Population);
+
+		public Resources GetRequirementsForPopulation (double population) => PopNeed.Multiply (population);
 
 		public GameState ProcessTick (GameState state)
 		{
@@ -51,17 +48,17 @@ namespace IncrementalSociety
 			if (!effectivePopCap.HasValue())
 				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
 #endif
-			
+
 			// Step 1 - Determine how many resources we need for our current population
 			var neededResource = GetRequirementsForPopulation (state);
-			
+
 			// Step 2 - Consume if we have enough, else consume as much as we can
 			bool starved = !state.Resources.HasMoreThan (neededResource);
 			state = ConsumeResources (state, neededResource);
-			
+
 			// Step 3a Get new desired growth rate
 			double growthRate = GetGrowthRate (state.Population, effectivePopCap);
-			
+
 			// Step 3b If we starved some people, multiple negative by x5
 			if (starved)
 				growthRate *= 5;
@@ -72,18 +69,18 @@ namespace IncrementalSociety
 			const double MinGrowth = 0.25;
 			if (growthRate < 0) {
 				if (state.Population - effectivePopCap < MinGrowth)
-					growthRate = effectivePopCap - state.Population; 
+					growthRate = effectivePopCap - state.Population;
 				else
 					growthRate = Math.Min (growthRate, -MinGrowth);
 			}
 			else {
 				if (effectivePopCap - state.Population < MinGrowth)
-					growthRate = effectivePopCap - state.Population; 
+					growthRate = effectivePopCap - state.Population;
 				else
 					growthRate = Math.Max (growthRate, MinGrowth);
 			}
-			
-			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later 
+
+			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later
 			if (growthRate > 0 && state.Population + growthRate > effectivePopCap)
 				return state;
 
@@ -91,14 +88,16 @@ namespace IncrementalSociety
 			return GrowAtRate (state, growthRate, effectivePopCap);
 		}
 
-		GameState ConsumeResources (GameState state, ImmutableDictionary<string, double> consumedResources)
+		GameState ConsumeResources (GameState state, Resources consumedResources)
 		{
 			var currentResources = state.Resources.ToBuilder ();
 			currentResources.Subtract (consumedResources);
-			
+
 			// Don't go negative when consuming population resources
-			foreach (var resource in consumedResources.Keys.Where (x => currentResources[x] < 0).ToList ())
-				currentResources [resource] = 0;
+			for (int i = 0 ; i < ResourceConfig.ResourceLength ; ++i) {
+				if (currentResources [i] < 0)
+					currentResources [i] = 0;
+			}
 
 			return state.WithResources (currentResources);
 		}
@@ -117,31 +116,30 @@ namespace IncrementalSociety
 			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
 			return effectivePopCap;
 		}
-		
-		public bool IsPopulationStarving (GameState state) 
+
+		public bool IsPopulationStarving (GameState state)
 		{
 			var neededResource = GetRequirementsForPopulation (state);
 			var nextTickResources = state.Resources.ToBuilder ();
 			nextTickResources.Add (ResourceEngine.CalculateAdditionalNextTick (state, 1.0));
-			return !nextTickResources.ToImmutable ().HasMoreThan (neededResource);
+			return !nextTickResources.HasMoreThan (neededResource);
 		}
 
-		string FindMostMissingResource (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
+		string FindMostMissingResource (GameState state, Resources resourcesPerTick)
 		{
-			var delta = resourcesPerTick.ToBuilder ();
-			delta.Subtract (GetRequirementsForPopulation (state));
+			var delta = resourcesPerTick.Subtract (GetRequirementsForPopulation (state)).ToBuilder ();
 			foreach (var need in PopNeed)
-				delta[need.Key] = delta.AmountOf (need.Key) / need.Value;
-			return delta.OrderBy (x => x.Value).Select (x => x.Key).Where (x => PopNeedNames.Contains (x)).First ();
+				delta[need.ResourceName] = delta[need.ResourceName] / need.Value;
+			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => PopNeedNames.Contains (x)).First ();
 		}
 
-		double FindResourceEffectivePopCap (GameState state, ImmutableDictionary<string, double> resourcesPerTick)
+		double FindResourceEffectivePopCap (GameState state, Resources resourcesPerTick)
 		{
 			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
 
 			var delta = resourcesPerTick.ToBuilder ();
 			delta.Subtract (GetRequirementsForPopulation (state));
-			double peopleShort = delta.AmountOf (mostMissingResource) / PopNeed.AmountOf (mostMissingResource);
+			double peopleShort = delta[mostMissingResource] / PopNeed[mostMissingResource];
 			return state.Population + peopleShort;
 		}
 
@@ -246,7 +244,7 @@ namespace IncrementalSociety
 			const double R = .025;
 			return R * ((popCap - popSize) / popSize) * popSize;
 		}
-		
+
 		public int GetBuildingJobCount (GameState state)
 		{
 			return state.AllBuildings ().Where (x => !ResourceEngine.FindBuilding (x).DoesNotRequireJob).Count ();

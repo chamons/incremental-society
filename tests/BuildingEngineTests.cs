@@ -6,13 +6,13 @@ using Xunit;
 
 namespace IncrementalSociety.Tests
 {
-	public class BuildingEngineTests
+	public class BuildingEngineTests : ResourceTestBase
 	{
 		[Fact]
 		public void BuildValidBuilding ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			state = engine.Build (state, state.Regions[0].Name, 0, "Workshop");
 			Assert.Equal (2, state.Regions[0].Areas[0].Buildings.Length);
@@ -23,7 +23,7 @@ namespace IncrementalSociety.Tests
 		public void BuildBuildingWhereNoRoom ()
 		{
 			GameState state = Factories.CreateGameState (camps: 3);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Workshop"));
@@ -33,7 +33,7 @@ namespace IncrementalSociety.Tests
 		public void BuildBuildingInvalidRegionType ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Mine"));
 		}
@@ -42,7 +42,7 @@ namespace IncrementalSociety.Tests
 		public void BuildBuildingValidAnywhere ()
 		{
 			GameState state = Factories.CreateGameState (camps: 1);
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			engine.Build (state, state.Regions[0].Name, 0, "Any");
 		}
@@ -69,7 +69,7 @@ namespace IncrementalSociety.Tests
 			GameState state = Factories.CreateGameState (camps: 1);
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.False (engine.CanAffordBuilding (state, "Workshop"));
-			state = state.WithResources (Immutable.CreateBuilderDictionary ("Wood", 10.0));
+			state = state.WithResources (Create ("Wood", 10.0));
 			Assert.True (engine.CanAffordBuilding (state, "Workshop"));
 		}
 
@@ -98,7 +98,7 @@ namespace IncrementalSociety.Tests
 			BuildingEngine engine = Factories.CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Destroy (state, state.Regions[0].Name, 0, 1));
 		}
-		
+
 		[Fact]
 		public void CanNotDestoryProtectedBuildings ()
 		{

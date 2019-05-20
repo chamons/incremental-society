@@ -159,8 +159,9 @@ namespace IncrementalSociety.Tests
 
 		static GameState CreateGameState (Area area)
 		{
+			var resourceEngine = CreateResourceEngine ();
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (1, Age.Stone, region.Yield(), new Dictionary<string, double> (), 150, 200);
+			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200);
 		}
 
 		public static ResourceEngine CreateResourceEngine ()

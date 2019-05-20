@@ -9,7 +9,7 @@ namespace IncrementalSociety.Tests
 {
 	public class Factories
 	{
-		const string ResourceJSON = @"{ ""resources"": [
+		internal const string ResourceJSON = @"{ ""resources"": [
 			{
 				""name"": ""Food""
 			},

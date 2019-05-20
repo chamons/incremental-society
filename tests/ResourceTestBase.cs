@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using IncrementalSociety.Json;
 using Xunit;
 
@@ -11,7 +12,8 @@ namespace IncrementalSociety.Tests
 
 		protected ResourceTestBase ()
 		{
-			Config = new ResourceConfig (new List<string> () { "Food", "Water" });
+			JsonLoader loader = new JsonLoader ("", "", "", Factories.ResourceJSON, validate: false);
+			Config = new ResourceConfig (loader.Resources.Resources.Select (x => x.Name));
 		}
 
 		protected Resources.Builder CreateBuilder (string resource, double amount)

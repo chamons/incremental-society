@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
@@ -109,7 +110,7 @@ namespace IncrementalSociety.Tests
 			ResourceEngine engine = Factories.CreateResourceEngine ();
 			GameState state = Factories.CreateGameState (camps: 0, workshops: 1).WithDisabledConversions ("Conversion".Yield ());
 			var resources = engine.CalculateAdditionalNextTick (state, 1.0);
-			Assert.Empty (resources);
+			Assert.True (resources.All (x => x.Value == 0));
 		}
 
 		[Fact]

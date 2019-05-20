@@ -31,7 +31,7 @@ namespace IncrementalSociety
 			var totalNeed = ResourceConfig.CreateBuilder ();
 			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
 			PopNeed = totalNeed.ToResources ();
-			PopNeedNames = new HashSet<string> (ResourceConfig.ResourceNames);
+			PopNeedNames = new HashSet<string> (PopNeed.Where (x => x.Value > 0).Select (x => x.ResourceName));
 
 			PopMin = json.Game.MinPopulation;
 		}

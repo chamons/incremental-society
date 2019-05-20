@@ -51,10 +51,10 @@ namespace IncrementalSociety.Tests
 		{
 			var result = CreateBuilder ("Food", 1.0);
 			result.Add (Config.Create ());
-			Assert.Equal (2, result["Food"]);
+			Assert.Equal (1, result["Food"]);
 
 			var chainResult = Create ("Food", 1.0).Add (Config.Create ());
-			Assert.Equal (2, chainResult["Food"]);
+			Assert.Equal (1, chainResult["Food"]);
 		}
 
 		[Fact]

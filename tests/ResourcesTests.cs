@@ -156,6 +156,20 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void IsEmptyActuallyEmpty ()
+		{
+			var result = Create ("Food", 1.0);
+			Assert.False (result.IsEmpty);
+		}
+
+		[Fact]
+		public void IsEmptyActuallyNot ()
+		{
+			var result = Create ("Food", 1.0);
+			Assert.False (result.IsEmpty);
+		}
+
+		[Fact]
 		public void Multiply ()
 		{
 			var result = CreateBuilder ("Food", 1.0);

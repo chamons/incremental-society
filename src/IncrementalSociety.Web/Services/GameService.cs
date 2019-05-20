@@ -70,7 +70,9 @@ namespace IncrementalSociety.Web.Services
 						State = null;
 				}
 			}
-			catch (JSException) {}
+			catch (Exception e) {
+				Console.Error.WriteLine ($"Error loading game: {e.Message}");
+			}
 
 			if (State == null)
 				State = Engine.CreateNewGame ();

@@ -9,9 +9,9 @@
 	<div class="d-flex flex-column building @BuildingStyleClass" onclick=@OnClick>
 		<p class="building-title">@BuildingName</p>
 		@if (HasBuilding) {
-			@if (Resources.AsNotNull ().Any ()) {
+			@if (!Resources?.IsEmpty ?? false) {
 				<div class="d-flex flex-wrap resource-line">
-				@foreach (var res in Resources.AsNotNull ()) {
+				@foreach (var res in Resources.AsNotNull ().Where (x => x.Value != 0)) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
 						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
@@ -19,9 +19,9 @@
 				}
 				</div>
 			}
-			@if (SecondaryResources.AsNotNull ().Any ()) {
+			@if (!SecondaryResources?.IsEmpty ?? false) {
 				<div class="d-flex flex-wrap resource-line secondary-resources">
-				@foreach (var res in SecondaryResources.AsNotNull ()) {
+				@foreach (var res in SecondaryResources.AsNotNull ().Where (x => x.Value != 0)) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
 						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>

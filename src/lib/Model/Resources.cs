@@ -109,6 +109,16 @@ namespace IncrementalSociety
 			return true;
 		}
 
+		public bool IsEmpty {
+			get {
+				for (int i = 0 ; i < ResourceLength ; ++i) {
+					if (Inventory[i] != 0)
+						return false;
+				}
+				return true;
+			}
+		}
+
 		public IEnumerator<ResourceItem> GetEnumerator()
 		{
 			for (int i = 0 ; i < ResourceLength ; ++i)

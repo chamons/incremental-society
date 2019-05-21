@@ -19,3 +19,6 @@ steps:
 
 - script: dotnet test
   displayName: 'Run tests'
+
+- script: dotnet run --project runner/runner.csproj
+  displayName: 'Run performance smoke test'

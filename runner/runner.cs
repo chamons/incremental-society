@@ -28,8 +28,24 @@ namespace IncrementalSociety.Runner
 			GameState state = engine.CreateNewGame ();
 			var start = DateTime.Now;
 
+			var buildOptions = new (string, int) [] {
+				("Gathering Camp", 0),
+				("Gathering Camp", 1),
+				("Huts", 1),
+				("Clay Pit", 2),
+				("Gathering Camp", 2),
+				("Gathering Camp", 3),
+				("Clay Pit", 3)
+			};
 			int tickCount = 0;
 			while (true) {
+				if (tickCount % 1000 == 0 && tickCount < 7000) {
+					int building = tickCount / 1000;
+					var option = buildOptions[building];
+					state = engine.ApplyAction (state, "Build District", new string [] { state.Regions[0].Name, option.Item2.ToString (), option.Item1 });
+					while (engine.CanIncreasePopulationCap (state))
+						state = engine.ApplyAction (state, "Grow Population Cap", new string [] {});
+				}
 				state = engine.ProcessTick (state);
 				tickCount++;
 				if ((DateTime.Now - start).Seconds > 10)

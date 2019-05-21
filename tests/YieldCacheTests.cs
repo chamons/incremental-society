@@ -6,15 +6,8 @@ using IncrementalSociety.Json;
 
 namespace IncrementalSociety.Tests
 {
-	public class YieldCacheTests
+	public class YieldCacheTests : ResourceTestBase
 	{
-		ResourceConfig Config;
-
-		public YieldCacheTests ()
-		{
-			Config = new ResourceConfig (new List<string> () { "Food", "Water" });
-		}
-
 		[Fact]
 		public void DuplicateItemsYield ()
 		{

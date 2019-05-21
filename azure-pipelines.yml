@@ -21,4 +21,4 @@ steps:
   displayName: 'Run tests'
 
 - script: dotnet run --project runner/runner.csproj
-  displayName: 'Run tests'
+  displayName: 'Run performance smoke test'

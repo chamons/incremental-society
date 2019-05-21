@@ -8,7 +8,6 @@ namespace IncrementalSociety.Json
 	public class ResourceDeclaration
 	{
 		public string Name { get; set; }
-		public bool Basic { get; set; }
 		[JsonProperty ("Image_has_age_prefix")]
 		public bool ImageHasAgePrefix { get; set; }
 	}
@@ -53,13 +52,13 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
-		
+
 		[JsonProperty ("prevent_build")]
 		public bool PreventBuild { get; set; }
-		
+
 		[JsonProperty ("prevent_destory")]
 		public bool PreventDestroy { get; set; }
-		
+
 		[JsonProperty ("does_not_require_job")]
 		public bool DoesNotRequireJob { get; set; }
 
@@ -74,10 +73,10 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
-		
+
 		[JsonProperty ("storage", NullValueHandling = NullValueHandling.Ignore)]
 		public Yield[] Storage { get; set; }
-		
+
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
 

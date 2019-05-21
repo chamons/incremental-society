@@ -8,9 +8,9 @@
 @inject BuildingService BuildingService
 
 <div>
-	<BuildingView 
+	<BuildingView
 		BuildingName="@Building"
-		Resources="@Resources"
+		Resources="@BuildingResources"
 		Conversions="@Conversions"
 		Disabled="@IsDisabled"
 		OnClick="OnClick"
@@ -26,11 +26,11 @@
 
 	[Parameter]
 	string Building { get; set; }
-	
+
 	bool HasBuilding => !String.IsNullOrEmpty (Building);
 	bool CanDestory => HasBuilding && BuildingService.CanDestoryBuilding (Building);
 
-	ImmutableDictionary<string, double> Resources => HasBuilding ? GameService.Engine.GetBuildingResources (Building) : null;
+	Resources BuildingResources => HasBuilding ? GameService.Engine.GetBuildingResources (Building) : null;
 	bool IsConversionEnabled (string name) => GameService.Engine.IsConversionEnabled (GameService.State, name);
 
 	protected override void OnInit ()
@@ -38,14 +38,14 @@
 		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
 	}
 
-	List<(bool Enabled, ImmutableDictionary<string, double> Resources)> Conversions
+	List<(bool Enabled, Resources Resources)> Conversions
 	{
 		get
 		{
 			if (HasBuilding) {
-				var allConversions = new List<(bool Enabled, ImmutableDictionary<string, double> Resources)> ();
+				var allConversions = new List<(bool Enabled, Resources Resources)> ();
 				foreach (var conversion in GameService.Engine.GetBuildingConversionResources (Building)) {
-					allConversions.Add ((IsConversionEnabled (conversion.Name), conversion.Resources)); 
+					allConversions.Add ((IsConversionEnabled (conversion.Name), conversion.Resources));
 				}
 				return allConversions;
 			}
@@ -57,19 +57,19 @@
 	{
 		get
 		{
-			switch (GameService.CurrentUIState) 
+			switch (GameService.CurrentUIState)
 			{
 				case GameUIState.SelectBuildingToDestory:
-					return CanDestory; 
+					return CanDestory;
 				default:
-					return false;	
+					return false;
 			}
 		}
 	}
-	
+
 	void OnClick ()
 	{
-		switch (GameService.CurrentUIState) 
+		switch (GameService.CurrentUIState)
 		{
 			case GameUIState.SelectBuildingToDestory:
 				if (CanDestory) {

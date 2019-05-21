@@ -9,24 +9,23 @@ namespace IncrementalSociety.Tests
 {
 	public class Factories
 	{
-		const string ResourceJSON = @"{ ""resources"": [
+		internal const string ResourceJSON = @"{ ""resources"": [
 			{
-				""name"": ""Food"",
+				""name"": ""Food""
 			},
 			{
-				""name"": ""Water"",
-	    			""basic"": true
+				""name"": ""Water""
 			},
 			{
-				""name"": ""Charcoal"",
+				""name"": ""Charcoal""
 			},
 			{
-				""name"": ""Wood"",
+				""name"": ""Wood""
 			}
 		]
 }";
 
-		const string BuildingJSON = @"{	
+		const string BuildingJSON = @"{
 		""buildings"": [
 			{
 				""name"": ""Gathering Camp"",
@@ -51,10 +50,10 @@ namespace IncrementalSociety.Tests
 				""conversion_yield"": [
 					{
 						""name"": ""Conversion"",
-						""cost"": [ 
+						""cost"": [
 							{ ""Name"": ""Wood"", ""Amount"" : 1 }
 						],
-						""provides"": [ 
+						""provides"": [
 							{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
 						]
 					}
@@ -73,10 +72,10 @@ namespace IncrementalSociety.Tests
 				""conversion_yield"": [
 					{
 						""name"": ""OtherConversion"",
-						""cost"": [ 
+						""cost"": [
 							{ ""Name"": ""Charcoal"", ""Amount"" : 1 }
 						],
-						""provides"": [ 
+						""provides"": [
 							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
 						]
 					}
@@ -160,8 +159,9 @@ namespace IncrementalSociety.Tests
 
 		static GameState CreateGameState (Area area)
 		{
+			var resourceEngine = CreateResourceEngine ();
 			var region = new Region ("TestLand", area.Yield ());
-			return new GameState (1, Age.Stone, region.Yield(), new Dictionary<string, double> (), 150, 200);
+			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200);
 		}
 
 		public static ResourceEngine CreateResourceEngine ()

@@ -13,17 +13,18 @@ namespace IncrementalSociety
 	{
 		JsonLoader Json;
 		YieldCache Yields;
-		HashSet<string> BasicResources;
+
+		public ResourceConfig ResourceConfig;
 
 		public int RegionCapacity => Json.Game.RegionCapacity;
-		
+
 		public ResourceEngine (JsonLoader json)
 		{
 			Json = json;
-			Yields = new YieldCache ();
-			BasicResources = new HashSet <string> (json.Resources.Resources.Where (x => x.Basic).Select (x => x.Name)); 
+			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
+			Yields = new YieldCache (ResourceConfig);
 		}
-		
+
 		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
 
 		public Building FindBuilding (string name)
@@ -33,10 +34,10 @@ namespace IncrementalSociety
 				throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
 			return building;
 		}
-		
+
 		public GameState AddTickOfResources (GameState state, double efficiency)
 		{
-			ImmutableDictionary<string, double>.Builder newResources = null; 
+			Resources.Builder newResources = null;
 			do {
 				// Determine next tick
 				var tickOfResources = CalculateAdditionalNextTick (state, efficiency);
@@ -44,10 +45,10 @@ namespace IncrementalSociety
 				newResources.Add (tickOfResources);
 
 				// If we're all positive, then go with that
-				if (!newResources.Keys.Any(x => newResources[x] < 0))
+				if (newResources.All (x => x.Value > 0))
 					break;
 
-				string conversion = FindConversionToDisable (state, newResources.ToImmutable ());
+				string conversion = FindConversionToDisable (state, newResources.ToResources ());
 
 				// Disable that conversion if found, else break;
 				if (conversion != null)
@@ -57,25 +58,25 @@ namespace IncrementalSociety
 			}
 			while (true);
 
-			return state.WithResources (newResources.ToImmutable ());
+			return state.WithResources (newResources.ToResources ());
 		}
 
 		public GameState ConstrainResourcesToStorage (GameState state)
 		{
-			ImmutableDictionary<string, double>.Builder resources = state.Resources.ToBuilder ();
-			ImmutableDictionary<string, double> resourceStorage = GetResourceStorage (state);
+			Resources.Builder resources = state.Resources.ToBuilder ();
+			Resources resourceStorage = GetResourceStorage (state);
 
-			foreach (var resource in resources.Keys.ToList ()) {
-				double storage = resourceStorage.AmountOf (resource);
+			foreach (var resource in ResourceConfig.ResourceNames) {
+				double storage = resourceStorage[resource];
 				if (resources[resource] > storage)
 					resources[resource] = storage;
 			}
 			return state.WithResources (resources);
 		}
 
-		string FindConversionToDisable (GameState state, ImmutableDictionary <string, double> newResources)
+		string FindConversionToDisable (GameState state, Resources newResources)
 		{
-			foreach (string missingResource in newResources.Where (x => x.Value < 0).Select (x => x.Key).OrderBy (x => x)) {
+			foreach (string missingResource in newResources.Where (x => x.Value < 0).Select (x => x.ResourceName).OrderBy (x => x)) {
 				var conversions = GetConversions (state, missingResource);
 				if (conversions.Count <= 0)
 					break;
@@ -90,14 +91,14 @@ namespace IncrementalSociety
 				var activeConversions = new List<(string Conversion, double Amount)> ();
 				foreach (var building in state.AllBuildings ())
 					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
-						if (conversion.Resources.AmountOf (missingResource) < 0)
-							activeConversions.Add ((conversion.Name, conversion.Resources.AmountOf (missingResource)));
+						if (conversion.Resources[missingResource] < 0)
+							activeConversions.Add ((conversion.Name, conversion.Resources[missingResource]));
 				return activeConversions;
 		}
 
-		public ImmutableDictionary<string, double> CalculateAdditionalNextTick (GameState state, double efficiency)
+		public Resources CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
-			var additional = ImmutableDictionary.CreateBuilder<string, double> ();
+			var additional = ResourceConfig.CreateBuilder ();
 			foreach (var building in state.AllBuildings ()) {
 				additional.AddWithMultiply (GetBuildingResources (building), efficiency);
 
@@ -105,16 +106,16 @@ namespace IncrementalSociety
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
 					additional.Add (conversion.Resources);
 			}
-			return additional.ToImmutable ();
+			return additional.ToResources ();
 		}
 
-		public ImmutableDictionary<string, double> GetBuildingResources (string name) => Yields.Total (FindBuilding (name).Yield);
-		public ImmutableDictionary<string, double> GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
-		public ImmutableDictionary<string, double> GetBuildingStorage (string name) => Yields.Total (FindBuilding (name).Storage);
+		public Resources GetBuildingResources (string name) => Yields.Total (FindBuilding (name).Yield);
+		public Resources GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
+		public Resources GetBuildingStorage (string name) => Yields.Total (FindBuilding (name).Storage);
 
-		public List<(string Name, ImmutableDictionary<string, double> Resources)> GetBuildingConversionResources (string name)
+		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
 		{
-			var conversion = new List<(string name, ImmutableDictionary<string, double> resources)> ();
+			var conversion = new List<(string name, Resources resources)> ();
 			var building = FindBuilding (name);
 			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
 				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
@@ -138,12 +139,12 @@ namespace IncrementalSociety
 			return allConversions;
 		}
 
-		public ImmutableDictionary<string, double> GetResourceStorage (GameState state)
-		{	
-			var storage = ImmutableDictionary.CreateBuilder <string, double> ();
+		public Resources GetResourceStorage (GameState state)
+		{
+			var storage = ResourceConfig.CreateBuilder ();
 			foreach (var yields in state.AllBuildings ().Select (x => FindBuilding (x).Storage))
 				storage.Add (Yields.Total (yields));
-			return storage.ToImmutable ();
+			return storage.ToResources ();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 namespace IncrementalSociety.Model
 {
 	// This is a template for https://github.com/chamons/VinylCutter
-	// Run dotnet records GameState.cs to update GameState.g.cs 
+	// Run dotnet records GameState.cs to update GameState.g.cs
 	[Inject]
 	public enum AreaType
 	{
@@ -36,6 +36,9 @@ namespace IncrementalSociety.Model
 		List<Area> Areas;
 	}
 
+	[Skip]
+	public class Resources {}
+
 	[With]
 	public class GameState
 	{
@@ -45,7 +48,7 @@ namespace IncrementalSociety.Model
 
 		List<Region> Regions;
 
-		Dictionary<string, double> Resources;
+		Resources Resources;
 
 		double Population;
 

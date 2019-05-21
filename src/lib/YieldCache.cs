@@ -8,18 +8,21 @@ namespace IncrementalSociety
 {
 	public class YieldCache
 	{
-		Dictionary<Yield, ImmutableDictionary<string, double>> YieldLookup;
-		Dictionary<ConversionYield, ImmutableDictionary<string, double>> ConversionYieldLookup;
+		Dictionary<Yield, Resources> YieldLookup;
+		Dictionary<ConversionYield, Resources> ConversionYieldLookup;
+		ResourceConfig ResourceConfig;
 
-		public YieldCache ()
+		public YieldCache (ResourceConfig resourceConfig)
 		{
-			YieldLookup = new Dictionary<Yield, ImmutableDictionary<string, double>> ();
-			ConversionYieldLookup = new Dictionary<ConversionYield, ImmutableDictionary<string, double>> ();
+			ResourceConfig = resourceConfig;
+
+			YieldLookup = new Dictionary<Yield, Resources> ();
+			ConversionYieldLookup = new Dictionary<ConversionYield, Resources> ();
 		}
 
-		public ImmutableDictionary<string, double> From (Yield yield)
+		public Resources From (Yield yield)
 		{
-			if (YieldLookup.TryGetValue (yield, out ImmutableDictionary<string, double> value))
+			if (YieldLookup.TryGetValue (yield, out Resources value))
 			{
 				return value;
 			}
@@ -31,9 +34,9 @@ namespace IncrementalSociety
 			}
 		}
 
-		public ImmutableDictionary<string, double> From (ConversionYield conversionYield)
+		public Resources From (ConversionYield conversionYield)
 		{
-			if (ConversionYieldLookup.TryGetValue (conversionYield, out ImmutableDictionary<string, double> value))
+			if (ConversionYieldLookup.TryGetValue (conversionYield, out Resources value))
 			{
 				return value;
 			}
@@ -45,36 +48,38 @@ namespace IncrementalSociety
 			}
 		}
 
-		public ImmutableDictionary<string, double> Total (Yield yield)
+		// These public APIs use the cache
+		public Resources Total (Yield yield)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			var resources = ResourceConfig.CreateBuilder ();
 			resources.Add (From (yield));
-			return resources.ToImmutable ();
+			return resources.ToResources ();
 		}
 
-		public ImmutableDictionary<string, double> Total (Yield[] yields)
+		public Resources Total (Yield[] yields)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			var resources = ResourceConfig.CreateBuilder ();
 			foreach (var yield in yields.AsNotNull ())
 				resources.Add (From (yield));
-			return resources.ToImmutable ();
+			return resources.ToResources ();
 		}
 
-		static ImmutableDictionary<string, double> Convert (Yield yield)
+		// These internal APIs do _not_ use the cache
+		Resources Convert (Yield yield)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
-			resources.Add (yield.Name, yield.Amount);
-			return resources.ToImmutable ();
+			var resources = ResourceConfig.CreateBuilder ();
+			resources[yield.Name] = yield.Amount;
+			return resources.ToResources ();
 		}
 
-		static ImmutableDictionary<string, double> Convert (ConversionYield conversionYield)
+		Resources Convert (ConversionYield conversionYield)
 		{
-			var resources = ImmutableDictionary.CreateBuilder<string, double> ();
+			var resources = ResourceConfig.CreateBuilder ();
 			foreach (var cost in conversionYield.Cost.AsNotNull ())
-				resources.Add (cost.Name, cost.Amount * -1);
+				resources[cost.Name] = cost.Amount * -1;
 			foreach (var provide in conversionYield.Provides.AsNotNull ())
-				resources.Add (provide.Name, provide.Amount);
-			return resources.ToImmutable ();
+				resources[provide.Name] = provide.Amount;
+			return resources.ToResources ();
 		}
 	}
 }

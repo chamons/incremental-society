@@ -15,16 +15,18 @@ namespace IncrementalSociety
 		ResourceEngine ResourceEngine;
 		YieldCache Yields;
 
+		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
+
 		public BuildingEngine (ResourceEngine engine, PopulationEngine populationEngine)
 		{
 			ResourceEngine = engine;
 			PopulationEngine = populationEngine;
-			Yields = new YieldCache ();
+			Yields = new YieldCache (ResourceConfig);
 		}
 
 		public GameState Build (GameState state, string regionName, int regionIndex, string buildingName)
 		{
-			Region region = state.Regions.First (x => x.Name == regionName); 
+			Region region = state.Regions.First (x => x.Name == regionName);
 			Area area = region.Areas [regionIndex];
 			if (area.Buildings.Length >= ResourceEngine.RegionCapacity)
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} for {buildingName} but out of room {area.Buildings.Length}");
@@ -36,13 +38,13 @@ namespace IncrementalSociety
 
 			if (!BuildingValidForArea (building, area))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
-			
+
 			var buildingTotalCost = Yields.Total (building.Cost);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
 			newResouces.Subtract (buildingTotalCost);
-			state = state.WithResources (newResouces.ToImmutable ());
+			state = state.WithResources (newResouces.ToResources ());
 
 			var newArea = area.WithBuildings (area.Buildings.Add (building.Name));
 			return UpdateStateWithArea (state, area, newArea, region);
@@ -57,13 +59,13 @@ namespace IncrementalSociety
 
 		public GameState Destroy (GameState state, string regionName, int regionIndex, int buildingIndex)
 		{
-			Region region = state.Regions.First (x => x.Name == regionName); 
+			Region region = state.Regions.First (x => x.Name == regionName);
 			Area area = region.Areas [regionIndex];
 			if (buildingIndex >= area.Buildings.Length)
 				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} for but invalid index {buildingIndex}");
 
 			string buildingName = area.Buildings[buildingIndex];
-			
+
 			var building = ResourceEngine.FindBuilding (buildingName);
 			if (building.PreventDestroy)
 				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} but {buildingName} is marked unable to destory");
@@ -85,7 +87,7 @@ namespace IncrementalSociety
 		{
 			return building.ValidRegions.Contains ("Any") || building.ValidRegions.Contains (area.Type.ToString ());
 		}
-		
+
 		public List<string> GetValidBuildingsForArea (Area area)
 		{
 			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => !x.PreventBuild && BuildingValidForArea (x, area));

@@ -11,25 +11,26 @@ namespace IncrementalSociety
 {
 	public class ResourceEngine
 	{
-		JsonLoader Json;
+		Dictionary<string, Building> BuildingLookup;
 		YieldCache Yields;
 
 		public ResourceConfig ResourceConfig;
 
-		public int RegionCapacity => Json.Game.RegionCapacity;
+		public int RegionCapacity { get; private set; }
+
+		public IEnumerable <Building> Buildings => BuildingLookup.Values;
 
 		public ResourceEngine (JsonLoader json)
 		{
-			Json = json;
+			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
 			Yields = new YieldCache (ResourceConfig);
+			RegionCapacity = json.Game.RegionCapacity;
 		}
-
-		public IEnumerable<Building> Buildings => Json.Buildings.Buildings;
 
 		public Building FindBuilding (string name)
 		{
-			var building = Json.Buildings.Buildings.FirstOrDefault (x => x.Name == name);
+			var building = BuildingLookup [name];
 			if (building == null)
 				throw new InvalidOperationException ($"Unable to find building \"{name}\" in resources");
 			return building;

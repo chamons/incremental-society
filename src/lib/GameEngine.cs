@@ -32,9 +32,6 @@ namespace IncrementalSociety
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)
 		{
-#if DEBUG
-			Console.WriteLine ($"ApplyAction - {action}\nState = {JsonConvert.SerializeObject (state)}");
-#endif
 			switch (action)
 			{
 				case "Grow Population Cap":
@@ -62,9 +59,6 @@ namespace IncrementalSociety
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");
 			}
-#if DEBUG
-			Console.WriteLine ($"ApplyAction Done\nState = {JsonConvert.SerializeObject (state)}");
-#endif
 			return state;
 		}
 

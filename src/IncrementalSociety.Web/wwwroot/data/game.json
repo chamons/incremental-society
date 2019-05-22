@@ -1,13 +1,13 @@
 {
 	"population_needs": [
 		{
-			"Name": "Water", "Amount" : 0.02
+			"name": "Water", "amount" : 0.02
 		},
 		{
-			"Name": "Food", "Amount" : 0.05
+			"name": "Food", "amount" : 0.05
 		},
 		{
-			"Name": "Wood", "Amount" : 0.01
+			"name": "Wood", "amount" : 0.01
 		}
 	],
 	"region_capacity": 2,

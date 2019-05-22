@@ -31,16 +31,16 @@ namespace IncrementalSociety.Tests
 				""name"": ""Gathering Camp"",
 				""valid_regions"": [""Plains""],
 				""yield"": [
-					{ ""Name"": ""Food"", ""Amount"" : 2 },
-					{ ""Name"": ""Water"", ""Amount"" : 2 }
+					{ ""name"": ""Food"", ""amount"" : 2 },
+					{ ""name"": ""Water"", ""amount"" : 2 }
 				],
 				""cost"": [
-					{ ""Name"": ""Wood"", ""Amount"" : 10 },
+					{ ""name"": ""Wood"", ""amount"" : 10 },
 				],
 				""storage"": [
-					{ ""Name"": ""Food"", ""Amount"" : 500 },
-					{ ""Name"": ""Water"", ""Amount"" : 400 },
-					{ ""Name"": ""Wood"", ""Amount"" : 50 },
+					{ ""name"": ""Food"", ""amount"" : 500 },
+					{ ""name"": ""Water"", ""amount"" : 400 },
+					{ ""name"": ""Wood"", ""amount"" : 50 },
 				],
 				""housing_capacity"": 200
 			},
@@ -51,18 +51,18 @@ namespace IncrementalSociety.Tests
 					{
 						""name"": ""Conversion"",
 						""cost"": [
-							{ ""Name"": ""Wood"", ""Amount"" : 1 }
+							{ ""name"": ""Wood"", ""amount"" : 1 }
 						],
 						""provides"": [
-							{ ""Name"": ""Charcoal"", ""Amount"" : 0.5 }
+							{ ""name"": ""Charcoal"", ""amount"" : 0.5 }
 						]
 					}
 				],
 				""cost"": [
-					{ ""Name"": ""Wood"", ""Amount"" : 10 }
+					{ ""name"": ""Wood"", ""amount"" : 10 }
 				],
 				""storage"": [
-					{ ""Name"": ""Charcoal"", ""Amount"" : 50 },
+					{ ""name"": ""Charcoal"", ""amount"" : 50 },
 				],
 				""housing_capacity"": 50
 			},
@@ -73,15 +73,15 @@ namespace IncrementalSociety.Tests
 					{
 						""name"": ""OtherConversion"",
 						""cost"": [
-							{ ""Name"": ""Charcoal"", ""Amount"" : 1 }
+							{ ""name"": ""Charcoal"", ""amount"" : 1 }
 						],
 						""provides"": [
-							{ ""Name"": ""Food"", ""Amount"" : 0.5 }
+							{ ""name"": ""Food"", ""amount"" : 0.5 }
 						]
 					}
 				],
 				""storage"": [
-					{ ""Name"": ""Food"", ""Amount"" : 500 },
+					{ ""name"": ""Food"", ""amount"" : 500 },
 				],
 			},
 			{
@@ -89,7 +89,7 @@ namespace IncrementalSociety.Tests
 				""valid_regions"": [""Plains""],
 				""prevent_destory"": true,
 				""yield"": [
-					{ ""Name"": ""Water"", ""Amount"" : 1.7 }
+					{ ""name"": ""Water"", ""amount"" : 1.7 }
 				]
 			},
 			{
@@ -132,7 +132,7 @@ namespace IncrementalSociety.Tests
 
 		const string GameJSON = @"{
 			""population_needs"": [	{
-				""Name"": ""Water"", ""Amount"" : .01,
+				""name"": ""Water"", ""amount"" : .01,
 			}],
 			""region_capacity"" :  3,
 			""min_population"" :  100

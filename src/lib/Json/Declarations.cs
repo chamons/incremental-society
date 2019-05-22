@@ -7,7 +7,9 @@ namespace IncrementalSociety.Json
 {
 	public class ResourceDeclaration
 	{
+		[JsonProperty ("name")]
 		public string Name { get; set; }
+
 		[JsonProperty ("Image_has_age_prefix")]
 		public bool ImageHasAgePrefix { get; set; }
 	}
@@ -19,7 +21,9 @@ namespace IncrementalSociety.Json
 
 	public class RegionDeclaration
 	{
+		[JsonProperty ("name")]
 		public string Name { get; set; }
+		[JsonProperty ("resources")]
 		public List<string> Resources { get; set; }
 		[JsonProperty ("can_spawn")]
 		public bool? CanSpawn { get; set; }
@@ -98,10 +102,10 @@ namespace IncrementalSociety.Json
 
 	public partial class Yield
 	{
-		[JsonProperty ("Name")]
+		[JsonProperty ("name", NullValueHandling = NullValueHandling.Ignore)]
 		public string Name { get; set; }
 
-		[JsonProperty ("Amount")]
+		[JsonProperty ("amount")]
 		public double Amount { get; set; }
 	}
 }

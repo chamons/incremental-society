@@ -55,6 +55,9 @@ namespace IncrementalSociety.Model
 		double PopulationCap;
 
 		[Default ("null")]
+		List<string> ResearchUnlocks;
+
+		[Default ("null")]
 		List<string> DisabledConversions;
 	}
 }

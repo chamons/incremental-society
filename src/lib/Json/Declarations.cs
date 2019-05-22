@@ -108,4 +108,22 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("amount")]
 		public double Amount { get; set; }
 	}
+
+	public class ResearchDeclaration
+	{
+		[JsonProperty ("name")]
+		public string Name { get; set; }
+
+		[JsonProperty ("dependencies")]
+		public List<string> Dependencies { get; set; }
+
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
+	}
+
+	public class ResearchDeclarations
+	{
+		[JsonProperty ("research")]
+		public List<ResearchDeclaration> Research { get; set; }
+	}
 }

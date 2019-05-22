@@ -138,9 +138,15 @@ namespace IncrementalSociety.Tests
 			""min_population"" :  100
 		}";
 
+		const string ResearchJSON = @"{
+			""research"" : [
+
+			]
+		}";
+
 		static JsonLoader CreateJsonLoader ()
 		{
-			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON);
+			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON, ResearchJSON);
 		}
 
 		public static GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)

@@ -12,7 +12,7 @@ namespace IncrementalSociety.Tests
 
 		protected ResourceTestBase ()
 		{
-			JsonLoader loader = new JsonLoader ("", "", "", Factories.ResourceJSON, validate: false);
+			JsonLoader loader = new JsonLoader ("", "", "", Factories.ResourceJSON, "", validate: false);
 			Config = new ResourceConfig (loader.Resources.Resources.Select (x => x.Name));
 		}
 

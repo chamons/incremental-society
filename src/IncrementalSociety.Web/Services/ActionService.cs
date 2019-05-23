@@ -33,6 +33,9 @@ namespace IncrementalSociety.Web.Services
 		void ResetActionList ()
 		{
 			Actions = new List <string> () { BuildText, DestroyText, NewGameText };
+#if DEBUG
+			Actions.Add ("Debug - Fill Resources");
+#endif
 		}
 
 		void ReplaceActionWithCancel ()

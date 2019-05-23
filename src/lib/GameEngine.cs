@@ -65,6 +65,13 @@ namespace IncrementalSociety
 					state = BuildingEngine.Destroy (state, regionName, regionIndex, buildingIndex);
 					break;
 				};
+#if DEBUG
+				case "Debug - Fill Resources":
+				{
+					state = state.WithResources (ResourceEngine.GetResourceStorage (state));
+					break;
+				}
+#endif
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");
 			}

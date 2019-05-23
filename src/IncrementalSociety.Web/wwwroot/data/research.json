@@ -1,5 +1,32 @@
 {
 	"research" : [
-
+		{
+			"name": "Tool Making",
+			"cost": [
+				{ "name": "Knowledge", "amount" : 100 }
+			],
+			"housing_capacity": 50
+		},
+		{
+			"name": "Agriculture",
+			"cost": [
+				{ "name": "Knowledge", "amount" : 100 }
+			],
+			"housing_capacity": 50
+		},
+		{
+			"name": "Animal Domestication",
+			"cost": [
+				{ "name": "Knowledge", "amount" : 100 }
+			],
+			"housing_capacity": 50
+		},
+		{
+			"name": "Animal Domestication",
+			"cost": [
+				{ "name": "Knowledge", "amount" : 100 }
+			],
+			"housing_capacity": 50
+		}
 	]
 }

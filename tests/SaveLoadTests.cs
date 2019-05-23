@@ -9,6 +9,9 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void SaveLoadRoundTrip ()
 		{
+			// This is some ugly static state we need since we do not serialize our resource json in save games
+			Resources.SaveLoadConfig = Config;
+
 			GameState state = Factories.CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Food", 100));
 			string serialized = JsonConvert.SerializeObject (state);

@@ -30,6 +30,15 @@ namespace IncrementalSociety
 			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 
+		public void ConfigureForLoad ()
+		{
+			// So when we load, we do not have sufficient state to inflate the
+			// resource lists, as we do not serialize the index.
+			// There is no need, as they must match our json
+			// So apply a bit of hacky static state
+			Resources.SaveLoadConfig = ResourceEngine.ResourceConfig;
+		}
+
 		public GameState ApplyAction (GameState state, string action, string [] args = null)
 		{
 			switch (action)

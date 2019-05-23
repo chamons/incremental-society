@@ -38,6 +38,10 @@ namespace IncrementalSociety
 
 	public class Resources : IEnumerable<ResourceItem>
 	{
+		// During saveload we are deserialized without our config
+		// Stash it here during inflation
+		public static ResourceConfig SaveLoadConfig { get; set; }
+
 		ResourceConfig Config;
 		double [] Inventory;
 
@@ -48,6 +52,17 @@ namespace IncrementalSociety
 		{
 			Config = config;
 			Inventory = new double [ResourceLength];
+		}
+
+		// This is invoked during json deserialization
+		public Resources (IEnumerable<ResourceItem> values)
+		{
+			if (SaveLoadConfig == null)
+				throw new InvalidOperationException ("Resources (IEnumerable<double>) ctor was invoked without SaveLoadConfig setup");
+
+			Config = SaveLoadConfig;
+			Inventory = new double[ResourceLength];
+			Array.Copy (values.Select (x => x.Value).ToArray (), Inventory, ResourceLength);
 		}
 
 		protected Resources (ResourceConfig config, double [] inventory)

@@ -63,6 +63,8 @@ namespace IncrementalSociety.Web.Services
 			Engine = GameEngine.Create (Loader);
 
 			try {
+				Engine.ConfigureForLoad ();
+
 				string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
 				if (!string.IsNullOrEmpty (serializedState) && serializedState != "null") {
 					State = JsonConvert.DeserializeObject<GameState> (serializedState);

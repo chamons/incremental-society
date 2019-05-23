@@ -71,6 +71,11 @@ namespace IncrementalSociety
 					state = state.WithResources (ResourceEngine.GetResourceStorage (state));
 					break;
 				}
+				case "Debug - Fill Population":
+				{
+					state = state.WithPopulation (state.PopulationCap);
+					break;
+				}
 #endif
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");

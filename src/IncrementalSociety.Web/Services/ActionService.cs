@@ -35,6 +35,7 @@ namespace IncrementalSociety.Web.Services
 			Actions = new List <string> () { BuildText, DestroyText, NewGameText };
 #if DEBUG
 			Actions.Add ("Debug - Fill Resources");
+			Actions.Add ("Debug - Fill Population");
 #endif
 		}
 

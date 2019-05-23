@@ -140,7 +140,17 @@ namespace IncrementalSociety.Tests
 
 		const string ResearchJSON = @"{
 			""research"" : [
-
+				{
+					""name"": ""FreeTech""
+				},
+				{
+					""name"": ""TechWithCost"",
+					""cost"": [ { ""name"": ""Food"", ""amount"" : 100 } ]
+				},
+				{
+					""name"": ""TechWithDependency"",
+					""Dependencies"": [ ""FreeTech"" ]
+				},
 			]
 		}";
 
@@ -183,6 +193,11 @@ namespace IncrementalSociety.Tests
 		public static PopulationEngine CreatePopEngine ()
 		{
 			return new PopulationEngine (CreateResourceEngine(), CreateJsonLoader ());
+		}
+
+		public static ResearchEngine CreateResearchEngine ()
+		{
+			return new ResearchEngine (CreateResourceEngine (), CreateJsonLoader ());
 		}
 	}
 }

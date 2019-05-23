@@ -2,31 +2,23 @@
 	"research" : [
 		{
 			"name": "Tool Making",
-			"cost": [
-				{ "name": "Knowledge", "amount" : 100 }
-			],
-			"housing_capacity": 50
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
 		},
 		{
 			"name": "Agriculture",
-			"cost": [
-				{ "name": "Knowledge", "amount" : 100 }
-			],
-			"housing_capacity": 50
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
 		},
 		{
-			"name": "Animal Domestication",
-			"cost": [
-				{ "name": "Knowledge", "amount" : 100 }
-			],
-			"housing_capacity": 50
+			"name": "Charcoal",
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
 		},
 		{
-			"name": "Animal Domestication",
-			"cost": [
-				{ "name": "Knowledge", "amount" : 100 }
-			],
-			"housing_capacity": 50
+			"name": "Fishing",
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+		},
+		{
+			"name": "Storytelling",
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
 		}
 	]
 }

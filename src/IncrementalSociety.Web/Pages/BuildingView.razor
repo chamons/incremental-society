@@ -31,7 +31,7 @@
 			}
 			@foreach (var conversion in Conversions.AsNotNull ()) {
 				<div class="d-flex flex-wrap resource-line @ConversionClass(conversion.Enabled)">
-				@foreach (var res in conversion.Resources) {
+				@foreach (var res in conversion.Resources.Where (x => x.Value != 0)) {
 					<div class="building-resource d-flex align-items-center">
 						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
 						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>

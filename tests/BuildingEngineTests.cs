@@ -32,6 +32,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingInvalidRegionType ()
 		{
+			ExtraBuildingJSON = @",
+			{
+				""name"": ""Mine"",
+				""valid_regions"": [""Mountains""]
+			}";
+
 			GameState state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = CreateBuildingEngine ();
@@ -41,6 +47,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingValidAnywhere ()
 		{
+			ExtraBuildingJSON = @",
+			{
+				""name"": ""Any"",
+				""valid_regions"": [""Any""]
+			}";
+
 			GameState state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Wood", 10.0));
 			BuildingEngine engine = CreateBuildingEngine ();
@@ -58,6 +70,11 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void CannotBuildBuildingMarkedUnable ()
 		{
+			ExtraBuildingJSON = @",{
+				""name"": ""Impossible"",
+				""valid_regions"": [""Plains""],
+				""prevent_build"" : true
+			}";
 			GameState state = CreateGameState ();
 			BuildingEngine engine = CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Impossible"));
@@ -113,7 +130,7 @@ namespace IncrementalSociety.Tests
 			GameState state = CreateGameState (camps: 1);
 			BuildingEngine engine = CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
-			Assert.True (buildings.Count > 5);
+			Assert.True (buildings.Count > 4);
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");

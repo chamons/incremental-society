@@ -16,7 +16,7 @@ namespace IncrementalSociety.Tests
 
 		protected ResourceTestBase ()
 		{
-			JsonLoader loader = new JsonLoader ("", "", "", ResourceJSON, "", validate: false);
+			JsonLoader loader = new JsonLoader ("", "", "", ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON), "", validate: false);
 			Config = new ResourceConfig (loader.Resources.Resources.Select (x => x.Name));
 		}
 
@@ -42,6 +42,7 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Wood""
 			}
+			%TEST_SPECIFIC%
 		]
 		}";
 
@@ -116,25 +117,8 @@ namespace IncrementalSociety.Tests
 				""name"": ""Housing"",
 				""valid_regions"": [""Plains""],
 				""housing_capacity"": 200
-			},
-			{
-				""name"": ""Impossible"",
-				""valid_regions"": [""Plains""],
-				""prevent_build"" : true
-			},
-			{
-				""name"": ""Any"",
-				""valid_regions"": [""Any""]
-			},
-			{
-				""name"": ""Mine"",
-				""valid_regions"": [""Mountains""]
-			},
-			{
-				""name"": ""NoJob"",
-				""valid_regions"": [""Any""],
-				""does_not_require_job"": true
-			},
+			}
+			%TEST_SPECIFIC%
 		]
 		}";
 
@@ -146,6 +130,7 @@ namespace IncrementalSociety.Tests
 				{
 					""name"": ""Mountains""
 				}
+				%TEST_SPECIFIC%
 			]
 		}";
 
@@ -155,6 +140,7 @@ namespace IncrementalSociety.Tests
 			}],
 			""region_capacity"" :  3,
 			""min_population"" :  100
+			%TEST_SPECIFIC%
 		}";
 
 		const string ResearchJSON = @"{
@@ -169,13 +155,24 @@ namespace IncrementalSociety.Tests
 				{
 					""name"": ""TechWithDependency"",
 					""Dependencies"": [ ""FreeTech"" ]
-				},
+				}
+				%TEST_SPECIFIC%
 			]
 		}";
 
+		protected string ExtraBuildingJSON = "";
+		protected string ExtraGameJSON = "";
+		protected string ExtraRegionJSON = "";
+		protected string ExtraResourceJSON = "";
+		protected string ExtraResearchJSON = "";
+
 		protected JsonLoader CreateJsonLoader ()
 		{
-			return new JsonLoader (BuildingJSON, GameJSON, RegionJSON, ResourceJSON, ResearchJSON);
+			return new JsonLoader (BuildingJSON.Replace ("%TEST_SPECIFIC%", ExtraBuildingJSON),
+								GameJSON.Replace ("%TEST_SPECIFIC%", ExtraGameJSON),
+								RegionJSON.Replace ("%TEST_SPECIFIC%", ExtraRegionJSON),
+								ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON),
+								ResearchJSON.Replace ("%TEST_SPECIFIC%", ExtraResearchJSON));
 		}
 
 		protected GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)

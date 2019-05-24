@@ -13,6 +13,7 @@ namespace IncrementalSociety.Web.Services
 		// These must match keys in GameEngine::ApplyAction
 		public const string BuildText = "Build District";
 		public const string DestroyText = "Destory District";
+		public const string ResearchText = "Research";
 		public const string NewGameText = "New Game";
 		public const string CancelText = "Cancel";
 
@@ -32,7 +33,7 @@ namespace IncrementalSociety.Web.Services
 
 		void ResetActionList ()
 		{
-			Actions = new List <string> () { BuildText, DestroyText, NewGameText };
+			Actions = new List <string> () { BuildText, DestroyText, ResearchText, NewGameText };
 #if DEBUG
 			Actions.Add ("Debug - Fill Resources");
 			Actions.Add ("Debug - Fill Population");
@@ -74,6 +75,9 @@ namespace IncrementalSociety.Web.Services
 					return;
 				case DestroyText:
 					GameService.SetUIState (GameUIState.SelectBuildingToDestory);
+					return;
+				case ResearchText:
+					GameService.SetUIState (GameUIState.ShowResearchSelectDialog);
 					return;
 				case CancelText:
 					GameService.SetUIState (GameUIState.Default);

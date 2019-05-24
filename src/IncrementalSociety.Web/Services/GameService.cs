@@ -17,6 +17,7 @@ namespace IncrementalSociety.Web.Services
 		Default,
 		SelectRegionToBuildIn,
 		ShowBuildingSelectDialog,
+		ShowResearchSelectDialog,
 		SelectBuildingToDestory,
 		InternalError
 	}

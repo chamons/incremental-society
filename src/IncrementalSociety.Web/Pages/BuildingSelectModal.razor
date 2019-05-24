@@ -68,8 +68,6 @@
 
 	bool CanBuild (string buildingName) => GameService.Engine.CanAffordBuilding (GameService.State, buildingName);
 
-	string BuildingBackgroundColor (string buildingName) => CanBuild (buildingName) ? "white" : "gray";
-
 	void OnSelection (string buildingName)
 	{
 		if (CanBuild (buildingName)) {

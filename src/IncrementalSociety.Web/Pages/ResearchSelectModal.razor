@@ -28,14 +28,6 @@
 							<div class="research-description">@researchItem.Description</div>
 						</div>
 					}
-					@if (ShowResearchedItems) {
-						@foreach (var researchItem in ResearchOptions.Where (x => x.IsResearched))
-						{
-							<div class="research-item">
-								<div class="research-title">@researchItem.Name</div>
-							</div>
-						}
-					}
 				</div>
 			}
 		</div>
@@ -44,8 +36,6 @@
 
 @functions {
 	bool Enabled => ResearchOptions != null;
-
-	bool ShowResearchedItems;
 
 	List<ResearchItem> ResearchOptions;
 

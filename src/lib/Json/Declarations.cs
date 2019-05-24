@@ -118,7 +118,7 @@ namespace IncrementalSociety.Json
 		public string Description { get; set; }
 
 		[JsonProperty ("dependencies")]
-		public HashSet<string> Dependencies { get; set; }
+		public List<string> Dependencies { get; set; }
 
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }

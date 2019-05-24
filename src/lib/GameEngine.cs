@@ -66,7 +66,13 @@ namespace IncrementalSociety
 					int buildingIndex = int.Parse (args[2]);
 					state = BuildingEngine.Destroy (state, regionName, regionIndex, buildingIndex);
 					break;
-				};
+				}
+				case "Research":
+				{
+					string techName= args[0];
+					state = ResearchEngine.Research (state, techName);
+					break;
+				}
 #if DEBUG
 				case "Debug - Fill Resources":
 				{
@@ -149,7 +155,9 @@ namespace IncrementalSociety
 		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
 
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
+
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
+		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
 
 		public const int CurrentVersion = 1;
 

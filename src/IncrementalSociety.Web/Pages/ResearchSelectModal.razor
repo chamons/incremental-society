@@ -18,7 +18,7 @@
 				</div>
 				<div class="modal-body">
 					@foreach (var researchItem in ResearchOptions.Where (x => !x.IsResearched)) {
-						<div class="research-item" onclick="@(() => OnSelection(@researchItem.Name))">
+						<div class="research-item @BackgroundStyle(@researchItem.Name)" onclick="@(() => OnSelection(@researchItem.Name))">
 							<div class="d-flex flex-wrap">
 								<div class="research-title">@researchItem.Name</div>
 								<MiniResourcesView
@@ -49,6 +49,9 @@
 
 	List<ResearchItem> ResearchOptions;
 
+	bool CanResearch (string techName) => GameService.Engine.CanResearch (GameService.State, techName);
+	string BackgroundStyle (string techName) => CanResearch (techName) ? "" : "disabled";
+
 	protected override void OnInit ()
 	{
 		GameService.CurrentUIStateChanged += OnUIStateChanged;
@@ -73,7 +76,10 @@
 
 	void OnSelection (string techName)
 	{
-		Dismiss (true);
+		if (CanResearch (techName)) {
+			GameService.ApplyAction (ActionService.ResearchText, new string[] { techName });
+			Dismiss (true);
+		}
 	}
 
 	void Dismiss (bool closeDialog = false)

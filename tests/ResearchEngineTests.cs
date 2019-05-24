@@ -9,8 +9,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ResearchAppliesToState ()
 		{
-			ResearchEngine engine = Factories.CreateResearchEngine ();
-			GameState state = Factories.CreateGameState ();
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
 
 			Assert.True (engine.CanResearch (state, "FreeTech"));
 			state = engine.Research (state, "FreeTech");
@@ -22,8 +22,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ResearchRequiresResources ()
 		{
-			ResearchEngine engine = Factories.CreateResearchEngine ();
-			GameState state = Factories.CreateGameState ();
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
 
 			Assert.False (engine.CanResearch (state, "TechWithCost"));
 			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "TechWithCost"));
@@ -40,8 +40,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ResearchHonorsDependencies ()
 		{
-			ResearchEngine engine = Factories.CreateResearchEngine ();
-			GameState state = Factories.CreateGameState ();
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
 
 			Assert.False (engine.CanResearch (state, "TechWithDependency"));
 			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "TechWithDependency"));
@@ -58,8 +58,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void CanNotDoubleResearchItem ()
 		{
-			ResearchEngine engine = Factories.CreateResearchEngine ();
-			GameState state = Factories.CreateGameState ();
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
 
 			Assert.True (engine.CanResearch (state, "FreeTech"));
 			state = engine.Research (state, "FreeTech");
@@ -74,8 +74,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ResearchOptions ()
 		{
-			ResearchEngine engine = Factories.CreateResearchEngine ();
-			GameState state = Factories.CreateGameState ();
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
 
 			var availableResearch = engine.GetCurrentResearchOptions (state);
 			Assert.Equal (2, availableResearch.Count);

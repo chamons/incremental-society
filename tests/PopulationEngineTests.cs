@@ -16,8 +16,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void GetRequiredResourcesForPop ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
+			var engine = CreatePopEngine ();
+			var state = CreateGameState ();
 			state = state.WithPopulation (100);
 
 			var reqs = engine.GetRequirementsForPopulation (state);
@@ -30,8 +30,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsActuallyConsumeResourcesOnTick ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
+			var engine = CreatePopEngine ();
+			var state = CreateGameState ();
 			state = state.WithPopulation (100);
 			state = state.WithResources (Create ("Water", 2.0));
 			state = engine.ProcessTick(state);
@@ -41,7 +41,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsDoNotIncreaseLinearly ()
 		{
-			var engine = Factories.CreatePopEngine ();
+			var engine = CreatePopEngine ();
 
 			// +100
 			Assert.Equal (1, engine.GetPopUnitsForTotalPopulation (100));
@@ -78,7 +78,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsGrowRateBasedOnSpaceToCap ()
 		{
-			var engine = Factories.CreatePopEngine ();
+			var engine = CreatePopEngine ();
 			double lowRate = engine.GetGrowthRate (100, 200);
 			double mideRate = engine.GetGrowthRate (150, 200);
 			double highRate = engine.GetGrowthRate (190, 200);
@@ -93,17 +93,17 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void GetHousingCapactiy ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 			Assert.Equal (200, engine.GetHousingCapacity (state));
-			state = Factories.CreateGameState (camps: 2);
+			state = CreateGameState (camps: 2);
 			Assert.Equal (400, engine.GetHousingCapacity (state));
 		}
 
 		[Fact]
 		public void GetNextAndPreviousBreakpoint ()
 		{
-			var engine = Factories.CreatePopEngine ();
+			var engine = CreatePopEngine ();
 			Assert.Equal (200, engine.GetNextPopBreakpoint (100));
 			Assert.Equal (100, engine.GetPreviousPopBreakpoint (100));
 			Assert.Equal (900, engine.GetPreviousPopBreakpoint (1000));
@@ -113,8 +113,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsGrowIfNeedsMet ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Water", 200.0));
 
 			double popBefore = state.Population;
@@ -125,8 +125,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsDecreaseIfNeedsNotMet ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
+			var engine = CreatePopEngine ();
+			var state = CreateGameState ();
 			double popBefore = state.Population;
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population < popBefore);
@@ -135,8 +135,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void CanNotDecreasePopCapBelowMinimum ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 2).WithPopulationCap (100);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 2).WithPopulationCap (100);
 
 			Assert.False(engine.CanDecreasePopulationCap (state));
 			Assert.Throws<InvalidOperationException> (() => engine.DecreasePopulationCap (state));
@@ -145,13 +145,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsRequireHousingToExpandCap ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 
 			Assert.False (engine.CanIncreasePopulationCap (state));
 			Assert.Throws<InvalidOperationException> (() => engine.IncreasePopulationCap (state));
 
-			state = Factories.CreateGameState (camps: 2);
+			state = CreateGameState (camps: 2);
 			Assert.True (engine.CanIncreasePopulationCap (state));
 			state = engine.IncreasePopulationCap (state);
 			Assert.Equal (300, state.PopulationCap);
@@ -160,8 +160,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsDecreaseIfOverCap ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 2).WithPopulation (300);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 2).WithPopulation (300);
 			double popBefore = state.Population;
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population < popBefore);
@@ -170,10 +170,10 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsDecreaseIfHousingDestoryed ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (holes: 1).WithPopulation (150);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (holes: 1).WithPopulation (150);
 
-			var buildingEngine = Factories.CreateBuildingEngine ();
+			var buildingEngine = CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 
 			double popBefore = state.Population;
@@ -187,8 +187,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopsHaveHardMinimumLowerLimit ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState ();
+			var engine = CreatePopEngine ();
+			var state = CreateGameState ();
 			state = state.WithPopulation (100);
 
 			state = engine.ProcessTick (state);
@@ -199,7 +199,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopulationEfficiencyRatios ()
 		{
-			var engine = Factories.CreatePopEngine ();
+			var engine = CreatePopEngine ();
 			double baseValue = engine.GetPopulationEfficiency (4, 5);
 			double someOverValue = engine.GetPopulationEfficiency (6, 5);
 			double moreOverValue = engine.GetPopulationEfficiency (7, 5);
@@ -211,12 +211,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void MoreBuildingsThanPopsReducesEfficiency ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 			double baseEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.Equal (1.0, baseEfficiency);
 
-			state = Factories.CreateGameState (camps: 2);
+			state = CreateGameState (camps: 2);
 			double lessEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.True (lessEfficiency < baseEfficiency);
 			Assert.True (lessEfficiency != 0);
@@ -225,12 +225,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void SomeBuildingsDoNotDecreaseEfficiency ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 			double baseEfficiency = engine.GetPopulationEfficiency (state);
 			Assert.Equal (1.0, baseEfficiency);
 
-			var buildingEngine = Factories.CreateBuildingEngine ();
+			var buildingEngine = CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "NoJob");
 
 			double afterEfficiency = engine.GetPopulationEfficiency (state);
@@ -240,8 +240,8 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ProcessTickGrows ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var state = Factories.CreateGameState (camps: 1);
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (camps: 1);
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population > 100 && state.Population < 200);
@@ -253,10 +253,10 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ProcessTickShrinkThenGrows ()
 		{
-			var engine = Factories.CreatePopEngine ();
-			var buildingEngine = Factories.CreateBuildingEngine ();
+			var engine = CreatePopEngine ();
+			var buildingEngine = CreateBuildingEngine ();
 
-			var state = Factories.CreateGameState (smokers: 1);
+			var state = CreateGameState (smokers: 1);
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = state.WithResources (Create ("Water", 1.0));
@@ -273,6 +273,12 @@ namespace IncrementalSociety.Tests
 			for (int i = 0 ; i < 40; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (170, state.Population);
+		}
+
+		[Fact]
+		public void PopulationRequirementsMayChangeDueToTechnology ()
+		{
+
 		}
 	}
 }

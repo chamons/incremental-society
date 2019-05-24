@@ -98,6 +98,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("name", NullValueHandling = NullValueHandling.Ignore)]
 		public string Name { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
 	}
 
 	public partial class Yield
@@ -107,6 +110,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("amount")]
 		public double Amount { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
 	}
 
 	public class ResearchDeclaration

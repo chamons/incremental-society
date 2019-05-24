@@ -173,5 +173,42 @@ namespace IncrementalSociety.Tests
 			Assert.Equal (-996, state.Resources["Food"]);
 			Assert.Equal (4, state.Resources["Water"]);
 		}
+
+		// Need way to extend default JSON for tests and refactor one offs in factory.cs
+		[Fact]
+		public void BuildingYieldMayChangeDueToTechnology ()
+		{
+
+		}
+
+		[Fact]
+		public void StorageMayChangeDueToTechnology ()
+		{
+
+		}
+
+		[Fact]
+		public void PopulationRequirementsMayChangeDueToTechnology ()
+		{
+
+		}
+
+		[Fact]
+		public void BuildingCostMayChangeDueToTechnology ()
+		{
+
+		}
+
+		[Fact]
+		public void AvailableConversionsMayChangeDueToTechnology ()
+		{
+
+		}
+
+		[Fact]
+		public void AvailableRegionsMayChangeDueToTechnology ()
+		{
+
+		}
 	}
 }

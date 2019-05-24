@@ -16,6 +16,7 @@ namespace IncrementalSociety
 		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
+		ResearchEngine ResearchEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
@@ -27,6 +28,7 @@ namespace IncrementalSociety
 			ResourceEngine = resourceEngine;
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
+			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
 			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 
@@ -147,6 +149,7 @@ namespace IncrementalSociety
 		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
 
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
+		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
 
 		public const int CurrentVersion = 1;
 

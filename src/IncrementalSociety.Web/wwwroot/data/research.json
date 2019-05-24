@@ -2,23 +2,28 @@
 	"research" : [
 		{
 			"name": "Tool Making",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "The creation stone tools: hand axes, hammerstones, and knives all allows more efficient gathering techniques."
 		},
 		{
 			"name": "Agriculture",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "The cultivation of grains and plants greatly increases yields when compared to gathering wild crops."
 		},
 		{
 			"name": "Charcoal",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "Raw wood contains a number of volatile compounds and water which reduces overall temperatures and increases overall smoke. By heating the wood without oxygen charcoal can be produced."
 		},
 		{
 			"name": "Fishing",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "Deep oceans and lakes contain a wealth of food, but requires specialized tools such as harpoons and nets to catch."
 		},
 		{
 			"name": "Storytelling",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ]
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "The telling of stories is more that just entertainment. It was the original way to transfer knowledge between the generations."
 		}
 	]
 }

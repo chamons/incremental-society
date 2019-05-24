@@ -24,9 +24,11 @@ namespace IncrementalSociety
 
 		ResearchDeclaration FindResearch (string techName) => Json.Research.Research.First (x => x.Name == techName);
 
+		bool StateHasUnlocked (GameState state, string techName) => state.ResearchUnlocks.AsNotNull ().Contains (techName);
+
 		public bool CanResearch (GameState state, string techName)
 		{
-			if (state.ResearchUnlocks.Contains (techName))
+			if (StateHasUnlocked (state, techName))
 				return false;
 
 			var research = FindResearch (techName);
@@ -51,6 +53,15 @@ namespace IncrementalSociety
 			var unlocks = state.ResearchUnlocks.ToBuilder ();
 			unlocks.Add (techName);
 			return state.WithResearchUnlocks (unlocks);
+		}
+
+		public List<ResearchItem> GetCurrentResearchOptions (GameState state)
+		{
+			var availableResearch = Json.Research.Research.Where (x => {
+					return StateHasUnlocked (state, x.Name) ||
+							x.Dependencies.AsNotNull ().All (y => StateHasUnlocked (state, y));
+				});
+			return availableResearch.Select (x => new ResearchItem (x.Name, x.Description, StateHasUnlocked (state, x.Name), Yields.Total (x.Cost))).ToList ();
 		}
 	}
 }

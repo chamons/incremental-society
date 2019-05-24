@@ -16,7 +16,7 @@ namespace IncrementalSociety.Tests
 			state = engine.Research (state, "FreeTech");
 
 			Assert.Single (state.ResearchUnlocks);
-			Assert.Equal ("FreeTech", state.ResearchUnlocks[0]);
+			Assert.Contains (state.ResearchUnlocks, x => x == "FreeTech");
 		}
 
 		[Fact]
@@ -33,7 +33,7 @@ namespace IncrementalSociety.Tests
 			state = engine.Research (state, "TechWithCost");
 
 			Assert.Single (state.ResearchUnlocks);
-			Assert.Equal ("TechWithCost", state.ResearchUnlocks[0]);
+			Assert.Contains (state.ResearchUnlocks, x => x == "TechWithCost");
 			Assert.Equal (0, state.Resources["Food"]);
 		}
 
@@ -47,11 +47,11 @@ namespace IncrementalSociety.Tests
 			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "TechWithDependency"));
 
 			state = engine.Research (state, "FreeTech");
-			
+
 			Assert.True (engine.CanResearch (state, "TechWithDependency"));
 			state = engine.Research (state, "TechWithDependency");
 
-			Assert.Equal (2, state.ResearchUnlocks.Length);
+			Assert.Equal (2, state.ResearchUnlocks.Count);
 			Assert.Contains (state.ResearchUnlocks, x => x == "TechWithDependency");
 		}
 
@@ -68,7 +68,27 @@ namespace IncrementalSociety.Tests
 			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "FreeTech"));
 
 			Assert.Single (state.ResearchUnlocks);
-			Assert.Equal ("FreeTech", state.ResearchUnlocks[0]);
+			Assert.Contains (state.ResearchUnlocks, x => x == "FreeTech");
+		}
+
+		[Fact]
+		public void ResearchOptions ()
+		{
+			ResearchEngine engine = Factories.CreateResearchEngine ();
+			GameState state = Factories.CreateGameState ();
+
+			var availableResearch = engine.GetCurrentResearchOptions (state);
+			Assert.Equal (2, availableResearch.Count);
+			Assert.Contains (availableResearch, x => x.Name == "FreeTech");
+			Assert.Contains (availableResearch, x => x.Name == "TechWithCost");
+
+			state = engine.Research (state, "FreeTech");
+
+			availableResearch = engine.GetCurrentResearchOptions (state);
+			Assert.Equal (3, availableResearch.Count);
+			Assert.Contains (availableResearch, x => x.Name == "FreeTech" && x.IsResearched);
+			Assert.Contains (availableResearch, x => x.Name == "TechWithDependency" && !x.IsResearched);
+			Assert.Contains (availableResearch, x => x.Name == "TechWithCost" && !x.IsResearched);
 		}
 	}
 }

@@ -17,6 +17,25 @@
 					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
+					@foreach (var researchItem in ResearchOptions.Where (x => !x.IsResearched)) {
+						<div class="research-item" onclick="@(() => OnSelection(@researchItem.Name))">
+							<div class="d-flex flex-wrap">
+								<div class="research-title">@researchItem.Name</div>
+								<MiniResourcesView
+									AdditionalStyles="research-cost no-border"
+									Resources="@researchItem.Cost" />
+							</div>
+							<div class="research-description">@researchItem.Description</div>
+						</div>
+					}
+					@if (ShowResearchedItems) {
+						@foreach (var researchItem in ResearchOptions.Where (x => x.IsResearched))
+						{
+							<div class="research-item">
+								<div class="research-title">@researchItem.Name</div>
+							</div>
+						}
+					}
 				</div>
 			}
 		</div>
@@ -25,7 +44,10 @@
 
 @functions {
 	bool Enabled => ResearchOptions != null;
-	List<ResearchDeclaration> ResearchOptions;
+
+	bool ShowResearchedItems;
+
+	List<ResearchItem> ResearchOptions;
 
 	protected override void OnInit ()
 	{
@@ -42,15 +64,16 @@
 	{
 		// If we're just transisitioning to the dialog, consume the options and show it
 		if (GameService.CurrentUIState == GameUIState.ShowResearchSelectDialog) {
-			ResearchOptions = new List<ResearchDeclaration> ();
+			ResearchOptions = GameService.Engine.GetCurrentResearchOptions (GameService.State);
 			StateHasChanged ();
 			((IJSInProcessRuntime)JsRuntime).Invoke<object> ("ShowResearchModal");
 		}
 		StateHasChanged ();
 	}
 
-	void OnSelection (string researchName)
+	void OnSelection (string techName)
 	{
+		Dismiss (true);
 	}
 
 	void Dismiss (bool closeDialog = false)

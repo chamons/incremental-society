@@ -55,9 +55,17 @@ namespace IncrementalSociety.Model
 		double PopulationCap;
 
 		[Default ("null")]
-		List<string> ResearchUnlocks;
+		HashSet<string> ResearchUnlocks;
 
 		[Default ("null")]
-		List<string> DisabledConversions;
+		HashSet<string> DisabledConversions;
+	}
+
+	public class ResearchItem
+	{
+		string Name;
+		string Description;
+		bool IsResearched;
+		Resources Cost;
 	}
 }

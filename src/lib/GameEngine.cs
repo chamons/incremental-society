@@ -103,9 +103,9 @@ namespace IncrementalSociety
 
 		public List<(string Name, bool Enabled)> GetConversions (GameState state) => ResourceEngine.GetConversions (state);
 
-		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
+		public List<(string Name, Resources Resources)> GetBuildingConversionResources (GameState state, string name)
 		{
-			return ResourceEngine.GetBuildingConversionResources (name);
+			return ResourceEngine.GetBuildingConversionResources (state, name);
 		}
 
 		public double GetEfficiencyOfNonBasicGoods (GameState state)

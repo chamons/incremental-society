@@ -34,17 +34,6 @@ namespace IncrementalSociety
 			return resources;
 		}
 
-		public Resources Create (ConversionYield conversionYield) => CreateBuilder (conversionYield).ToResources ();
-		public Resources.Builder CreateBuilder (ConversionYield conversionYield)
-		{
-			var resources = new Resources.Builder (this);
-			foreach (var cost in conversionYield.Cost.AsNotNull ())
-				resources[cost.Name] = cost.Amount * -1;
-			foreach (var provide in conversionYield.Provides.AsNotNull ())
-				resources[provide.Name] = provide.Amount;
-			return resources;
-		}
-
 		public Resources Create(IEnumerable <Yield> yields) => CreateBuilder (yields).ToResources ();
 		public Resources.Builder CreateBuilder (IEnumerable <Yield> yields)
 		{

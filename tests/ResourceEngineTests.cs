@@ -126,8 +126,9 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ConversionYield ()
 		{
+			GameState state = CreateGameState ();
 			ResourceEngine engine = CreateResourceEngine ();
-			var conversions = engine.GetBuildingConversionResources ("Workshop");
+			var conversions = engine.GetBuildingConversionResources (state, "Workshop");
 			Assert.Equal ("Conversion", conversions[0].Name);
 			Assert.True (conversions[0].Resources["Wood"] < 0.0);
 			Assert.True (conversions[0].Resources["Charcoal"] > 0.0);
@@ -257,6 +258,45 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AvailableConversionsMayChangeDueToTechnology ()
 		{
+			ExtraBuildingJSON = @",{
+				""name"": ""ExtraConversion"",
+				""valid_regions"": [""Plains""],
+				""conversion_yield"": [
+					{
+						""name"": ""Conversion"",
+						""cost"": [
+							{ ""name"": ""Wood"", ""amount"" : 1 },
+							{ ""required_technology"": ""Tech"", ""name"": ""Wood"", ""amount"" : 1 }
+						],
+						""provides"": [
+							{ ""name"": ""Charcoal"", ""amount"" : 0.5 },
+							{ ""required_technology"": ""Tech"", ""name"": ""Charcoal"", ""amount"" : 2 }
+						]
+					}
+				]
+			}";
+
+			GameState state = CreateGameState ();
+			state = state.WithResources (Create ("Wood", 2));
+			BuildingEngine buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "ExtraConversion");
+
+			ResourceEngine engine = CreateResourceEngine ();
+			var conversion = engine.GetBuildingConversionResources (state, "ExtraConversion");
+			Assert.Equal (-1, conversion[0].Resources["Wood"]);
+			Assert.Equal (.5, conversion[0].Resources["Charcoal"]);
+			var resources = engine.CalculateAdditionalNextTick (state, 1.0);
+			Assert.Equal (-1, resources["Wood"]);
+			Assert.Equal (.5, resources["Charcoal"]);
+
+			state = state.WithResearchUnlocks (new string [] { "Tech" });
+
+			conversion = engine.GetBuildingConversionResources (state, "ExtraConversion");
+			Assert.Equal (-2, conversion[0].Resources["Wood"]);
+			Assert.Equal (2.5, conversion[0].Resources["Charcoal"]);
+			resources = engine.CalculateAdditionalNextTick (state, 1.0);
+			Assert.Equal (-2, resources["Wood"]);
+			Assert.Equal (2.5, resources["Charcoal"]);
 		}
 
 		[Fact]

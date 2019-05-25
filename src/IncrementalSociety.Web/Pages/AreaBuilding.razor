@@ -44,7 +44,7 @@
 		{
 			if (HasBuilding) {
 				var allConversions = new List<(bool Enabled, Resources Resources)> ();
-				foreach (var conversion in GameService.Engine.GetBuildingConversionResources (Building)) {
+				foreach (var conversion in GameService.Engine.GetBuildingConversionResources (GameService.State, Building)) {
 					allConversions.Add ((IsConversionEnabled (conversion.Name), conversion.Resources));
 				}
 				return allConversions;

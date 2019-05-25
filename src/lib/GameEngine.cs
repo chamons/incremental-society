@@ -137,7 +137,7 @@ namespace IncrementalSociety
 			return nextTickResources.ToResources ();
 		}
 
-		public Resources GetBuildingResources (string building) => ResourceEngine.GetBuildingResources (building);
+		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
 		public Resources GetBuildingCost (string building) => ResourceEngine.GetBuildingCost(building);
 		public Resources GetBuildingStorage (string building) => ResourceEngine.GetBuildingStorage (building);
 

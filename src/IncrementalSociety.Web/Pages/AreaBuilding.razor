@@ -30,7 +30,7 @@
 	bool HasBuilding => !String.IsNullOrEmpty (Building);
 	bool CanDestory => HasBuilding && BuildingService.CanDestoryBuilding (Building);
 
-	Resources BuildingResources => HasBuilding ? GameService.Engine.GetBuildingResources (Building) : null;
+	Resources BuildingResources => HasBuilding ? GameService.Engine.GetBuildingResources (GameService.State, Building) : null;
 	bool IsConversionEnabled (string name) => GameService.Engine.IsConversionEnabled (GameService.State, name);
 
 	protected override void OnInit ()

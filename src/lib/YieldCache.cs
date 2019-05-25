@@ -56,7 +56,7 @@ namespace IncrementalSociety
 			return resources.ToResources ();
 		}
 
-		public Resources Total (Yield[] yields)
+		public Resources Total (IEnumerable <Yield> yields)
 		{
 			var resources = ResourceConfig.CreateBuilder ();
 			foreach (var yield in yields.AsNotNull ())

@@ -117,7 +117,8 @@ namespace IncrementalSociety.Tests
 		public void BuildingResources ()
 		{
 			ResourceEngine engine = CreateResourceEngine ();
-			var campResources = engine.GetBuildingResources ("Gathering Camp");
+			GameState state = CreateGameState ();
+			var campResources = engine.GetBuildingResources (state, "Gathering Camp");
 			Assert.True (campResources["Food"] > 0.0);
 			Assert.True (campResources["Water"] > 0.0);
 		}
@@ -174,11 +175,28 @@ namespace IncrementalSociety.Tests
 			Assert.Equal (4, state.Resources["Water"]);
 		}
 
-		// Need way to extend default JSON for tests and refactor one offs in factory.cs
 		[Fact]
 		public void BuildingYieldMayChangeDueToTechnology ()
 		{
+			ExtraBuildingJSON = @",{
+				""name"": ""ExtraYield"",
+				""valid_regions"": [""Plains""],
+				""yield"": [
+						{ ""name"": ""Food"", ""amount"" : 2 },
+						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
+				]
+			}";
 
+			GameState state = CreateGameState ();
+			BuildingEngine buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "ExtraYield");
+
+			ResourceEngine engine = CreateResourceEngine ();
+			Assert.Equal (2, engine.CalculateAdditionalNextTick (state, 1.0)["Food"]);
+
+			state = state.WithResearchUnlocks (new string [] { "Tech" });
+
+			Assert.Equal (4, engine.CalculateAdditionalNextTick (state, 1.0)["Food"]);
 		}
 
 		[Fact]

@@ -13,7 +13,6 @@ namespace IncrementalSociety
 	{
 		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
-		YieldCache Yields;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
@@ -21,7 +20,6 @@ namespace IncrementalSociety
 		{
 			ResourceEngine = engine;
 			PopulationEngine = populationEngine;
-			Yields = new YieldCache (ResourceConfig);
 		}
 
 		public GameState Build (GameState state, string regionName, int regionIndex, string buildingName)

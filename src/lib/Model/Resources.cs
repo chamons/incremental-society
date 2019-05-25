@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using IncrementalSociety.Json;
+using IncrementalSociety.Utilities;
+
 namespace IncrementalSociety
 {
 	public class ResourceConfig
@@ -22,6 +25,34 @@ namespace IncrementalSociety
 
 		public Resources Create () => new Resources (this);
 		public Resources.Builder CreateBuilder () => new Resources.Builder (this);
+
+		public Resources Create (Yield yield) => CreateBuilder (yield).ToResources ();
+		public Resources.Builder CreateBuilder (Yield yield)
+		{
+			var resources = new Resources.Builder (this);
+			resources[yield.Name] = yield.Amount;
+			return resources;
+		}
+
+		public Resources Create (ConversionYield conversionYield) => CreateBuilder (conversionYield).ToResources ();
+		public Resources.Builder CreateBuilder (ConversionYield conversionYield)
+		{
+			var resources = new Resources.Builder (this);
+			foreach (var cost in conversionYield.Cost.AsNotNull ())
+				resources[cost.Name] = cost.Amount * -1;
+			foreach (var provide in conversionYield.Provides.AsNotNull ())
+				resources[provide.Name] = provide.Amount;
+			return resources;
+		}
+
+		public Resources Create(IEnumerable <Yield> yields) => CreateBuilder (yields).ToResources ();
+		public Resources.Builder CreateBuilder (IEnumerable <Yield> yields)
+		{
+			var resources = new Resources.Builder (this);
+			foreach (var yield in yields.AsNotNull ())
+				resources[yield.Name] += yield.Amount;
+			return resources;
+		}
 	}
 
 	public struct ResourceItem

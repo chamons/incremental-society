@@ -15,21 +15,19 @@ namespace IncrementalSociety
 		Resources PopNeed;
 		HashSet <string> PopNeedNames;
 		double PopMin;
-		YieldCache Yields;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
 		public PopulationEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
-			Yields = new YieldCache (ResourceConfig);
 			LoadAndCalculatePopNeed (json);
 		}
 
 		void LoadAndCalculatePopNeed (JsonLoader json)
 		{
 			var totalNeed = ResourceConfig.CreateBuilder ();
-			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
+			totalNeed.Add (ResourceConfig.Create (json.Game.PopulationNeeds));
 			PopNeed = totalNeed.ToResources ();
 			PopNeedNames = new HashSet<string> (PopNeed.Where (x => x.Value > 0).Select (x => x.ResourceName));
 

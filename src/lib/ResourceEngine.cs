@@ -12,7 +12,6 @@ namespace IncrementalSociety
 	public class ResourceEngine
 	{
 		Dictionary<string, Building> BuildingLookup;
-		YieldCache Yields;
 
 		public ResourceConfig ResourceConfig;
 
@@ -24,7 +23,6 @@ namespace IncrementalSociety
 		{
 			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
-			Yields = new YieldCache (ResourceConfig);
 			RegionCapacity = json.Game.RegionCapacity;
 		}
 
@@ -116,7 +114,7 @@ namespace IncrementalSociety
 		{
 			var building = FindBuilding (name);
 			var yields = building.Yield.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
-			return Yields.Total (yields);
+			return ResourceConfig.Create (yields);
 		}
 
 		public Resources GetBuildingStorage (GameState state, string name)
@@ -128,7 +126,7 @@ namespace IncrementalSociety
 		Resources GetBuildingStorage (GameState state, Building building)
 		{
 			var storage = building.Storage.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
-			return Yields.Total (storage);
+			return ResourceConfig.Create (storage);
 		}
 
 		public Resources GetBuildingCost (GameState state, string name)
@@ -140,7 +138,7 @@ namespace IncrementalSociety
 		public Resources GetBuildingCost (GameState state, Building building)
 		{
 			var cost = building.Cost.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
-			return Yields.Total (cost);
+			return ResourceConfig.Create (cost);
 		}
 
 		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
@@ -148,7 +146,7 @@ namespace IncrementalSociety
 			var conversion = new List<(string name, Resources resources)> ();
 			var building = FindBuilding (name);
 			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
-				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
+				conversion.Add ((conversionYield.Name, ResourceConfig.Create (conversionYield)));
 			return conversion;
 		}
 

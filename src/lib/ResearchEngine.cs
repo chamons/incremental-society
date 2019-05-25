@@ -13,13 +13,13 @@ namespace IncrementalSociety
 	{
 		ResourceEngine ResourceEngine;
 		JsonLoader Json;
-		YieldCache Yields;
+
+		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
 		public ResearchEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
 			Json = json;
-			Yields = new YieldCache (ResourceEngine.ResourceConfig);
 		}
 
 		ResearchDeclaration FindResearch (string techName) => Json.Research.Research.First (x => x.Name == techName);
@@ -35,7 +35,7 @@ namespace IncrementalSociety
 			if (research.Dependencies.AsNotNull ().Except (state.ResearchUnlocks).Any ())
 				return false;
 
-			if (!state.Resources.HasMoreThan (Yields.Total (research.Cost)))
+			if (!state.Resources.HasMoreThan (ResourceConfig.Create (research.Cost)))
 				return false;
 
 			return true;
@@ -48,7 +48,7 @@ namespace IncrementalSociety
 
 			var research = FindResearch (techName);
 			if (research.Cost != null)
-				state = state.WithResources (state.Resources.Subtract (Yields.Total (research.Cost)));
+				state = state.WithResources (state.Resources.Subtract (ResourceConfig.Create (research.Cost)));
 
 			var unlocks = state.ResearchUnlocks.ToBuilder ();
 			unlocks.Add (techName);
@@ -61,7 +61,7 @@ namespace IncrementalSociety
 					return StateHasUnlocked (state, x.Name) ||
 							x.Dependencies.AsNotNull ().All (y => StateHasUnlocked (state, y));
 				});
-			return availableResearch.Select (x => new ResearchItem (x.Name, x.Description, StateHasUnlocked (state, x.Name), Yields.Total (x.Cost))).ToList ();
+			return availableResearch.Select (x => new ResearchItem (x.Name, x.Description, StateHasUnlocked (state, x.Name), ResourceConfig.Create (x.Cost))).ToList ();
 		}
 	}
 }

@@ -34,13 +34,23 @@ namespace IncrementalSociety.Json
 		public List<RegionDeclaration> Regions { get; set; }
 	}
 
+	public class RegionCapacityDeclaration
+	{
+		[JsonProperty ("region_capacity")]
+		public int RegionCapacity { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
+	}
+
 	public class GameDeclarations
 	{
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
-		public int RegionCapacity { get; set; }
+		public RegionCapacityDeclaration [] RegionCapacityDeclarations { get; set; }
+
 
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
@@ -75,7 +85,7 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("conversion_yield", NullValueHandling = NullValueHandling.Ignore)]
 		public ConversionYield[] ConversionYield { get; set; }
 
-		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
+		[JsonProperty ("RequiredResource", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
 
 		[JsonProperty ("storage", NullValueHandling = NullValueHandling.Ignore)]

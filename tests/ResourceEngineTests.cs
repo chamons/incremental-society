@@ -302,7 +302,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AvailableRegionsMayChangeDueToTechnology ()
 		{
+			GameState state = CreateGameState ();
+			ResourceEngine engine = CreateResourceEngine ();
 
+			Assert.Equal (3, engine.GetRegionCapacity (state));
+			state = state.WithResearchUnlocks (new string [] { "Expansion" });
+			Assert.Equal (4, engine.GetRegionCapacity (state));
 		}
 	}
 }

@@ -12,18 +12,22 @@ namespace IncrementalSociety
 	public class ResourceEngine
 	{
 		Dictionary<string, Building> BuildingLookup;
+		JsonLoader Json;
 
 		public ResourceConfig ResourceConfig;
-
-		public int RegionCapacity { get; private set; }
 
 		public IEnumerable <Building> Buildings => BuildingLookup.Values;
 
 		public ResourceEngine (JsonLoader json)
 		{
+			Json = json;
 			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
-			RegionCapacity = json.Game.RegionCapacity;
+		}
+
+		public int GetRegionCapacity (GameState state)
+		{
+			return Json.Game.RegionCapacityDeclarations.Where (x => HasResearch (state, x.RequireTechnology)).Sum (x => x.RegionCapacity);
 		}
 
 		public Building FindBuilding (string name)

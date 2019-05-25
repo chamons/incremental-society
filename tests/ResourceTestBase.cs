@@ -29,7 +29,7 @@ namespace IncrementalSociety.Tests
 
 		protected Resources Create (string resource, double amount) => CreateBuilder (resource, amount).ToResources ();
 
-		const string ResourceJSON = @"{ ""resources"": [
+		protected string ResourceJSON = @"{ ""resources"": [
 			{
 				""name"": ""Food""
 			},
@@ -46,7 +46,7 @@ namespace IncrementalSociety.Tests
 		]
 		}";
 
-		const string BuildingJSON = @"{
+		protected string BuildingJSON = @"{
 		""buildings"": [
 			{
 				""name"": ""Gathering Camp"",
@@ -122,7 +122,7 @@ namespace IncrementalSociety.Tests
 		]
 		}";
 
-		const string RegionJSON = @"{
+		protected string RegionJSON = @"{
 			""regions"": [
 				{
 					""name"": ""Plains""
@@ -134,16 +134,19 @@ namespace IncrementalSociety.Tests
 			]
 		}";
 
-		const string GameJSON = @"{
+		protected string GameJSON = @"{
 			""population_needs"": [	{
 				""name"": ""Water"", ""amount"" : .01,
 			}],
-			""region_capacity"" :  3,
+			""region_capacity"": [
+				{ ""region_capacity"": 3 },
+				{  ""required_technology"": ""Expansion"", ""region_capacity"": 1 }
+			],
 			""min_population"" :  100
 			%TEST_SPECIFIC%
 		}";
 
-		const string ResearchJSON = @"{
+		protected string ResearchJSON = @"{
 			""research"" : [
 				{
 					""name"": ""FreeTech""

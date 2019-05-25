@@ -26,7 +26,7 @@ namespace IncrementalSociety
 		{
 			Region region = state.Regions.First (x => x.Name == regionName);
 			Area area = region.Areas [regionIndex];
-			if (area.Buildings.Length >= ResourceEngine.RegionCapacity)
+			if (area.Buildings.Length >= ResourceEngine.GetRegionCapacity (state))
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} for {buildingName} but out of room {area.Buildings.Length}");
 
 			var building = ResourceEngine.FindBuilding (buildingName);

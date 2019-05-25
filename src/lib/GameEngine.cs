@@ -11,8 +11,6 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		public int RegionCapacity { get; private set; }
-
 		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
@@ -29,7 +27,6 @@ namespace IncrementalSociety
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
-			RegionCapacity = ResourceEngine.RegionCapacity;
 		}
 
 		public void ConfigureForLoad ()
@@ -136,6 +133,8 @@ namespace IncrementalSociety
 			nextTickResources.Subtract (PopulationEngine.GetRequirementsForPopulation (state));
 			return nextTickResources.ToResources ();
 		}
+
+		public int GetRegionCapacity (GameState state) => ResourceEngine.GetRegionCapacity (state);
 
 		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
 		public Resources GetBuildingCost (GameState state, string building) => ResourceEngine.GetBuildingCost (state, building);

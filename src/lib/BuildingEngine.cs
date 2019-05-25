@@ -39,7 +39,7 @@ namespace IncrementalSociety
 			if (!BuildingValidForArea (building, area))
 				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
 
-			var buildingTotalCost = Yields.Total (building.Cost);
+			var buildingTotalCost = ResourceEngine.GetBuildingCost (state, building);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
@@ -52,8 +52,7 @@ namespace IncrementalSociety
 
 		public bool CanAffordBuilding (GameState state, string buildingName)
 		{
-			var building = ResourceEngine.FindBuilding (buildingName);
-			var buildingTotalCost = Yields.Total (building.Cost);
+			var buildingTotalCost = ResourceEngine.GetBuildingCost (state, buildingName);
 			return state.Resources.HasMoreThan (buildingTotalCost);
 		}
 

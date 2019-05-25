@@ -131,7 +131,17 @@ namespace IncrementalSociety
 			return Yields.Total (storage);
 		}
 
-		public Resources GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
+		public Resources GetBuildingCost (GameState state, string name)
+		{
+			var building = FindBuilding (name);
+			return GetBuildingCost (state, building);
+		}
+
+		public Resources GetBuildingCost (GameState state, Building building)
+		{
+			var cost = building.Cost.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
+			return Yields.Total (cost);
+		}
 
 		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
 		{

@@ -40,7 +40,7 @@
 	Area Area => Region.Areas[AreaIndex];
 	string AreaName => Area.Type.ToString ();
 
-	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
+	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (GameService.State, name);
 	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (GameService.State, name);
 
 	protected override void OnInit ()

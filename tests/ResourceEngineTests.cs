@@ -232,13 +232,31 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildingCostMayChangeDueToTechnology ()
 		{
+			ExtraBuildingJSON = @",{
+				""name"": ""ExtraYield"",
+				""valid_regions"": [""Plains""],
+				""cost"": [
+						{ ""name"": ""Food"", ""amount"" : 2 },
+						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
+				]
+			}";
 
+			GameState state = CreateGameState ();
+			state = state.WithResources (Create ("Food", 4));
+			BuildingEngine buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "ExtraYield");
+
+			ResourceEngine engine = CreateResourceEngine ();
+			Assert.Equal (2, engine.GetBuildingCost (state, "ExtraYield")["Food"]);
+
+			state = state.WithResearchUnlocks (new string [] { "Tech" });
+
+			Assert.Equal (4, engine.GetBuildingCost (state, "ExtraYield")["Food"]);
 		}
 
 		[Fact]
 		public void AvailableConversionsMayChangeDueToTechnology ()
 		{
-
 		}
 
 		[Fact]

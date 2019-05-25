@@ -139,7 +139,7 @@ namespace IncrementalSociety
 
 		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
 		public Resources GetBuildingCost (string building) => ResourceEngine.GetBuildingCost(building);
-		public Resources GetBuildingStorage (string building) => ResourceEngine.GetBuildingStorage (building);
+		public Resources GetBuildingStorage (GameState state, string building) => ResourceEngine.GetBuildingStorage (state, building);
 
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 

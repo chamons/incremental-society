@@ -202,7 +202,25 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void StorageMayChangeDueToTechnology ()
 		{
+			ExtraBuildingJSON = @",{
+				""name"": ""ExtraYield"",
+				""valid_regions"": [""Plains""],
+				""storage"": [
+						{ ""name"": ""Food"", ""amount"" : 2 },
+						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
+				]
+			}";
 
+			GameState state = CreateGameState ();
+			BuildingEngine buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "ExtraYield");
+
+			ResourceEngine engine = CreateResourceEngine ();
+			Assert.Equal (2, engine.GetResourceStorage (state)["Food"]);
+
+			state = state.WithResearchUnlocks (new string [] { "Tech" });
+
+			Assert.Equal (4, engine.GetResourceStorage (state)["Food"]);
 		}
 
 		[Fact]

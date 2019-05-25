@@ -119,8 +119,19 @@ namespace IncrementalSociety
 			return Yields.Total (yields);
 		}
 
+		public Resources GetBuildingStorage (GameState state, string name)
+		{
+			var building = FindBuilding (name);
+			return GetBuildingStorage (state, building);
+		}
+
+		Resources GetBuildingStorage (GameState state, Building building)
+		{
+			var storage = building.Storage.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
+			return Yields.Total (storage);
+		}
+
 		public Resources GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
-		public Resources GetBuildingStorage (string name) => Yields.Total (FindBuilding (name).Storage);
 
 		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
 		{
@@ -151,8 +162,9 @@ namespace IncrementalSociety
 		public Resources GetResourceStorage (GameState state)
 		{
 			var storage = ResourceConfig.CreateBuilder ();
-			foreach (var yields in state.AllBuildings ().Select (x => FindBuilding (x).Storage))
-				storage.Add (Yields.Total (yields));
+
+			foreach (var building in state.AllBuildings ())
+				storage.Add (GetBuildingStorage (state, building));
 			return storage.ToResources ();
 		}
 	}

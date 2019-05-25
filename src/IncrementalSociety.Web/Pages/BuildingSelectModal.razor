@@ -41,7 +41,7 @@
 	string AreaName => Area.Type.ToString ();
 
 	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
-	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (name);
+	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (GameService.State, name);
 
 	protected override void OnInit ()
 	{

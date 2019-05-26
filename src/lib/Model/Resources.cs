@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using IncrementalSociety.Json;
+using IncrementalSociety.Utilities;
+
 namespace IncrementalSociety
 {
 	public class ResourceConfig
@@ -22,6 +25,23 @@ namespace IncrementalSociety
 
 		public Resources Create () => new Resources (this);
 		public Resources.Builder CreateBuilder () => new Resources.Builder (this);
+
+		public Resources Create (Yield yield) => CreateBuilder (yield).ToResources ();
+		public Resources.Builder CreateBuilder (Yield yield)
+		{
+			var resources = new Resources.Builder (this);
+			resources[yield.Name] = yield.Amount;
+			return resources;
+		}
+
+		public Resources Create(IEnumerable <Yield> yields) => CreateBuilder (yields).ToResources ();
+		public Resources.Builder CreateBuilder (IEnumerable <Yield> yields)
+		{
+			var resources = new Resources.Builder (this);
+			foreach (var yield in yields.AsNotNull ())
+				resources[yield.Name] += yield.Amount;
+			return resources;
+		}
 	}
 
 	public struct ResourceItem
@@ -38,6 +58,10 @@ namespace IncrementalSociety
 
 	public class Resources : IEnumerable<ResourceItem>
 	{
+		// During saveload we are deserialized without our config
+		// Stash it here during inflation
+		public static ResourceConfig SaveLoadConfig { get; set; }
+
 		ResourceConfig Config;
 		double [] Inventory;
 
@@ -48,6 +72,17 @@ namespace IncrementalSociety
 		{
 			Config = config;
 			Inventory = new double [ResourceLength];
+		}
+
+		// This is invoked during json deserialization
+		public Resources (IEnumerable<ResourceItem> values)
+		{
+			if (SaveLoadConfig == null)
+				throw new InvalidOperationException ("Resources (IEnumerable<double>) ctor was invoked without SaveLoadConfig setup");
+
+			Config = SaveLoadConfig;
+			Inventory = new double[ResourceLength];
+			Array.Copy (values.Select (x => x.Value).ToArray (), Inventory, ResourceLength);
 		}
 
 		protected Resources (ResourceConfig config, double [] inventory)

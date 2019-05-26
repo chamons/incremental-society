@@ -19,4 +19,4 @@ sass::
 	$(Q) sass --watch src/IncrementalSociety.Web/wwwroot/css/site.sass src/IncrementalSociety.Web/wwwroot/css
 
 records::
-	$(Q) dotnet records src/lib/Model/GameState.cs -o src/lib/Model/
+	$(Q) dotnet records src/lib/Model/GameState.csx -o src/lib/Model/

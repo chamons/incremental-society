@@ -35,11 +35,11 @@
     "valid_regions": [ "Mountain", "Plains", "Forest" ],
     "RequiredResource ": "Stone",
     "yield": [
-        { "Name": "Stone", "Amount" : 2 }
+        { "name": "Stone", "amount" : 2 }
     ],
     "cost": [
-        { "Name": "Wood", "Amount" : 10 },
-        { "Name": "Stone", "Amount" : 10 }
+        { "name": "Wood", "amount" : 10 },
+        { "name": "Stone", "amount" : 10 }
     ]
 }
 
@@ -50,15 +50,15 @@
         {
             "name": "Charcoal Production",
             "cost": [ 
-                { "Name": "Wood", "Amount" : 1 }
+                { "name": "Wood", "amount" : 1 }
             ],
             "provides": [ 
-                { "Name": "Charcoal", "Amount" : 0.5 }
+                { "name": "Charcoal", "amount" : 0.5 }
             ]
         }
     ],
     "cost": [
-        { "Name": "Wood", "Amount" : 10 }
+        { "name": "Wood", "amount" : 10 }
     ]
 },
 

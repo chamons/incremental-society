@@ -18,8 +18,9 @@ namespace IncrementalSociety.Runner
 			string gameJson = File.ReadAllText (webRoot + "data/game.json");
 			string regionsJson = File.ReadAllText (webRoot + "data/regions.json");
 			string resourcesJson = File.ReadAllText (webRoot + "data/resources.json");
+			string researchJson = File.ReadAllText (webRoot + "data/research.json");
 
-			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson);
+			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson);
 		}
 
 		static void Main(string[] args)

@@ -72,9 +72,10 @@ namespace IncrementalSociety.Model
 		public Resources Resources { get; }
 		public double Population { get; }
 		public double PopulationCap { get; }
-		public ImmutableArray<string> DisabledConversions { get; }
+		public ImmutableHashSet<string> ResearchUnlocks { get; }
+		public ImmutableHashSet<string> DisabledConversions { get; }
 
-		public GameState (int version, Age age, IEnumerable<Region> regions, Resources resources, double population, double populationCap, IEnumerable<string> disabledConversions = null)
+		public GameState (int version, Age age, IEnumerable<Region> regions, Resources resources, double population, double populationCap, IEnumerable<string> researchUnlocks = null, IEnumerable<string> disabledConversions = null)
 		{
 			Version = version;
 			Age = age;
@@ -82,42 +83,64 @@ namespace IncrementalSociety.Model
 			Resources = resources;
 			Population = population;
 			PopulationCap = populationCap;
-			DisabledConversions = ImmutableArray.CreateRange (disabledConversions ?? Array.Empty<string> ());
+			ResearchUnlocks = ImmutableHashSet.CreateRange (researchUnlocks ?? Array.Empty<string> ());
+			DisabledConversions = ImmutableHashSet.CreateRange (disabledConversions ?? Array.Empty<string> ());
 		}
 
 		public GameState WithVersion (int version)
 		{
-			return new GameState (version, Age, Regions, Resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (version, Age, Regions, Resources, Population, PopulationCap, ResearchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithAge (Age age)
 		{
-			return new GameState (Version, age, Regions, Resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, age, Regions, Resources, Population, PopulationCap, ResearchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithRegions (IEnumerable<Region> regions)
 		{
-			return new GameState (Version, Age, regions, Resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, regions, Resources, Population, PopulationCap, ResearchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithResources (Resources resources)
 		{
-			return new GameState (Version, Age, Regions, resources, Population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, resources, Population, PopulationCap, ResearchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithPopulation (double population)
 		{
-			return new GameState (Version, Age, Regions, Resources, population, PopulationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, Resources, population, PopulationCap, ResearchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithPopulationCap (double populationCap)
 		{
-			return new GameState (Version, Age, Regions, Resources, Population, populationCap, DisabledConversions);
+			return new GameState (Version, Age, Regions, Resources, Population, populationCap, ResearchUnlocks, DisabledConversions);
+		}
+
+		public GameState WithResearchUnlocks (IEnumerable<string> researchUnlocks)
+		{
+			return new GameState (Version, Age, Regions, Resources, Population, PopulationCap, researchUnlocks, DisabledConversions);
 		}
 
 		public GameState WithDisabledConversions (IEnumerable<string> disabledConversions)
 		{
-			return new GameState (Version, Age, Regions, Resources, Population, PopulationCap, disabledConversions);
+			return new GameState (Version, Age, Regions, Resources, Population, PopulationCap, ResearchUnlocks, disabledConversions);
+		}
+
+		public bool HasResearch (string tech) => tech == null || ResearchUnlocks.Contains (tech);
+	}
+
+	public partial class ResearchItem
+	{
+		public string Name { get; }
+		public string Description { get; }
+		public Resources Cost { get; }
+
+		public ResearchItem (string name, string description, Resources cost)
+		{
+			Name = name;
+			Description = description;
+			Cost = cost;
 		}
 	}
 }

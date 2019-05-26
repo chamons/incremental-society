@@ -12,20 +12,22 @@ namespace IncrementalSociety
 	public class ResourceEngine
 	{
 		Dictionary<string, Building> BuildingLookup;
-		YieldCache Yields;
+		JsonLoader Json;
 
 		public ResourceConfig ResourceConfig;
-
-		public int RegionCapacity { get; private set; }
 
 		public IEnumerable <Building> Buildings => BuildingLookup.Values;
 
 		public ResourceEngine (JsonLoader json)
 		{
+			Json = json;
 			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
-			Yields = new YieldCache (ResourceConfig);
-			RegionCapacity = json.Game.RegionCapacity;
+		}
+
+		public int GetRegionCapacity (GameState state)
+		{
+			return Json.Game.RegionCapacityDeclarations.Where (x => state.HasResearch (x.RequireTechnology)).Sum (x => x.RegionCapacity);
 		}
 
 		public Building FindBuilding (string name)
@@ -91,7 +93,7 @@ namespace IncrementalSociety
 		{
 				var activeConversions = new List<(string Conversion, double Amount)> ();
 				foreach (var building in state.AllBuildings ())
-					foreach (var conversion in GetBuildingConversionResources (building).Where (x => IsConversionEnabled (state, x.Name)))
+					foreach (var conversion in GetBuildingConversionResources (state, building).Where (x => IsConversionEnabled (state, x.Name)))
 						if (conversion.Resources[missingResource] < 0)
 							activeConversions.Add ((conversion.Name, conversion.Resources[missingResource]));
 				return activeConversions;
@@ -101,25 +103,39 @@ namespace IncrementalSociety
 		{
 			var additional = ResourceConfig.CreateBuilder ();
 			foreach (var building in state.AllBuildings ()) {
-				additional.AddWithMultiply (GetBuildingResources (building), efficiency);
+				additional.AddWithMultiply (GetBuildingResources (state, building), efficiency);
 
-				var conversions = GetBuildingConversionResources (building);
+				var conversions = GetBuildingConversionResources (state, building);
 				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
 					additional.Add (conversion.Resources);
 			}
 			return additional.ToResources ();
 		}
 
-		public Resources GetBuildingResources (string name) => Yields.Total (FindBuilding (name).Yield);
-		public Resources GetBuildingCost (string name) => Yields.Total (FindBuilding (name).Cost);
-		public Resources GetBuildingStorage (string name) => Yields.Total (FindBuilding (name).Storage);
+		public Resources GetResourcesBasedOnTech (GameState state, IEnumerable<Yield> allYields)
+		{
+			var yields = allYields.AsNotNull ().Where (x => state.HasResearch (x.RequireTechnology));
+			return ResourceConfig.Create (yields);
+		}
 
-		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
+		public Resources GetBuildingResources (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Yield);
+		public Resources GetBuildingResources (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Yield);
+
+		public Resources GetBuildingStorage (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Storage);
+		public Resources GetBuildingStorage (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Storage);
+
+		public Resources GetBuildingCost (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Cost);
+		public Resources GetBuildingCost (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Cost);
+
+		public List<(string Name, Resources Resources)> GetBuildingConversionResources (GameState state, string name)
 		{
 			var conversion = new List<(string name, Resources resources)> ();
 			var building = FindBuilding (name);
-			foreach (var conversionYield in building.ConversionYield.AsNotNull ())
-				conversion.Add ((conversionYield.Name, Yields.From (conversionYield)));
+			foreach (var conversionYield in building.ConversionYield.AsNotNull ()) {
+				var costs = GetResourcesBasedOnTech (state, conversionYield.Cost);
+				var provided = GetResourcesBasedOnTech (state, conversionYield.Provides);
+				conversion.Add ((conversionYield.Name, provided.Subtract (costs)));
+			}
 			return conversion;
 		}
 
@@ -130,7 +146,7 @@ namespace IncrementalSociety
 			var consideredConversions = new HashSet<string> ();
 			var allConversions = new List<(string Conversion, bool Enabled)> ();
 			foreach (var building in state.AllBuildings()) {
-				foreach (var conversion in GetBuildingConversionResources (building)) {
+				foreach (var conversion in GetBuildingConversionResources (state, building)) {
 					if (!consideredConversions.Contains (conversion.Name)) {
 						consideredConversions.Add (conversion.Name);
 						allConversions.Add ((conversion.Name, IsConversionEnabled (state, conversion.Name)));
@@ -143,8 +159,9 @@ namespace IncrementalSociety
 		public Resources GetResourceStorage (GameState state)
 		{
 			var storage = ResourceConfig.CreateBuilder ();
-			foreach (var yields in state.AllBuildings ().Select (x => FindBuilding (x).Storage))
-				storage.Add (Yields.Total (yields));
+
+			foreach (var building in state.AllBuildings ())
+				storage.Add (GetBuildingStorage (state, building));
 			return storage.ToResources ();
 		}
 	}

@@ -17,7 +17,7 @@
 					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
-					@foreach (string building in GameService.Engine.GetValidBuildingsForArea (@Area))
+					@foreach (string building in GameService.Engine.GetValidBuildingsForArea (GameService.State, Area))
 					{
 						<BuildingView
 							BuildingName="@building"
@@ -40,8 +40,8 @@
 	Area Area => Region.Areas[AreaIndex];
 	string AreaName => Area.Type.ToString ();
 
-	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (name);
-	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (name);
+	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (GameService.State, name);
+	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (GameService.State, name);
 
 	protected override void OnInit ()
 	{
@@ -68,8 +68,6 @@
 
 	bool CanBuild (string buildingName) => GameService.Engine.CanAffordBuilding (GameService.State, buildingName);
 
-	string BuildingBackgroundColor (string buildingName) => CanBuild (buildingName) ? "white" : "gray";
-
 	void OnSelection (string buildingName)
 	{
 		if (CanBuild (buildingName)) {
@@ -95,7 +93,7 @@
 
 	// Triggered when clicking off modal from bootstrap
 	[JSInvokable]
-	public void OnModalDismissed ()
+	public void OnBuildingModalDismissed ()
 	{
 		Dismiss ();
 	}

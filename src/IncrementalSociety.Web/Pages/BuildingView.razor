@@ -9,35 +9,18 @@
 	<div class="d-flex flex-column building @BuildingStyleClass" onclick=@OnClick>
 		<p class="building-title">@BuildingName</p>
 		@if (HasBuilding) {
-			@if (!Resources?.IsEmpty ?? false) {
-				<div class="d-flex flex-wrap resource-line">
-				@foreach (var res in Resources.AsNotNull ().Where (x => x.Value != 0)) {
-					<div class="building-resource d-flex align-items-center">
-						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
-						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
-					</div>
-				}
-				</div>
-			}
-			@if (!SecondaryResources?.IsEmpty ?? false) {
-				<div class="d-flex flex-wrap resource-line secondary-resources">
-				@foreach (var res in SecondaryResources.AsNotNull ().Where (x => x.Value != 0)) {
-					<div class="building-resource d-flex align-items-center">
-						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
-						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
-					</div>
-				}
-				</div>
-			}
+			<MiniResourcesView
+				Resources="@Resources"
+				ColorResourcesAsDelta="@ColorResourcesAsDelta" />
+			<MiniResourcesView
+				AdditionalStyles="secondary-resources"
+				Resources="@SecondaryResources"
+				ColorResourcesAsDelta="@ColorResourcesAsDelta" />
 			@foreach (var conversion in Conversions.AsNotNull ()) {
-				<div class="d-flex flex-wrap resource-line @ConversionClass(conversion.Enabled)">
-				@foreach (var res in conversion.Resources) {
-					<div class="building-resource d-flex align-items-center">
-						<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
-						<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
-					</div>
-				}
-				</div>
+				<MiniResourcesView
+					AdditionalStyles="@ConversionClass(conversion.Enabled)"
+					Resources="@conversion.Resources"
+					ColorResourcesAsDelta="@ColorResourcesAsDelta" />
 			}
 		}
 	</div>

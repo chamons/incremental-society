@@ -7,7 +7,9 @@ namespace IncrementalSociety.Json
 {
 	public class ResourceDeclaration
 	{
+		[JsonProperty ("name")]
 		public string Name { get; set; }
+
 		[JsonProperty ("Image_has_age_prefix")]
 		public bool ImageHasAgePrefix { get; set; }
 	}
@@ -19,7 +21,9 @@ namespace IncrementalSociety.Json
 
 	public class RegionDeclaration
 	{
+		[JsonProperty ("name")]
 		public string Name { get; set; }
+		[JsonProperty ("resources")]
 		public List<string> Resources { get; set; }
 		[JsonProperty ("can_spawn")]
 		public bool? CanSpawn { get; set; }
@@ -30,13 +34,22 @@ namespace IncrementalSociety.Json
 		public List<RegionDeclaration> Regions { get; set; }
 	}
 
+	public class RegionCapacityDeclaration
+	{
+		[JsonProperty ("region_capacity")]
+		public int RegionCapacity { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
+	}
+
 	public class GameDeclarations
 	{
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
-		public int RegionCapacity { get; set; }
+		public RegionCapacityDeclaration [] RegionCapacityDeclarations { get; set; }
 
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
@@ -71,7 +84,7 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("conversion_yield", NullValueHandling = NullValueHandling.Ignore)]
 		public ConversionYield[] ConversionYield { get; set; }
 
-		[JsonProperty ("RequiredResource ", NullValueHandling = NullValueHandling.Ignore)]
+		[JsonProperty ("RequiredResource", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequiredResource { get; set; }
 
 		[JsonProperty ("storage", NullValueHandling = NullValueHandling.Ignore)]
@@ -82,6 +95,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("housing_capacity")]
 		public int HousingCapacity { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
 	}
 
 	public partial class ConversionYield
@@ -98,10 +114,34 @@ namespace IncrementalSociety.Json
 
 	public partial class Yield
 	{
-		[JsonProperty ("Name")]
+		[JsonProperty ("name", NullValueHandling = NullValueHandling.Ignore)]
 		public string Name { get; set; }
 
-		[JsonProperty ("Amount")]
+		[JsonProperty ("amount")]
 		public double Amount { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
+	}
+
+	public class ResearchDeclaration
+	{
+		[JsonProperty ("name")]
+		public string Name { get; set; }
+
+		[JsonProperty ("description")]
+		public string Description { get; set; }
+
+		[JsonProperty ("dependencies")]
+		public List<string> Dependencies { get; set; }
+
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
+	}
+
+	public class ResearchDeclarations
+	{
+		[JsonProperty ("research")]
+		public List<ResearchDeclaration> Research { get; set; }
 	}
 }

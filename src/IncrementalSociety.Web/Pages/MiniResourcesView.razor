@@ -1,0 +1,29 @@
+@using System.Collections.Immutable
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Utilities
+
+@inject StyleService StyleService
+
+@if (!Resources?.IsEmpty ?? false) {
+	<div class="d-flex flex-wrap resource-line @AdditionalStyles">
+	@foreach (var res in Resources.AsNotNull ().Where (x => x.Value != 0)) {
+		<div class="building-resource d-flex align-items-center">
+			<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
+			<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
+		</div>
+	}
+	</div>
+}
+
+@functions {
+	[Parameter]
+	string AdditionalStyles { get; set; }
+
+	[Parameter]
+	Resources Resources { get; set; }
+
+	[Parameter]
+	bool ColorResourcesAsDelta { get; set; }
+
+	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
+}

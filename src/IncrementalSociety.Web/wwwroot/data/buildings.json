@@ -7,16 +7,16 @@
 			"does_not_require_job" : true,
 			"valid_regions": [ "Any" ],
 			"storage": [
-				{ "Name": "Food", "Amount" : 200 },
-				{ "Name": "Water", "Amount" : 100 },
-				{ "Name": "Wood", "Amount" : 200 },
-				{ "Name": "Stone", "Amount" : 100 },
-				{ "Name": "Knowledge", "Amount" : 100 }
+				{ "name": "Food", "amount" : 200 },
+				{ "name": "Water", "amount" : 100 },
+				{ "name": "Wood", "amount" : 200 },
+				{ "name": "Stone", "amount" : 100 },
+				{ "name": "Knowledge", "amount" : 100 }
 			],
 			"yield": [
-				{ "Name": "Food", "Amount" : 10 },
-				{ "Name": "Water", "Amount" : 4 },
-				{ "Name": "Wood", "Amount" : 2 }
+				{ "name": "Food", "amount" : 10 },
+				{ "name": "Water", "amount" : 4 },
+				{ "name": "Wood", "amount" : 2 }
 			],
 			"housing_capacity": 200
 		},
@@ -26,8 +26,8 @@
 			"valid_regions": [ "Plains", "Forest" ],
 			"cost": [
 				{
-					"Name": "Wood",
-					"Amount": 100
+					"name": "Wood",
+					"amount": 100
 				}
 			],
 			"housing_capacity": 300
@@ -36,15 +36,15 @@
 			"name": "Gathering Camp",
 			"valid_regions": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
-				{ "Name": "Food", "Amount" : 5 },
-				{ "Name": "Water", "Amount" : 3 },
-				{ "Name": "Stone", "Amount" : 0.1 },
-				{ "Name": "Wood", "Amount" : 1 }
+				{ "name": "Food", "amount" : 5 },
+				{ "name": "Water", "amount" : 3 },
+				{ "name": "Stone", "amount" : 0.1 },
+				{ "name": "Wood", "amount" : 1 }
 			],
 			"cost": [
 				{
-					"Name": "Wood",
-					"Amount": 50
+					"name": "Wood",
+					"amount": 50
 				}
 			]
 		},
@@ -53,26 +53,26 @@
 			"valid_regions": [ "Any" ],
 			"RequiredResource ": "Clay",
 			"yield": [
-				{ "Name": "Clay", "Amount" : 2 }
+				{ "name": "Clay", "amount" : 2 }
 			],
 			"conversion_yield": [
 				{
 					"name": "Bricks Production",
 					"cost": [ 
-						{ "Name": "Clay", "Amount" : 1 }
+						{ "name": "Clay", "amount" : 1 }
 					],
 					"provides": [ 
-						{ "Name": "Bricks", "Amount" : 0.25 }
+						{ "name": "Bricks", "amount" : 0.25 }
 					]
 				}
 			],
 			"cost": [
-				{ "Name": "Wood", "Amount" : 100 },
-				{ "Name": "Stone", "Amount" : 50 }
+				{ "name": "Wood", "amount" : 100 },
+				{ "name": "Stone", "amount" : 50 }
 			],
 			"storage": [
-				{ "Name": "Clay", "Amount" : 100 },
-				{ "Name": "Bricks", "Amount" : 100 }
+				{ "name": "Clay", "amount" : 100 },
+				{ "name": "Bricks", "amount" : 100 }
 			]
 		},
 		{
@@ -82,19 +82,19 @@
 				{
 					"name": "Stone Tools Creation",
 					"cost": [ 
-						{ "Name": "Stone", "Amount" : 1 }
+						{ "name": "Stone", "amount" : 1 }
 					],
 					"provides": [ 
-						{ "Name": "Tools", "Amount" : 0.1 }
+						{ "name": "Tools", "amount" : 0.1 }
 					]
 				}
 			],
 			"storage": [ 
-				{ "Name": "Tools", "Amount" : 100 }
+				{ "name": "Tools", "amount" : 100 }
 			],
 			"cost": [
-				{ "Name": "Wood", "Amount" : 100 },
-				{ "Name": "Bricks", "Amount" : 50 }
+				{ "name": "Wood", "amount" : 100 },
+				{ "name": "Bricks", "amount" : 50 }
 			],
 			"housing_capacity": 50
 		}

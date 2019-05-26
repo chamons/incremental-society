@@ -17,6 +17,7 @@ namespace IncrementalSociety.Web.Services
 		Default,
 		SelectRegionToBuildIn,
 		ShowBuildingSelectDialog,
+		ShowResearchSelectDialog,
 		SelectBuildingToDestory,
 		InternalError
 	}
@@ -63,6 +64,8 @@ namespace IncrementalSociety.Web.Services
 			Engine = GameEngine.Create (Loader);
 
 			try {
+				Engine.ConfigureForLoad ();
+
 				string serializedState = ((IJSInProcessRuntime)JSRuntime).Invoke<string> ("LoadGame");
 				if (!string.IsNullOrEmpty (serializedState) && serializedState != "null") {
 					State = JsonConvert.DeserializeObject<GameState> (serializedState);
@@ -85,8 +88,9 @@ namespace IncrementalSociety.Web.Services
 			string gameJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/game.json");
 			string regionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/regions.json");
 			string resourcesJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/resources.json");
+			string researchJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/research.json");
 
-			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson);
+			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson);
 		}
 
 		// Shared between multiple consumers

@@ -11,11 +11,10 @@ namespace IncrementalSociety
 {
 	public class GameEngine
 	{
-		public int RegionCapacity { get; private set; }
-
 		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
+		ResearchEngine ResearchEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
@@ -27,7 +26,16 @@ namespace IncrementalSociety
 			ResourceEngine = resourceEngine;
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
-			RegionCapacity = ResourceEngine.RegionCapacity;
+			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
+		}
+
+		public void ConfigureForLoad ()
+		{
+			// So when we load, we do not have sufficient state to inflate the
+			// resource lists, as we do not serialize the index.
+			// There is no need, as they must match our json
+			// So apply a bit of hacky static state
+			Resources.SaveLoadConfig = ResourceEngine.ResourceConfig;
 		}
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)
@@ -55,7 +63,25 @@ namespace IncrementalSociety
 					int buildingIndex = int.Parse (args[2]);
 					state = BuildingEngine.Destroy (state, regionName, regionIndex, buildingIndex);
 					break;
-				};
+				}
+				case "Research":
+				{
+					string techName= args[0];
+					state = ResearchEngine.Research (state, techName);
+					break;
+				}
+#if DEBUG
+				case "Debug - Fill Resources":
+				{
+					state = state.WithResources (ResourceEngine.GetResourceStorage (state));
+					break;
+				}
+				case "Debug - Fill Population":
+				{
+					state = state.WithPopulation (state.PopulationCap);
+					break;
+				}
+#endif
 				default:
 					throw new InvalidOperationException ($"Unable to find action {action}");
 			}
@@ -74,9 +100,9 @@ namespace IncrementalSociety
 
 		public List<(string Name, bool Enabled)> GetConversions (GameState state) => ResourceEngine.GetConversions (state);
 
-		public List<(string Name, Resources Resources)> GetBuildingConversionResources (string name)
+		public List<(string Name, Resources Resources)> GetBuildingConversionResources (GameState state, string name)
 		{
-			return ResourceEngine.GetBuildingConversionResources (name);
+			return ResourceEngine.GetBuildingConversionResources (state, name);
 		}
 
 		public double GetEfficiencyOfNonBasicGoods (GameState state)
@@ -96,7 +122,7 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
+		public List<string> GetValidBuildingsForArea (GameState state, Area area) => BuildingEngine.GetValidBuildingsForArea (state, area);
 
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 		public bool AbleToBuild (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventBuild;
@@ -104,13 +130,15 @@ namespace IncrementalSociety
 		public Resources GetResourcesNextTick (GameState state)
 		{
 			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiencyOfNonBasicGoods (state)).ToBuilder ();
-			nextTickResources.Subtract (PopulationEngine.GetRequirementsForPopulation (state));
+			nextTickResources.Subtract (PopulationEngine.GetRequirementsForCurrentPopulation (state));
 			return nextTickResources.ToResources ();
 		}
 
-		public Resources GetBuildingResources (string building) => ResourceEngine.GetBuildingResources (building);
-		public Resources GetBuildingCost (string building) => ResourceEngine.GetBuildingCost(building);
-		public Resources GetBuildingStorage (string building) => ResourceEngine.GetBuildingStorage (building);
+		public int GetRegionCapacity (GameState state) => ResourceEngine.GetRegionCapacity (state);
+
+		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
+		public Resources GetBuildingCost (GameState state, string building) => ResourceEngine.GetBuildingCost (state, building);
+		public Resources GetBuildingStorage (GameState state, string building) => ResourceEngine.GetBuildingStorage (state, building);
 
 		public bool CanDestoryBuilding (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventDestroy;
 
@@ -126,6 +154,9 @@ namespace IncrementalSociety
 		public bool IsPopulationStarving (GameState state) => PopulationEngine.IsPopulationStarving (state);
 
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
+
+		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
+		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
 
 		public const int CurrentVersion = 1;
 

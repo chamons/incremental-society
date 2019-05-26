@@ -12,33 +12,30 @@ namespace IncrementalSociety
 	public class PopulationEngine
 	{
 		ResourceEngine ResourceEngine;
-		Resources PopNeed;
-		HashSet <string> PopNeedNames;
+
+		JsonLoader Json;
 		double PopMin;
-		YieldCache Yields;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
 		public PopulationEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
-			Yields = new YieldCache (ResourceConfig);
-			LoadAndCalculatePopNeed (json);
-		}
-
-		void LoadAndCalculatePopNeed (JsonLoader json)
-		{
-			var totalNeed = ResourceConfig.CreateBuilder ();
-			totalNeed.Add (Yields.Total (json.Game.PopulationNeeds));
-			PopNeed = totalNeed.ToResources ();
-			PopNeedNames = new HashSet<string> (PopNeed.Where (x => x.Value > 0).Select (x => x.ResourceName));
-
+			Json = json;
 			PopMin = json.Game.MinPopulation;
 		}
 
-		public Resources GetRequirementsForPopulation (GameState state) => GetRequirementsForPopulation (state.Population);
+		public Resources GetRequirementsForCurrentPopulation (GameState state) => GetRequirementsForPopulation (state, state.Population);
 
-		public Resources GetRequirementsForPopulation (double population) => PopNeed.Multiply (population);
+		public Resources GetRequirementsForPopulation (GameState state, double population)
+		{
+			return GetRequirementsPerPop (state).Multiply (population);
+		}
+
+		public Resources GetRequirementsPerPop (GameState state)
+		{
+			return ResourceEngine.GetResourcesBasedOnTech (state, Json.Game.PopulationNeeds);
+		}
 
 		public GameState ProcessTick (GameState state)
 		{
@@ -50,7 +47,7 @@ namespace IncrementalSociety
 #endif
 
 			// Step 1 - Determine how many resources we need for our current population
-			var neededResource = GetRequirementsForPopulation (state);
+			var neededResource = GetRequirementsForCurrentPopulation (state);
 
 			// Step 2 - Consume if we have enough, else consume as much as we can
 			bool starved = !state.Resources.HasMoreThan (neededResource);
@@ -107,7 +104,7 @@ namespace IncrementalSociety
 			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
 
 			double effectivePopCap;
-			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state.PopulationCap)))
+			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state, state.PopulationCap)))
 				effectivePopCap = state.PopulationCap;
 			else
 				effectivePopCap = FindResourceEffectivePopCap (state, resourcesPerTick);
@@ -119,7 +116,7 @@ namespace IncrementalSociety
 
 		public bool IsPopulationStarving (GameState state)
 		{
-			var neededResource = GetRequirementsForPopulation (state);
+			var neededResource = GetRequirementsForCurrentPopulation (state);
 			var nextTickResources = state.Resources.ToBuilder ();
 			nextTickResources.Add (ResourceEngine.CalculateAdditionalNextTick (state, 1.0));
 			return !nextTickResources.HasMoreThan (neededResource);
@@ -127,19 +124,22 @@ namespace IncrementalSociety
 
 		string FindMostMissingResource (GameState state, Resources resourcesPerTick)
 		{
-			var delta = resourcesPerTick.Subtract (GetRequirementsForPopulation (state)).ToBuilder ();
-			foreach (var need in PopNeed)
+			var needsPerPop = GetRequirementsPerPop (state);
+
+			var delta = resourcesPerTick.Subtract (GetRequirementsForCurrentPopulation (state)).ToBuilder ();
+			foreach (var need in needsPerPop)
 				delta[need.ResourceName] = delta[need.ResourceName] / need.Value;
-			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => PopNeedNames.Contains (x)).First ();
+			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => needsPerPop[x] > 0).First ();
 		}
 
 		double FindResourceEffectivePopCap (GameState state, Resources resourcesPerTick)
 		{
 			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
-
+			var totalPopNeed = GetRequirementsForCurrentPopulation (state);
+			var needsPerPop = GetRequirementsPerPop (state);
 			var delta = resourcesPerTick.ToBuilder ();
-			delta.Subtract (GetRequirementsForPopulation (state));
-			double peopleShort = delta[mostMissingResource] / PopNeed[mostMissingResource];
+			delta.Subtract (totalPopNeed);
+			double peopleShort = delta[mostMissingResource] / needsPerPop[mostMissingResource];
 			return state.Population + peopleShort;
 		}
 

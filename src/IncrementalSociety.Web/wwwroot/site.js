@@ -1,11 +1,3 @@
-window.ShowBuildingModal = () => {
-	$('#selectBuildingModal').modal('show');
-};
-
-window.DismissBuildingModal = () => {
-	$('#selectBuildingModal').modal('hide');
-};
-
 window.SaveGame = (state) => {
 	localStorage.setItem('save-state', state);
 };
@@ -17,23 +9,32 @@ window.LoadGame = () => {
 	return save;
 };
 
-onBuildingModalShown = function (event) {
-}
+onBuildingModalHidden = function (event) { BuildingModalView.invokeMethod ('OnBuildingModalDismissed'); }
+window.ShowBuildingModal = () => { $('#selectBuildingModal').modal('show'); };
+window.DismissBuildingModal = () => { $('#selectBuildingModal').modal('hide'); };
 
-onBuildingModalHidden = function (event) {
-	ModalView.invokeMethod ('OnModalDismissed');
-}
+onResearchModalHidden = function (event) { ResearchModalView.invokeMethod ('OnResearchModalDismissed'); }
+window.ShowResearchModal = () => { $('#selectResearchModal').modal('show'); };
+window.DismissResearchModal = () => { $('#selectResearchModal').modal('hide'); };
 
-/* 
+/*
  * These controls aren't created until C# renders tree, so we must delay this until then.
  * Also, we get this called after every render, so don't hook up controls that refresh.
  */
-var ModalView = null;
-window.InitBuildingModal = (modalView) =>  
+var BuildingModalView = null;
+window.InitBuildingModal = (modalView) =>
 {
-	if (ModalView === null) {
-		ModalView = modalView;
-		$('#selectBuildingModal').on('show.bs.modal', onBuildingModalShown);
+	if (BuildingModalView === null) {
+		BuildingModalView = modalView;
 		$('#selectBuildingModal').on('hide.bs.modal', onBuildingModalHidden);
+	}
+}
+
+var ResearchModalView = null;
+window.InitResearchModal = (modalView) =>
+{
+	if (ResearchModalView === null) {
+		ResearchModalView = modalView;
+		$('#selectResearchModal').on('hide.bs.modal', onBuildingModalHidden);
 	}
 }

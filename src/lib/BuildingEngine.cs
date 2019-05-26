@@ -13,7 +13,6 @@ namespace IncrementalSociety
 	{
 		PopulationEngine PopulationEngine;
 		ResourceEngine ResourceEngine;
-		YieldCache Yields;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
@@ -21,25 +20,21 @@ namespace IncrementalSociety
 		{
 			ResourceEngine = engine;
 			PopulationEngine = populationEngine;
-			Yields = new YieldCache (ResourceConfig);
 		}
 
 		public GameState Build (GameState state, string regionName, int regionIndex, string buildingName)
 		{
 			Region region = state.Regions.First (x => x.Name == regionName);
 			Area area = region.Areas [regionIndex];
-			if (area.Buildings.Length >= ResourceEngine.RegionCapacity)
+			if (area.Buildings.Length >= ResourceEngine.GetRegionCapacity (state))
 				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} for {buildingName} but out of room {area.Buildings.Length}");
 
 			var building = ResourceEngine.FindBuilding (buildingName);
 
-			if (building.PreventBuild)
-				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} but {buildingName} is marked unable to build");
+			if (!CanBuildBuilding (state, building, area))
+				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} but {buildingName} is unable to build?");
 
-			if (!BuildingValidForArea (building, area))
-				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
-
-			var buildingTotalCost = Yields.Total (building.Cost);
+			var buildingTotalCost = ResourceEngine.GetBuildingCost (state, building);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
 				throw new InvalidOperationException ($"Build for {buildingName} but not enough resourcs.");
 			var newResouces = state.Resources.ToBuilder ();
@@ -52,8 +47,7 @@ namespace IncrementalSociety
 
 		public bool CanAffordBuilding (GameState state, string buildingName)
 		{
-			var building = ResourceEngine.FindBuilding (buildingName);
-			var buildingTotalCost = Yields.Total (building.Cost);
+			var buildingTotalCost = ResourceEngine.GetBuildingCost (state, buildingName);
 			return state.Resources.HasMoreThan (buildingTotalCost);
 		}
 
@@ -88,9 +82,20 @@ namespace IncrementalSociety
 			return building.ValidRegions.Contains ("Any") || building.ValidRegions.Contains (area.Type.ToString ());
 		}
 
-		public List<string> GetValidBuildingsForArea (Area area)
+		bool CanBuildBuilding (GameState state, Building building, Area area)
 		{
-			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => !x.PreventBuild && BuildingValidForArea (x, area));
+			if (building.PreventBuild)
+				return false;
+			if (!BuildingValidForArea (building, area))
+				return false;
+			if (!state.HasResearch (building.RequireTechnology))
+				return false;
+			return true;
+		}
+
+		public List<string> GetValidBuildingsForArea (GameState state, Area area)
+		{
+			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => CanBuildBuilding (state, x, area));
 			return buildings.Select (b => b.Name).ToList ();
 		}
 	}

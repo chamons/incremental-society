@@ -20,10 +20,10 @@ namespace IncrementalSociety.Tests
 			var state = CreateGameState ();
 			state = state.WithPopulation (100);
 
-			var reqs = engine.GetRequirementsForPopulation (state);
+			var reqs = engine.GetRequirementsForCurrentPopulation (state);
 			Assert.Equal (1, reqs["Water"]);
 			state = state.WithPopulation (200);
-			reqs = engine.GetRequirementsForPopulation (state);
+			reqs = engine.GetRequirementsForCurrentPopulation (state);
 			Assert.Equal (2, reqs["Water"]);
 		}
 
@@ -265,13 +265,18 @@ namespace IncrementalSociety.Tests
 			var buildingEngine = CreateBuildingEngine ();
 			state = state.WithResources (Create ("Wood", 100));
 
+			// The population cap here is equal, resources and housing
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Gathering Camp");
 			state = state.WithPopulationCap (200);
+
+			// We now have to much housing, so cap is 200
 			Assert.Equal (200, engine.FindEffectiveCap (state));
 			state = buildingEngine.Build (state, state.Regions[0].Name, 1, "Housing");
 			state = state.WithPopulationCap (400);
 			Assert.Equal (200, engine.FindEffectiveCap (state));
+
+			// We now have equal again, so 400
 			state = buildingEngine.Build (state, state.Regions[0].Name, 1, "Gathering Camp");
 			Assert.Equal (400, engine.FindEffectiveCap (state));
 		}
@@ -306,13 +311,13 @@ namespace IncrementalSociety.Tests
 		{
 			var engine = CreatePopEngine ();
 			var state = CreateGameState ();
-			var reqs = engine.GetRequirementsForPopulation (state);
+			var reqs = engine.GetRequirementsForCurrentPopulation (state);
 			Assert.True (reqs["Water"] > 0);
 			Assert.True (reqs["Food"] == 0);
 
 			state = state.WithResearchUnlocks (new string [] { "Bronze Age" });
 
-			reqs = engine.GetRequirementsForPopulation (state);
+			reqs = engine.GetRequirementsForCurrentPopulation (state);
 			Assert.True (reqs["Water"] > 0);
 			Assert.True (reqs["Food"] > 0);
 		}

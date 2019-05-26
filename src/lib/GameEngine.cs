@@ -130,7 +130,7 @@ namespace IncrementalSociety
 		public Resources GetResourcesNextTick (GameState state)
 		{
 			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiencyOfNonBasicGoods (state)).ToBuilder ();
-			nextTickResources.Subtract (PopulationEngine.GetRequirementsForPopulation (state));
+			nextTickResources.Subtract (PopulationEngine.GetRequirementsForCurrentPopulation (state));
 			return nextTickResources.ToResources ();
 		}
 

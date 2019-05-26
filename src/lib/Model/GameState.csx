@@ -68,7 +68,6 @@ namespace IncrementalSociety.Model
 	{
 		string Name;
 		string Description;
-		bool IsResearched;
 		Resources Cost;
 	}
 }

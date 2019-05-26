@@ -134,14 +134,12 @@ namespace IncrementalSociety.Model
 	{
 		public string Name { get; }
 		public string Description { get; }
-		public bool IsResearched { get; }
 		public Resources Cost { get; }
 
-		public ResearchItem (string name, string description, bool isResearched, Resources cost)
+		public ResearchItem (string name, string description, Resources cost)
 		{
 			Name = name;
 			Description = description;
-			IsResearched = isResearched;
 			Cost = cost;
 		}
 	}

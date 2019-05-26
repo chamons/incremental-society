@@ -85,10 +85,9 @@ namespace IncrementalSociety.Tests
 			state = engine.Research (state, "FreeTech");
 
 			availableResearch = engine.GetCurrentResearchOptions (state);
-			Assert.Equal (3, availableResearch.Count);
-			Assert.Contains (availableResearch, x => x.Name == "FreeTech" && x.IsResearched);
-			Assert.Contains (availableResearch, x => x.Name == "TechWithDependency" && !x.IsResearched);
-			Assert.Contains (availableResearch, x => x.Name == "TechWithCost" && !x.IsResearched);
+			Assert.Equal (2, availableResearch.Count);
+			Assert.Contains (availableResearch, x => x.Name == "TechWithDependency");
+			Assert.Contains (availableResearch, x => x.Name == "TechWithCost");
 		}
 	}
 }

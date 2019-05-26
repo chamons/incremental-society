@@ -17,7 +17,7 @@
 					<button type="button" class="close" onclick=@OnCloseButton><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
-					@foreach (var researchItem in ResearchOptions.Where (x => !x.IsResearched)) {
+					@foreach (var researchItem in ResearchOptions) {
 						<div class="research-item @BackgroundStyle(@researchItem.Name)" onclick="@(() => OnSelection(@researchItem.Name))">
 							<div class="d-flex flex-wrap">
 								<div class="research-title">@researchItem.Name</div>

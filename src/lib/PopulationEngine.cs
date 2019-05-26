@@ -125,9 +125,10 @@ namespace IncrementalSociety
 		string FindMostMissingResource (GameState state, Resources resourcesPerTick)
 		{
 			var popNeed = GetRequirementsForCurrentPopulation (state);
+			var needPerPop = GetRequirementsPerPop (state);
 
 			var delta = resourcesPerTick.Subtract (popNeed).ToBuilder ();
-			foreach (var need in popNeed)
+			foreach (var need in needPerPop)
 				delta[need.ResourceName] = delta[need.ResourceName] / need.Value;
 			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => popNeed[x] > 0).First ();
 		}

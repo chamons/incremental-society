@@ -136,7 +136,8 @@ namespace IncrementalSociety.Tests
 
 		const string GameJSON = @"{
 			""population_needs"": [
-				{""name"": ""Water"", ""amount"" : .01 },
+				{ ""name"": ""Water"", ""amount"" : .01 },
+				{ ""required_technology"": ""Bronze Age"", ""name"": ""Food"", ""amount"" : .01 },
 			],
 			""region_capacity"": [
 				{ ""region_capacity"": 3 },

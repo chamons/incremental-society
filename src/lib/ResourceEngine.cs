@@ -113,7 +113,7 @@ namespace IncrementalSociety
 		}
 
 		bool HasResearch (GameState state, string tech) => tech == null || state.ResearchUnlocks.Contains (tech);
-		Resources GetResourcesBasedOnTech (GameState state, IEnumerable<Yield> allYields)
+		public Resources GetResourcesBasedOnTech (GameState state, IEnumerable<Yield> allYields)
 		{
 			var yields = allYields.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
 			return ResourceConfig.Create (yields);

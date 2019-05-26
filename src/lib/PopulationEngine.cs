@@ -12,8 +12,8 @@ namespace IncrementalSociety
 	public class PopulationEngine
 	{
 		ResourceEngine ResourceEngine;
-		Resources PopNeed;
-		HashSet <string> PopNeedNames;
+
+		JsonLoader Json;
 		double PopMin;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
@@ -21,22 +21,19 @@ namespace IncrementalSociety
 		public PopulationEngine (ResourceEngine resourceEngine, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
-			LoadAndCalculatePopNeed (json);
-		}
-
-		void LoadAndCalculatePopNeed (JsonLoader json)
-		{
-			var totalNeed = ResourceConfig.CreateBuilder ();
-			totalNeed.Add (ResourceConfig.Create (json.Game.PopulationNeeds));
-			PopNeed = totalNeed.ToResources ();
-			PopNeedNames = new HashSet<string> (PopNeed.Where (x => x.Value > 0).Select (x => x.ResourceName));
-
+			Json = json;
 			PopMin = json.Game.MinPopulation;
 		}
 
-		public Resources GetRequirementsForPopulation (GameState state) => GetRequirementsForPopulation (state.Population);
+		public Resources GetRequirementsForPopulation (GameState state)
+		{
+			return GetRequirementsPerPop (state).Multiply (state.Population);
+		}
 
-		public Resources GetRequirementsForPopulation (double population) => PopNeed.Multiply (population);
+		public Resources GetRequirementsPerPop (GameState state)
+		{
+			return ResourceEngine.GetResourcesBasedOnTech (state, Json.Game.PopulationNeeds);
+		}
 
 		public GameState ProcessTick (GameState state)
 		{
@@ -105,7 +102,7 @@ namespace IncrementalSociety
 			var resourcesPerTick = ResourceEngine.CalculateAdditionalNextTick (state, 1.0);
 
 			double effectivePopCap;
-			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state.PopulationCap)))
+			if (resourcesPerTick.HasMoreThan (GetRequirementsForPopulation (state)))
 				effectivePopCap = state.PopulationCap;
 			else
 				effectivePopCap = FindResourceEffectivePopCap (state, resourcesPerTick);
@@ -126,18 +123,21 @@ namespace IncrementalSociety
 		string FindMostMissingResource (GameState state, Resources resourcesPerTick)
 		{
 			var delta = resourcesPerTick.Subtract (GetRequirementsForPopulation (state)).ToBuilder ();
-			foreach (var need in PopNeed)
+			var popNeed = GetRequirementsForPopulation (state);
+
+			foreach (var need in popNeed)
 				delta[need.ResourceName] = delta[need.ResourceName] / need.Value;
-			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => PopNeedNames.Contains (x)).First ();
+			return delta.OrderBy (x => x.Value).Select (x => x.ResourceName).Where (x => popNeed[x] > 0).First ();
 		}
 
 		double FindResourceEffectivePopCap (GameState state, Resources resourcesPerTick)
 		{
 			string mostMissingResource = FindMostMissingResource (state, resourcesPerTick);
-
+			var totalPopNeed = GetRequirementsForPopulation (state);
+			var needPerPop = GetRequirementsPerPop (state);
 			var delta = resourcesPerTick.ToBuilder ();
-			delta.Subtract (GetRequirementsForPopulation (state));
-			double peopleShort = delta[mostMissingResource] / PopNeed[mostMissingResource];
+			delta.Subtract (totalPopNeed);
+			double peopleShort = delta[mostMissingResource] / needPerPop[mostMissingResource];
 			return state.Population + peopleShort;
 		}
 

@@ -31,11 +31,8 @@ namespace IncrementalSociety
 
 			var building = ResourceEngine.FindBuilding (buildingName);
 
-			if (building.PreventBuild)
-				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} but {buildingName} is marked unable to build");
-
-			if (!BuildingValidForArea (building, area))
-				throw new InvalidOperationException ($"Build for {buildingName} but wrong region {area.Type}.");
+			if (!CanBuildBuilding (state, building, area))
+				throw new InvalidOperationException ($"Build in {regionName} {regionIndex} but {buildingName} is unable to build?");
 
 			var buildingTotalCost = ResourceEngine.GetBuildingCost (state, building);
 			if (!state.Resources.HasMoreThan (buildingTotalCost))
@@ -85,9 +82,20 @@ namespace IncrementalSociety
 			return building.ValidRegions.Contains ("Any") || building.ValidRegions.Contains (area.Type.ToString ());
 		}
 
-		public List<string> GetValidBuildingsForArea (Area area)
+		bool CanBuildBuilding (GameState state, Building building, Area area)
 		{
-			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => !x.PreventBuild && BuildingValidForArea (x, area));
+			if (building.PreventBuild)
+				return false;
+			if (!BuildingValidForArea (building, area))
+				return false;
+			if (!state.HasResearch (building.RequireTechnology))
+				return false;
+			return true;
+		}
+
+		public List<string> GetValidBuildingsForArea (GameState state, Area area)
+		{
+			IEnumerable<Building> buildings = ResourceEngine.Buildings.Where (x => CanBuildBuilding (state, x, area));
 			return buildings.Select (b => b.Name).ToList ();
 		}
 	}

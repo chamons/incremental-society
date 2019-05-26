@@ -122,7 +122,7 @@ namespace IncrementalSociety
 			return state;
 		}
 
-		public List<string> GetValidBuildingsForArea (Area area) => BuildingEngine.GetValidBuildingsForArea (area);
+		public List<string> GetValidBuildingsForArea (GameState state, Area area) => BuildingEngine.GetValidBuildingsForArea (state, area);
 
 		public bool CanAffordBuilding (GameState state, string buildingName) => BuildingEngine.CanAffordBuilding (state, buildingName);
 		public bool AbleToBuild (string buildingName) => !ResourceEngine.FindBuilding (buildingName).PreventBuild;

@@ -27,7 +27,7 @@ namespace IncrementalSociety
 
 		public int GetRegionCapacity (GameState state)
 		{
-			return Json.Game.RegionCapacityDeclarations.Where (x => HasResearch (state, x.RequireTechnology)).Sum (x => x.RegionCapacity);
+			return Json.Game.RegionCapacityDeclarations.Where (x => state.HasResearch (x.RequireTechnology)).Sum (x => x.RegionCapacity);
 		}
 
 		public Building FindBuilding (string name)
@@ -112,10 +112,9 @@ namespace IncrementalSociety
 			return additional.ToResources ();
 		}
 
-		bool HasResearch (GameState state, string tech) => tech == null || state.ResearchUnlocks.Contains (tech);
 		public Resources GetResourcesBasedOnTech (GameState state, IEnumerable<Yield> allYields)
 		{
-			var yields = allYields.AsNotNull ().Where (x => HasResearch (state, x.RequireTechnology));
+			var yields = allYields.AsNotNull ().Where (x => state.HasResearch (x.RequireTechnology));
 			return ResourceConfig.Create (yields);
 		}
 

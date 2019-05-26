@@ -51,7 +51,6 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("region_capacity")]
 		public RegionCapacityDeclaration [] RegionCapacityDeclarations { get; set; }
 
-
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
 	}
@@ -96,6 +95,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("housing_capacity")]
 		public int HousingCapacity { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
 	}
 
 	public partial class ConversionYield

@@ -59,6 +59,9 @@ namespace IncrementalSociety.Model
 
 		[Default ("null")]
 		HashSet<string> DisabledConversions;
+
+		[Inject]
+		public bool HasResearch (string tech) => tech == null || ResearchUnlocks.Contains (tech);
 	}
 
 	public class ResearchItem

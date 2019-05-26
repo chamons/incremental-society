@@ -129,11 +129,30 @@ namespace IncrementalSociety.Tests
 		{
 			GameState state = CreateGameState (camps: 1);
 			BuildingEngine engine = CreateBuildingEngine ();
-			var buildings = engine.GetValidBuildingsForArea (state.Regions[0].Areas[0]);
+			var buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
 			Assert.True (buildings.Count > 4);
 			Assert.Contains (buildings, x => x == "Gathering Camp");
 			Assert.Contains (buildings, x => x == "Workshop");
 			Assert.Contains (buildings, x => x == "Smoker");
+		}
+
+		[Fact]
+		public void AvailableBuildingsMayChangeDueToTechnology ()
+		{
+			ExtraBuildingJSON = @",{
+				""name"": ""RequiresTech"",
+				""valid_regions"": [""Plains""],
+				""required_technology"": ""Tech""
+			}";
+			GameState state = CreateGameState (camps: 1);
+			BuildingEngine engine = CreateBuildingEngine ();
+			var buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
+			Assert.DoesNotContain (buildings, x => x == "RequiresTech");
+
+			state = state.WithResearchUnlocks (new string [] { "Tech" });
+
+			buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
+			Assert.Contains (buildings, x => x == "RequiresTech");
 		}
 	}
 }

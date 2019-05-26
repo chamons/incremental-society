@@ -126,6 +126,8 @@ namespace IncrementalSociety.Model
 		{
 			return new GameState (Version, Age, Regions, Resources, Population, PopulationCap, ResearchUnlocks, disabledConversions);
 		}
+
+		public bool HasResearch (string tech) => tech == null || ResearchUnlocks.Contains (tech);
 	}
 
 	public partial class ResearchItem

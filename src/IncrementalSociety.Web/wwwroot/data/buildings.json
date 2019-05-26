@@ -8,14 +8,12 @@
 			"valid_regions": [ "Any" ],
 			"storage": [
 				{ "name": "Food", "amount" : 200 },
-				{ "name": "Water", "amount" : 100 },
 				{ "name": "Wood", "amount" : 200 },
 				{ "name": "Stone", "amount" : 100 },
 				{ "name": "Knowledge", "amount" : 100 }
 			],
 			"yield": [
 				{ "name": "Food", "amount" : 10 },
-				{ "name": "Water", "amount" : 4 },
 				{ "name": "Wood", "amount" : 2 }
 			],
 			"housing_capacity": 200
@@ -37,7 +35,6 @@
 			"valid_regions": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
 				{ "name": "Food", "amount" : 5 },
-				{ "name": "Water", "amount" : 3 },
 				{ "name": "Stone", "amount" : 0.1 },
 				{ "name": "Wood", "amount" : 1 }
 			],
@@ -58,10 +55,10 @@
 			"conversion_yield": [
 				{
 					"name": "Bricks Production",
-					"cost": [ 
+					"cost": [
 						{ "name": "Clay", "amount" : 1 }
 					],
-					"provides": [ 
+					"provides": [
 						{ "name": "Bricks", "amount" : 0.25 }
 					]
 				}
@@ -81,15 +78,15 @@
 			"conversion_yield": [
 				{
 					"name": "Stone Tools Creation",
-					"cost": [ 
+					"cost": [
 						{ "name": "Stone", "amount" : 1 }
 					],
-					"provides": [ 
+					"provides": [
 						{ "name": "Tools", "amount" : 0.1 }
 					]
 				}
 			],
-			"storage": [ 
+			"storage": [
 				{ "name": "Tools", "amount" : 100 }
 			],
 			"cost": [

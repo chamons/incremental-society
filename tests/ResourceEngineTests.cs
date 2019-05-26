@@ -225,12 +225,6 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
-		public void PopulationRequirementsMayChangeDueToTechnology ()
-		{
-
-		}
-
-		[Fact]
 		public void BuildingCostMayChangeDueToTechnology ()
 		{
 			ExtraBuildingJSON = @",{

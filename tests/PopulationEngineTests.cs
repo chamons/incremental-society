@@ -285,7 +285,17 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void PopulationRequirementsMayChangeDueToTechnology ()
 		{
+			var engine = CreatePopEngine ();
+			var state = CreateGameState ();
+			var reqs = engine.GetRequirementsForPopulation (state);
+			Assert.True (reqs["Water"] > 0);
+			Assert.True (reqs["Food"] == 0);
 
+			state = state.WithResearchUnlocks (new string [] { "Bronze Age" });
+
+			reqs = engine.GetRequirementsForPopulation (state);
+			Assert.True (reqs["Water"] > 0);
+			Assert.True (reqs["Food"] > 0);
 		}
 	}
 }

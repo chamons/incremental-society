@@ -258,6 +258,25 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void PopulationCapGrowsBasedOnBuildings ()
+		{
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (new Area[] { new Area (AreaType.Plains, null), new Area (AreaType.Plains, null), new Area (AreaType.Plains, null) });
+			var buildingEngine = CreateBuildingEngine ();
+			state = state.WithResources (Create ("Wood", 100));
+
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Gathering Camp");
+			state = state.WithPopulationCap (200);
+			Assert.Equal (200, engine.FindEffectiveCap (state));
+			state = buildingEngine.Build (state, state.Regions[0].Name, 1, "Housing");
+			state = state.WithPopulationCap (400);
+			Assert.Equal (200, engine.FindEffectiveCap (state));
+			state = buildingEngine.Build (state, state.Regions[0].Name, 1, "Gathering Camp");
+			Assert.Equal (400, engine.FindEffectiveCap (state));
+		}
+
+		[Fact]
 		public void ProcessTickShrinkThenGrows ()
 		{
 			var engine = CreatePopEngine ();

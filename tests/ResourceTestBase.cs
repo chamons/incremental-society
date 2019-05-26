@@ -190,13 +190,13 @@ namespace IncrementalSociety.Tests
 				buildings.Add ("Smoker");
 			for (int i = 0 ; i < holes ; ++i)
 				buildings.Add ("Watering Hole");
-			return CreateGameState (new Area (AreaType.Plains, buildings));
+			return CreateGameState ((new Area (AreaType.Plains, buildings)).Yield ());
 		}
 
-		protected GameState CreateGameState (Area area)
+		protected GameState CreateGameState (IEnumerable<Area> areas)
 		{
 			var resourceEngine = CreateResourceEngine ();
-			var region = new Region ("TestLand", area.Yield ());
+			var region = new Region ("TestLand", areas);
 			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200);
 		}
 

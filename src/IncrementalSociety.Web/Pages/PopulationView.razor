@@ -18,9 +18,10 @@
 @functions {
 
 	double Round (double d) => Math.Round (d, 3);
+	double Floor (double d) => Math.Floor (d);
 
-	double Population => Round (GameService.State.Population);
-	double PopulationCap => Round (GameService.State.PopulationCap);
+	double Population => Floor (GameService.State.Population);
+	double PopulationCap => Floor (GameService.State.PopulationCap);
 	double CurrentHousing => Round (PopulationService.CurrentHousing);
 	double MaxBuildings => Round (PopulationService.MaxBuildings);
 	double Efficiency => Round (PopulationService.Efficiency);
@@ -37,7 +38,7 @@
 	{
 		GameService.ApplyAction ("Lower Population Cap", new string[] {});
 	}
-	
+
 	void Increment ()
 	{
 		GameService.ApplyAction ("Grow Population Cap", new string[] {});

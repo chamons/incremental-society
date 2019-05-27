@@ -22,6 +22,12 @@
 					Resources="@conversion.Resources"
 					ColorResourcesAsDelta="@ColorResourcesAsDelta" />
 			}
+			@if (HousingValue > 0) {
+				<div class="building-resource d-flex align-items-center">
+					<img class="resource-image" src="images/housing.png" />
+					<div>@HousingValue</div>
+				</div>
+			}
 		}
 	</div>
 </div>
@@ -38,6 +44,9 @@
 
 	[Parameter]
 	Resources SecondaryResources { get; set; }
+
+	[Parameter]
+	double HousingValue { get; set; }
 
 	[Parameter]
 	bool Disabled { get; set; }

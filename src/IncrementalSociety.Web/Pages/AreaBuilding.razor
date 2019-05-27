@@ -11,6 +11,7 @@
 	<BuildingView
 		BuildingName="@Building"
 		Resources="@BuildingResources"
+		HousingValue="@GetBuildingHousing(@Building)"
 		Conversions="@Conversions"
 		Disabled="@IsDisabled"
 		OnClick="OnClick"
@@ -32,6 +33,8 @@
 
 	Resources BuildingResources => HasBuilding ? GameService.Engine.GetBuildingResources (GameService.State, Building) : null;
 	bool IsConversionEnabled (string name) => GameService.Engine.IsConversionEnabled (GameService.State, name);
+
+	double GetBuildingHousing (string name) => name == null ? 0 : GameService.Engine.GetBuildingHousing (GameService.State, name);
 
 	protected override void OnInit ()
 	{

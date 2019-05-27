@@ -127,6 +127,8 @@ namespace IncrementalSociety
 		public Resources GetBuildingCost (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Cost);
 		public Resources GetBuildingCost (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Cost);
 
+		public double GetBuildingHousing (GameState state, string building) => FindBuilding (building).HousingCapacity;
+
 		public List<(string Name, Resources Resources)> GetBuildingConversionResources (GameState state, string name)
 		{
 			var conversion = new List<(string name, Resources resources)> ();

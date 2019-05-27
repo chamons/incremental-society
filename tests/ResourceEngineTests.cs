@@ -313,6 +313,6 @@ namespace IncrementalSociety.Tests
 			Assert.Equal (200, engine.GetBuildingHousing(state, "Housing"));
 			state = state.WithResearchUnlocks (new string [] { "Expansion" });
 			Assert.Equal (400, engine.GetBuildingHousing(state, "Housing"));
-	}
+		}
 	}
 }

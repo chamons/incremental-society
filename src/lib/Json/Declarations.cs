@@ -5,6 +5,15 @@ using Newtonsoft.Json;
 
 namespace IncrementalSociety.Json
 {
+	public class CapacityDeclaration
+	{
+		[JsonProperty ("capacity")]
+		public int Capacity { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
+	}
+
 	public class ResourceDeclaration
 	{
 		[JsonProperty ("name")]
@@ -34,22 +43,13 @@ namespace IncrementalSociety.Json
 		public List<RegionDeclaration> Regions { get; set; }
 	}
 
-	public class RegionCapacityDeclaration
-	{
-		[JsonProperty ("region_capacity")]
-		public int RegionCapacity { get; set; }
-
-		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
-		public string RequireTechnology { get; set; }
-	}
-
 	public class GameDeclarations
 	{
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
-		public RegionCapacityDeclaration [] RegionCapacityDeclarations { get; set; }
+		public CapacityDeclaration [] RegionCapacityDeclarations { get; set; }
 
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
@@ -94,7 +94,7 @@ namespace IncrementalSociety.Json
 		public Yield[] Cost { get; set; }
 
 		[JsonProperty ("housing_capacity")]
-		public int HousingCapacity { get; set; }
+		public CapacityDeclaration [] HousingCapacity { get; set; }
 
 		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequireTechnology { get; set; }

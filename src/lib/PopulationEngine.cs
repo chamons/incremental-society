@@ -154,7 +154,7 @@ namespace IncrementalSociety
 			return state.WithPopulation (newPopulation);
 		}
 
-		public double GetHousingCapacity (GameState state) => state.AllBuildings ().Sum (x => ResourceEngine.FindBuilding (x).HousingCapacity);
+		public double GetHousingCapacity (GameState state) => state.AllBuildings ().Sum (x => ResourceEngine.GetBuildingHousing (state, x));
 
 		public bool CanIncreasePopulationCap (GameState state)
 		{

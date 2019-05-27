@@ -25,11 +25,6 @@ namespace IncrementalSociety
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
 		}
 
-		public int GetRegionCapacity (GameState state)
-		{
-			return Json.Game.RegionCapacityDeclarations.Where (x => state.HasResearch (x.RequireTechnology)).Sum (x => x.RegionCapacity);
-		}
-
 		public Building FindBuilding (string name)
 		{
 			var building = BuildingLookup [name];
@@ -118,6 +113,11 @@ namespace IncrementalSociety
 			return ResourceConfig.Create (yields);
 		}
 
+		public int GetCapacityBasedOnTech (GameState state, IEnumerable<CapacityDeclaration> capacities)
+		{
+			return capacities.AsNotNull ().Where (x => state.HasResearch (x.RequireTechnology)).Sum (x => x.Capacity);
+		}
+
 		public Resources GetBuildingResources (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Yield);
 		public Resources GetBuildingResources (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Yield);
 
@@ -126,6 +126,11 @@ namespace IncrementalSociety
 
 		public Resources GetBuildingCost (GameState state, string name) => GetResourcesBasedOnTech (state, FindBuilding (name).Cost);
 		public Resources GetBuildingCost (GameState state, Building building) => GetResourcesBasedOnTech (state, building.Cost);
+
+		public double GetBuildingHousing (GameState state, string name) => GetCapacityBasedOnTech (state, FindBuilding (name).HousingCapacity);
+		public double GetBuildingHousing (GameState state, Building building) => GetCapacityBasedOnTech (state, building.HousingCapacity);
+
+		public int GetRegionCapacity (GameState state) => GetCapacityBasedOnTech (state, Json.Game.RegionCapacityDeclarations);
 
 		public List<(string Name, Resources Resources)> GetBuildingConversionResources (GameState state, string name)
 		{

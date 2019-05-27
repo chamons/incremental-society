@@ -63,7 +63,9 @@ namespace IncrementalSociety.Tests
 					{ ""name"": ""Water"", ""amount"" : 400 },
 					{ ""name"": ""Wood"", ""amount"" : 50 },
 				],
-				""housing_capacity"": 200
+				""housing_capacity"": [
+					{ ""capacity"": 200 }
+				]
 			},
 			{
 				""name"": ""Workshop"",
@@ -85,7 +87,9 @@ namespace IncrementalSociety.Tests
 				""storage"": [
 					{ ""name"": ""Charcoal"", ""amount"" : 50 },
 				],
-				""housing_capacity"": 50
+				""housing_capacity"": [
+					{ ""capacity"": 50 }
+				]
 			},
 			{
 				""name"": ""Smoker"",
@@ -116,7 +120,10 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Housing"",
 				""valid_regions"": [""Plains""],
-				""housing_capacity"": 200
+				""housing_capacity"": [
+					{ ""capacity"": 200 },
+					{ ""required_technology"": ""Expansion"", ""capacity"": 200 }
+				]
 			}
 			%TEST_SPECIFIC%
 		]
@@ -140,8 +147,8 @@ namespace IncrementalSociety.Tests
 				{ ""required_technology"": ""Bronze Age"", ""name"": ""Food"", ""amount"" : .01 },
 			],
 			""region_capacity"": [
-				{ ""region_capacity"": 3 },
-				{  ""required_technology"": ""Expansion"", ""region_capacity"": 1 }
+				{ ""capacity"": 3 },
+				{  ""required_technology"": ""Expansion"", ""capacity"": 1 }
 			],
 			""min_population"" :  100
 			%TEST_SPECIFIC%

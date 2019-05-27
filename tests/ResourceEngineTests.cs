@@ -303,5 +303,16 @@ namespace IncrementalSociety.Tests
 			state = state.WithResearchUnlocks (new string [] { "Expansion" });
 			Assert.Equal (4, engine.GetRegionCapacity (state));
 		}
+
+		[Fact]
+		public void HousingMayChangeDueToTechnology ()
+		{
+			GameState state = CreateGameState ();
+			ResourceEngine engine = CreateResourceEngine ();
+
+			Assert.Equal (200, engine.GetBuildingHousing(state, "Housing"));
+			state = state.WithResearchUnlocks (new string [] { "Expansion" });
+			Assert.Equal (400, engine.GetBuildingHousing(state, "Housing"));
+	}
 	}
 }

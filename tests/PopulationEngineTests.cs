@@ -321,5 +321,19 @@ namespace IncrementalSociety.Tests
 			Assert.True (reqs["Water"] > 0);
 			Assert.True (reqs["Food"] > 0);
 		}
+
+		[Fact]
+		public void HousingMayChangeDueToTechnology ()
+		{
+			GameState state = CreateGameState ();
+			var buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+
+			PopulationEngine engine = CreatePopEngine ();
+
+			Assert.Equal (200, engine.GetHousingCapacity (state));
+			state = state.WithResearchUnlocks (new string [] { "Expansion" });
+			Assert.Equal (400, engine.GetHousingCapacity (state));
+		}
 	}
 }

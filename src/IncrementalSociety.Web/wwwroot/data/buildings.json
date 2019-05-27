@@ -16,7 +16,9 @@
 				{ "name": "Food", "amount" : 10 },
 				{ "name": "Wood", "amount" : 2 }
 			],
-			"housing_capacity": 200
+			"housing_capacity": [
+				{ "capacity": 200 }
+			]
 		},
 		{
 			"name": "Huts",
@@ -28,7 +30,9 @@
 					"amount": 100
 				}
 			],
-			"housing_capacity": 300
+			"housing_capacity": [
+				{ "capacity": 300 }
+			]
 		},
 		{
 			"name": "Gathering Camp",
@@ -92,8 +96,7 @@
 			"cost": [
 				{ "name": "Wood", "amount" : 100 },
 				{ "name": "Bricks", "amount" : 50 }
-			],
-			"housing_capacity": 50
+			]
 		}
 	]
 }

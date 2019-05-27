@@ -23,6 +23,7 @@
 							BuildingName="@building"
 							Resources="@GetBuildingCost(@building)"
 							SecondaryResources="@GetBuildingStorage(@building)"
+							HousingValue="@GetBuildingHousing(@building)"
 							Disabled="@(!@CanBuild(@building))"
 							OnClick="@(() => OnSelection(@building))"
 							ColorResourcesAsDelta=false />
@@ -42,6 +43,7 @@
 
 	Resources GetBuildingCost (string name) => GameService.Engine.GetBuildingCost (GameService.State, name);
 	Resources GetBuildingStorage (string name) => GameService.Engine.GetBuildingStorage (GameService.State, name);
+	double GetBuildingHousing (string name) => GameService.Engine.GetBuildingHousing (GameService.State, name);
 
 	protected override void OnInit ()
 	{

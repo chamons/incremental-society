@@ -25,7 +25,3 @@ mountain.png
 skoll
 -----------
 medicine.png
-
-sbed
------------
-water.png

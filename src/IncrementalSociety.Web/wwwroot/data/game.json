@@ -1,9 +1,6 @@
 {
 	"population_needs": [
 		{
-			"name": "Water", "amount" : 0.02
-		},
-		{
 			"name": "Food", "amount" : 0.05
 		},
 		{

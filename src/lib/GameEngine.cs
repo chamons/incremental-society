@@ -28,7 +28,7 @@ namespace IncrementalSociety
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
-			EdictsEngine = new EdictsEngine (loader);
+			EdictsEngine = new EdictsEngine (ResourceEngine, loader);
 		}
 
 		public void ConfigureForLoad ()
@@ -121,6 +121,7 @@ namespace IncrementalSociety
 			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
 			state = PopulationEngine.ProcessTick (state);
 			state = ResourceEngine.ConstrainResourcesToStorage (state);
+			state = EdictsEngine.ProcessTick (state);
 			return state;
 		}
 

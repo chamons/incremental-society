@@ -236,7 +236,7 @@ namespace IncrementalSociety.Tests
 
 		protected EdictsEngine CreateEdictsEngine ()
 		{
-			return new EdictsEngine (Loader.Value);
+			return new EdictsEngine (CreateResourceEngine (), Loader.Value);
 		}
 	}
 }

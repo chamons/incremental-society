@@ -156,6 +156,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("provides")]
 		public Yield[] Provides { get; set; }
 
+		[JsonProperty ("cooldown")]
+		public int Cooldown { get; set; }
+
 		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
 		public string RequireTechnology { get; set; }
 

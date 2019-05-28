@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -19,8 +19,9 @@ namespace IncrementalSociety.Runner
 			string regionsJson = File.ReadAllText (webRoot + "data/regions.json");
 			string resourcesJson = File.ReadAllText (webRoot + "data/resources.json");
 			string researchJson = File.ReadAllText (webRoot + "data/research.json");
+			string edictsJson = File.ReadAllText (webRoot + "data/edicts.json");
 
-			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson);
+			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson, edictsJson);
 		}
 
 		static void Main(string[] args)

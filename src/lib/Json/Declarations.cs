@@ -144,4 +144,29 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("research")]
 		public List<ResearchDeclaration> Research { get; set; }
 	}
+
+	public class EdictDeclaration
+	{
+		[JsonProperty ("name")]
+		public string Name { get; set; }
+
+		[JsonProperty ("cost")]
+		public Yield[] Cost { get; set; }
+
+		[JsonProperty ("provides")]
+		public Yield[] Provides { get; set; }
+
+		[JsonProperty ("required_technology", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireTechnology { get; set; }
+
+		[JsonProperty ("required_building", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequireBuilding { get; set; }
+	}
+
+	public class EdictsDeclarations
+	{
+		[JsonProperty ("edicts")]
+		public List<EdictDeclaration> Edicts { get; set; }
+
+	}
 }

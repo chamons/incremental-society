@@ -15,6 +15,7 @@ namespace IncrementalSociety
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
 		ResearchEngine ResearchEngine;
+		EdictsEngine EdictsEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
@@ -27,6 +28,7 @@ namespace IncrementalSociety
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
+			EdictsEngine = new EdictsEngine (loader);
 		}
 
 		public void ConfigureForLoad ()
@@ -167,7 +169,7 @@ namespace IncrementalSociety
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
 			resources["Wood"] = 50;
-			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200);
+			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
 		}
 	}
 }

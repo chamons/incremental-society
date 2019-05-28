@@ -13,11 +13,18 @@ namespace IncrementalSociety.Tests
 	public abstract class ResourceTestBase
 	{
 		protected ResourceConfig Config;
+		protected EdictCooldownConfig EdictConfig;
 
 		protected ResourceTestBase ()
 		{
-			JsonLoader loader = new JsonLoader ("", "", "", ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON), "", validate: false);
+			ConfigureConfigs ();
+		}
+
+		protected void ConfigureConfigs ()
+		{
+			JsonLoader loader = new JsonLoader ("", "", "", ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON), "", EdictsJSON.Replace ("%TEST_SPECIFIC%", ExtraEdictsJSON), validate: false);
 			Config = new ResourceConfig (loader.Resources.Resources.Select (x => x.Name));
+			EdictConfig = new EdictCooldownConfig (loader.Edicts.Edicts.Select (x => x.Name));
 		}
 
 		protected Resources.Builder CreateBuilder (string resource, double amount)
@@ -171,11 +178,18 @@ namespace IncrementalSociety.Tests
 			]
 		}";
 
+		const string EdictsJSON = @"{
+			""edicts"" : [
+				%TEST_SPECIFIC%
+			]
+		}";
+
 		protected string ExtraBuildingJSON = "";
 		protected string ExtraGameJSON = "";
 		protected string ExtraRegionJSON = "";
 		protected string ExtraResourceJSON = "";
 		protected string ExtraResearchJSON = "";
+		protected string ExtraEdictsJSON = "";
 
 		protected JsonLoader CreateJsonLoader ()
 		{
@@ -183,7 +197,8 @@ namespace IncrementalSociety.Tests
 								GameJSON.Replace ("%TEST_SPECIFIC%", ExtraGameJSON),
 								RegionJSON.Replace ("%TEST_SPECIFIC%", ExtraRegionJSON),
 								ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON),
-								ResearchJSON.Replace ("%TEST_SPECIFIC%", ExtraResearchJSON));
+								ResearchJSON.Replace ("%TEST_SPECIFIC%", ExtraResearchJSON),
+								EdictsJSON.Replace ("%TEST_SPECIFIC%", ExtraEdictsJSON));
 		}
 
 		protected GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)
@@ -203,8 +218,9 @@ namespace IncrementalSociety.Tests
 		protected GameState CreateGameState (IEnumerable<Area> areas)
 		{
 			var resourceEngine = CreateResourceEngine ();
+			var edictEngine = CreateEdictsEngine ();
 			var region = new Region ("TestLand", areas);
-			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200);
+			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
 		}
 
 		protected ResourceEngine CreateResourceEngine ()
@@ -225,6 +241,11 @@ namespace IncrementalSociety.Tests
 		protected ResearchEngine CreateResearchEngine ()
 		{
 			return new ResearchEngine (CreateResourceEngine (), CreateJsonLoader ());
+		}
+
+		protected EdictsEngine CreateEdictsEngine ()
+		{
+			return new EdictsEngine (CreateJsonLoader ());
 		}
 	}
 }

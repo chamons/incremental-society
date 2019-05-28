@@ -10,7 +10,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BasicMutability ()
 		{
-			ExtraEdictsJSON = @"
+			const string extraEdictsJSON = @"
 				{
 					""name"": ""First""
 				},
@@ -19,8 +19,8 @@ namespace IncrementalSociety.Tests
 				}
 			";
 
-			// ResourceTestBase can't honor extra json at constructor time
-			ConfigureConfigs ();
+			ConfigureCustomJsonPayload (extraEdictsJSON: extraEdictsJSON);
+
 
 			EdictCooldown cooldown = EdictConfig.Create ();
 			Assert.Equal (0, cooldown["First"]);

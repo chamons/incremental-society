@@ -12,20 +12,28 @@ namespace IncrementalSociety.Tests
 {
 	public abstract class ResourceTestBase
 	{
-		protected ResourceConfig Config;
-		protected EdictCooldownConfig EdictConfig;
-
-		protected ResourceTestBase ()
+		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraRegionJSON ="", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
-			ConfigureConfigs ();
+			return new JsonLoader (BuildingJSON.Replace ("%TEST_SPECIFIC%", extraBuildingJSON),
+								GameJSON.Replace ("%TEST_SPECIFIC%", extraGameJSON),
+								RegionJSON.Replace ("%TEST_SPECIFIC%", extraRegionJSON),
+								ResourceJSON.Replace ("%TEST_SPECIFIC%", extraResourceJSON),
+								ResearchJSON.Replace ("%TEST_SPECIFIC%", extraResearchJSON),
+								EdictsJSON.Replace ("%TEST_SPECIFIC%", extraEdictsJSON));
 		}
 
-		protected void ConfigureConfigs ()
+		protected void ConfigureCustomJsonPayload (string extraBuildingJSON = "", string extraGameJSON = "", string extraRegionJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
-			JsonLoader loader = new JsonLoader ("", "", "", ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON), "", EdictsJSON.Replace ("%TEST_SPECIFIC%", ExtraEdictsJSON), validate: false);
-			Config = new ResourceConfig (loader.Resources.Resources.Select (x => x.Name));
-			EdictConfig = new EdictCooldownConfig (loader.Edicts.Edicts.Select (x => x.Name));
+			Loader = new Lazy<JsonLoader> (CreateJsonLoader (extraBuildingJSON, extraGameJSON, extraRegionJSON, extraResourceJSON, extraResearchJSON, extraEdictsJSON));
 		}
+
+		Lazy<JsonLoader> Loader = new Lazy<JsonLoader> (() => CreateJsonLoader ());
+
+		Lazy<ResourceConfig> LazyConfig => new Lazy<ResourceConfig> (() => new ResourceConfig (Loader.Value.Resources.Resources.Select (x => x.Name)));
+		protected ResourceConfig Config => LazyConfig.Value;
+
+		Lazy<EdictCooldownConfig> LazyEdictConfig => new Lazy<EdictCooldownConfig> (() => new EdictCooldownConfig (Loader.Value.Edicts.Edicts.Select (x => x.Name)));
+		protected EdictCooldownConfig EdictConfig => LazyEdictConfig.Value;
 
 		protected Resources.Builder CreateBuilder (string resource, double amount)
 		{
@@ -184,23 +192,6 @@ namespace IncrementalSociety.Tests
 			]
 		}";
 
-		protected string ExtraBuildingJSON = "";
-		protected string ExtraGameJSON = "";
-		protected string ExtraRegionJSON = "";
-		protected string ExtraResourceJSON = "";
-		protected string ExtraResearchJSON = "";
-		protected string ExtraEdictsJSON = "";
-
-		protected JsonLoader CreateJsonLoader ()
-		{
-			return new JsonLoader (BuildingJSON.Replace ("%TEST_SPECIFIC%", ExtraBuildingJSON),
-								GameJSON.Replace ("%TEST_SPECIFIC%", ExtraGameJSON),
-								RegionJSON.Replace ("%TEST_SPECIFIC%", ExtraRegionJSON),
-								ResourceJSON.Replace ("%TEST_SPECIFIC%", ExtraResourceJSON),
-								ResearchJSON.Replace ("%TEST_SPECIFIC%", ExtraResearchJSON),
-								EdictsJSON.Replace ("%TEST_SPECIFIC%", ExtraEdictsJSON));
-		}
-
 		protected GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)
 		{
 			var buildings = new List<string> ();
@@ -225,7 +216,7 @@ namespace IncrementalSociety.Tests
 
 		protected ResourceEngine CreateResourceEngine ()
 		{
-			return new ResourceEngine (CreateJsonLoader ());
+			return new ResourceEngine (Loader.Value);
 		}
 
 		protected BuildingEngine CreateBuildingEngine ()
@@ -235,17 +226,17 @@ namespace IncrementalSociety.Tests
 
 		protected PopulationEngine CreatePopEngine ()
 		{
-			return new PopulationEngine (CreateResourceEngine(), CreateJsonLoader ());
+			return new PopulationEngine (CreateResourceEngine(), Loader.Value);
 		}
 
 		protected ResearchEngine CreateResearchEngine ()
 		{
-			return new ResearchEngine (CreateResourceEngine (), CreateJsonLoader ());
+			return new ResearchEngine (CreateResourceEngine (), Loader.Value);
 		}
 
 		protected EdictsEngine CreateEdictsEngine ()
 		{
-			return new EdictsEngine (CreateJsonLoader ());
+			return new EdictsEngine (Loader.Value);
 		}
 	}
 }

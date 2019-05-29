@@ -38,6 +38,7 @@ namespace IncrementalSociety
 			// There is no need, as they must match our json
 			// So apply a bit of hacky static state
 			Resources.SaveLoadConfig = ResourceEngine.ResourceConfig;
+			EdictCooldown.SaveLoadConfig = EdictsEngine.EdictConfig;
 		}
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)

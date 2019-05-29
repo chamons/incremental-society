@@ -225,12 +225,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void SomeBuildingsDoNotDecreaseEfficiency ()
 		{
-			ExtraBuildingJSON = @",
+			const string extraBuildingJSON = @",
 			{
 				""name"": ""NoJob"",
 				""valid_regions"": [""Any""],
 				""does_not_require_job"": true
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			var engine = CreatePopEngine ();
 			var state = CreateGameState (camps: 1);

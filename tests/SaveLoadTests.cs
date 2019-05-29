@@ -11,6 +11,7 @@ namespace IncrementalSociety.Tests
 		{
 			// This is some ugly static state we need since we do not serialize our resource json in save games
 			Resources.SaveLoadConfig = Config;
+			EdictCooldown.SaveLoadConfig = EdictConfig;
 
 			GameState state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Food", 100));

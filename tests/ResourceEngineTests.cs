@@ -179,7 +179,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildingYieldMayChangeDueToTechnology ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
 				""valid_regions"": [""Plains""],
 				""yield"": [
@@ -187,6 +187,7 @@ namespace IncrementalSociety.Tests
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
 				]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState ();
 			BuildingEngine buildingEngine = CreateBuildingEngine ();
@@ -203,7 +204,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void StorageMayChangeDueToTechnology ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
 				""valid_regions"": [""Plains""],
 				""storage"": [
@@ -211,6 +212,7 @@ namespace IncrementalSociety.Tests
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
 				]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState ();
 			BuildingEngine buildingEngine = CreateBuildingEngine ();
@@ -227,7 +229,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildingCostMayChangeDueToTechnology ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
 				""valid_regions"": [""Plains""],
 				""cost"": [
@@ -235,6 +237,7 @@ namespace IncrementalSociety.Tests
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
 				]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState ();
 			state = state.WithResources (Create ("Food", 4));
@@ -252,7 +255,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AvailableConversionsMayChangeDueToTechnology ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""ExtraConversion"",
 				""valid_regions"": [""Plains""],
 				""conversion_yield"": [
@@ -269,6 +272,7 @@ namespace IncrementalSociety.Tests
 					}
 				]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState ();
 			state = state.WithResources (Create ("Wood", 2));

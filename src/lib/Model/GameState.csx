@@ -39,9 +39,15 @@ namespace IncrementalSociety.Model
 	[Skip]
 	public class Resources {}
 
+	[Skip]
+	public class EdictCooldown {}
+
 	[With]
 	public class GameState
 	{
+		[Inject]
+		public bool HasResearch (string tech) => tech == null || ResearchUnlocks.Contains (tech);
+
 		int Version;
 
 		Age Age;
@@ -54,14 +60,13 @@ namespace IncrementalSociety.Model
 
 		double PopulationCap;
 
+		EdictCooldown Edicts;
+
 		[Default ("null")]
 		HashSet<string> ResearchUnlocks;
 
 		[Default ("null")]
 		HashSet<string> DisabledConversions;
-
-		[Inject]
-		public bool HasResearch (string tech) => tech == null || ResearchUnlocks.Contains (tech);
 	}
 
 	public class ResearchItem

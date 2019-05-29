@@ -25,8 +25,10 @@ namespace IncrementalSociety.Json
 		public string ResearchJSON { get; }
 		public ResearchDeclarations Research { get; }
 
+		public string EdictsJSON { get; }
+		public EdictsDeclarations Edicts { get; }
 
-		public JsonLoader (string buildings, string game, string regions, string resources, string research, bool validate = true)
+		public JsonLoader (string buildings, string game, string regions, string resources, string research, string edicts, bool validate = true)
 		{
 			BuildingsJSON = buildings;
 			Buildings = JsonConvert.DeserializeObject<BuildingDeclarations> (BuildingsJSON);
@@ -42,6 +44,9 @@ namespace IncrementalSociety.Json
 
 			ResearchJSON = research;
 			Research = JsonConvert.DeserializeObject<ResearchDeclarations> (ResearchJSON);
+
+			EdictsJSON = edicts;
+			Edicts = JsonConvert.DeserializeObject<EdictsDeclarations> (EdictsJSON);
 
 			if (validate)
 				ValidateJson ();

@@ -32,11 +32,12 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingInvalidRegionType ()
 		{
-			ExtraBuildingJSON = @",
+			const string extraBuildingJSON = @",
 			{
 				""name"": ""Mine"",
 				""valid_regions"": [""Mountains""]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Wood", 10.0));
@@ -47,11 +48,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void BuildBuildingValidAnywhere ()
 		{
-			ExtraBuildingJSON = @",
+			const string extraBuildingJSON = @",
 			{
 				""name"": ""Any"",
 				""valid_regions"": [""Any""]
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
+
 
 			GameState state = CreateGameState (camps: 1);
 			state = state.WithResources (Create ("Wood", 10.0));
@@ -70,11 +73,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void CannotBuildBuildingMarkedUnable ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""Impossible"",
 				""valid_regions"": [""Plains""],
 				""prevent_build"" : true
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
+
 			GameState state = CreateGameState ();
 			BuildingEngine engine = CreateBuildingEngine ();
 			Assert.Throws<InvalidOperationException> (() => engine.Build (state, state.Regions[0].Name, 0, "Impossible"));
@@ -139,11 +144,13 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void AvailableBuildingsMayChangeDueToTechnology ()
 		{
-			ExtraBuildingJSON = @",{
+			const string extraBuildingJSON = @",{
 				""name"": ""RequiresTech"",
 				""valid_regions"": [""Plains""],
 				""required_technology"": ""Tech""
 			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
+
 			GameState state = CreateGameState (camps: 1);
 			BuildingEngine engine = CreateBuildingEngine ();
 			var buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);

@@ -15,6 +15,7 @@ namespace IncrementalSociety
 		ResourceEngine ResourceEngine;
 		BuildingEngine BuildingEngine;
 		ResearchEngine ResearchEngine;
+		EdictsEngine EdictsEngine;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
@@ -27,6 +28,7 @@ namespace IncrementalSociety
 			PopulationEngine = new PopulationEngine (ResourceEngine, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
+			EdictsEngine = new EdictsEngine (ResourceEngine, loader);
 		}
 
 		public void ConfigureForLoad ()
@@ -36,6 +38,7 @@ namespace IncrementalSociety
 			// There is no need, as they must match our json
 			// So apply a bit of hacky static state
 			Resources.SaveLoadConfig = ResourceEngine.ResourceConfig;
+			EdictCooldown.SaveLoadConfig = EdictsEngine.EdictConfig;
 		}
 
 		public GameState ApplyAction (GameState state, string action, string [] args = null)
@@ -66,8 +69,14 @@ namespace IncrementalSociety
 				}
 				case "Research":
 				{
-					string techName= args[0];
+					string techName = args[0];
 					state = ResearchEngine.Research (state, techName);
+					break;
+				}
+				case "Edict":
+				{
+					string edictName = args[0];
+					state = EdictsEngine.ApplyEdict (state, edictName);
 					break;
 				}
 #if DEBUG
@@ -119,6 +128,7 @@ namespace IncrementalSociety
 			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
 			state = PopulationEngine.ProcessTick (state);
 			state = ResourceEngine.ConstrainResourcesToStorage (state);
+			state = EdictsEngine.ProcessTick (state);
 			return state;
 		}
 
@@ -158,6 +168,7 @@ namespace IncrementalSociety
 
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
 		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
+		public IEnumerable<(string Name, bool CanApply)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
 
 		public const int CurrentVersion = 1;
 
@@ -167,7 +178,7 @@ namespace IncrementalSociety
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
 			resources["Wood"] = 50;
-			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200);
+			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
 		}
 	}
 }

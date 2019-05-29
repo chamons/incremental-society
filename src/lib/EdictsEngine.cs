@@ -35,6 +35,15 @@ namespace IncrementalSociety
 			if (!CanApplyEdict (state, name))
 				throw new InvalidOperationException ($"Attempted to apply edict {name} but unable to apply");
 
+			var edict = Edicts[name];
+			var resources = state.Resources.ToBuilder ();
+			resources.Subtract (ResourceEngine.GetResourcesBasedOnTech (state, edict.Cost));
+			resources.Add (ResourceEngine.GetResourcesBasedOnTech (state, edict.Provides));
+			state = state.WithResources (resources.ToResources ());
+
+			if (edict.Cooldown > 0)
+				state = state.WithEdicts (state.Edicts.Add (edict.Name, edict.Cooldown));
+
 			return state;
 		}
 
@@ -58,7 +67,7 @@ namespace IncrementalSociety
 
 		public IEnumerable<(string Name, int Cooldown)> AvailableEdicts (GameState state)
 		{
-			return null;
+			return Edicts.Where (x => CanApplyEdict (state, x.Key)).Select (x => (x.Key, state.Edicts[x.Key]));
 		}
 	}
 }

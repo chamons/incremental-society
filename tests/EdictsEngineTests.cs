@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -24,9 +25,8 @@ namespace IncrementalSociety.Tests
 			Assert.True (engine.CanApplyEdict (state, "Edict"));
 			state = engine.ApplyEdict (state, "Edict");
 
-
 			Assert.False(engine.CanApplyEdict (state, "Edict"));
-			Assert.False (state.Edicts["Edict"] == 2);
+			Assert.True (state.Edicts["Edict"] == 2);
 			Assert.Throws<InvalidOperationException> (() => engine.ApplyEdict (state, "Edict"));
 
 			state = engine.ProcessTick (state);
@@ -109,8 +109,49 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ListOfEdicts ()
 		{
-			// Multiple edicts, some which require buildings we do/don't have. Same with tech
-			// One of which is on cooldown
+			const string extraEdictsJSON = @"
+				{
+					""name"": ""Edict""
+				},
+				{
+					""name"": ""EdictWithCooldown"",
+					""cooldown"": 2
+				},
+				{
+					""name"": ""RequireTechEdict"",
+					""required_technology"": ""Tech""
+				},
+				{
+					""name"": ""RequireBuildingEdict"",
+					""required_building"": ""Smoker""
+				}
+			";
+
+			ConfigureCustomJsonPayload (extraEdictsJSON: extraEdictsJSON);
+
+			var engine = CreateEdictsEngine ();
+			var state = CreateGameState ();
+
+			var edictList = engine.AvailableEdicts (state).ToList ();
+			Assert.Equal (2, edictList.Count);
+			Assert.Contains (edictList, x => x.Name == "Edict");
+			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown");
+
+			state = engine.ApplyEdict (state, "EdictWithCooldown");
+			edictList = engine.AvailableEdicts (state).ToList ();
+			Assert.Single (edictList);
+			Assert.Contains (edictList, x => x.Name == "Edict");
+
+			state = state.WithResearchUnlocks (new string[] { "Tech" });
+			edictList = engine.AvailableEdicts (state).ToList ();
+			Assert.Equal (2, edictList.Count);
+			Assert.Contains (edictList, x => x.Name == "RequireTechEdict");
+
+			var buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Smoker");
+			edictList = engine.AvailableEdicts (state).ToList ();
+			Assert.Equal (3, edictList.Count);
+			Assert.Contains (edictList, x => x.Name == "RequireBuildingEdict");
 		}
 	}
 }

@@ -69,8 +69,14 @@ namespace IncrementalSociety
 				}
 				case "Research":
 				{
-					string techName= args[0];
+					string techName = args[0];
 					state = ResearchEngine.Research (state, techName);
+					break;
+				}
+				case "Edict":
+				{
+					string edictName = args[0];
+					state = EdictsEngine.ApplyEdict (state, edictName);
 					break;
 				}
 #if DEBUG
@@ -162,6 +168,7 @@ namespace IncrementalSociety
 
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
 		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
+		public IEnumerable<(string Name, int Cooldown)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
 
 		public const int CurrentVersion = 1;
 

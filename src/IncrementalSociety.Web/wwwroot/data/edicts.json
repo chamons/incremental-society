@@ -1,4 +1,16 @@
 {
 	"edicts": [
+		{
+			"name": "Feast",
+			"cooldown": 120,
+			"cost": [
+				{ "name": "Food", "amount" : 150 },
+				{ "name": "Wood", "amount" : 25 }
+			],
+			"provides": [
+				{ "name": "Knowledge", "amount" : 10 }
+			]
+		}
 	]
 }
+	

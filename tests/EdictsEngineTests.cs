@@ -134,23 +134,24 @@ namespace IncrementalSociety.Tests
 
 			var edictList = engine.AvailableEdicts (state).ToList ();
 			Assert.Equal (2, edictList.Count);
-			Assert.Contains (edictList, x => x.Name == "Edict");
-			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown");
+			Assert.Contains (edictList, x => x.Name == "Edict" && x.Cooldown == 0);
+			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && x.Cooldown == 0);
 
 			state = engine.ApplyEdict (state, "EdictWithCooldown");
 			edictList = engine.AvailableEdicts (state).ToList ();
-			Assert.Single (edictList);
-			Assert.Contains (edictList, x => x.Name == "Edict");
+			Assert.Equal (2, edictList.Count);
+			Assert.Contains (edictList, x => x.Name == "Edict" && x.Cooldown == 0);
+			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && x.Cooldown == 2);
 
 			state = state.WithResearchUnlocks (new string[] { "Tech" });
 			edictList = engine.AvailableEdicts (state).ToList ();
-			Assert.Equal (2, edictList.Count);
+			Assert.Equal (3, edictList.Count);
 			Assert.Contains (edictList, x => x.Name == "RequireTechEdict");
 
 			var buildingEngine = CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Smoker");
 			edictList = engine.AvailableEdicts (state).ToList ();
-			Assert.Equal (3, edictList.Count);
+			Assert.Equal (4, edictList.Count);
 			Assert.Contains (edictList, x => x.Name == "RequireBuildingEdict");
 		}
 	}

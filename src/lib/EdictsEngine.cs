@@ -56,18 +56,26 @@ namespace IncrementalSociety
 			if (!state.Resources.HasMoreThan (GetEdictCost (state, edict)))
 				return false;
 
-			if (!state.HasResearch (edict.RequireTechnology))
-				return false;
-
-			if (edict.RequireBuilding != null && !state.AllBuildings ().Any (x => x == edict.RequireBuilding))
+			if (!HasValidRequirements (state, name))
 				return false;
 
 			return true;
 		}
 
+		bool HasValidRequirements (GameState state, string name)
+		{
+			var edict = Edicts[name];
+
+			if (!state.HasResearch (edict.RequireTechnology))
+				return false;
+			if (edict.RequireBuilding != null && !state.AllBuildings ().Any (x => x == edict.RequireBuilding))
+				return false;
+			return true;
+		}
+
 		public IEnumerable<(string Name, int Cooldown)> AvailableEdicts (GameState state)
 		{
-			return Edicts.Where (x => CanApplyEdict (state, x.Key)).Select (x => (x.Key, state.Edicts[x.Key]));
+			return Edicts.Where (x => HasValidRequirements (state, x.Key)).Select (x => (x.Key, state.Edicts[x.Key]));
 		}
 	}
 }

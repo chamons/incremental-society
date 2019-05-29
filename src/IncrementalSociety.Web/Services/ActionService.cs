@@ -6,7 +6,7 @@ namespace IncrementalSociety.Web.Services
 	public class ActionService
 	{
 		GameService GameService;
-		public List<string> Actions { get; private set; }
+		public List<(string Name, bool Enabled)> Actions { get; private set; }
 
 		GameUIState CurrentUIState => GameService.CurrentUIState;
 
@@ -33,10 +33,13 @@ namespace IncrementalSociety.Web.Services
 
 		void ResetActionList ()
 		{
-			Actions = new List <string> () { BuildText, DestroyText, ResearchText, NewGameText };
+			var edicts = GameService.Engine.AvailableEdicts (GameService.State).ToList ();
+			Actions = new List <(string Name, bool Enabled)> (edicts.Count + 4) { (BuildText, true), (DestroyText, true), (ResearchText, true), (NewGameText, true) };
+			foreach (var edict in GameService.Engine.AvailableEdicts (GameService.State))
+				Actions.Add ((edict.Name, edict.Cooldown == 0));
 #if DEBUG
-			Actions.Add ("Debug - Fill Resources");
-			Actions.Add ("Debug - Fill Population");
+			Actions.Add (("Debug - Fill Resources", true));
+			Actions.Add (("Debug - Fill Population", true));
 #endif
 		}
 
@@ -45,8 +48,8 @@ namespace IncrementalSociety.Web.Services
 			string actionText = GetActionText ();
 			if (actionText != null) {
 				for (int i = 0; i < Actions.Count; ++i) {
-					if (Actions[i] == actionText) {
-						Actions[i] = CancelText;
+					if (Actions[i].Name == actionText) {
+						Actions[i] = (CancelText, true);
 						return;
 					}
 				}
@@ -87,7 +90,10 @@ namespace IncrementalSociety.Web.Services
 					return;
 				default:
 					GameService.SetUIState (GameUIState.Default);
-					GameService.ApplyAction (action);
+					if (GameService.Engine.AvailableEdicts (GameService.State).Any (x => x.Name == action))
+						GameService.ApplyAction ("Edict", new string[] { action });
+					else
+						GameService.ApplyAction (action);
 					return;
 			}
 		}

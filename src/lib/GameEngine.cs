@@ -168,7 +168,7 @@ namespace IncrementalSociety
 
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
 		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
-		public IEnumerable<(string Name, int Cooldown)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
+		public IEnumerable<(string Name, bool CanApply)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
 
 		public const int CurrentVersion = 1;
 

@@ -35,8 +35,9 @@ namespace IncrementalSociety.Web.Services
 		{
 			var edicts = GameService.Engine.AvailableEdicts (GameService.State).ToList ();
 			Actions = new List <(string Name, bool Enabled)> (edicts.Count + 4) { (BuildText, true), (DestroyText, true), (ResearchText, true), (NewGameText, true) };
-			foreach (var edict in GameService.Engine.AvailableEdicts (GameService.State))
-				Actions.Add ((edict.Name, edict.Cooldown == 0));
+			foreach (var edict in GameService.Engine.AvailableEdicts (GameService.State)) {
+				Actions.Add ((edict.Name, edict.CanApply));
+			}
 #if DEBUG
 			Actions.Add (("Debug - Fill Resources", true));
 			Actions.Add (("Debug - Fill Population", true));

@@ -49,16 +49,23 @@ namespace IncrementalSociety
 
 		public bool CanApplyEdict (GameState state, string name)
 		{
+			if (!HasValidRequirements (state, name))
+				return false;
+
+			if (!CanApplyNow (state, name))
+				return false;
+
+			return true;
+		}
+
+		bool CanApplyNow (GameState state, string name)
+		{
 			if (state.Edicts[name] > 0)
 				return false;
 
 			var edict = Edicts[name];
 			if (!state.Resources.HasMoreThan (GetEdictCost (state, edict)))
 				return false;
-
-			if (!HasValidRequirements (state, name))
-				return false;
-
 			return true;
 		}
 
@@ -73,9 +80,9 @@ namespace IncrementalSociety
 			return true;
 		}
 
-		public IEnumerable<(string Name, int Cooldown)> AvailableEdicts (GameState state)
+		public IEnumerable<(string Name, bool CanApply)> AvailableEdicts (GameState state)
 		{
-			return Edicts.Where (x => HasValidRequirements (state, x.Key)).Select (x => (x.Key, state.Edicts[x.Key]));
+			return Edicts.Where (x => HasValidRequirements (state, x.Key)).Select (x => (x.Key, CanApplyNow (state, x.Key)));
 		}
 	}
 }

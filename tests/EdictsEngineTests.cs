@@ -134,14 +134,14 @@ namespace IncrementalSociety.Tests
 
 			var edictList = engine.AvailableEdicts (state).ToList ();
 			Assert.Equal (2, edictList.Count);
-			Assert.Contains (edictList, x => x.Name == "Edict" && x.Cooldown == 0);
-			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && x.Cooldown == 0);
+			Assert.Contains (edictList, x => x.Name == "Edict" && x.CanApply);
+			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && x.CanApply);
 
 			state = engine.ApplyEdict (state, "EdictWithCooldown");
 			edictList = engine.AvailableEdicts (state).ToList ();
 			Assert.Equal (2, edictList.Count);
-			Assert.Contains (edictList, x => x.Name == "Edict" && x.Cooldown == 0);
-			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && x.Cooldown == 2);
+			Assert.Contains (edictList, x => x.Name == "Edict" && x.CanApply);
+			Assert.Contains (edictList, x => x.Name == "EdictWithCooldown" && !x.CanApply);
 
 			state = state.WithResearchUnlocks (new string[] { "Tech" });
 			edictList = engine.AvailableEdicts (state).ToList ();

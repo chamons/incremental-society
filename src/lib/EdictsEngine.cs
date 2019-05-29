@@ -37,7 +37,7 @@ namespace IncrementalSociety
 
 			var edict = Edicts[name];
 			var resources = state.Resources.ToBuilder ();
-			resources.Subtract (ResourceEngine.GetResourcesBasedOnTech (state, edict.Cost));
+			resources.Subtract (GetEdictCost (state, edict));
 			resources.Add (ResourceEngine.GetResourcesBasedOnTech (state, edict.Provides));
 			state = state.WithResources (resources.ToResources ());
 

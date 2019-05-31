@@ -89,5 +89,107 @@ namespace IncrementalSociety.Tests
 			Assert.Contains (availableResearch, x => x.Name == "TechWithDependency");
 			Assert.Contains (availableResearch, x => x.Name == "TechWithCost");
 		}
+
+		[Fact]
+		public void SpecializationThrowsIfResearchWithoutSelection ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""Special"",
+				""specializations"": [ ""First"", ""Second"", ""Third"" ]
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.Throws<InvalidOperationException> (() => engine.CanResearch (state, "Special"));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special"));
+		}
+
+		[Fact]
+		public void NonSpecializationThrowsIfResearchWithSelection ()
+		{
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.Throws<InvalidOperationException> (() => engine.CanResearch (state, "FreeTech", 1));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "FreeTech", 1));
+		}
+
+		[Fact]
+		public void SpecializationGrantsSepecializationIfResearched ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""Special"",
+				""specializations"": [ ""First"", ""Second"", ""Third"" ]
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.True (engine.CanResearch (state, "Special", 1));
+			state = engine.Research (state, "Special", 1);
+			Assert.Equal (2, state.ResearchUnlocks.Count);
+			Assert.Contains (state.ResearchUnlocks, x => x == "Special");
+			Assert.Contains (state.ResearchUnlocks, x => x == "Second");
+		}
+
+		[Fact]
+		public void SpecializationCanNotBeSelectedTwice ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""Special"",
+				""specializations"": [ ""First"", ""Second"", ""Third"" ]
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.True (engine.CanResearch (state, "Special", 1));
+			state = engine.Research (state, "Special", 1);
+
+			Assert.False (engine.CanResearch (state, "Special", 0));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special", 0));
+			Assert.False (engine.CanResearch (state, "Special", 10));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special", 10));
+		}
+
+		[Fact]
+		public void SecondSpecializationCanSelectOnlyOtherSpecializations ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""Special"",
+				""specializations"": [ ""First"", ""Second"", ""Third"" ]
+			},
+			{
+				""name"": ""Special 2"",
+				""specializations"": [ ""First"", ""Second"", ""Third"" ]
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.True (engine.CanResearch (state, "Special", 1));
+			state = engine.Research (state, "Special", 1);
+
+			Assert.False (engine.CanResearch (state, "Special", 1));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special", 1));
+
+			Assert.True (engine.CanResearch (state, "Special 2", 0));
+			state = engine.Research (state, "Special 2", 0);
+
+			Assert.Equal (4, state.ResearchUnlocks.Count);
+			Assert.Contains (state.ResearchUnlocks, x => x == "Special");
+			Assert.Contains (state.ResearchUnlocks, x => x == "Special 2");
+			Assert.Contains (state.ResearchUnlocks, x => x == "First");
+			Assert.Contains (state.ResearchUnlocks, x => x == "Second");
+		}
 	}
 }

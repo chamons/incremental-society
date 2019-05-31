@@ -24,7 +24,20 @@ namespace IncrementalSociety
 
 		ResearchDeclaration FindResearch (string techName) => Json.Research.Research.First (x => x.Name == techName);
 
-		public bool CanResearch (GameState state, string techName)
+		void AssertValidSpecializationIndex (ResearchDeclaration research, int index)
+		{
+			int count = research.Specializations.AsNotNull ().Count ();
+			if (count == 0) {
+				if (index != -1)
+					throw new InvalidOperationException ($"Tried to index {research.Name} with index {index} but does not have specializations?");
+			}
+			else {
+				if (index < 0 || index > count)
+					throw new InvalidOperationException ($"Tried to index {research.Name} with index {index} but invalid for length {count}?");
+			}
+		}
+
+		public bool CanResearch (GameState state, string techName, int specialization = -1)
 		{
 			if (state.HasResearch (techName))
 				return false;
@@ -33,15 +46,22 @@ namespace IncrementalSociety
 			if (research.Dependencies.AsNotNull ().Except (state.ResearchUnlocks).Any ())
 				return false;
 
+			AssertValidSpecializationIndex (research, specialization);
+
+			if (specialization != -1) {
+				if (state.HasResearch (research.Specializations[specialization]))
+					return false;
+			}
+
 			if (!state.Resources.HasMoreThan (ResourceConfig.Create (research.Cost)))
 				return false;
 
 			return true;
 		}
 
-		public GameState Research (GameState state, string techName)
+		public GameState Research (GameState state, string techName, int specialization = -1)
 		{
-			if (!CanResearch (state, techName))
+			if (!CanResearch (state, techName, specialization))
 				throw new InvalidOperationException ($"Tried to research {techName} but CanResearch returned false?");
 
 			var research = FindResearch (techName);
@@ -50,6 +70,11 @@ namespace IncrementalSociety
 
 			var unlocks = state.ResearchUnlocks.ToBuilder ();
 			unlocks.Add (techName);
+
+			if (specialization != -1) {
+				unlocks.Add (research.Specializations[specialization]);
+			}
+
 			return state.WithResearchUnlocks (unlocks);
 		}
 

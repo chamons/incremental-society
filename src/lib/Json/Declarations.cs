@@ -137,6 +137,9 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
+
+		[JsonProperty ("specializations")]
+		public string[] Specializations { get; set; }
 	}
 
 	public class ResearchDeclarations

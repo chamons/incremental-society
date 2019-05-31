@@ -88,5 +88,17 @@ namespace IncrementalSociety
 				});
 			return availableResearch.Select (x => new ResearchItem (x.Name, x.Description, ResourceConfig.Create (x.Cost))).ToList ();
 		}
+
+		public List<ResearchItem> GetResearchSpecializations (string techName)
+		{
+			var baseResearch = FindResearch (techName);
+			return baseResearch.Specializations.AsNotNull ().Select (x =>
+			{
+				var specialization = FindResearch (x);
+				return new ResearchItem (specialization.Name, specialization.Description, ResourceConfig.Create (baseResearch.Cost));
+			}).ToList ();
+		}
+
+		
 	}
 }

@@ -18,15 +18,22 @@
 				</div>
 				<div class="modal-body">
 					@foreach (var researchItem in ResearchOptions) {
-						<div class="research-item @BackgroundStyle(@researchItem.Name)" onclick="@(() => OnSelection(@researchItem.Name))">
-							<div class="d-flex flex-wrap">
-								<div class="research-title">@researchItem.Name</div>
-								<MiniResourcesView
-									AdditionalStyles="research-cost no-border"
-									Resources="@researchItem.Cost" />
+						var specializations = GameService.Engine.GetResearchSpecializations (researchItem.Name);
+						if (specializations.Count == 0) {
+							<div class="research-item @GetBackgroundStyle(@researchItem.Name)" onclick="@(() => OnSelection (@researchItem.Name))">
+								<div class="d-flex flex-wrap">
+									<div class="research-title">@researchItem.Name</div>
+									<MiniResourcesView
+										AdditionalStyles="research-cost no-border"
+										Resources="@researchItem.Cost" />
+								</div>
+								<div class="research-description">@researchItem.Description</div>
 							</div>
-							<div class="research-description">@researchItem.Description</div>
-						</div>
+						}
+						else {
+							<div class="research-title">@researchItem.Name</div>
+						}
+
 					}
 				</div>
 			}
@@ -40,7 +47,7 @@
 	List<ResearchItem> ResearchOptions;
 
 	bool CanResearch (string techName) => GameService.Engine.CanResearch (GameService.State, techName);
-	string BackgroundStyle (string techName) => CanResearch (techName) ? "" : "disabled";
+	string GetBackgroundStyle (string techName) => CanResearch (techName) ? "" : "disabled";
 
 	protected override void OnInit ()
 	{

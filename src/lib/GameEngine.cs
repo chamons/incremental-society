@@ -70,7 +70,8 @@ namespace IncrementalSociety
 				case "Research":
 				{
 					string techName = args[0];
-					state = ResearchEngine.Research (state, techName);
+					int selection = args.Length > 1 ? int.Parse (args[1]) : -1;
+					state = ResearchEngine.Research (state, techName, selection);
 					break;
 				}
 				case "Edict":
@@ -167,8 +168,9 @@ namespace IncrementalSociety
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
 
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);
-		public bool CanResearch (GameState state, string techName) => ResearchEngine.CanResearch (state, techName);
-		public IEnumerable<(string Name, bool CanApply)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
+		public bool CanResearch (GameState state, string techName, int specialization = -1) => ResearchEngine.CanResearch (state, techName, specialization);
+		public List<ResearchItem> GetResearchSpecializations (string techName) => ResearchEngine.GetResearchSpecializations (techName);
+ 		public IEnumerable<(string Name, bool CanApply)> AvailableEdicts (GameState state) => EdictsEngine.AvailableEdicts (state);
 
 		public const int CurrentVersion = 1;
 

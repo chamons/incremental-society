@@ -107,6 +107,24 @@ namespace IncrementalSociety.Tests
 			Assert.Contains (availableResearch, x => x.Name == "TechWithCost");
 		}
 
+
+		[Fact]
+		public void NonStandAloneItemDoesNotShowupOnResearchOptions ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""DoesNotStandAlone"",
+				""isNotStandalone"": true
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			var availableResearch = engine.GetCurrentResearchOptions (state);
+			Assert.DoesNotContain (availableResearch, x => x.Name == "DoesNotStandAlone");
+		}
+
 		[Fact]
 		public void SpecializationThrowsIfResearchWithoutSelection ()
 		{

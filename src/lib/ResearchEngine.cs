@@ -84,7 +84,7 @@ namespace IncrementalSociety
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state)
 		{
 			var availableResearch = Json.Research.Research.Where (x => {
-					return !state.HasResearch (x.Name) && x.Dependencies.AsNotNull ().All (y => state.HasResearch (y));
+					return !x.IsNotStandalone && !state.HasResearch (x.Name) && x.Dependencies.AsNotNull ().All (y => state.HasResearch (y));
 				});
 			return availableResearch.Select (x => new ResearchItem (x.Name, x.Description, ResourceConfig.Create (x.Cost))).ToList ();
 		}

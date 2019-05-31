@@ -72,6 +72,23 @@ namespace IncrementalSociety.Tests
 		}
 
 		[Fact]
+		public void CanNotResearchNonStandAloneItem ()
+		{
+			const string extraResearchJson = @",
+			{
+				""name"": ""DoesNotStandAlone"",
+				""isNotStandalone"": true
+			}";
+			ConfigureCustomJsonPayload (extraResearchJSON: extraResearchJson);
+
+			ResearchEngine engine = CreateResearchEngine ();
+			GameState state = CreateGameState ();
+
+			Assert.False (engine.CanResearch (state, "DoesNotStandAlone"));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "DoesNotStandAlone"));
+		}
+
+		[Fact]
 		public void ResearchOptions ()
 		{
 			ResearchEngine engine = CreateResearchEngine ();

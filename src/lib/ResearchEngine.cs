@@ -43,6 +43,9 @@ namespace IncrementalSociety
 				return false;
 
 			var research = FindResearch (techName);
+			if (research.IsNotStandalone)
+				return false;
+
 			if (research.Dependencies.AsNotNull ().Except (state.ResearchUnlocks).Any ())
 				return false;
 

@@ -132,6 +132,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("description")]
 		public string Description { get; set; }
 
+		[JsonProperty ("isNotStandalone")]
+		public bool IsNotStandalone { get; set; }
+
 		[JsonProperty ("dependencies")]
 		public List<string> Dependencies { get; set; }
 

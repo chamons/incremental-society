@@ -12,6 +12,7 @@ namespace IncrementalSociety
 	public class ResourceEngine
 	{
 		Dictionary<string, Building> BuildingLookup;
+		Dictionary<string, Resources> AreaBonuses;
 		JsonLoader Json;
 
 		public ResourceConfig ResourceConfig;
@@ -23,6 +24,7 @@ namespace IncrementalSociety
 			Json = json;
 			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
+			AreaBonuses = json.Areas.Areas.ToDictionary (x => x.Name, x => GetBaseResources (x.BonusYield));
 		}
 
 		public Building FindBuilding (string name)
@@ -97,14 +99,27 @@ namespace IncrementalSociety
 		public Resources CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
 			var additional = ResourceConfig.CreateBuilder ();
-			foreach (var building in state.AllBuildings ()) {
-				additional.AddWithMultiply (GetBuildingResources (state, building), efficiency);
+			foreach (var region in state.Regions) {
+				foreach (var area in region.Areas) {
+					var areaBonus = AreaBonuses[area.Type];
+					foreach (var building in area.Buildings) {
+						var buildingResources = GetBuildingResources (state, building);
+						buildingResources = buildingResources.Multiply (areaBonus);
+						additional.AddWithMultiply (buildingResources, efficiency);
 
-				var conversions = GetBuildingConversionResources (state, building);
-				foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
-					additional.Add (conversion.Resources);
+						var conversions = GetBuildingConversionResources (state, building);
+						foreach (var conversion in conversions.Where (x => IsConversionEnabled (state, x.Name)))
+							additional.Add (conversion.Resources);
+					}
+				}
 			}
+
 			return additional.ToResources ();
+		}
+
+		public Resources GetBaseResources (IEnumerable<Yield> allYields)
+		{
+			return ResourceConfig.Create (allYields);
 		}
 
 		public Resources GetResourcesBasedOnTech (GameState state, IEnumerable<Yield> allYields)

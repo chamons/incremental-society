@@ -318,5 +318,36 @@ namespace IncrementalSociety.Tests
 			state = state.WithResearchUnlocks (new string [] { "Expansion" });
 			Assert.Equal (400, engine.GetBuildingHousing(state, "Housing"));
 		}
+
+		[Fact]
+		public void ResourcesCanChangeDueToRegionMultipliers ()
+		{
+			const string extraRegionJSON = @",{
+				""name"": ""Super Plains"",
+				""bonus_yield"": [
+					{ ""name"": ""Food"", ""amount"" : 2 }
+				],
+			}";
+			const string extraBuildingJSON = @",{
+				""name"": ""Camp"",
+				""valid_areas"": [""Plains"", ""Super Plains""],
+				""yield"": [
+					{ ""name"": ""Food"", ""amount"" : 2 },
+					{ ""name"": ""Water"", ""amount"" : 2 }
+				],
+			}";
+
+			ConfigureCustomJsonPayload (extraRegionJSON: extraRegionJSON, extraBuildingJSON: extraBuildingJSON);
+
+			GameState state = CreateGameState (new Area[] { new Area ("Plains", new string[] { "Camp" }),
+															new Area ("Super Plains", new string[] { "Camp" })});
+
+
+			ResourceEngine engine = CreateResourceEngine ();
+			// Food is affected by bonus yield - 2 + (2 * 2) = 6
+			Assert.Equal (6, engine.CalculateAdditionalNextTick (state, 1.0)["Food"]);
+			// Water is not affected by bonus yield - 2 + 2
+			Assert.Equal (4, engine.CalculateAdditionalNextTick (state, 1.0)["Water"]);
+		}
 	}
 }

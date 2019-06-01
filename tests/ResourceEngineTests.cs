@@ -181,7 +181,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""yield"": [
 						{ ""name"": ""Food"", ""amount"" : 2 },
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
@@ -206,7 +206,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""storage"": [
 						{ ""name"": ""Food"", ""amount"" : 2 },
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
@@ -231,7 +231,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""ExtraYield"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""cost"": [
 						{ ""name"": ""Food"", ""amount"" : 2 },
 						{ ""required_technology"": ""Tech"", ""name"": ""Food"", ""amount"" : 2 }
@@ -257,7 +257,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""ExtraConversion"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""conversion_yield"": [
 					{
 						""name"": ""Conversion"",

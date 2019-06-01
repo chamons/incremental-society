@@ -12,11 +12,11 @@ namespace IncrementalSociety.Tests
 {
 	public abstract class ResourceTestBase
 	{
-		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraRegionJSON ="", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
+		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON ="", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
 			return new JsonLoader (BuildingJSON.Replace ("%TEST_SPECIFIC%", extraBuildingJSON),
 								GameJSON.Replace ("%TEST_SPECIFIC%", extraGameJSON),
-								RegionJSON.Replace ("%TEST_SPECIFIC%", extraRegionJSON),
+								AreaJSON.Replace ("%TEST_SPECIFIC%", extraAreaJSON),
 								ResourceJSON.Replace ("%TEST_SPECIFIC%", extraResourceJSON),
 								ResearchJSON.Replace ("%TEST_SPECIFIC%", extraResearchJSON),
 								EdictsJSON.Replace ("%TEST_SPECIFIC%", extraEdictsJSON));
@@ -65,7 +65,7 @@ namespace IncrementalSociety.Tests
 		""buildings"": [
 			{
 				""name"": ""Gathering Camp"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""yield"": [
 					{ ""name"": ""Food"", ""amount"" : 2 },
 					{ ""name"": ""Water"", ""amount"" : 2 }
@@ -84,7 +84,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Workshop"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""conversion_yield"": [
 					{
 						""name"": ""Conversion"",
@@ -108,7 +108,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Smoker"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""conversion_yield"": [
 					{
 						""name"": ""OtherConversion"",
@@ -126,7 +126,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Watering Hole"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""prevent_destory"": true,
 				""yield"": [
 					{ ""name"": ""Water"", ""amount"" : 1.7 }
@@ -134,7 +134,7 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Housing"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""housing_capacity"": [
 					{ ""capacity"": 200 },
 					{ ""required_technology"": ""Expansion"", ""capacity"": 200 }
@@ -144,8 +144,8 @@ namespace IncrementalSociety.Tests
 		]
 		}";
 
-		const string RegionJSON = @"{
-			""regions"": [
+		const string AreaJSON = @"{
+			""areas"": [
 				{
 					""name"": ""Plains""
 				},
@@ -203,7 +203,7 @@ namespace IncrementalSociety.Tests
 				buildings.Add ("Smoker");
 			for (int i = 0 ; i < holes ; ++i)
 				buildings.Add ("Watering Hole");
-			return CreateGameState ((new Area (AreaType.Plains, buildings)).Yield ());
+			return CreateGameState ((new Area ("Plains", buildings)).Yield ());
 		}
 
 		protected GameState CreateGameState (IEnumerable<Area> areas)
@@ -211,7 +211,7 @@ namespace IncrementalSociety.Tests
 			var resourceEngine = CreateResourceEngine ();
 			var edictEngine = CreateEdictsEngine ();
 			var region = new Region ("TestLand", areas);
-			return new GameState (1, Age.Stone, region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
+			return new GameState (1, "Stone", region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
 		}
 
 		protected ResourceEngine CreateResourceEngine ()

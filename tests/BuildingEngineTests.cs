@@ -35,7 +35,7 @@ namespace IncrementalSociety.Tests
 			const string extraBuildingJSON = @",
 			{
 				""name"": ""Mine"",
-				""valid_regions"": [""Mountains""]
+				""valid_areas"": [""Mountains""]
 			}";
 			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
@@ -51,7 +51,7 @@ namespace IncrementalSociety.Tests
 			const string extraBuildingJSON = @",
 			{
 				""name"": ""Any"",
-				""valid_regions"": [""Any""]
+				""valid_areas"": [""Any""]
 			}";
 			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
 
@@ -75,7 +75,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""Impossible"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""prevent_build"" : true
 			}";
 			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
@@ -146,7 +146,7 @@ namespace IncrementalSociety.Tests
 		{
 			const string extraBuildingJSON = @",{
 				""name"": ""RequiresTech"",
-				""valid_regions"": [""Plains""],
+				""valid_areas"": [""Plains""],
 				""required_technology"": ""Tech""
 			}";
 			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);

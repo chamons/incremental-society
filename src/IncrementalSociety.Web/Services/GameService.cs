@@ -86,12 +86,12 @@ namespace IncrementalSociety.Web.Services
 		{
 			string buildingsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/buildings.json");
 			string gameJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/game.json");
-			string regionsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/regions.json");
+			string areaJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/areas.json");
 			string resourcesJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/resources.json");
 			string researchJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/research.json");
 			string edictsJson = await Client.GetStringAsync (URIHelper.GetBaseUri () + "data/edicts.json");
 
-			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson, edictsJson);
+			return new JsonLoader (buildingsJson, gameJson, areaJson, resourcesJson, researchJson, edictsJson);
 		}
 
 		// Shared between multiple consumers

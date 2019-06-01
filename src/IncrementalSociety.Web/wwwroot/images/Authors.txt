@@ -11,7 +11,7 @@ preserved-food.png
 boards.png
 plains.png
 forest.png
-ocean.png
+coast.png
 desert.png
 swamp.png
 housing.png

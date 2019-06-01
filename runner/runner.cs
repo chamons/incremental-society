@@ -16,12 +16,12 @@ namespace IncrementalSociety.Runner
 			string webRoot = Path.Combine (assemblyPath, "../../../../src/IncrementalSociety.Web/wwwroot/");
 			string buildingsJson = File.ReadAllText (webRoot + "data/buildings.json");
 			string gameJson = File.ReadAllText (webRoot + "data/game.json");
-			string regionsJson = File.ReadAllText (webRoot + "data/regions.json");
+			string areaJson = File.ReadAllText (webRoot + "data/areas.json");
 			string resourcesJson = File.ReadAllText (webRoot + "data/resources.json");
 			string researchJson = File.ReadAllText (webRoot + "data/research.json");
 			string edictsJson = File.ReadAllText (webRoot + "data/edicts.json");
 
-			return new JsonLoader (buildingsJson, gameJson, regionsJson, resourcesJson, researchJson, edictsJson);
+			return new JsonLoader (buildingsJson, gameJson, areaJson, resourcesJson, researchJson, edictsJson);
 		}
 
 		static void Main(string[] args)

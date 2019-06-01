@@ -2,28 +2,10 @@ namespace IncrementalSociety.Model
 {
 	// This is a template for https://github.com/chamons/VinylCutter
 	// Run dotnet records GameState.cs to update GameState.g.cs
-	[Inject]
-	public enum AreaType
-	{
-		Forest,
-		Plains,
-		Mountain,
-		Ocean,
-		Swamp,
-		Desert
-	}
-
-	[Inject]
-	public enum Age
-	{
-		Stone,
-		Bronze
-	}
-
 	[With]
 	public class Area
 	{
-		AreaType Type;
+		string Type;
 
 		[Default ("null")]
 		List<string> Buildings;
@@ -50,7 +32,7 @@ namespace IncrementalSociety.Model
 
 		int Version;
 
-		Age Age;
+		string Age;
 
 		List<Region> Regions;
 

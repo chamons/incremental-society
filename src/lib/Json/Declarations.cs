@@ -28,7 +28,7 @@ namespace IncrementalSociety.Json
 		public List<ResourceDeclaration> Resources { get; set; }
 	}
 
-	public class RegionDeclaration
+	public class AreaDeclaration
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
@@ -36,11 +36,13 @@ namespace IncrementalSociety.Json
 		public List<string> Resources { get; set; }
 		[JsonProperty ("can_spawn")]
 		public bool? CanSpawn { get; set; }
+		[JsonProperty ("bonus_yield")]
+		public Yield[] BonusYield { get; set; }
 	}
 
-	public class RegionDeclarations
+	public class AreaDeclarations
 	{
-		public List<RegionDeclaration> Regions { get; set; }
+		public List<AreaDeclaration> Areas { get; set; }
 	}
 
 	public class GameDeclarations
@@ -75,8 +77,8 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("does_not_require_job")]
 		public bool DoesNotRequireJob { get; set; }
 
-		[JsonProperty ("valid_regions")]
-		public string[] ValidRegions { get; set; }
+		[JsonProperty ("valid_areas")]
+		public string[] ValidAreas { get; set; }
 
 		[JsonProperty ("yield", NullValueHandling = NullValueHandling.Ignore)]
 		public Yield[] Yield { get; set; }

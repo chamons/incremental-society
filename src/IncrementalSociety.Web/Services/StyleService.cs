@@ -33,13 +33,20 @@ namespace IncrementalSociety.Web.Services
 
 		public string GetResourceDeltaClass (double count)
 		{
-			if (count < -.001) {
+			if (count < -.001)
 				return "red";
-			}
-			if (count > .001) {
+			if (count > .001)
 				return "green";
-			}
 			return "clear";
-		}	
+		}
+
+		public string GetPercentageClass (double count)
+		{
+			if (count < 100)
+				return "red";
+			if (count > 100)
+				return "green";
+			return "clear";
+		}
 	}
 }

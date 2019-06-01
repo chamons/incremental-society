@@ -30,16 +30,21 @@
 						}
 						else {
 							<div class="research-options">
-								<div class="research-title">@researchItem.Name</div>
-								@for  (int i = 0; i < specializations.Count; ++i) {
-									int index = i;
-									<ResearchView
-										ResearchName=@specializations[index].Name
-										Description=@specializations[i].Description
-										BackgroundStyle="@GetBackgroundStyle(researchItem.Name, index)"
-										OnSelection=@(() => OnSelection (researchItem.Name, index))
-									/>
-								}
+								<div class="d-flex flex-wrap">
+									<div class="research-title">@researchItem.Name</div>
+									<MiniResourcesView AdditionalStyles="research-cost no-border" Resources="@researchItem.Cost" />
+								</div>
+								<div class="research-specializations">
+									@for (int i = 0; i < specializations.Count; ++i) {
+										int index = i;
+										<ResearchView
+											ResearchName=@specializations[index].Name
+											Description=@specializations[i].Description
+											BackgroundStyle="@GetBackgroundStyle(researchItem.Name, index)"
+											OnSelection=@(() => OnSelection (researchItem.Name, index))
+										/>
+									}
+								</div>
 							</div>
 						}
 
@@ -56,7 +61,7 @@
 	List<ResearchItem> ResearchOptions;
 
 	bool CanResearch (string techName, int specializationIndex = -1) => GameService.Engine.CanResearch (GameService.State, techName, specializationIndex);
-	string GetBackgroundStyle (string techName, int specializationIndex = -1) => CanResearch (techName, specializationIndex) ? "" : "disabled";
+	string GetBackgroundStyle (string techName, int specializationIndex = -1) => CanResearch (techName, specializationIndex) ? "background-white" : "disabled";
 
 	protected override void OnInit ()
 	{

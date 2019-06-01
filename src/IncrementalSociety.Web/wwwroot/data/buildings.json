@@ -5,7 +5,7 @@
 			"prevent_build": true,
 			"prevent_destory": true,
 			"does_not_require_job" : true,
-			"valid_regions": [ "Any" ],
+			"valid_areas": [ "Any" ],
 			"storage": [
 				{ "name": "Food", "amount" : 200 },
 				{ "name": "Wood", "amount" : 200 },
@@ -22,8 +22,8 @@
 		},
 		{
 			"name": "Huts",
-			"does_not_require_job" : true,
-			"valid_regions": [ "Plains", "Forest" ],
+			"does_not_require_job": true,
+			"valid_areas": [ "Plains", "Forest" ],
 			"cost": [
 				{
 					"name": "Wood",
@@ -36,7 +36,7 @@
 		},
 		{
 			"name": "Gathering Camp",
-			"valid_regions": [ "Plains", "Forest", "Mountain" ],
+			"valid_areas": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
 				{ "name": "Food", "amount" : 5 },
 				{ "name": "Stone", "amount" : 0.1 },
@@ -51,7 +51,7 @@
 		},
 		{
 			"name": "Clay Pit",
-			"valid_regions": [ "Any" ],
+			"valid_areas": [ "Any" ],
 			"RequiredResource ": "Clay",
 			"yield": [
 				{ "name": "Clay", "amount" : 2 }
@@ -78,7 +78,7 @@
 		},
 		{
 			"name": "Crude Workshop",
-			"valid_regions": [ "Plains" ],
+			"valid_areas": [ "Plains" ],
 			"conversion_yield": [
 				{
 					"name": "Stone Tools Creation",

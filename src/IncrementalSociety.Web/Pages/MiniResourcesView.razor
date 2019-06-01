@@ -9,7 +9,7 @@
 	@foreach (var res in Resources.AsNotNull ().Where (x => x.Value != 0)) {
 		<div class="building-resource d-flex align-items-center">
 			<img class="resource-image" src="@StyleService.GetImageFilename(@res.ResourceName)" />
-			<div class="@GetResourceValueClass(@res.Value)">@res.Value</div>
+			<div class="@GetResourceValueClass(@res.Value)">@FormatValue(@res.Value)</div>
 		</div>
 	}
 	</div>
@@ -24,6 +24,11 @@
 
 	[Parameter]
 	bool ColorResourcesAsDelta { get; set; }
+
+	[Parameter]
+	bool ShowPercent { get; set; }
+
+	string FormatValue (double value) => ShowPercent ? $"{value * 100}%" : $"{value}";
 
 	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
 }

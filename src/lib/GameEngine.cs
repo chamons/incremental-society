@@ -146,6 +146,7 @@ namespace IncrementalSociety
 		}
 
 		public int GetRegionCapacity (GameState state) => ResourceEngine.GetRegionCapacity (state);
+		public Resources GetAreaBonusResources (Area area) => ResourceEngine.GetAreaBonus (area);
 
 		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
 		public Resources GetBuildingCost (GameState state, string building) => ResourceEngine.GetBuildingCost (state, building);
@@ -176,11 +177,11 @@ namespace IncrementalSociety
 
 		public GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area (AreaType.Forest, new string[] { "Crude Settlement" }), new Area (AreaType.Plains), new Area (AreaType.Forest), new Area (AreaType.Forest), new Area (AreaType.Ocean) });
+			var greenlandRegion = new Region ("Greenland", new Area[] { new Area ("Forest", new string[] { "Crude Settlement" }), new Area ("Plains"), new Area ("Forest"), new Area ("Forest"), new Area ("Coast") });
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
 			resources["Wood"] = 50;
-			return new GameState (CurrentVersion, Age.Stone, new Region[] { greenlandRegion }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
+			return new GameState (CurrentVersion, "Stone", new Region[] { greenlandRegion }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
 		}
 	}
 }

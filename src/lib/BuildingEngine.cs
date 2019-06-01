@@ -79,7 +79,7 @@ namespace IncrementalSociety
 
 		bool BuildingValidForArea (Building building, Area area)
 		{
-			return building.ValidRegions.Contains ("Any") || building.ValidRegions.Contains (area.Type.ToString ());
+			return building.ValidAreas.Contains ("Any") || building.ValidAreas.Contains (area.Type.ToString ());
 		}
 
 		bool CanBuildBuilding (GameState state, Building building, Area area)

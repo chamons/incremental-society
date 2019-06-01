@@ -4,34 +4,18 @@ using System.Collections.Immutable;
 
 namespace IncrementalSociety.Model
 {
-	public enum AreaType
-	{
-		Forest,
-		Plains,
-		Mountain,
-		Ocean,
-		Swamp,
-		Desert
-	}
-
-	public enum Age
-	{
-		Stone,
-		Bronze
-	}
-
 	public partial class Area
 	{
-		public AreaType Type { get; }
+		public string Type { get; }
 		public ImmutableArray<string> Buildings { get; }
 
-		public Area (AreaType type, IEnumerable<string> buildings = null)
+		public Area (string type, IEnumerable<string> buildings = null)
 		{
 			Type = type;
 			Buildings = ImmutableArray.CreateRange (buildings ?? Array.Empty<string> ());
 		}
 
-		public Area WithType (AreaType type)
+		public Area WithType (string type)
 		{
 			return new Area (type, Buildings);
 		}
@@ -67,7 +51,7 @@ namespace IncrementalSociety.Model
 	public partial class GameState
 	{
 		public int Version { get; }
-		public Age Age { get; }
+		public string Age { get; }
 		public ImmutableArray<Region> Regions { get; }
 		public Resources Resources { get; }
 		public double Population { get; }
@@ -76,7 +60,7 @@ namespace IncrementalSociety.Model
 		public ImmutableHashSet<string> ResearchUnlocks { get; }
 		public ImmutableHashSet<string> DisabledConversions { get; }
 
-		public GameState (int version, Age age, IEnumerable<Region> regions, Resources resources, double population, double populationCap, EdictCooldown edicts, IEnumerable<string> researchUnlocks = null, IEnumerable<string> disabledConversions = null)
+		public GameState (int version, string age, IEnumerable<Region> regions, Resources resources, double population, double populationCap, EdictCooldown edicts, IEnumerable<string> researchUnlocks = null, IEnumerable<string> disabledConversions = null)
 		{
 			Version = version;
 			Age = age;
@@ -94,7 +78,7 @@ namespace IncrementalSociety.Model
 			return new GameState (version, Age, Regions, Resources, Population, PopulationCap, Edicts, ResearchUnlocks, DisabledConversions);
 		}
 
-		public GameState WithAge (Age age)
+		public GameState WithAge (string age)
 		{
 			return new GameState (Version, age, Regions, Resources, Population, PopulationCap, Edicts, ResearchUnlocks, DisabledConversions);
 		}

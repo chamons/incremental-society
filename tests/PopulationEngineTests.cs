@@ -228,7 +228,7 @@ namespace IncrementalSociety.Tests
 			const string extraBuildingJSON = @",
 			{
 				""name"": ""NoJob"",
-				""valid_regions"": [""Any""],
+				""valid_areas"": [""Any""],
 				""does_not_require_job"": true
 			}";
 			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON);
@@ -262,7 +262,7 @@ namespace IncrementalSociety.Tests
 		public void PopulationCapGrowsBasedOnBuildings ()
 		{
 			var engine = CreatePopEngine ();
-			var state = CreateGameState (new Area[] { new Area (AreaType.Plains, null), new Area (AreaType.Plains, null), new Area (AreaType.Plains, null) });
+			var state = CreateGameState (new Area[] { new Area ("Plains", null), new Area ("Plains", null), new Area ("Plains", null) });
 			var buildingEngine = CreateBuildingEngine ();
 			state = state.WithResources (Create ("Wood", 100));
 

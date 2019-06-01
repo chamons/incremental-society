@@ -16,8 +16,8 @@ namespace IncrementalSociety.Json
 		public string GameJSON { get; }
 		public GameDeclarations Game { get; }
 
-		public string RegionsJSON { get; }
-		public RegionDeclarations Regions { get; }
+		public string AreaJSON { get; }
+		public AreaDeclarations Areas { get; }
 
 		public string ResourcesJSON { get; }
 		public ResourceDeclarations Resources { get; }
@@ -28,7 +28,7 @@ namespace IncrementalSociety.Json
 		public string EdictsJSON { get; }
 		public EdictsDeclarations Edicts { get; }
 
-		public JsonLoader (string buildings, string game, string regions, string resources, string research, string edicts, bool validate = true)
+		public JsonLoader (string buildings, string game, string areas, string resources, string research, string edicts, bool validate = true)
 		{
 			BuildingsJSON = buildings;
 			Buildings = JsonConvert.DeserializeObject<BuildingDeclarations> (BuildingsJSON);
@@ -36,8 +36,8 @@ namespace IncrementalSociety.Json
 			GameJSON = game;
 			Game = JsonConvert.DeserializeObject<GameDeclarations> (GameJSON);
 
-			RegionsJSON = regions;
-			Regions = JsonConvert.DeserializeObject<RegionDeclarations> (RegionsJSON);
+			AreaJSON = areas;
+			Areas = JsonConvert.DeserializeObject<AreaDeclarations> (AreaJSON);
 
 			ResourcesJSON = resources;
 			Resources = JsonConvert.DeserializeObject<ResourceDeclarations> (ResourcesJSON);
@@ -59,7 +59,7 @@ namespace IncrementalSociety.Json
 
 			foreach (var b in Buildings.Buildings)
 			{
-				if (b.ValidRegions == null)
+				if (b.ValidAreas == null)
 					throw new InvalidOperationException ($"JSON failed validation, {b.Name} has no valid regions?");
 
 				foreach (var yield in b.Yield.AsNotNull ())
@@ -73,8 +73,8 @@ namespace IncrementalSociety.Json
 						ValidateResource (cost.Name);
 				}
 
-				foreach (var region in b.ValidRegions)
-					ValidateRegion (region);
+				foreach (var region in b.ValidAreas)
+					ValidateArea (region);
 			}
 		}
 
@@ -84,12 +84,12 @@ namespace IncrementalSociety.Json
 				throw new InvalidOperationException ($"JSON failed validation, unable to find resource - '{name}'");
 		}
 
-		void ValidateRegion (string name)
+		void ValidateArea (string name)
 		{
 			if (name == "Any")
 				return;
-			if (!Regions.Regions.Any (x => x.Name == name))
-				throw new InvalidOperationException ($"JSON failed validation, unable to find region - '{name}'");
+			if (!Areas.Areas.Any (x => x.Name == name))
+				throw new InvalidOperationException ($"JSON failed validation, unable to find area - '{name}'");
 		}
 	}
 }

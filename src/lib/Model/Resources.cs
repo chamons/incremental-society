@@ -135,6 +135,13 @@ namespace IncrementalSociety
 			return builder;
 		}
 
+		public Resources Multiply (Resources right)
+		{
+			var builder = ToBuilder ();
+			builder.Multiply (right);
+			return builder;
+		}
+
 		public bool HasMoreThan (Resources right)
 		{
 			for (int i = 0 ; i < ResourceLength ; ++i) {
@@ -211,6 +218,14 @@ namespace IncrementalSociety
 					return;
 				for (int i = 0 ; i < ResourceLength ; ++i)
 					Inventory[i] = Inventory[i] * right;
+			}
+
+			public new void Multiply (Resources right)
+			{
+				for (int i = 0; i < ResourceLength; ++i) {
+					if (right[i] != 0)
+						Inventory[i] = Inventory[i] * right[i];
+				}					
 			}
 		}
 	}

@@ -96,6 +96,8 @@ namespace IncrementalSociety
 				return activeConversions;
 		}
 
+		public Resources GetAreaBonus (Area area) => AreaBonuses[area.Type];
+
 		public Resources CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
 			var additional = ResourceConfig.CreateBuilder ();

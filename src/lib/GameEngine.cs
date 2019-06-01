@@ -146,6 +146,7 @@ namespace IncrementalSociety
 		}
 
 		public int GetRegionCapacity (GameState state) => ResourceEngine.GetRegionCapacity (state);
+		public Resources GetAreaBonusResources (Area area) => ResourceEngine.GetAreaBonus (area);
 
 		public Resources GetBuildingResources (GameState state, string building) => ResourceEngine.GetBuildingResources (state, building);
 		public Resources GetBuildingCost (GameState state, string building) => ResourceEngine.GetBuildingCost (state, building);

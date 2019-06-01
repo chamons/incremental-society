@@ -4,7 +4,7 @@
 
 @inject GameService GameService
 
-<div class="research-item @GetBackgroundStyle(@ResearchName)" onclick="@(() => OnSelection ())">
+<div class="research-item @BackgroundStyle" onclick="@(() => OnSelection ())">
 	<div class="d-flex flex-wrap">
 		<div class="research-title">@ResearchName</div>
 		<MiniResourcesView AdditionalStyles="research-cost no-border"
@@ -27,8 +27,8 @@
 	[Parameter]
 	Action OnSelection { get; set; }
 
-	bool CanResearch (string techName) => GameService.Engine.CanResearch (GameService.State, techName);
-	string GetBackgroundStyle (string techName) => CanResearch (techName) ? "" : "disabled";
+	[Parameter]
+	string BackgroundStyle { get; set; }
 
 	protected override void OnInit ()
 	{

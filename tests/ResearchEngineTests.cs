@@ -214,8 +214,8 @@ namespace IncrementalSociety.Tests
 			Assert.True (engine.CanResearch (state, "Special", 1));
 			state = engine.Research (state, "Special", 1);
 
-			Assert.False (engine.CanResearch (state, "Special", 1));
-			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special", 1));
+			Assert.False (engine.CanResearch (state, "Special 2", 1));
+			Assert.Throws<InvalidOperationException> (() => engine.Research (state, "Special 2", 1));
 
 			Assert.True (engine.CanResearch (state, "Special 2", 0));
 			state = engine.Research (state, "Special 2", 0);

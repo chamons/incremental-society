@@ -24,11 +24,23 @@
 								ResearchName=@researchItem.Name
 								Description=@researchItem.Description
 								Resources=@researchItem.Cost
+								BackgroundStyle="@GetBackgroundStyle(researchItem.Name)"
 								OnSelection=@(() => OnSelection (@researchItem.Name))
 							/>
 						}
 						else {
-							<div class="research-title">@researchItem.Name</div>
+							<div class="research-options">
+								<div class="research-title">@researchItem.Name</div>
+								@for  (int i = 0; i < specializations.Count; ++i) {
+									int index = i;
+									<ResearchView
+										ResearchName=@specializations[index].Name
+										Description=@specializations[i].Description
+										BackgroundStyle="@GetBackgroundStyle(researchItem.Name, index)"
+										OnSelection=@(() => OnSelection (researchItem.Name, index))
+									/>
+								}
+							</div>
 						}
 
 					}
@@ -43,7 +55,8 @@
 
 	List<ResearchItem> ResearchOptions;
 
-	bool CanResearch (string techName) => GameService.Engine.CanResearch (GameService.State, techName);
+	bool CanResearch (string techName, int specializationIndex = -1) => GameService.Engine.CanResearch (GameService.State, techName, specializationIndex);
+	string GetBackgroundStyle (string techName, int specializationIndex = -1) => CanResearch (techName, specializationIndex) ? "" : "disabled";
 
 	protected override void OnInit ()
 	{
@@ -67,11 +80,19 @@
 		StateHasChanged ();
 	}
 
-	void OnSelection (string techName)
+	void OnSelection (string techName, int specializationIndex = -1)
 	{
-		if (CanResearch (techName)) {
-			GameService.ApplyAction (ActionService.ResearchText, new string[] { techName });
-			Dismiss (true);
+		if (specializationIndex == -1) {
+			if (CanResearch (techName)) {
+				GameService.ApplyAction (ActionService.ResearchText, new string[] { techName });
+				Dismiss (true);
+			}
+		}
+		else {
+			if (CanResearch (techName, specializationIndex)) {
+				GameService.ApplyAction (ActionService.ResearchText, new string[] { techName, specializationIndex.ToString () });
+				Dismiss (true);
+			}
 		}
 	}
 

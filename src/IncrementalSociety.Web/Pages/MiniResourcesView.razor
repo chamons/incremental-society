@@ -28,7 +28,16 @@
 	[Parameter]
 	bool ShowPercent { get; set; }
 
-	string FormatValue (double value) => ShowPercent ? $"{value * 100}%" : $"{value}";
+	string FormatValue(double value) => ShowPercent ? $"{value * 100}%" : $"{value}";
 
-	string GetResourceValueClass (double value) => ColorResourcesAsDelta ? StyleService.GetResourceDeltaClass (value) : "";
+	string GetResourceValueClass(double value)
+	{
+		if (ShowPercent) {
+			return StyleService.GetPercentageClass(value * 100);
+		}
+		if (ColorResourcesAsDelta) {
+			return StyleService.GetResourceDeltaClass(value);
+		}
+		return "";
+	}
 }

@@ -18,15 +18,31 @@
 				</div>
 				<div class="modal-body">
 					@foreach (var researchItem in ResearchOptions) {
-						<div class="research-item @BackgroundStyle(@researchItem.Name)" onclick="@(() => OnSelection(@researchItem.Name))">
-							<div class="d-flex flex-wrap">
+						var specializations = GameService.Engine.GetResearchSpecializations (researchItem.Name);
+						if (specializations.Count == 0) {
+							<ResearchView
+								ResearchName=@researchItem.Name
+								Description=@researchItem.Description
+								Resources=@researchItem.Cost
+								BackgroundStyle="@GetBackgroundStyle(researchItem.Name)"
+								OnSelection=@(() => OnSelection (@researchItem.Name))
+							/>
+						}
+						else {
+							<div class="research-options">
 								<div class="research-title">@researchItem.Name</div>
-								<MiniResourcesView
-									AdditionalStyles="research-cost no-border"
-									Resources="@researchItem.Cost" />
+								@for  (int i = 0; i < specializations.Count; ++i) {
+									int index = i;
+									<ResearchView
+										ResearchName=@specializations[index].Name
+										Description=@specializations[i].Description
+										BackgroundStyle="@GetBackgroundStyle(researchItem.Name, index)"
+										OnSelection=@(() => OnSelection (researchItem.Name, index))
+									/>
+								}
 							</div>
-							<div class="research-description">@researchItem.Description</div>
-						</div>
+						}
+
 					}
 				</div>
 			}
@@ -39,8 +55,8 @@
 
 	List<ResearchItem> ResearchOptions;
 
-	bool CanResearch (string techName) => GameService.Engine.CanResearch (GameService.State, techName);
-	string BackgroundStyle (string techName) => CanResearch (techName) ? "" : "disabled";
+	bool CanResearch (string techName, int specializationIndex = -1) => GameService.Engine.CanResearch (GameService.State, techName, specializationIndex);
+	string GetBackgroundStyle (string techName, int specializationIndex = -1) => CanResearch (techName, specializationIndex) ? "" : "disabled";
 
 	protected override void OnInit ()
 	{
@@ -64,10 +80,10 @@
 		StateHasChanged ();
 	}
 
-	void OnSelection (string techName)
+	void OnSelection (string techName, int specializationIndex = -1)
 	{
-		if (CanResearch (techName)) {
-			GameService.ApplyAction (ActionService.ResearchText, new string[] { techName });
+		if (CanResearch (techName, specializationIndex)) {
+			GameService.ApplyAction (ActionService.ResearchText, new string[] { techName, specializationIndex.ToString () });
 			Dismiss (true);
 		}
 	}

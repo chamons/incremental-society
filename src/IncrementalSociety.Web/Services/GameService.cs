@@ -52,9 +52,9 @@ namespace IncrementalSociety.Web.Services
 
 		void OnException (string s)
 		{
-			var options = new Dictionary<string, object> {
-				["Exception"] = s
-			};
+			var options = new Dictionary<string, object> ();
+			if (s.Contains ("  at"))
+				options["Exception"] = s;
 			SetUIState (GameUIState.InternalError, options);
 		}
 

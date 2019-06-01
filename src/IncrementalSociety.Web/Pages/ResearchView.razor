@@ -1,0 +1,37 @@
+@using System.Collections.Immutable
+@using IncrementalSociety.Web.Services
+@using IncrementalSociety.Utilities
+
+@inject GameService GameService
+
+<div class="research-item @BackgroundStyle" onclick="@(() => OnSelection ())">
+	<div class="d-flex flex-wrap">
+		<div class="research-title">@ResearchName</div>
+		<MiniResourcesView AdditionalStyles="research-cost no-border"
+						   Resources="@Resources" />
+	</div>
+	<div class="research-description">@Description</div>
+</div>
+
+@functions {
+
+	[Parameter]
+	string ResearchName { get; set; }
+
+	[Parameter]
+	string Description { get; set; }
+
+	[Parameter]
+	Resources Resources { get; set; }
+
+	[Parameter]
+	Action OnSelection { get; set; }
+
+	[Parameter]
+	string BackgroundStyle { get; set; }
+
+	protected override void OnInit ()
+	{
+		GameService.CurrentUIStateChanged += (o, e) => StateHasChanged ();
+	}
+}

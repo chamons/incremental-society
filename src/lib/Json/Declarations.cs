@@ -132,11 +132,17 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("description")]
 		public string Description { get; set; }
 
+		[JsonProperty ("isNotStandalone")]
+		public bool IsNotStandalone { get; set; }
+
 		[JsonProperty ("dependencies")]
 		public List<string> Dependencies { get; set; }
 
 		[JsonProperty ("cost")]
 		public Yield[] Cost { get; set; }
+
+		[JsonProperty ("specializations")]
+		public string[] Specializations { get; set; }
 	}
 
 	public class ResearchDeclarations

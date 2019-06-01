@@ -7,8 +7,18 @@
 		},
 		{
 			"name": "Agriculture",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"isNotStandalone": true,
 			"description": "The cultivation of grains and plants greatly increases yields when compared to gathering wild crops."
+		},
+		{
+			"name": "Animal Husbandry",
+			"isNotStandalone": true,
+			"description": "Mankinds close association with the animal kingdom was forged early in our history. They provide food, transportation, and even companionship."
+		},
+		{
+			"name": "Fishing",
+			"isNotStandalone": true,
+			"description": "Deep oceans and lakes contain a wealth of food, but requires specialized tools such as harpoons and nets to catch"
 		},
 		{
 			"name": "Charcoal",
@@ -16,14 +26,22 @@
 			"description": "Raw wood contains a number of volatile compounds and water which reduces overall temperatures and increases overall smoke. By heating the wood without oxygen charcoal can be produced."
 		},
 		{
-			"name": "Fishing",
-			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
-			"description": "Deep oceans and lakes contain a wealth of food, but requires specialized tools such as harpoons and nets to catch."
-		},
-		{
 			"name": "Storytelling",
 			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
 			"description": "The telling of stories is more that just entertainment. It was the original way to transfer knowledge between the generations."
+		},
+		{
+			"name": "Food Specialization",
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"description": "One of the first great challenges of any civilization is to find a stable and consistent food source.",
+			"specializations": [ "Agriculture", "Animal Husbandry", "Fishing" ]
+		},
+		{
+			"name": "Food Specialization II",
+			"cost": [ { "name": "Knowledge", "amount" : 100 } ],
+			"dependencies": [ "Food Specialization" ],
+			"description": "One of the first great challenges of any civilization is to find a stable and consistent food source.",
+			"specializations": [ "Agriculture", "Animal Husbandry", "Fishing" ]
 		}
 	]
 }

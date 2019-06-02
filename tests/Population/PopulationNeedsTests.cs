@@ -20,8 +20,15 @@ namespace IncrementalSociety.Tests.Population
 		{
 			// Each missing luxary good is up to 20% unhappiness
 			var needs = CreatePopulationNeeds ();
-			GameState state = CreateGameState ();
-			Assert.Equal (1, needs.CalculateHappiness (state).Value);
+			Assert.Equal (1, needs.CalculateHappiness (200, new double [] { }, false).Value, 3);
+			Assert.Equal (.8, needs.CalculateHappiness (200, new double [] { 0 }, false).Value, 3);
+			Assert.Equal (.6, needs.CalculateHappiness (200, new double [] { 0, 0 }, false).Value, 3);
+
+			// Each complete luxary good needs is 10% bonus
+			Assert.Equal (1, needs.CalculateHappiness (200, new double [] { 1 }, false).Value, 3);
+
+			// And they can cancel out somewhat
+			Assert.Equal (.95, needs.CalculateHappiness (200, new double [] { 1, .75, .75, .75 }, false).Value, 3);
 		}
 
 		[Fact]
@@ -30,8 +37,13 @@ namespace IncrementalSociety.Tests.Population
 			// Population density causes base unhappiness as it increases
 			// Each 200 people over 1000 cause 10% and will need to be offset by happiness buildings
 			var needs = CreatePopulationNeeds ();
-			GameState state = CreateGameState ();
-			Assert.Equal (1, needs.CalculateHappiness (state).Value);
+		}
+
+		[Fact]
+		public void StarvingSetHappinessToZero ()
+		{
+			var needs = CreatePopulationNeeds ();
+			Assert.Equal (0, needs.CalculateHappiness (200, new double [] { 1 }, true).Value);
 		}
 
 		[Fact]
@@ -40,8 +52,6 @@ namespace IncrementalSociety.Tests.Population
 			// Population density causes base unhappiness as it increases
 			// Each 200 people over 1000 cause 10% and will need to be offset by health buildings
 			var needs = CreatePopulationNeeds ();
-			GameState state = CreateGameState ();
-			Assert.Equal (1, needs.CalculateHealth (state).Value);
 		}
 	}
 }

@@ -16,7 +16,8 @@
 		{ "capacity": 2 }
 	],
 	"min_population" : 100,
-	"happiness_loss_per_full_luxary_missing": 0.2,
+	"happiness_gain_per_luxary_full": 0.1,
+	"happiness_loss_per_luxary_missing": 0.2,
 	"happiness_loss_pop_starting": 10,
 	"happiness_loss_per_extra_pop": 0.1,
 	"health_loss_pop_starting": 10,

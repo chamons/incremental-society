@@ -14,6 +14,7 @@ namespace IncrementalSociety.Population
 		ResourceEngine ResourceEngine;
 		PopulationResources PopulationResources;
 		PopulationCapacity PopulationCapacity;
+		double HappinessGainPerFullLuxary;
 		double HappinessLossPerLuxaryMissing;
 		double HappinessLossStaring;
 		double HappinessLossPerExtraPop;
@@ -27,6 +28,7 @@ namespace IncrementalSociety.Population
 			ResourceEngine = resourceEngine;
 			PopulationResources = populationResources;
 			PopulationCapacity = populationCapacity;
+			HappinessGainPerFullLuxary = json.Game.HappinessGainPerFullLuxary;
 			HappinessLossPerLuxaryMissing = json.Game.HappinessLossPerLuxaryMissing;
 			HappinessLossStaring = json.Game.HappinessLossStaring;
 			HappinessLossPerExtraPop = json.Game.HappinessLossPerExtraPop;
@@ -34,25 +36,51 @@ namespace IncrementalSociety.Population
 			HealthLossPerExtraPop = json.Game.HealthLossPerExtraPop;
 		}
 
-		public PopulationRatio CalculateHappiness (double population, double luxaryGoodRaio, double totalLuxaryGoods)
+		public PopulationRatio CalculateHappiness (double population, IEnumerable <double> luxaryGoods, bool starving)
 		{
-			return PopulationRatio.Create (1);
+			// No one should be happy when people are actively starving in your country
+			if (starving)
+				return PopulationRatio.Create (0);
+
+			double happiness = 1.0;
+
+			double currentPops = PopulationCapacity.GetPopUnitsForTotalPopulation (population);
+			double popsOver = currentPops - HappinessLossStaring;
+			if (popsOver > 0)
+				happiness -= popsOver * HappinessLossPerExtraPop;
+
+			foreach (var luxRatio in luxaryGoods) {
+				if (luxRatio >= 1)
+					happiness += HappinessGainPerFullLuxary;
+				else
+					happiness -= HappinessLossPerLuxaryMissing * (1 - luxRatio);
+			}
+
+			return PopulationRatio.Create (MathUtilities.Clamp (happiness, 0, 1));
 		}
 
 		public PopulationRatio CalculateHappiness (GameState state)
 		{
 			// TODO - Fix
-			return CalculateHappiness (state.Population, 1, 1);
+			return CalculateHappiness (state.Population, Enumerable.Empty<double> (), false);
+		}
+
+		public PopulationRatio CalculateHealth (double population)
+		{
+			double health = 1.0;
+
+			double currentPops = PopulationCapacity.GetPopUnitsForTotalPopulation (population);
+			double popsOver = currentPops - HealthLossStaring;
+
+			if (popsOver > 0)
+				health -= popsOver * HealthLossPerExtraPop;
+
+			return PopulationRatio.Create (MathUtilities.Clamp (health, 0, 1));
 		}
 
 		public PopulationRatio CalculateHealth (GameState state)
 		{
 			return CalculateHealth (state.Population);
-		}
-
-		public PopulationRatio CalculateHealth (double population)
-		{
-			return PopulationRatio.Create (1);
 		}
 
 		public GameState ConsumeResources (GameState state)

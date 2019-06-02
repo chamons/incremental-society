@@ -70,7 +70,10 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
 
-		[JsonProperty ("happiness_loss_per_full_luxary_missing")]
+		[JsonProperty ("happiness_gain_per_luxary_full")]
+		public double HappinessGainPerFullLuxary { get; set; }
+
+		[JsonProperty ("happiness_loss_per_luxary_missing")]
 		public double HappinessLossPerLuxaryMissing { get; set; }
 
 		[JsonProperty ("happiness_loss_pop_starting")]

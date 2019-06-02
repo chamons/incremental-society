@@ -47,5 +47,13 @@
 				}
 			]
 		}
+	],
+	"features": [
+		{
+			"name": "Fertile",
+			"bonus_yield": [
+				{ "name": "Food", "amount": 1.2 }
+			]
+		},
 	]
 }

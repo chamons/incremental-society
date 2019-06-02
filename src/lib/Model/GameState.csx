@@ -7,7 +7,10 @@ namespace IncrementalSociety.Model
 	{
 		string Type;
 
-		[Default ("null")]
+        [Default("null")]
+        List<string> Features;
+
+        [Default ("null")]
 		List<string> Buildings;
 	}
 

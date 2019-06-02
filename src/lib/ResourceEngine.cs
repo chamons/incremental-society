@@ -13,6 +13,7 @@ namespace IncrementalSociety
 	{
 		Dictionary<string, Building> BuildingLookup;
 		Dictionary<string, Resources> AreaBonuses;
+		Dictionary<string, Resources> FeatureBonuses;
 		JsonLoader Json;
 
 		public ResourceConfig ResourceConfig;
@@ -24,7 +25,8 @@ namespace IncrementalSociety
 			Json = json;
 			BuildingLookup = json.Buildings.Buildings.ToDictionary (x => x.Name, x => x);
 			ResourceConfig = new ResourceConfig (json.Resources.Resources.Select (x => x.Name));
-			AreaBonuses = json.Areas.Areas.ToDictionary (x => x.Name, x => GetBaseResources (x.BonusYield));
+			AreaBonuses = json.Areas.Areas.AsNotNull ().ToDictionary (x => x.Name, x => GetBaseResources (x.BonusYield));
+			FeatureBonuses = json.Areas.Features.AsNotNull ().ToDictionary(x => x.Name, x => GetBaseResources(x.BonusYield));
 		}
 
 		public Building FindBuilding (string name)
@@ -96,7 +98,13 @@ namespace IncrementalSociety
 				return activeConversions;
 		}
 
-		public Resources GetAreaBonus (Area area) => AreaBonuses[area.Type];
+		public Resources GetAreaBonus(Area area)
+		{
+			var bonus = AreaBonuses[area.Type].ToBuilder();
+			foreach (var feature in area.Features.AsNotNull())
+				bonus.Multiply (FeatureBonuses[feature]);
+			return bonus.ToResources();
+		}
 
 		public Resources CalculateAdditionalNextTick (GameState state, double efficiency)
 		{
@@ -105,8 +113,12 @@ namespace IncrementalSociety
 				foreach (var area in region.Areas) {
 					var areaBonus = AreaBonuses[area.Type];
 					foreach (var building in area.Buildings) {
-						var buildingResources = GetBuildingResources (state, building);
-						buildingResources = buildingResources.Multiply (areaBonus);
+						var buildingResources = GetBuildingResources(state, building).ToBuilder();
+						buildingResources.Multiply (areaBonus);
+
+						foreach (var feature in area.Features.AsNotNull())
+							buildingResources.Multiply(FeatureBonuses[feature]);
+
 						additional.AddWithMultiply (buildingResources, efficiency);
 
 						var conversions = GetBuildingConversionResources (state, building);

@@ -177,7 +177,7 @@ namespace IncrementalSociety
 
 		public GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area ("Forest", new string[] { "Crude Settlement" }), new Area ("Plains"), new Area ("Forest"), new Area ("Forest"), new Area ("Coast") });
+			var greenlandRegion = new Region ("Greenland", new Area[] { new Area ("Forest", buildings: new string[] { "Crude Settlement" }), new Area ("Plains", new string[] { "Fertile" }), new Area ("Forest"), new Area ("Forest"), new Area ("Coast") });
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
 			resources["Wood"] = 50;

@@ -15,19 +15,54 @@ namespace IncrementalSociety.Tests.Population
 	public class GrowthRateCurveTests : ResourceTestBase
 	{
 		[Fact]
-		public void PopsGrowRateBasedOnSpaceToCap ()
+		public void PopulationGrowthFactors ()
 		{
 			var curve = CreatePopulationGrowthCurve ();
-			double lowRate = curve.GetBaseGrowthRate (100, 200);
-			double mideRate = curve.GetBaseGrowthRate (150, 200);
-			double highRate = curve.GetBaseGrowthRate (190, 200);
-			Assert.True (lowRate > mideRate && mideRate > highRate);
 
-			double lowOverRate = curve.GetBaseGrowthRate (200, 100);
-			double mideOverRate = curve.GetBaseGrowthRate (150, 100);
-			double highOverRate = curve.GetBaseGrowthRate (110, 100);
-			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
+			// By default we grow at 1% a tick if fully happy and linerally less as we approach 0% happiness
+			// Births don't hit 0% when people are unhappy as not all things are up to planning
+			Assert.Equal (1, curve.CalculatePopulationGrowthRate (100, PopulationRatio.Create (1.0)));
+			Assert.Equal (.6, curve.CalculatePopulationGrowthRate (100, PopulationRatio.Create (0.5)), 3);
+			Assert.Equal (.20, curve.CalculatePopulationGrowthRate (100, PopulationRatio.Create (0)), 3);
 		}
+
+		[Fact]
+		public void PopulationDeathFactors ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+
+			// By default we die at .5% a tick if fully helath and linerally triple that as we approach 0% health
+			Assert.Equal (.5, curve.CalculatePopulationDeathRate (100, PopulationRatio.Create (1.0)), 3);
+			Assert.Equal (1, curve.CalculatePopulationDeathRate (100, PopulationRatio.Create (0.5)), 3);
+			Assert.Equal (1.5, curve.CalculatePopulationDeathRate (100, PopulationRatio.Create (0)), 3);
+		}
+
+		[Fact]
+		public void PopulationImmigrationFactors ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+
+			// When happy (> .5 happines) we immigrate up 1% of open housing per tick.
+			// This linerally decreases as we approach .5
+			Assert.Equal (1, curve.CalculateImmigrationRate (100, PopulationRatio.Create (1.0)), 3);
+			Assert.Equal (.5, curve.CalculateImmigrationRate (100, PopulationRatio.Create (0.75)), 3);
+			Assert.Equal (0, curve.CalculateImmigrationRate (100, PopulationRatio.Create (.5)), 3);
+			Assert.Equal (0, curve.CalculateImmigrationRate (100, PopulationRatio.Create (0)), 3);
+		}
+
+		[Fact]
+		public void PopulationEmmigrationFactors ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+
+			// When unhappy (< .5 happines) we emmigrate up 1% of population per tick.
+			// This linerally decreases as we approach .5
+			Assert.Equal (1, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0)), 3);
+			Assert.Equal (.5, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0.25)), 3);
+			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (.5)), 3);
+			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0)), 3);
+		}
+
 
 		[Fact]
 		public void RoundGrowthRateToPreventOverflows ()

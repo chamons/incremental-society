@@ -14,6 +14,7 @@ namespace IncrementalSociety.Population
 		PopulationCapacity PopulationCapacity;
 		PopulationResources PopulationResources;
 		PopulationGrowthCurve PopulationGrowthCurve;
+		PopulationNeeds PopulationNeeds;
 		double PopMin;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
@@ -23,46 +24,21 @@ namespace IncrementalSociety.Population
 			ResourceEngine = resourceEngine;
 			PopulationCapacity = populationCapacity;
 			PopulationResources = populationResourceFinder;
-			PopulationGrowthCurve = new PopulationGrowthCurve (popMin);
+			PopulationGrowthCurve = new PopulationGrowthCurve (PopulationCapacity, popMin);
+			PopulationNeeds = new PopulationNeeds (ResourceEngine, PopulationResources);
 			PopMin = popMin;
 		}
 
 		public GameState ProcessTick (GameState state)
 		{
 			var neededResource = PopulationResources.GetRequirementsForCurrentPopulation (state);
+			var happiness = PopulationNeeds.CalculateHappiness (state);
+			var health = PopulationNeeds.CalculateHealth (state);
 
-			bool starved = !state.Resources.HasMoreThan (neededResource);
-			state = ConsumeResources (state, neededResource);
+			double growthRate = PopulationGrowthCurve.GetGrowthRate (state, happiness, health);
 
-			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
-			double growthRate = PopulationGrowthCurve.GetGrowthRate (state.Population, starved, effectivePopCap);
-
-			return GrowAtRate (state, growthRate, effectivePopCap);
-		}
-
-		GameState ConsumeResources (GameState state, Resources consumedResources)
-		{
-			var currentResources = state.Resources.ToBuilder ();
-			currentResources.Subtract (consumedResources);
-
-			// Don't go negative when consuming population resources
-			for (int i = 0 ; i < ResourceConfig.ResourceLength ; ++i) {
-				if (currentResources [i] < 0)
-					currentResources [i] = 0;
-			}
-
-			return state.WithResources (currentResources);
-		}
-
-		GameState GrowAtRate (GameState state, double rate, double cap)
-		{
-			double newPopulation;
-			if (rate > 0)
-				newPopulation = Math.Min (state.Population + rate, cap);
-			else
-				newPopulation = Math.Max (state.Population + rate, PopMin);
-
-			return state.WithPopulation (newPopulation);
+			state = PopulationNeeds.ConsumeResources (state);
+			return state.WithPopulation (state.Population + growthRate);
 		}
 	}
 }

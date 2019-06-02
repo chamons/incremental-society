@@ -11,26 +11,30 @@ namespace IncrementalSociety.Population
 	public class PopulationGrowthCurve
 	{
 		double PopMin;
+		PopulationCapacity PopulationCapacity;
 
-		public PopulationGrowthCurve (double popMin)
+		public PopulationGrowthCurve (PopulationCapacity populationCapacity, double popMin)
 		{
+			PopulationCapacity = populationCapacity;
 			PopMin = popMin;
 		}
 
-		public double GetGrowthRate (double population, bool starved, double effectivePopCap)
+		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
 		{
-			double growthRate = GetBaseGrowthRate (population, effectivePopCap);
+			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
 
-			// If we're starving, decrease much faster
-			if (starved)
-				growthRate *= 5;
+			double growthRate = CalculatePopulationGrowthRate (state.Population, happy);
+			double freeHousing = PopulationCapacity.GetHousingCapacity (state) - state.Population;
+			growthRate += CalculateImmigrationRate (freeHousing, happy);
+			growthRate -= CalculateEmmigrationRate (state.Population, happy);
+			growthRate -= CalculatePopulationDeathRate (state.Population, health);
 
 			growthRate = RoundGrowthRateAboveMinimumStep (growthRate);
-			growthRate = RoundGrowthToPreventOverflow (population, growthRate, effectivePopCap);
+			growthRate = RoundGrowthToPreventOverflow (state.Population, growthRate, effectivePopCap);
 			return growthRate;
 		}
 
-		public const double MinGrowth = 0.25;
+		public const double MinGrowth = 0.2;
 		public double RoundGrowthRateAboveMinimumStep (double growthRate)
 		{
 			if (growthRate < 0)
@@ -48,11 +52,32 @@ namespace IncrementalSociety.Population
 			return growthRate;
 		}
 
-		public double GetBaseGrowthRate (double popSize, double popCap)
+		const double BasePopGrowthRate = .01;
+		public double CalculatePopulationGrowthRate (double population, PopulationRatio happiness)
 		{
-			// Logistic growth
-			const double R = .025;
-			return R * ((popCap - popSize) / popSize) * popSize;
+			return population * BasePopGrowthRate * (happiness.Value * .8 + .2);
+		}
+
+		const double BaseImmigrationRate = .01;
+		public double CalculateImmigrationRate (double freeHousing, PopulationRatio happiness)
+		{
+			if (happiness.Value <= .5)
+				return 0;
+			return freeHousing * BaseImmigrationRate * ((happiness.Value - .5) * 2);
+		}
+
+		const double BaseEmmigrationRate = .01;
+		public double CalculateEmmigrationRate (double population, PopulationRatio happiness)
+		{
+			if (happiness.Value >= .5)
+				return 0;
+			return population * BaseEmmigrationRate * (.5 - happiness.Value) * 2;
+		}
+
+		const double BaseDeathRate = .005;
+		public double CalculatePopulationDeathRate (double population, PopulationRatio health)
+		{
+			return population * BaseDeathRate * (3 + (health.Value * -2));
 		}
 	}
 }

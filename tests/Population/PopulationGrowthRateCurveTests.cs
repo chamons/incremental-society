@@ -18,14 +18,14 @@ namespace IncrementalSociety.Tests.Population
 		public void PopsGrowRateBasedOnSpaceToCap ()
 		{
 			var curve = CreatePopulationGrowthCurve ();
-			double lowRate = curve.GetGrowthRate (100, 200);
-			double mideRate = curve.GetGrowthRate (150, 200);
-			double highRate = curve.GetGrowthRate (190, 200);
+			double lowRate = curve.GetBaseGrowthRate (100, 200);
+			double mideRate = curve.GetBaseGrowthRate (150, 200);
+			double highRate = curve.GetBaseGrowthRate (190, 200);
 			Assert.True (lowRate > mideRate && mideRate > highRate);
 
-			double lowOverRate = curve.GetGrowthRate (200, 100);
-			double mideOverRate = curve.GetGrowthRate (150, 100);
-			double highOverRate = curve.GetGrowthRate (110, 100);
+			double lowOverRate = curve.GetBaseGrowthRate (200, 100);
+			double mideOverRate = curve.GetBaseGrowthRate (150, 100);
+			double highOverRate = curve.GetBaseGrowthRate (110, 100);
 			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
 		}
 	}

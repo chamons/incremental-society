@@ -29,45 +29,15 @@ namespace IncrementalSociety.Population
 
 		public GameState ProcessTick (GameState state)
 		{
-			// Step 0 - Determine how many people our income and housing supports
-			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
-#if DEBUG
-			if (!effectivePopCap.HasValue())
-				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
-#endif
 
-			// Step 1 - Determine how many resources we need for our current population
 			var neededResource = PopulationResources.GetRequirementsForCurrentPopulation (state);
 
-			// Step 2 - Consume if we have enough, else consume as much as we can
 			bool starved = !state.Resources.HasMoreThan (neededResource);
 			state = ConsumeResources (state, neededResource);
 
-			// Step 3a Get new desired growth rate
-			double growthRate = PopulationGrowthCurve.GetGrowthRate (state.Population, effectivePopCap);
+			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
+			double growthRate = PopulationGrowthCurve.GetGrowthRate (state, starved, effectivePopCap);
 
-			// Step 3b If we starved some people, multiple negative by x5
-			if (starved)
-				growthRate *= 5;
-
-			// Step 3c Tweak the growth rate to be "nicer":
-			// - If we're within one of the cap, round our rate to make a nice .25
-			// - Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
-			const double MinGrowth = 0.25;
-			if (growthRate < 0) {
-				if (state.Population - effectivePopCap < MinGrowth)
-					growthRate = effectivePopCap - state.Population;
-				else
-					growthRate = Math.Min (growthRate, -MinGrowth);
-			}
-			else {
-				if (effectivePopCap - state.Population < MinGrowth)
-					growthRate = effectivePopCap - state.Population;
-				else
-					growthRate = Math.Max (growthRate, MinGrowth);
-			}
-
-			// Step 4 Grow!
 			return GrowAtRate (state, growthRate, effectivePopCap);
 		}
 

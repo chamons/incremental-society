@@ -34,6 +34,13 @@ namespace IncrementalSociety.Population
 
 			// If our housing is lower than income, use that as effective cap
 			effectivePopCap = Math.Min (effectivePopCap, GetHousingCapacity (state));
+
+			// We've divided by zero multiple times in the past, let's sanity check in debug
+#if DEBUG
+			if (!effectivePopCap.HasValue())
+				throw new InvalidOperationException ($"Processing population tick produced invalid population cap: {effectivePopCap}");
+#endif
+
 			return effectivePopCap;
 		}
 

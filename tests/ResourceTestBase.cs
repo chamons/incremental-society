@@ -234,6 +234,6 @@ namespace IncrementalSociety.Tests
 		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), Loader.Value.Game.MinPopulation);
 		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), Loader.Value.Game.MinPopulation);
 		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopulationCapacity ());
-		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve ();
+		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (Loader.Value.Game.MinPopulation);
 	}
 }

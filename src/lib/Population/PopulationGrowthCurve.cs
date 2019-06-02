@@ -10,38 +10,42 @@ namespace IncrementalSociety.Population
 {
 	public class PopulationGrowthCurve
 	{
-		public PopulationGrowthCurve ()
+		double PopMin;
+
+		public PopulationGrowthCurve (double popMin)
 		{
+			PopMin = popMin;
 		}
 
-		public double GetGrowthRate (GameState state, bool starved, double effectivePopCap)
+		public double GetGrowthRate (double population, bool starved, double effectivePopCap)
 		{
-			double baseRate = GetBaseGrowthRate (state.Population, effectivePopCap);
+			double growthRate = GetBaseGrowthRate (population, effectivePopCap);
 
 			// If we're starving, decrease much faster
 			if (starved)
-				baseRate *= 5;
+				growthRate *= 5;
 
-			return TweakGrowthRate (state, baseRate, effectivePopCap);
+			growthRate = RoundGrowthRateAboveMinimumStep (growthRate);
+			growthRate = RoundGrowthToPreventOverflow (population, growthRate, effectivePopCap);
+			return growthRate;
 		}
 
-		double TweakGrowthRate (GameState state, double growthRate, double effectivePopCap)
+		public const double MinGrowth = 0.25;
+		public double RoundGrowthRateAboveMinimumStep (double growthRate)
 		{
-			// If we're within one of the cap, round our rate to make a nice .25
-			// Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
-			const double MinGrowth = 0.25;
-			if (growthRate < 0) {
-				if (state.Population - effectivePopCap < MinGrowth)
-					return effectivePopCap - state.Population;
-				else
-					return Math.Min (growthRate, -MinGrowth);
-			}
-			else {
-				if (effectivePopCap - state.Population < MinGrowth)
-					return effectivePopCap - state.Population;
-				else
-					return Math.Max (growthRate, MinGrowth);
-			}
+			if (growthRate < 0)
+				return Math.Min (growthRate, -MinGrowth);
+			else
+				return Math.Max (growthRate, MinGrowth);
+		}
+
+		public double RoundGrowthToPreventOverflow (double population, double growthRate, double effectivePopCap)
+		{
+			if (growthRate < 0 && population + growthRate < PopMin)
+				return PopMin - population;
+			else if (growthRate > 0 && population + growthRate > effectivePopCap)
+				return effectivePopCap - population;
+			return growthRate;
 		}
 
 		public double GetBaseGrowthRate (double popSize, double popCap)

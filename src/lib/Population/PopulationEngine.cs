@@ -23,7 +23,7 @@ namespace IncrementalSociety.Population
 			ResourceEngine = resourceEngine;
 			PopulationCapacity = populationCapacity;
 			PopulationResources = populationResourceFinder;
-			PopulationGrowthCurve = new PopulationGrowthCurve ();
+			PopulationGrowthCurve = new PopulationGrowthCurve (popMin);
 			PopMin = popMin;
 		}
 
@@ -35,7 +35,7 @@ namespace IncrementalSociety.Population
 			state = ConsumeResources (state, neededResource);
 
 			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
-			double growthRate = PopulationGrowthCurve.GetGrowthRate (state, starved, effectivePopCap);
+			double growthRate = PopulationGrowthCurve.GetGrowthRate (state.Population, starved, effectivePopCap);
 
 			return GrowAtRate (state, growthRate, effectivePopCap);
 		}

@@ -4,6 +4,7 @@ using System.Linq;
 
 using Xunit;
 
+using IncrementalSociety.Population;
 using IncrementalSociety.Model;
 using IncrementalSociety.Json;
 using IncrementalSociety.Utilities;
@@ -225,29 +226,13 @@ namespace IncrementalSociety.Tests
 			return new GameState (1, "Stone", region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
 		}
 
-		protected ResourceEngine CreateResourceEngine ()
-		{
-			return new ResourceEngine (Loader.Value);
-		}
-
-		protected BuildingEngine CreateBuildingEngine ()
-		{
-			return new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
-		}
-
-		protected PopulationEngine CreatePopEngine ()
-		{
-			return new PopulationEngine (CreateResourceEngine(), Loader.Value);
-		}
-
-		protected ResearchEngine CreateResearchEngine ()
-		{
-			return new ResearchEngine (CreateResourceEngine (), Loader.Value);
-		}
-
-		protected EdictsEngine CreateEdictsEngine ()
-		{
-			return new EdictsEngine (CreateResourceEngine (), Loader.Value);
-		}
+		protected ResourceEngine CreateResourceEngine () => new ResourceEngine (Loader.Value);
+		protected BuildingEngine CreateBuildingEngine () => new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
+		protected ResearchEngine CreateResearchEngine () => new ResearchEngine (CreateResourceEngine (), Loader.Value);
+		protected EdictsEngine CreateEdictsEngine () => new EdictsEngine (CreateResourceEngine (), Loader.Value);
+		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), Loader.Value);
+		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), Loader.Value.Game.MinPopulation);
+		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), Loader.Value.Game.MinPopulation);
+		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopulationCapacity ());
 	}
 }

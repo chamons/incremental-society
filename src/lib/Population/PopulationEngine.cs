@@ -13,6 +13,7 @@ namespace IncrementalSociety.Population
 		ResourceEngine ResourceEngine;
 		PopulationCapacity PopulationCapacity;
 		PopulationResources PopulationResources;
+		PopulationGrowthCurve PopulationGrowthCurve;
 		double PopMin;
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
@@ -22,6 +23,7 @@ namespace IncrementalSociety.Population
 			ResourceEngine = resourceEngine;
 			PopulationCapacity = populationCapacity;
 			PopulationResources = populationResourceFinder;
+			PopulationGrowthCurve = new PopulationGrowthCurve ();
 			PopMin = popMin;
 		}
 
@@ -42,7 +44,7 @@ namespace IncrementalSociety.Population
 			state = ConsumeResources (state, neededResource);
 
 			// Step 3a Get new desired growth rate
-			double growthRate = GetGrowthRate (state.Population, effectivePopCap);
+			double growthRate = PopulationGrowthCurve.GetGrowthRate (state.Population, effectivePopCap);
 
 			// Step 3b If we starved some people, multiple negative by x5
 			if (starved)
@@ -64,10 +66,6 @@ namespace IncrementalSociety.Population
 				else
 					growthRate = Math.Max (growthRate, MinGrowth);
 			}
-
-			// Step 3d If growing, don't grow over our effectice cap because then we'll just starve later
-			if (growthRate > 0 && state.Population + growthRate > effectivePopCap)
-				return state;
 
 			// Step 4 Grow!
 			return GrowAtRate (state, growthRate, effectivePopCap);
@@ -96,13 +94,6 @@ namespace IncrementalSociety.Population
 				newPopulation = Math.Max (state.Population + rate, PopMin);
 
 			return state.WithPopulation (newPopulation);
-		}
-
-		public double GetGrowthRate (double popSize, double popCap)
-		{
-			// Logistic growth
-			const double R = .025;
-			return R * ((popCap - popSize) / popSize) * popSize;
 		}
 	}
 }

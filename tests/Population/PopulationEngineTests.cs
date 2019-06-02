@@ -26,21 +26,6 @@ namespace IncrementalSociety.Tests.Population
 		}
 
 		[Fact]
-		public void PopsGrowRateBasedOnSpaceToCap ()
-		{
-			var engine = CreatePopEngine ();
-			double lowRate = engine.GetGrowthRate (100, 200);
-			double mideRate = engine.GetGrowthRate (150, 200);
-			double highRate = engine.GetGrowthRate (190, 200);
-			Assert.True (lowRate > mideRate && mideRate > highRate);
-
-			double lowOverRate = engine.GetGrowthRate (200, 100);
-			double mideOverRate = engine.GetGrowthRate (150, 100);
-			double highOverRate = engine.GetGrowthRate (110, 100);
-			Assert.True (lowOverRate < mideOverRate && mideOverRate < highOverRate);
-		}
-
-		[Fact]
 		public void PopsGrowIfNeedsMet ()
 		{
 			var engine = CreatePopEngine ();

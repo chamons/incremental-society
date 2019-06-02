@@ -17,17 +17,18 @@ namespace IncrementalSociety.Population
 		public double GetGrowthRate (GameState state, bool starved, double effectivePopCap)
 		{
 			double baseRate = GetBaseGrowthRate (state.Population, effectivePopCap);
-			return TweakGrowthRate (state, starved, baseRate, effectivePopCap);
+
+			// If we're starving, decrease much faster
+			if (starved)
+				baseRate *= 5;
+
+			return TweakGrowthRate (state, baseRate, effectivePopCap);
 		}
 
-		double TweakGrowthRate (GameState state, bool starved, double growthRate, double effectivePopCap)
+		double TweakGrowthRate (GameState state, double growthRate, double effectivePopCap)
 		{
-			// If we're starving, decrease much faster
 			// If we're within one of the cap, round our rate to make a nice .25
 			// Else if our rate is less than one, round "up/down" to prevent very small changes from taking forever
-			if (starved)
-				growthRate *= 5;
-
 			const double MinGrowth = 0.25;
 			if (growthRate < 0) {
 				if (state.Population - effectivePopCap < MinGrowth)

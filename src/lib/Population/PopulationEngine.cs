@@ -29,7 +29,6 @@ namespace IncrementalSociety.Population
 
 		public GameState ProcessTick (GameState state)
 		{
-
 			var neededResource = PopulationResources.GetRequirementsForCurrentPopulation (state);
 
 			bool starved = !state.Resources.HasMoreThan (neededResource);

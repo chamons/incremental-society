@@ -40,9 +40,20 @@ namespace IncrementalSociety.Json
 		public Yield[] BonusYield { get; set; }
 	}
 
+	public class FeatureDeclaration
+	{
+		[JsonProperty("name")]
+		public string Name { get; set; }
+
+		[JsonProperty("bonus_yield")]
+		public Yield[] BonusYield { get; set; }
+	}
+
 	public class AreaDeclarations
 	{
 		public List<AreaDeclaration> Areas { get; set; }
+
+		public List<FeatureDeclaration> Features { get; set; }
 	}
 
 	public class GameDeclarations

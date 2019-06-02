@@ -339,15 +339,39 @@ namespace IncrementalSociety.Tests
 
 			ConfigureCustomJsonPayload (extraRegionJSON: extraRegionJSON, extraBuildingJSON: extraBuildingJSON);
 
-			GameState state = CreateGameState (new Area[] { new Area ("Plains", new string[] { "Camp" }),
-															new Area ("Super Plains", new string[] { "Camp" })});
+			GameState state = CreateGameState (new Area[] { new Area ("Plains", buildings: new string[] { "Camp" }),
+															new Area ("Super Plains", buildings: new string[] { "Camp" })});
 
 
 			ResourceEngine engine = CreateResourceEngine ();
+			Assert.Equal(0, engine.GetAreaBonus(state.Regions[0].Areas[0])["Food"]);
+			Assert.Equal(2, engine.GetAreaBonus(state.Regions[0].Areas[1])["Food"]);
+
 			// Food is affected by bonus yield - 2 + (2 * 2) = 6
 			Assert.Equal (6, engine.CalculateAdditionalNextTick (state, 1.0)["Food"]);
 			// Water is not affected by bonus yield - 2 + 2
 			Assert.Equal (4, engine.CalculateAdditionalNextTick (state, 1.0)["Water"]);
+		}
+
+		[Fact]
+		public void ResourcesCanChangeDueToFeatures ()
+		{
+			const string extraFeatureJSON = @"{
+				""name"": ""Fertile"",
+				""bonus_yield"": [
+					{ ""name"": ""Food"", ""amount"": 1.2 }
+				]
+			}";
+
+			ConfigureCustomJsonPayload(extraFeatureJSON: extraFeatureJSON);
+
+			GameState state = CreateGameState(new Area[] { new Area("Plains", "Fertile".Yield(), "Gathering Camp".Yield())});
+
+			ResourceEngine engine = CreateResourceEngine();
+			Assert.Equal(1.2, engine.GetAreaBonus(state.Regions[0].Areas[0])["Food"]);
+
+			// 2 * 1.2 = 2.4
+			Assert.Equal(2.4, engine.CalculateAdditionalNextTick(state, 1.0)["Food"], 3);
 		}
 	}
 }

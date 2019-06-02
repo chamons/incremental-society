@@ -7,22 +7,29 @@ namespace IncrementalSociety.Model
 	public partial class Area
 	{
 		public string Type { get; }
+		public ImmutableArray<string> Features { get; }
 		public ImmutableArray<string> Buildings { get; }
 
-		public Area (string type, IEnumerable<string> buildings = null)
+		public Area (string type, IEnumerable<string> features = null, IEnumerable<string> buildings = null)
 		{
 			Type = type;
+			Features = ImmutableArray.CreateRange (features ?? Array.Empty<string> ());
 			Buildings = ImmutableArray.CreateRange (buildings ?? Array.Empty<string> ());
 		}
 
 		public Area WithType (string type)
 		{
-			return new Area (type, Buildings);
+			return new Area (type, Features, Buildings);
+		}
+
+		public Area WithFeatures (IEnumerable<string> features)
+		{
+			return new Area (Type, features, Buildings);
 		}
 
 		public Area WithBuildings (IEnumerable<string> buildings)
 		{
-			return new Area (Type, buildings);
+			return new Area (Type, Features, buildings);
 		}
 	}
 

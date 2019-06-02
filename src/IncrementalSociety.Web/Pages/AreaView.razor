@@ -15,7 +15,12 @@
 	<div class="area-more-info collapse @(Expanded ? "show" : "hide")" style="background-color:@BackgroundColor;">
 		<div class="area-more-info-header">
 			<img class="area-image" src="images\\@(Area.Type).png" onclick="@OnAreaImageClick" />
-			<p>@Area.Type</p>
+			<div>@Area.Type</div>
+			<div class="d-flex flex-wrap">
+				@foreach (var feature in Area.Features){
+					<div class="area-feature">@feature</div>
+				}
+			</div>
 			<MiniResourcesView Resources="@GameService.Engine.GetAreaBonusResources(@Area)" ColorResourcesAsDelta="true" ShowPercent="true" />
 		</div>
 		@for (int i = 0; i < BuildingService.RegionCapacity; ++i) {

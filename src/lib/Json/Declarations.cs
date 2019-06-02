@@ -61,6 +61,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
+		[JsonProperty("luxary_population_needs")]
+		public Yield[] LuxaryPopulationNeeds { get; set; }
+
 		[JsonProperty ("region_capacity")]
 		public CapacityDeclaration [] RegionCapacityDeclarations { get; set; }
 

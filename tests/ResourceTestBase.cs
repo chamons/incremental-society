@@ -56,6 +56,9 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Wood""
+			},
+			{
+				""name"": ""Pottery""
 			}
 			%TEST_SPECIFIC%
 		]
@@ -163,6 +166,11 @@ namespace IncrementalSociety.Tests
 			""population_needs"": [
 				{ ""name"": ""Water"", ""amount"" : .01 },
 				{ ""required_technology"": ""Bronze Age"", ""name"": ""Food"", ""amount"" : .01 },
+			],
+			""luxary_population_needs"": [
+				{
+					""name"": ""Pottery"", ""amount"": 0.01
+				}
 			],
 			""region_capacity"": [
 				{ ""capacity"": 3 },

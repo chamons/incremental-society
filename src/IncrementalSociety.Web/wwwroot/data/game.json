@@ -7,6 +7,11 @@
 			"name": "Wood", "amount" : 0.01
 		}
 	],
+	"luxary_population_needs": [
+		{
+			"name": "Pottery", "amount": 0.01
+		}
+	],
 	"region_capacity": [
 		{ "capacity": 2 }
 	],

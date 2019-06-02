@@ -101,8 +101,10 @@ namespace IncrementalSociety
 		public Resources GetAreaBonus(Area area)
 		{
 			var bonus = AreaBonuses[area.Type].ToBuilder();
-			foreach (var feature in area.Features.AsNotNull())
-				bonus.Multiply (FeatureBonuses[feature]);
+			foreach (var feature in area.Features.AsNotNull()) {
+				bonus.MultiplyEmptyAsOne (FeatureBonuses[feature]);
+			}
+				
 			return bonus.ToResources();
 		}
 

@@ -203,5 +203,20 @@ namespace IncrementalSociety.Tests
 			Assert.Equal (2.5, builder["Food"], 1);
 			Assert.Equal (2, builder["Water"], 1);
 		}
+
+		[Fact]
+		public void MultiplyEmptyAsOneResources()
+		{
+			var multiplier = CreateBuilder("Food", 1.5);
+			var result = Config.Create();
+			result = result.MultiplyEmptyAsOne(multiplier);
+
+			Assert.Equal(1.5, result["Food"], 1);
+
+			var builder = Config.CreateBuilder ();
+			builder.MultiplyEmptyAsOne(multiplier);
+
+			Assert.Equal(1.5, builder["Food"], 1);
+		}
 	}
 }

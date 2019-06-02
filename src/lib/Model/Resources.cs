@@ -149,6 +149,13 @@ namespace IncrementalSociety
 			return builder;
 		}
 
+		public Resources FloorAtZero ()
+		{
+			var builder = ToBuilder();
+			builder.FloorAtZero ();
+			return builder;
+		}
+
 		public bool HasMoreThan (Resources right)
 		{
 			for (int i = 0 ; i < ResourceLength ; ++i) {
@@ -232,8 +239,9 @@ namespace IncrementalSociety
 				for (int i = 0; i < ResourceLength; ++i) {
 					if (right[i] != 0)
 						Inventory[i] = Inventory[i] * right[i];
-				}					
+				}
 			}
+
 			public new void MultiplyEmptyAsOne (Resources right)
 			{
 				for (int i = 0; i < ResourceLength; ++i) {
@@ -242,7 +250,15 @@ namespace IncrementalSociety
 							Inventory[i] = Inventory[i] * right[i];
 						else
 							Inventory[i] = right[i];
-					}						
+					}
+				}
+			}
+
+			public new void FloorAtZero ()
+			{
+				for (int i = 0 ; i < ResourceLength ; ++i) {
+					if (this[i] < 0)
+						this[i] = 0;
 				}
 			}
 		}

@@ -69,6 +69,21 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
+
+		[JsonProperty ("happiness_loss_per_full_luxary_missing")]
+		public double HappinessLossPerLuxaryMissing { get; set; }
+
+		[JsonProperty ("happiness_loss_pop_starting")]
+		public double HappinessLossStaring { get; set; }
+
+		[JsonProperty ("happiness_loss_per_extra_pop")]
+		public double HappinessLossPerExtraPop { get; set; }
+
+		[JsonProperty ("health_loss_pop_starting")]
+		public double HealthLossStaring { get; set; }
+
+		[JsonProperty ("health_loss_per_extra_pop")]
+		public double HealthLossPerExtraPop { get; set; }
 	}
 
 	public partial class BuildingDeclarations

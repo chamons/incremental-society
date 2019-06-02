@@ -35,7 +35,7 @@ namespace IncrementalSociety
 			EdictsEngine = new EdictsEngine (ResourceEngine, loader);
 			PopulationResources = new PopulationResources (ResourceEngine, loader);
 			PopulationCapacity = new PopulationCapacity (ResourceEngine, PopulationResources, loader.Game.MinPopulation);
-			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, loader.Game.MinPopulation);
+			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, loader);
 			PopulationBuildingInfo = new PopulationBuildingInfo (ResourceEngine, PopulationCapacity);
 		}
 

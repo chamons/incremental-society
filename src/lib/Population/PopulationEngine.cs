@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
 
@@ -19,14 +20,15 @@ namespace IncrementalSociety.Population
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
-		public PopulationEngine (ResourceEngine resourceEngine, PopulationCapacity populationCapacity, PopulationResources populationResourceFinder, double popMin)
+		public PopulationEngine (ResourceEngine resourceEngine, PopulationCapacity populationCapacity, PopulationResources populationResourceFinder, JsonLoader loader)
 		{
+			PopMin = loader.Game.MinPopulation;
+
 			ResourceEngine = resourceEngine;
 			PopulationCapacity = populationCapacity;
 			PopulationResources = populationResourceFinder;
-			PopulationGrowthCurve = new PopulationGrowthCurve (PopulationCapacity, popMin);
-			PopulationNeeds = new PopulationNeeds (ResourceEngine, PopulationResources);
-			PopMin = popMin;
+			PopulationGrowthCurve = new PopulationGrowthCurve (PopulationCapacity, PopMin);
+			PopulationNeeds = new PopulationNeeds (ResourceEngine, loader, PopulationCapacity, PopulationResources);
 		}
 
 		public GameState ProcessTick (GameState state)

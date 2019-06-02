@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using IncrementalSociety.Population;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
@@ -37,6 +38,10 @@ namespace IncrementalSociety.Tests.Population
 			// Population density causes base unhappiness as it increases
 			// Each 200 people over 1000 cause 10% and will need to be offset by happiness buildings
 			var needs = CreatePopulationNeeds ();
+			Assert.Equal (1, needs.CalculateHappiness (800, Enumerable.Empty<double> (), false).Value, 3);
+			Assert.Equal (1, needs.CalculateHappiness (1000, Enumerable.Empty<double> (), false).Value, 3);
+			Assert.Equal (.9, needs.CalculateHappiness (1200, Enumerable.Empty<double> (), false).Value, 3);
+			Assert.Equal (.6, needs.CalculateHappiness (1800, Enumerable.Empty<double> (), false).Value, 3);
 		}
 
 		[Fact]
@@ -52,6 +57,10 @@ namespace IncrementalSociety.Tests.Population
 			// Population density causes base unhappiness as it increases
 			// Each 200 people over 1000 cause 10% and will need to be offset by health buildings
 			var needs = CreatePopulationNeeds ();
+			Assert.Equal (1, needs.CalculateHealth (800).Value, 3);
+			Assert.Equal (1, needs.CalculateHealth (1000).Value, 3);
+			Assert.Equal (.9, needs.CalculateHealth (1200).Value, 3);
+			Assert.Equal (.6, needs.CalculateHealth (1800).Value, 3);
 		}
 	}
 }

@@ -83,6 +83,24 @@ namespace IncrementalSociety.Tests.Population
 		}
 
 		[Fact]
+		public void RoundGrowthWithNoCapShouldHitZero ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+
+			Assert.Equal (0, curve.RoundGrowthToPreventOverflow (100, -.5, 0));
+			Assert.Equal (0, curve.RoundGrowthToPreventOverflow (100, .5, 0));
+		}
+
+		[Fact]
+		public void RoundGrowthAtCapShouldHitZero ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+
+			Assert.Equal (0, curve.RoundGrowthToPreventOverflow (100, -.5, 100));
+			Assert.Equal (0, curve.RoundGrowthToPreventOverflow (200, .5, 200));
+		}
+
+		[Fact]
 		public void RoundGrowthToPreventVerySmallGrowths ()
 		{
 			var curve = CreatePopulationGrowthCurve ();

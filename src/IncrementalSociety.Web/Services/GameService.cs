@@ -53,9 +53,10 @@ namespace IncrementalSociety.Web.Services
 		void OnException (string s)
 		{
 			var options = new Dictionary<string, object> ();
-			if (s.Contains ("  at"))
+			if (s.Contains ("  at")) {
 				options["Exception"] = s;
-			SetUIState (GameUIState.InternalError, options);
+				SetUIState (GameUIState.InternalError, options);
+			}
 		}
 
 		public async Task Load ()

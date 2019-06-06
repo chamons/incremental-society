@@ -47,15 +47,14 @@ namespace IncrementalSociety.Population
 		{
 			double expectedPopulation = population + growthRate;
 
-			// If it pushes us above pop cap, stop there
-			if (expectedPopulation > effectivePopCap) {
-				growthRate = effectivePopCap - population;
-				expectedPopulation = population + growthRate;
-			}
+			// If it pushes us above pop cap, re-run with just enough to get us to the cap
+			// Just in case we're inverted with effectPopCap < PopMin or something crazy
+			if (expectedPopulation > effectivePopCap)
+				return RoundGrowthToPreventOverflow (population, effectivePopCap - population, effectivePopCap);
 
 			// If our expected rate pulls us under PopMin
 			if (expectedPopulation < PopMin)
-				growthRate = PopMin - population;
+				return PopMin - population;
 
 			return growthRate;
 		}

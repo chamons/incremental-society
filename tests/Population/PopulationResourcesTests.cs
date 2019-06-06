@@ -51,6 +51,10 @@ namespace IncrementalSociety.Tests.Population
 			state = state.WithPopulation (100);
 
 			Assert.True (resourceFinder.IsPopulationStarving (state));
+
+			// Even if we're in the negative, we only starve when nothing stored
+			state = state.WithResources (Create ("Water", 100));
+			Assert.False (resourceFinder.IsPopulationStarving (state));
 		}
 	}
 }

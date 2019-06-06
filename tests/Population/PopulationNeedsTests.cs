@@ -33,6 +33,21 @@ namespace IncrementalSociety.Tests.Population
 		}
 
 		[Fact]
+		public void PopulationLuxaryFromActualBulidings ()
+		{
+			GameState state = CreateGameState ();
+			state = state.WithResources (Create ("Water", 100));
+			BuildingEngine buildingEngine = CreateBuildingEngine ();
+
+			var needs = CreatePopulationNeeds ();
+			Assert.Equal (.8, needs.CalculateHappiness (state).Value, 3);
+
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Potter");
+			double happiness = needs.CalculateHappiness (state).Value;
+			Assert.True (happiness > .8 && happiness < 1);
+		}
+
+		[Fact]
 		public void CrowdingCausesNegativeHappiness ()
 		{
 			// Population density causes base unhappiness as it increases

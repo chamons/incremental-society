@@ -143,6 +143,13 @@ namespace IncrementalSociety.Tests
 					{ ""capacity"": 200 },
 					{ ""required_technology"": ""Expansion"", ""capacity"": 200 }
 				]
+			},
+			{
+				""name"": ""Potter"",
+				""valid_areas"": [""Plains""],
+				""yield"": [
+					{ ""name"": ""Pottery"", ""amount"" : .15 }
+				]
 			}
 			%TEST_SPECIFIC%
 		]

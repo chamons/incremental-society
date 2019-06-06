@@ -61,8 +61,7 @@ namespace IncrementalSociety.Population
 
 		public PopulationRatio CalculateHappiness (GameState state)
 		{
-			// TODO - Fix
-			return CalculateHappiness (state.Population, Enumerable.Empty<double> (), false);
+			return CalculateHappiness (state.Population, PopulationResources.FindLuxaryRatios (state), PopulationResources.IsPopulationStarving (state));
 		}
 
 		public PopulationRatio CalculateHealth (double population)

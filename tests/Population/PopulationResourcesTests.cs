@@ -66,10 +66,10 @@ namespace IncrementalSociety.Tests.Population
 			state = state.WithPopulation (100);
 
 			var reqs = resourceFinder.GetLuxaryForCurrentPopulation (state);
-			Assert.Equal (1, reqs["Pottary"]);
+			Assert.Equal (1, reqs["Pottery"]);
 			state = state.WithPopulation (200);
 			reqs = resourceFinder.GetLuxaryForCurrentPopulation (state);
-			Assert.Equal (2, reqs["Pottary"]);
+			Assert.Equal (2, reqs["Pottery"]);
 		}
 
 		[Fact]

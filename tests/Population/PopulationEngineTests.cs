@@ -93,7 +93,7 @@ namespace IncrementalSociety.Tests.Population
 			state = state.WithPopulation (100).WithPopulationCap (200);
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population > 100 && state.Population < 200);
-			for (int i = 0 ; i < 100; ++i)
+			for (int i = 0 ; i < 200; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (200, state.Population);
 		}

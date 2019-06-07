@@ -12,12 +12,12 @@ namespace IncrementalSociety.Population
 	public class PopulationBuildingInfo
 	{
 		ResourceEngine ResourceEngine;
-		PopulationCapacity PopulationCapacity;
+		PopUnits PopUnits;
 
-		public PopulationBuildingInfo (ResourceEngine resourceEngine, PopulationCapacity populationCapacity)
+		public PopulationBuildingInfo (ResourceEngine resourceEngine, PopUnits popUnits)
 		{
 			ResourceEngine = resourceEngine;
-			PopulationCapacity = populationCapacity;
+			PopUnits = popUnits;
 		}
 
 		public int GetBuildingJobCount (GameState state)
@@ -28,7 +28,7 @@ namespace IncrementalSociety.Population
 		public double GetPopulationEfficiency (GameState state)
 		{
 			int buildingCount = GetBuildingJobCount (state);
-			double totalPopCount = PopulationCapacity.GetPopUnitsForTotalPopulation (state.Population);
+			double totalPopCount = PopUnits.GetPopUnitsForTotalPopulation (state.Population);
 			return GetPopulationEfficiency (buildingCount, totalPopCount);
 		}
 

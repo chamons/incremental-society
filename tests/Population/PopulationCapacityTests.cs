@@ -14,43 +14,6 @@ namespace IncrementalSociety.Tests.Population
 	public class PopulationCapacityTests : ResourceTestBase
 	{
 		[Fact]
-		public void PopsDoNotIncreaseLinearly ()
-		{
-			var capacity = CreatePopulationCapacity ();
-
-			// +100
-			Assert.Equal (1, capacity.GetPopUnitsForTotalPopulation (100));
-			Assert.Equal (1.5, capacity.GetPopUnitsForTotalPopulation (150));
-			Assert.Equal (2, capacity.GetPopUnitsForTotalPopulation (200));
-			Assert.Equal (4, capacity.GetPopUnitsForTotalPopulation (400));
-			Assert.Equal (10, capacity.GetPopUnitsForTotalPopulation (1000));
-
-			// +200
-			Assert.Equal (11, capacity.GetPopUnitsForTotalPopulation (1200));
-			Assert.Equal (15, capacity.GetPopUnitsForTotalPopulation (2000));
-
-			// +500
-			Assert.Equal (16, capacity.GetPopUnitsForTotalPopulation (2500));
-			Assert.Equal (19, capacity.GetPopUnitsForTotalPopulation (4000));
-
-			// +1000
-			Assert.Equal (20, capacity.GetPopUnitsForTotalPopulation (5000));
-			Assert.Equal (25, capacity.GetPopUnitsForTotalPopulation (10000));
-
-			// +5000
-			Assert.Equal (26, capacity.GetPopUnitsForTotalPopulation (15000));
-			Assert.Equal (32, capacity.GetPopUnitsForTotalPopulation (50000));
-
-			// +10000
-			Assert.Equal (33, capacity.GetPopUnitsForTotalPopulation (60000));
-			Assert.Equal (37, capacity.GetPopUnitsForTotalPopulation (100000));
-
-			// +50000
-			Assert.Equal (38, capacity.GetPopUnitsForTotalPopulation (150000));
-			Assert.Equal (40, capacity.GetPopUnitsForTotalPopulation (250000));
-		}
-
-		[Fact]
 		public void GetHousingCapactiy ()
 		{
 			var capacity = CreatePopulationCapacity ();
@@ -59,17 +22,6 @@ namespace IncrementalSociety.Tests.Population
 			Assert.Equal (200, capacity.GetHousingCapacity (state));
 			state = CreateGameState (camps: 2);
 			Assert.Equal (400, capacity.GetHousingCapacity (state));
-		}
-
-		[Fact]
-		public void GetNextAndPreviousBreakpoint ()
-		{
-			var capacity = CreatePopulationCapacity ();
-
-			Assert.Equal (200, capacity.GetNextPopBreakpoint (100));
-			Assert.Equal (100, capacity.GetPreviousPopBreakpoint (100));
-			Assert.Equal (900, capacity.GetPreviousPopBreakpoint (1000));
-			Assert.Equal (1200, capacity.GetNextPopBreakpoint (1000));
 		}
 
 		[Fact]
@@ -132,6 +84,7 @@ namespace IncrementalSociety.Tests.Population
 
 			// We now have equal again, so 400
 			state = buildingEngine.Build (state, state.Regions[0].Name, 1, "Gathering Camp");
+			state = state.WithPopulation (200);
 			Assert.Equal (400, capacity.FindEffectiveCap (state));
 		}
 	}

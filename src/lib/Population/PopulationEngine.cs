@@ -28,7 +28,7 @@ namespace IncrementalSociety.Population
 			PopulationCapacity = populationCapacity;
 			PopulationResources = populationResourceFinder;
 			PopulationGrowthCurve = new PopulationGrowthCurve (PopulationCapacity, PopMin);
-			PopulationNeeds = new PopulationNeeds (ResourceEngine, loader, PopulationCapacity, PopulationResources);
+			PopulationNeeds = new PopulationNeeds (ResourceEngine, loader, new PopUnits (PopMin), PopulationResources);
 		}
 
 		public GameState ProcessTick (GameState state)

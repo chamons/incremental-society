@@ -116,6 +116,7 @@ namespace IncrementalSociety.Tests.Population
 				state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 
+			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 0);
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
 			for (int i = 0 ; i < 100; ++i)

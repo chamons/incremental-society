@@ -13,7 +13,7 @@ namespace IncrementalSociety.Population
 	{
 		ResourceEngine ResourceEngine;
 		PopulationResources PopulationResources;
-		PopulationCapacity PopulationCapacity;
+		PopUnits PopUnits;
 		double HappinessGainPerFullLuxary;
 		double HappinessLossPerLuxaryMissing;
 		double HappinessLossStaring;
@@ -23,11 +23,11 @@ namespace IncrementalSociety.Population
 
 		ResourceConfig ResourceConfig => ResourceEngine.ResourceConfig;
 
-		public PopulationNeeds (ResourceEngine resourceEngine, JsonLoader json, PopulationCapacity populationCapacity, PopulationResources populationResources)
+		public PopulationNeeds (ResourceEngine resourceEngine, JsonLoader json, PopUnits popUnits, PopulationResources populationResources)
 		{
 			ResourceEngine = resourceEngine;
 			PopulationResources = populationResources;
-			PopulationCapacity = populationCapacity;
+			PopUnits = popUnits;
 			HappinessGainPerFullLuxary = json.Game.HappinessGainPerFullLuxary;
 			HappinessLossPerLuxaryMissing = json.Game.HappinessLossPerLuxaryMissing;
 			HappinessLossStaring = json.Game.HappinessLossStaring;
@@ -44,7 +44,7 @@ namespace IncrementalSociety.Population
 
 			double happiness = 1.0;
 
-			double currentPops = PopulationCapacity.GetPopUnitsForTotalPopulation (population);
+			double currentPops = PopUnits.GetPopUnitsForTotalPopulation (population);
 			double popsOver = currentPops - HappinessLossStaring;
 			if (popsOver > 0)
 				happiness -= popsOver * HappinessLossPerExtraPop;
@@ -68,7 +68,7 @@ namespace IncrementalSociety.Population
 		{
 			double health = 1.0;
 
-			double currentPops = PopulationCapacity.GetPopUnitsForTotalPopulation (population);
+			double currentPops = PopUnits.GetPopUnitsForTotalPopulation (population);
 			double popsOver = currentPops - HealthLossStaring;
 
 			if (popsOver > 0)

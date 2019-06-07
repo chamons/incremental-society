@@ -12,12 +12,14 @@ namespace IncrementalSociety.Population
 	public class PopulationResources
 	{
 		ResourceEngine ResourceEngine;
+		PopulationBuildingInfo PopulationBuildingInfo;
 		JsonLoader Json;
 		List<string> LuxaryNeedsNames;
 
-		public PopulationResources (ResourceEngine resourceEngine, JsonLoader json)
+		public PopulationResources (ResourceEngine resourceEngine, PopulationBuildingInfo populationBuildingInfo, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
+			PopulationBuildingInfo = populationBuildingInfo;
 			Json = json;
 			LuxaryNeedsNames = Json.Game.LuxaryPopulationNeeds.Select (x => x.Name).ToList ();
 		}
@@ -69,9 +71,9 @@ namespace IncrementalSociety.Population
 
 		Resources.Builder ResourcesWithNextTick (GameState state)
 		{
+			double efficiency = PopulationBuildingInfo.GetPopulationEfficiency (state);
 			var nextTickResources = state.Resources.ToBuilder ();
-			// TODO - 1.0 here is wrong
-			nextTickResources.Add (ResourceEngine.CalculateAdditionalNextTick (state, 1.0));
+			nextTickResources.Add (ResourceEngine.CalculateAdditionalNextTick (state, efficiency));
 			return nextTickResources;
 		}
 

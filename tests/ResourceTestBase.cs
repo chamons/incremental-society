@@ -139,6 +139,7 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Housing"",
 				""valid_areas"": [""Plains""],
+				""does_not_require_job"": true,
 				""housing_capacity"": [
 					{ ""capacity"": 200 },
 					{ ""required_technology"": ""Expansion"", ""capacity"": 200 }
@@ -239,15 +240,16 @@ namespace IncrementalSociety.Tests
 			return new GameState (1, "Stone", region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
 		}
 
+		protected PopUnits CreatePopUnits () => new PopUnits (Loader.Value.Game.MinPopulation);
 		protected ResourceEngine CreateResourceEngine () => new ResourceEngine (Loader.Value);
 		protected BuildingEngine CreateBuildingEngine () => new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
 		protected ResearchEngine CreateResearchEngine () => new ResearchEngine (CreateResourceEngine (), Loader.Value);
 		protected EdictsEngine CreateEdictsEngine () => new EdictsEngine (CreateResourceEngine (), Loader.Value);
-		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), Loader.Value);
-		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), Loader.Value.Game.MinPopulation);
+		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), CreatePopulationBuildingInfo (), Loader.Value);
+		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), CreatePopulationBuildingInfo (), CreatePopUnits ());
 		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), Loader.Value);
-		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopulationCapacity ());
+		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopUnits ());
 		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value.Game.MinPopulation);
-		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopulationCapacity (), CreatePopulationResources ());
+		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopUnits (), CreatePopulationResources ());
 	}
 }

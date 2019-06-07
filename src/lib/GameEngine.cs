@@ -21,6 +21,7 @@ namespace IncrementalSociety
 		PopulationBuildingInfo PopulationBuildingInfo;
 		PopulationCapacity PopulationCapacity;
 		PopulationResources PopulationResources;
+		PopUnits PopUnits;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
@@ -30,13 +31,15 @@ namespace IncrementalSociety
 		public GameEngine (JsonLoader loader, ResourceEngine resourceEngine)
 		{
 			ResourceEngine = resourceEngine;
-			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
+			PopUnits = new PopUnits (loader.Game.MinPopulation);
+			PopulationBuildingInfo = new PopulationBuildingInfo (ResourceEngine, PopUnits);
 			ResearchEngine = new ResearchEngine (ResourceEngine, loader);
 			EdictsEngine = new EdictsEngine (ResourceEngine, loader);
-			PopulationResources = new PopulationResources (ResourceEngine, loader);
-			PopulationCapacity = new PopulationCapacity (ResourceEngine, PopulationResources, loader.Game.MinPopulation);
+			PopulationResources = new PopulationResources (ResourceEngine, PopulationBuildingInfo, loader);
+
+			PopulationCapacity = new PopulationCapacity (ResourceEngine, PopulationResources, PopulationBuildingInfo, PopUnits);
 			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, loader);
-			PopulationBuildingInfo = new PopulationBuildingInfo (ResourceEngine, PopulationCapacity);
+			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 		}
 
 		public void ConfigureForLoad ()
@@ -123,18 +126,13 @@ namespace IncrementalSociety
 			return ResourceEngine.GetBuildingConversionResources (state, name);
 		}
 
-		public double GetEfficiencyOfNonBasicGoods (GameState state)
-		{
-			if (IsPopulationStarving (state))
-				return 0;
-			return PopulationBuildingInfo.GetPopulationEfficiency (state);
-		}
+		public double GetEfficiency (GameState state) => PopulationBuildingInfo.GetPopulationEfficiency (state);
 
 		public double FindEffectivePopulationCap (GameState state) => PopulationCapacity.FindEffectiveCap (state);
 
 		public GameState ProcessTick (GameState state)
 		{
-			state = ResourceEngine.AddTickOfResources (state, GetEfficiencyOfNonBasicGoods (state));
+			state = ResourceEngine.AddTickOfResources (state, GetEfficiency (state));
 			state = PopulationEngine.ProcessTick (state);
 			state = ResourceEngine.ConstrainResourcesToStorage (state);
 			state = EdictsEngine.ProcessTick (state);
@@ -148,7 +146,7 @@ namespace IncrementalSociety
 
 		public Resources GetResourcesNextTick (GameState state)
 		{
-			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiencyOfNonBasicGoods (state)).ToBuilder ();
+			var nextTickResources = ResourceEngine.CalculateAdditionalNextTick (state, GetEfficiency (state)).ToBuilder ();
 			nextTickResources.Subtract (PopulationResources.GetRequirementsForCurrentPopulation (state));
 			return nextTickResources.ToResources ();
 		}
@@ -165,13 +163,13 @@ namespace IncrementalSociety
 
 		public int GetBuildingJobCount (GameState state) => PopulationBuildingInfo.GetBuildingJobCount (state);
 		public int GetBuildingTotal (GameState state) => state.AllBuildings ().Count ();
-		public double GetMaxBuildings (GameState state) => PopulationCapacity.GetPopUnitsForTotalPopulation (state.Population);
+		public double GetMaxBuildings (GameState state) => PopUnits.GetPopUnitsForTotalPopulation (state.Population);
 		public double GetHousingCapacity (GameState state) => PopulationCapacity.GetHousingCapacity (state);
 
 		public bool CanIncreasePopulationCap (GameState state) => PopulationCapacity.CanIncreasePopulationCap (state);
 		public bool CanDecreasePopulationCap (GameState state) => PopulationCapacity.CanDecreasePopulationCap (state);
-		public double GetPopCapDecrementAmount (GameState state) => PopulationCapacity.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
-		public double GetPopCapIncrementAmount (GameState state) => PopulationCapacity.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public double GetPopCapDecrementAmount (GameState state) => PopUnits.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
+		public double GetPopCapIncrementAmount (GameState state) => PopUnits.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public bool IsPopulationStarving (GameState state) => PopulationResources.IsPopulationStarving (state);
 
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);

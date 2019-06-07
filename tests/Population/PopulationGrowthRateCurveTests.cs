@@ -57,10 +57,14 @@ namespace IncrementalSociety.Tests.Population
 
 			// When unhappy (< .5 happines) we emmigrate up 1% of population per tick.
 			// This linerally decreases as we approach .5
-			Assert.Equal (1, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0)), 3);
-			Assert.Equal (.5, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0.25)), 3);
-			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (.5)), 3);
-			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0)), 3);
+			Assert.Equal (1, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0), 0), 3);
+			Assert.Equal (.5, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (0.25), 0), 3);
+			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (.5), 0), 3);
+			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), 0), 3);
+
+			// When we are out of room, we emmigrarte 2% of the housing delta per tick
+			Assert.Equal (2, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -100), 3);
+			Assert.Equal (.2, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -10), 3);
 		}
 
 
@@ -110,6 +114,25 @@ namespace IncrementalSociety.Tests.Population
 
 			Assert.Equal (-1.2, curve.RoundGrowthRateAboveMinimumStep (-1.2));
 			Assert.Equal (-PopulationGrowthCurve.MinGrowth, curve.RoundGrowthRateAboveMinimumStep (-0.01));
+		}
+
+		[Fact]
+		public void DroppingHousingDoesNotDrasticallyReducePopulation ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+			var state = CreateGameState ();
+			var buildingEngine = CreateBuildingEngine ();
+
+			var growthRate = curve.GetGrowthRate (state, PopulationRatio.Create (1),PopulationRatio.Create (1));
+			Assert.True (growthRate < 0 && growthRate > -10);
+		}
+
+		[Fact]
+		public void RoundGrowthDoesNotChangeSign ()
+		{
+			var curve = CreatePopulationGrowthCurve ();
+			var growthRate = curve.RoundGrowthToPreventOverflow (200, 1, 0);
+			Assert.Equal (0, growthRate);
 		}
 	}
 }

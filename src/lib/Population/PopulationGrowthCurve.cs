@@ -22,12 +22,14 @@ namespace IncrementalSociety.Population
 		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
 		{
 			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
-
-			double growthRate = CalculatePopulationGrowthRate (state.Population, happy);
 			double freeHousing = PopulationCapacity.GetHousingCapacity (state) - state.Population;
-			growthRate += CalculateImmigrationRate (freeHousing, happy);
-			growthRate -= CalculateEmmigrationRate (state.Population, happy);
-			growthRate -= CalculatePopulationDeathRate (state.Population, health);
+
+			double popGrowthRate = CalculatePopulationGrowthRate (state.Population, happy);
+			double immigrationRate = CalculateImmigrationRate (freeHousing, happy);
+			double emmigrationRate = CalculateEmmigrationRate (state.Population, happy, freeHousing);
+			double deathRate = CalculatePopulationDeathRate (state.Population, health);
+
+			double growthRate = popGrowthRate + immigrationRate - emmigrationRate - deathRate;
 
 			growthRate = RoundGrowthRateAboveMinimumStep (growthRate);
 			growthRate = RoundGrowthToPreventOverflow (state.Population, growthRate, effectivePopCap);
@@ -47,13 +49,12 @@ namespace IncrementalSociety.Population
 		{
 			double expectedPopulation = population + growthRate;
 
-			// If it pushes us above pop cap, re-run with just enough to get us to the cap
-			// Just in case we're inverted with effectPopCap < PopMin or something crazy
-			if (expectedPopulation > effectivePopCap)
-				return RoundGrowthToPreventOverflow (population, effectivePopCap - population, effectivePopCap);
+			// If we have a positive growth rate and we'll overshoot reduce towards zero
+			if (expectedPopulation > effectivePopCap && growthRate > 0)
+				return RoundGrowthToPreventOverflow (population, Math.Max (0, effectivePopCap - population), effectivePopCap);
 
-			// If our expected rate pulls us under PopMin
-			if (expectedPopulation < PopMin)
+			// If we have a negative growth and we'll undershoot min, reduce to hit it directly
+			if (expectedPopulation < PopMin && growthRate < 0)
 				return PopMin - population;
 
 			return growthRate;
@@ -68,17 +69,25 @@ namespace IncrementalSociety.Population
 		const double BaseImmigrationRate = .01;
 		public double CalculateImmigrationRate (double freeHousing, PopulationRatio happiness)
 		{
-			if (happiness.Value <= .5)
+			// No one wants to immigrate to an unhappy land or one without space
+			if (happiness.Value <= .5 || freeHousing < 1)
 				return 0;
 			return freeHousing * BaseImmigrationRate * ((happiness.Value - .5) * 2);
 		}
 
+		// Move these to game.json
 		const double BaseEmmigrationRate = .01;
-		public double CalculateEmmigrationRate (double population, PopulationRatio happiness)
+		const double HousingEmmigrationRate = .02;
+		public double CalculateEmmigrationRate (double population, PopulationRatio happiness, double freeHousing)
 		{
-			if (happiness.Value >= .5)
-				return 0;
-			return population * BaseEmmigrationRate * (.5 - happiness.Value) * 2;
+			double happinessEmmigration = 0;
+			if (happiness.Value < .5)
+				happinessEmmigration = population * BaseEmmigrationRate * (.5 - happiness.Value) * 2;
+
+			double spaceEmmigration = 0;
+			if (freeHousing < 0)
+				spaceEmmigration = -1 * freeHousing * HousingEmmigrationRate;
+			return happinessEmmigration + spaceEmmigration;
 		}
 
 		const double BaseDeathRate = .005;

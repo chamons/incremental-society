@@ -51,8 +51,14 @@ namespace IncrementalSociety.Tests.Population
 		public void PopsDecreaseIfOverCap ()
 		{
 			var engine = CreatePopEngine ();
-			var state = CreateGameState (camps: 2).WithPopulation (300);
+			var state = CreateGameState (holes: 2).WithPopulation (200);
+			var buildingEngine = CreateBuildingEngine ();
+
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+			state = engine.ProcessTick (state);
 			double popBefore = state.Population;
+
+			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 2);
 			state = engine.ProcessTick (state);
 			Assert.True (state.Population < popBefore);
 		}
@@ -71,7 +77,10 @@ namespace IncrementalSociety.Tests.Population
 			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 1);
 
 			state = engine.ProcessTick (state);
+
+			// We decrease some, but don't drop to floor in one tick
 			Assert.True (state.Population < popBefore);
+			Assert.True (popBefore - 10 < state.Population);
 		}
 
 		[Fact]

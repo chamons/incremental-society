@@ -16,7 +16,7 @@ namespace IncrementalSociety.Web.Services
 
 		// STUB_DATA - Filter by age
 		public IEnumerable<ResourceDeclaration> Resources => GameService.Loader.Resources.Resources;
-		
+
 		public string GetImageFilename (string name)
 		{
 			return GetImageFilename (Resources.First (x => x.Name == name));
@@ -29,6 +29,15 @@ namespace IncrementalSociety.Web.Services
 				return $"images\\{GameService.State.Age}-{name}.png";
 			else
 				return $"images\\{name}.png";
+		}
+
+		public string GetDeltaClass (double count)
+		{
+			if (count < -.001)
+				return "red";
+			if (count > .001)
+				return "green";
+			return "";
 		}
 
 		public string GetResourceDeltaClass (double count)

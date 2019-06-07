@@ -21,6 +21,7 @@ namespace IncrementalSociety
 		PopulationBuildingInfo PopulationBuildingInfo;
 		PopulationCapacity PopulationCapacity;
 		PopulationResources PopulationResources;
+		PopulationNeeds PopulationNeeds;
 		PopUnits PopUnits;
 
 		public static GameEngine Create (JsonLoader loader)
@@ -38,7 +39,8 @@ namespace IncrementalSociety
 			PopulationResources = new PopulationResources (ResourceEngine, PopulationBuildingInfo, loader);
 
 			PopulationCapacity = new PopulationCapacity (ResourceEngine, PopulationResources, PopulationBuildingInfo, PopUnits);
-			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, loader);
+			PopulationNeeds = new PopulationNeeds (ResourceEngine, loader, PopUnits, PopulationResources);
+			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, PopulationNeeds, loader.Game.MinPopulation);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 		}
 
@@ -171,6 +173,10 @@ namespace IncrementalSociety
 		public double GetPopCapDecrementAmount (GameState state) => PopUnits.GetPreviousPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public double GetPopCapIncrementAmount (GameState state) => PopUnits.GetNextPopBreakpoint (state.PopulationCap) - state.PopulationCap;
 		public bool IsPopulationStarving (GameState state) => PopulationResources.IsPopulationStarving (state);
+
+		public double GetHealth (GameState state) => PopulationNeeds.CalculateHealth (state).Value;
+		public double GetHappiness (GameState state) => PopulationNeeds.CalculateHappiness (state).Value;
+		public double GetGrowthRate (GameState state) => PopulationEngine.CalculateGrowthRate (state);
 
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
 

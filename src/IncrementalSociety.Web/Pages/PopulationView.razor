@@ -1,17 +1,25 @@
 @using IncrementalSociety.Web.Services
 
 @inject GameService GameService
+@inject StyleService StyleService
 @inject PopulationService PopulationService
 
 <div id="PopStats">
-	Population: @Population / @PopulationCap (@PopulationService.EffectiveCap)
+	@{
+		double currentGrowthRate = GrowthRate;
+		string growthStyle = StyleService.GetDeltaClass (currentGrowthRate);
+	}
+	Population: @Population / @PopulationCap <div class="d-inline @growthStyle">(@currentGrowthRate)</div>
+	<div>Effective Capacity: @EffectiveCap</div>
 	@if (PopulationService.IsPopulationStarving)
 	{
-		<div class="red">Population is starving and can not shrink further! All non-critical resource collection haulted.</div>
+		<div class="red">Population is starving!</div>
 	}
 	<div class="@(@OverBuilt ? "red" : "")">Jobs: @BuildingJobCount / @MaxBuildings</div>
 	<div>Current Housing: @CurrentHousing</div>
 	<div>Efficiency: @Efficiency</div>
+	<div>Health: @Health</div>
+	<div>Happiness: @Happiness</div>
 	<button disabled=@(!@PopulationService.CanDecrement) onclick="@Decrement">@PopulationService.CapDecrementAmount</button>
 	<button disabled=@(!@PopulationService.CanIncrement) onclick="@Increment">@PopulationService.CapIncrementAmount</button>
 </div>
@@ -22,9 +30,13 @@
 
 	double Population => Floor (GameService.State.Population);
 	double PopulationCap => Floor (GameService.State.PopulationCap);
+	double GrowthRate => Round (PopulationService.GrowthRate);
+	double EffectiveCap => Round (PopulationService.EffectiveCap);
 	double CurrentHousing => Round (PopulationService.CurrentHousing);
 	double MaxBuildings => Round (PopulationService.MaxBuildings);
 	double Efficiency => Round (PopulationService.Efficiency);
+	double Health => Round (PopulationService.Health);
+	double Happiness => Round (PopulationService.Happiness);
 
 	int BuildingJobCount => PopulationService.BuildingJobCount;
 	bool OverBuilt => BuildingJobCount > MaxBuildings;

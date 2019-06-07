@@ -247,7 +247,7 @@ namespace IncrementalSociety.Tests
 		protected EdictsEngine CreateEdictsEngine () => new EdictsEngine (CreateResourceEngine (), Loader.Value);
 		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), CreatePopulationBuildingInfo (), Loader.Value);
 		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), CreatePopulationBuildingInfo (), CreatePopUnits ());
-		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), Loader.Value);
+		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), CreatePopulationNeeds (), Loader.Value.Game.MinPopulation);
 		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopUnits ());
 		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value.Game.MinPopulation);
 		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopUnits (), CreatePopulationResources ());

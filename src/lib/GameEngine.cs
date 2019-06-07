@@ -40,7 +40,7 @@ namespace IncrementalSociety
 
 			PopulationCapacity = new PopulationCapacity (ResourceEngine, PopulationResources, PopulationBuildingInfo, PopUnits);
 			PopulationNeeds = new PopulationNeeds (ResourceEngine, loader, PopUnits, PopulationResources);
-			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, PopulationNeeds, loader.Game.MinPopulation);
+			PopulationEngine = new PopulationEngine (ResourceEngine, PopulationCapacity, PopulationResources, PopulationNeeds, loader);
 			BuildingEngine = new BuildingEngine (ResourceEngine, PopulationEngine);
 		}
 

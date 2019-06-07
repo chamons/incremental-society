@@ -87,6 +87,24 @@ namespace IncrementalSociety.Json
 
 		[JsonProperty ("health_loss_per_extra_pop")]
 		public double HealthLossPerExtraPop { get; set; }
+
+		[JsonProperty ("base_pop_growth_rate")]
+		public double BasePopGrowthRate { get; set; }
+
+		[JsonProperty ("min_growth")]
+		public double MinGrowth { get; set; }
+
+		[JsonProperty ("base_immigration_rate")]
+		public double BaseImmigrationRate { get; set; }
+
+		[JsonProperty ("base_emmigration_rate")]
+		public double BaseEmmigrationRate { get; set; }
+
+		[JsonProperty ("housing_emmigration_rate")]
+		public double HousingEmmigrationRate { get; set; }
+
+		[JsonProperty ("base_death_rate")]
+		public double BaseDeathRate { get; set; }
 	}
 
 	public partial class BuildingDeclarations

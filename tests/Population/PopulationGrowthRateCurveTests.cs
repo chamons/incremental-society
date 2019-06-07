@@ -110,10 +110,10 @@ namespace IncrementalSociety.Tests.Population
 			var curve = CreatePopulationGrowthCurve ();
 
 			Assert.Equal (1.2, curve.RoundGrowthRateAboveMinimumStep (1.2));
-			Assert.Equal (PopulationGrowthCurve.MinGrowth, curve.RoundGrowthRateAboveMinimumStep (0.01));
+			Assert.Equal (curve.MinGrowth, curve.RoundGrowthRateAboveMinimumStep (0.01));
 
 			Assert.Equal (-1.2, curve.RoundGrowthRateAboveMinimumStep (-1.2));
-			Assert.Equal (-PopulationGrowthCurve.MinGrowth, curve.RoundGrowthRateAboveMinimumStep (-0.01));
+			Assert.Equal (-curve.MinGrowth, curve.RoundGrowthRateAboveMinimumStep (-0.01));
 		}
 
 		[Fact]

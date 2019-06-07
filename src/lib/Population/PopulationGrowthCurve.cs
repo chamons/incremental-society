@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
 
@@ -13,10 +14,23 @@ namespace IncrementalSociety.Population
 		double PopMin;
 		PopulationCapacity PopulationCapacity;
 
-		public PopulationGrowthCurve (PopulationCapacity populationCapacity, double popMin)
+		public double MinGrowth;
+		double BasePopGrowthRate;
+		double BaseImmigrationRate;
+		double BaseEmmigrationRate;
+		double HousingEmmigrationRate;
+		double BaseDeathRate;
+
+		public PopulationGrowthCurve (PopulationCapacity populationCapacity, JsonLoader json)
 		{
 			PopulationCapacity = populationCapacity;
-			PopMin = popMin;
+			PopMin = json.Game.MinPopulation;
+			MinGrowth = json.Game.MinGrowth;
+			BasePopGrowthRate = json.Game.BasePopGrowthRate;
+			BaseImmigrationRate = json.Game.BaseImmigrationRate;
+			BaseEmmigrationRate = json.Game.BaseEmmigrationRate;
+			HousingEmmigrationRate = json.Game.HousingEmmigrationRate;
+			BaseDeathRate = json.Game.BaseDeathRate;
 		}
 
 		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
@@ -36,7 +50,6 @@ namespace IncrementalSociety.Population
 			return growthRate;
 		}
 
-		public const double MinGrowth = 0.2;
 		public double RoundGrowthRateAboveMinimumStep (double growthRate)
 		{
 			if (growthRate < 0)
@@ -60,13 +73,11 @@ namespace IncrementalSociety.Population
 			return growthRate;
 		}
 
-		const double BasePopGrowthRate = .01;
 		public double CalculatePopulationGrowthRate (double population, PopulationRatio happiness)
 		{
 			return population * BasePopGrowthRate * (happiness.Value * .8 + .2);
 		}
 
-		const double BaseImmigrationRate = .01;
 		public double CalculateImmigrationRate (double freeHousing, PopulationRatio happiness)
 		{
 			// No one wants to immigrate to an unhappy land or one without space
@@ -75,9 +86,6 @@ namespace IncrementalSociety.Population
 			return freeHousing * BaseImmigrationRate * ((happiness.Value - .5) * 2);
 		}
 
-		// Move these to game.json
-		const double BaseEmmigrationRate = .01;
-		const double HousingEmmigrationRate = .02;
 		public double CalculateEmmigrationRate (double population, PopulationRatio happiness, double freeHousing)
 		{
 			double happinessEmmigration = 0;
@@ -90,7 +98,6 @@ namespace IncrementalSociety.Population
 			return happinessEmmigration + spaceEmmigration;
 		}
 
-		const double BaseDeathRate = .005;
 		public double CalculatePopulationDeathRate (double population, PopulationRatio health)
 		{
 			return population * BaseDeathRate * (3 + (health.Value * -2));

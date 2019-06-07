@@ -191,7 +191,13 @@ namespace IncrementalSociety.Tests
 			""happiness_loss_pop_starting"": 10,
 			""happiness_loss_per_extra_pop"": 0.1,
 			""health_loss_pop_starting"": 10,
-			""health_loss_per_extra_pop"": 0.1
+			""health_loss_per_extra_pop"": 0.1,
+			""min_growth"": 0.2,
+			""base_pop_growth_rate"": 0.01,
+			""base_immigration_rate"": 0.01,
+			""base_emmigration_rate"": 0.01,
+			""housing_emmigration_rate"": 0.02,
+			""base_death_rate"": 0.005
 			%TEST_SPECIFIC%
 		}";
 
@@ -247,9 +253,9 @@ namespace IncrementalSociety.Tests
 		protected EdictsEngine CreateEdictsEngine () => new EdictsEngine (CreateResourceEngine (), Loader.Value);
 		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), CreatePopulationBuildingInfo (), Loader.Value);
 		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), CreatePopulationBuildingInfo (), CreatePopUnits ());
-		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), CreatePopulationNeeds (), Loader.Value.Game.MinPopulation);
+		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), CreatePopulationNeeds (), Loader.Value);
 		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopUnits ());
-		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value.Game.MinPopulation);
+		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value);
 		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopUnits (), CreatePopulationResources ());
 	}
 }

@@ -26,6 +26,7 @@
 	"base_pop_growth_rate": 0.01,
 	"base_immigration_rate": 0.01,
 	"base_emmigration_rate": 0.01,
-	"housing_emmigration_rate": 0.02,
+	"housing_emmigration_rate_per_missing": 0.05,
+	"housing_emmigration_rate_base": 0.01,
 	"base_death_rate": 0.005
 }

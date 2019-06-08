@@ -71,11 +71,27 @@ namespace IncrementalSociety.Tests.Population
 
 			var buildingEngine = CreateBuildingEngine ();
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
-
 			double popBefore = state.Population;
 
 			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 1);
+		state = engine.ProcessTick (state);
 
+			// We decrease some, but don't drop to floor in one tick
+			Assert.True (state.Population < popBefore);
+			Assert.True (popBefore - 10 < state.Population);
+		}
+
+		[Fact]
+		public void PopsDecreaseIfCapReduced ()
+		{
+			var engine = CreatePopEngine ();
+			var state = CreateGameState (holes: 1).WithPopulation (150).WithPopulationCap (150);
+
+			var buildingEngine = CreateBuildingEngine ();
+			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Housing");
+			double popBefore = state.Population;
+
+			state = state.WithPopulationCap (100);
 			state = engine.ProcessTick (state);
 
 			// We decrease some, but don't drop to floor in one tick
@@ -121,14 +137,14 @@ namespace IncrementalSociety.Tests.Population
 			// Make sure Charcoal conversion doesn't get selected
 			state = state.WithResources (Create ("Charcoal", 20.0));
 
-			for (int i = 0 ; i < 100; ++i)
+			for (int i = 0 ; i < 200; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (100, state.Population);
 
 			state = buildingEngine.Destroy (state, state.Regions[0].Name, 0, 0);
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Watering Hole");
 
-			for (int i = 0 ; i < 100; ++i)
+			for (int i = 0 ; i < 200; ++i)
 				state = engine.ProcessTick (state);
 			Assert.Equal (170, state.Population);
 		}

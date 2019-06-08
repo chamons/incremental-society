@@ -100,8 +100,11 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("base_emmigration_rate")]
 		public double BaseEmmigrationRate { get; set; }
 
-		[JsonProperty ("housing_emmigration_rate")]
-		public double HousingEmmigrationRate { get; set; }
+		[JsonProperty ("housing_emmigration_rate_per_missing")]
+		public double HousingEmmigrationRatePerMissing { get; set; }
+
+		[JsonProperty ("housing_emmigration_rate_base")]
+		public double HousingEmmigrationRateBase { get; set; }
 
 		[JsonProperty ("base_death_rate")]
 		public double BaseDeathRate { get; set; }

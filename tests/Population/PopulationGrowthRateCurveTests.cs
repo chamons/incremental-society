@@ -62,9 +62,12 @@ namespace IncrementalSociety.Tests.Population
 			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (.5), 0), 3);
 			Assert.Equal (0, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), 0), 3);
 
-			// When we are out of room, we emmigrarte 2% of the housing delta per tick
-			Assert.Equal (2, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -100), 3);
-			Assert.Equal (.2, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -10), 3);
+			// When we are out of room, we emmigrarte:
+			// - 5% of the housing delta per tick PLUS
+			// - 1% of the population per tick
+			// This way, we can't out grow over housing
+			Assert.Equal (6, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -100), 3);
+			Assert.Equal (1.5, curve.CalculateEmmigrationRate (100, PopulationRatio.Create (1.0), -10), 3);
 		}
 
 

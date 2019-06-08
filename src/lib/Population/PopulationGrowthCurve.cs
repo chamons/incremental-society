@@ -18,7 +18,8 @@ namespace IncrementalSociety.Population
 		double BasePopGrowthRate;
 		double BaseImmigrationRate;
 		double BaseEmmigrationRate;
-		double HousingEmmigrationRate;
+		double HousingEmmigrationRatePerMissing;
+		double HousingEmmigrationRateBase;
 		double BaseDeathRate;
 
 		public PopulationGrowthCurve (PopulationCapacity populationCapacity, JsonLoader json)
@@ -29,18 +30,19 @@ namespace IncrementalSociety.Population
 			BasePopGrowthRate = json.Game.BasePopGrowthRate;
 			BaseImmigrationRate = json.Game.BaseImmigrationRate;
 			BaseEmmigrationRate = json.Game.BaseEmmigrationRate;
-			HousingEmmigrationRate = json.Game.HousingEmmigrationRate;
+			HousingEmmigrationRatePerMissing = json.Game.HousingEmmigrationRatePerMissing;
+			HousingEmmigrationRateBase = json.Game.HousingEmmigrationRateBase;
 			BaseDeathRate = json.Game.BaseDeathRate;
 		}
 
 		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
 		{
 			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
-			double freeHousing = PopulationCapacity.GetHousingCapacity (state) - state.Population;
+			double freeCap = effectivePopCap - state.Population;
 
 			double popGrowthRate = CalculatePopulationGrowthRate (state.Population, happy);
-			double immigrationRate = CalculateImmigrationRate (freeHousing, happy);
-			double emmigrationRate = CalculateEmmigrationRate (state.Population, happy, freeHousing);
+			double immigrationRate = CalculateImmigrationRate (freeCap, happy);
+			double emmigrationRate = CalculateEmmigrationRate (state.Population, happy, freeCap);
 			double deathRate = CalculatePopulationDeathRate (state.Population, health);
 
 			double growthRate = popGrowthRate + immigrationRate - emmigrationRate - deathRate;
@@ -78,23 +80,23 @@ namespace IncrementalSociety.Population
 			return population * BasePopGrowthRate * (happiness.Value * .8 + .2);
 		}
 
-		public double CalculateImmigrationRate (double freeHousing, PopulationRatio happiness)
+		public double CalculateImmigrationRate (double freeCap, PopulationRatio happiness)
 		{
 			// No one wants to immigrate to an unhappy land or one without space
-			if (happiness.Value <= .5 || freeHousing < 1)
+			if (happiness.Value <= .5 || freeCap < 1)
 				return 0;
-			return freeHousing * BaseImmigrationRate * ((happiness.Value - .5) * 2);
+			return freeCap * BaseImmigrationRate * ((happiness.Value - .5) * 2);
 		}
 
-		public double CalculateEmmigrationRate (double population, PopulationRatio happiness, double freeHousing)
+		public double CalculateEmmigrationRate (double population, PopulationRatio happiness, double freeCap)
 		{
 			double happinessEmmigration = 0;
 			if (happiness.Value < .5)
 				happinessEmmigration = population * BaseEmmigrationRate * (.5 - happiness.Value) * 2;
 
 			double spaceEmmigration = 0;
-			if (freeHousing < 0)
-				spaceEmmigration = -1 * freeHousing * HousingEmmigrationRate;
+			if (freeCap < 0)
+				spaceEmmigration = (-1 * freeCap) * HousingEmmigrationRatePerMissing + population * HousingEmmigrationRateBase;
 			return happinessEmmigration + spaceEmmigration;
 		}
 

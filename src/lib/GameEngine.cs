@@ -178,6 +178,11 @@ namespace IncrementalSociety
 		public double GetHappiness (GameState state) => PopulationNeeds.CalculateHappiness (state).Value;
 		public double GetGrowthRate (GameState state) => PopulationEngine.CalculateGrowthRate (state);
 
+		public (double PopGrowth, double Immigration, double Emmigration, double Death) GetGrowthComponents (GameState state)
+		{
+			return PopulationEngine.GetGrowthComponents (state);
+		}
+
 		public Resources GetResourceStorage (GameState state) => ResourceEngine.GetResourceStorage (state);
 
 		public List<ResearchItem> GetCurrentResearchOptions (GameState state) => ResearchEngine.GetCurrentResearchOptions (state);

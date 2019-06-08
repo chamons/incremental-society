@@ -35,17 +35,23 @@ namespace IncrementalSociety.Population
 			BaseDeathRate = json.Game.BaseDeathRate;
 		}
 
-		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
+		public (double PopGrowth, double Immigration, double Emmigration, double Death) GetGrowthComponents (GameState state, PopulationRatio happy, PopulationRatio health, double effectivePopCap)
 		{
-			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
 			double freeCap = effectivePopCap - state.Population;
 
 			double popGrowthRate = CalculatePopulationGrowthRate (state.Population, happy);
 			double immigrationRate = CalculateImmigrationRate (freeCap, happy);
 			double emmigrationRate = CalculateEmmigrationRate (state.Population, happy, freeCap);
 			double deathRate = CalculatePopulationDeathRate (state.Population, health);
+			return (popGrowthRate, immigrationRate, emmigrationRate, deathRate);
+		}
 
-			double growthRate = popGrowthRate + immigrationRate - emmigrationRate - deathRate;
+		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)
+		{
+			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
+			var rate = GetGrowthComponents (state, happy, health, effectivePopCap);
+
+			double growthRate = rate.PopGrowth + rate.Immigration - rate.Emmigration - rate.Death;
 
 			growthRate = RoundGrowthRateAboveMinimumStep (growthRate);
 			growthRate = RoundGrowthToPreventOverflow (state.Population, growthRate, effectivePopCap);

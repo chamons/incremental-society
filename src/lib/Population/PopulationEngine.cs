@@ -41,11 +41,18 @@ namespace IncrementalSociety.Population
 
 		public double CalculateGrowthRate (GameState state)
 		{
-			var neededResource = PopulationResources.GetRequirementsForCurrentPopulation (state);
 			var happiness = PopulationNeeds.CalculateHappiness (state);
 			var health = PopulationNeeds.CalculateHealth (state);
 
 			return PopulationGrowthCurve.GetGrowthRate (state, happiness, health);
+		}
+
+		public (double PopGrowth, double Immigration, double Emmigration, double Death) GetGrowthComponents (GameState state)
+		{
+			var happiness = PopulationNeeds.CalculateHappiness (state);
+			var health = PopulationNeeds.CalculateHealth (state);
+			double effectivePopCap = PopulationCapacity.FindEffectiveCap (state);
+			return PopulationGrowthCurve.GetGrowthComponents (state, happiness, health, effectivePopCap);
 		}
 	}
 }

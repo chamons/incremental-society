@@ -9,7 +9,7 @@
 		double currentGrowthRate = GrowthRate;
 		string growthStyle = StyleService.GetDeltaClass (currentGrowthRate);
 	}
-	Population: @Population / @PopulationCap <div class="d-inline @growthStyle">(@currentGrowthRate)</div>
+	<div title="@CreatePopulationDetailTooltip()">Population: @Population / @PopulationCap <div class="d-inline @growthStyle">(@currentGrowthRate)</div></div>
 	<div>Effective Capacity: @EffectiveCap</div>
 	@if (PopulationService.IsPopulationStarving)
 	{
@@ -54,5 +54,14 @@
 	void Increment ()
 	{
 		GameService.ApplyAction ("Grow Population Cap", new string[] {});
+	}
+
+	string CreatePopulationDetailTooltip ()
+	{
+		var components = PopulationService.GrowthComponents;
+		return $@"Births: {Round (components.PopGrowth)}
+Deaths: {Round (components.Death)}
+Immigration: {Round (components.Immigration)}
+Emmigration: {Round (components.Emmigration)}";
 	}
 }

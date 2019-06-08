@@ -23,6 +23,7 @@ namespace IncrementalSociety.Web.Services
 		public double Health => GameService.Engine.GetHealth (State);
 		public double Happiness => GameService.Engine.GetHappiness (State);
 		public double GrowthRate => GameService.Engine.GetGrowthRate (State);
+		public (double PopGrowth, double Immigration, double Emmigration, double Death) GrowthComponents => GameService.Engine.GetGrowthComponents (State);
 
 		public bool CanDecrement => GameService.Engine.CanDecreasePopulationCap (State);
 		public bool CanIncrement => GameService.Engine.CanIncreasePopulationCap (State);

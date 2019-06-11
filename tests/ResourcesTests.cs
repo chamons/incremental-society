@@ -218,5 +218,22 @@ namespace IncrementalSociety.Tests
 
 			Assert.Equal(1.5, builder["Food"], 1);
 		}
+
+		[Fact]
+		public void FloorAtZero ()
+		{
+			var offset = CreateBuilder("Food", 1.5);
+			var result = Config.Create();
+			result = result.Subtract (offset);
+			Assert.Equal(-1.5, result["Food"], 1);
+			result = result.FloorAtZero ();
+			Assert.Equal(0, result["Food"], 1);
+
+			var builder = Config.CreateBuilder ();
+			builder.Subtract (offset);
+			Assert.Equal(-1.5, builder["Food"], 1);
+			builder.FloorAtZero ();
+			Assert.Equal(0, builder["Food"], 1);
+		}
 	}
 }

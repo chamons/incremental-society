@@ -4,6 +4,7 @@ using System.Linq;
 
 using Xunit;
 
+using IncrementalSociety.Population;
 using IncrementalSociety.Model;
 using IncrementalSociety.Json;
 using IncrementalSociety.Utilities;
@@ -56,6 +57,9 @@ namespace IncrementalSociety.Tests
 			},
 			{
 				""name"": ""Wood""
+			},
+			{
+				""name"": ""Pottery""
 			}
 			%TEST_SPECIFIC%
 		]
@@ -135,9 +139,17 @@ namespace IncrementalSociety.Tests
 			{
 				""name"": ""Housing"",
 				""valid_areas"": [""Plains""],
+				""does_not_require_job"": true,
 				""housing_capacity"": [
 					{ ""capacity"": 200 },
 					{ ""required_technology"": ""Expansion"", ""capacity"": 200 }
+				]
+			},
+			{
+				""name"": ""Potter"",
+				""valid_areas"": [""Plains""],
+				""yield"": [
+					{ ""name"": ""Pottery"", ""amount"" : .15 }
 				]
 			}
 			%TEST_SPECIFIC%
@@ -164,11 +176,29 @@ namespace IncrementalSociety.Tests
 				{ ""name"": ""Water"", ""amount"" : .01 },
 				{ ""required_technology"": ""Bronze Age"", ""name"": ""Food"", ""amount"" : .01 },
 			],
+			""luxary_population_needs"": [
+				{
+					""name"": ""Pottery"", ""amount"": 0.01
+				}
+			],
 			""region_capacity"": [
 				{ ""capacity"": 3 },
 				{  ""required_technology"": ""Expansion"", ""capacity"": 1 }
 			],
-			""min_population"" :  100
+			""min_population"" :  100,
+			""happiness_gain_per_luxary_full"": 0.1,
+			""happiness_loss_per_luxary_missing"": 0.2,
+			""happiness_loss_pop_starting"": 10,
+			""happiness_loss_per_extra_pop"": 0.1,
+			""health_loss_pop_starting"": 10,
+			""health_loss_per_extra_pop"": 0.1,
+			""min_growth"": 0.2,
+			""base_pop_growth_rate"": 0.01,
+			""base_immigration_rate"": 0.01,
+			""base_emmigration_rate"": 0.01,
+			""housing_emmigration_rate_per_missing"": 0.05,
+			""housing_emmigration_rate_base"": 0.01,
+			""base_death_rate"": 0.005
 			%TEST_SPECIFIC%
 		}";
 
@@ -217,29 +247,16 @@ namespace IncrementalSociety.Tests
 			return new GameState (1, "Stone", region.Yield(), resourceEngine.ResourceConfig.Create (), 150, 200, edictEngine.EdictConfig.Create ());
 		}
 
-		protected ResourceEngine CreateResourceEngine ()
-		{
-			return new ResourceEngine (Loader.Value);
-		}
-
-		protected BuildingEngine CreateBuildingEngine ()
-		{
-			return new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
-		}
-
-		protected PopulationEngine CreatePopEngine ()
-		{
-			return new PopulationEngine (CreateResourceEngine(), Loader.Value);
-		}
-
-		protected ResearchEngine CreateResearchEngine ()
-		{
-			return new ResearchEngine (CreateResourceEngine (), Loader.Value);
-		}
-
-		protected EdictsEngine CreateEdictsEngine ()
-		{
-			return new EdictsEngine (CreateResourceEngine (), Loader.Value);
-		}
+		protected PopUnits CreatePopUnits () => new PopUnits (Loader.Value.Game.MinPopulation);
+		protected ResourceEngine CreateResourceEngine () => new ResourceEngine (Loader.Value);
+		protected BuildingEngine CreateBuildingEngine () => new BuildingEngine (CreateResourceEngine (), CreatePopEngine ());
+		protected ResearchEngine CreateResearchEngine () => new ResearchEngine (CreateResourceEngine (), Loader.Value);
+		protected EdictsEngine CreateEdictsEngine () => new EdictsEngine (CreateResourceEngine (), Loader.Value);
+		protected PopulationResources CreatePopulationResources () => new PopulationResources (CreateResourceEngine(), CreatePopulationBuildingInfo (), Loader.Value);
+		protected PopulationCapacity CreatePopulationCapacity () => new PopulationCapacity (CreateResourceEngine(), CreatePopulationResources (), CreatePopulationBuildingInfo (), CreatePopUnits ());
+		protected PopulationEngine CreatePopEngine () => new PopulationEngine (CreateResourceEngine(), CreatePopulationCapacity (), CreatePopulationResources (), CreatePopulationNeeds (), Loader.Value);
+		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopUnits ());
+		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value);
+		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopUnits (), CreatePopulationResources ());
 	}
 }

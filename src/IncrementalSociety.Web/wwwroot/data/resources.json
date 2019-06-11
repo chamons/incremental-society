@@ -1,29 +1,32 @@
 {
-    "resources": [
-        {
-            "name": "Food"
-        },
-        {
-            "name": "Wood"
-        },
-        {
-            "name": "Clay"
-        },
-        {
-            "name": "Bricks"
-        },
-        {
-            "name": "Stone"
-        },
-        {
-            "name": "Tools",
-            "image_has_age_prefix":  true
-        },
-        {
-            "name": "Charcoal"
-        },
-        {
-            "name": "Knowledge"
-        }
-    ]
+	"resources": [
+		{
+			"name": "Food"
+		},
+		{
+			"name": "Wood"
+		},
+		{
+			"name": "Clay"
+		},
+		{
+			"name": "Bricks"
+		},
+		{
+			"name": "Stone"
+		},
+		{
+			"name": "Tools",
+			"image_has_age_prefix": true
+		},
+		{
+			"name": "Charcoal"
+		},
+		{
+			"name": "Knowledge"
+		},
+		{
+			"name": "Pottery"
+		}
+	]
 }

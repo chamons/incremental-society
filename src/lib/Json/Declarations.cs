@@ -61,11 +61,53 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
+		[JsonProperty("luxary_population_needs")]
+		public Yield[] LuxaryPopulationNeeds { get; set; }
+
 		[JsonProperty ("region_capacity")]
 		public CapacityDeclaration [] RegionCapacityDeclarations { get; set; }
 
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
+
+		[JsonProperty ("happiness_gain_per_luxary_full")]
+		public double HappinessGainPerFullLuxary { get; set; }
+
+		[JsonProperty ("happiness_loss_per_luxary_missing")]
+		public double HappinessLossPerLuxaryMissing { get; set; }
+
+		[JsonProperty ("happiness_loss_pop_starting")]
+		public double HappinessLossStaring { get; set; }
+
+		[JsonProperty ("happiness_loss_per_extra_pop")]
+		public double HappinessLossPerExtraPop { get; set; }
+
+		[JsonProperty ("health_loss_pop_starting")]
+		public double HealthLossStaring { get; set; }
+
+		[JsonProperty ("health_loss_per_extra_pop")]
+		public double HealthLossPerExtraPop { get; set; }
+
+		[JsonProperty ("base_pop_growth_rate")]
+		public double BasePopGrowthRate { get; set; }
+
+		[JsonProperty ("min_growth")]
+		public double MinGrowth { get; set; }
+
+		[JsonProperty ("base_immigration_rate")]
+		public double BaseImmigrationRate { get; set; }
+
+		[JsonProperty ("base_emmigration_rate")]
+		public double BaseEmmigrationRate { get; set; }
+
+		[JsonProperty ("housing_emmigration_rate_per_missing")]
+		public double HousingEmmigrationRatePerMissing { get; set; }
+
+		[JsonProperty ("housing_emmigration_rate_base")]
+		public double HousingEmmigrationRateBase { get; set; }
+
+		[JsonProperty ("base_death_rate")]
+		public double BaseDeathRate { get; set; }
 	}
 
 	public partial class BuildingDeclarations

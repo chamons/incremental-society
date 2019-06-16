@@ -14,8 +14,8 @@ namespace IncrementalSociety.Population
 		ResourceEngine ResourceEngine;
 		PopulationResources PopulationResources;
 		PopUnits PopUnits;
-		double HappinessGainPerFullLuxary;
-		double HappinessLossPerLuxaryMissing;
+		double HappinessGainPerFullLuxury;
+		double HappinessLossPerLuxuryMissing;
 		double HappinessLossStaring;
 		double HappinessLossPerExtraPop;
 		double HealthLossStaring;
@@ -28,15 +28,15 @@ namespace IncrementalSociety.Population
 			ResourceEngine = resourceEngine;
 			PopulationResources = populationResources;
 			PopUnits = popUnits;
-			HappinessGainPerFullLuxary = json.Game.HappinessGainPerFullLuxary;
-			HappinessLossPerLuxaryMissing = json.Game.HappinessLossPerLuxaryMissing;
+			HappinessGainPerFullLuxury = json.Game.HappinessGainPerFullLuxury;
+			HappinessLossPerLuxuryMissing = json.Game.HappinessLossPerLuxuryMissing;
 			HappinessLossStaring = json.Game.HappinessLossStaring;
 			HappinessLossPerExtraPop = json.Game.HappinessLossPerExtraPop;
 			HealthLossStaring = json.Game.HealthLossStaring;
 			HealthLossPerExtraPop = json.Game.HealthLossPerExtraPop;
 		}
 
-		public PopulationRatio CalculateHappiness (double population, IEnumerable <double> luxaryGoods, bool starving)
+		public PopulationRatio CalculateHappiness (double population, IEnumerable <double> luxuryGoods, bool starving)
 		{
 			// No one should be happy when people are actively starving in your country
 			if (starving)
@@ -49,11 +49,11 @@ namespace IncrementalSociety.Population
 			if (popsOver > 0)
 				happiness -= popsOver * HappinessLossPerExtraPop;
 
-			foreach (var luxRatio in luxaryGoods) {
+			foreach (var luxRatio in luxuryGoods) {
 				if (luxRatio >= 1)
-					happiness += HappinessGainPerFullLuxary;
+					happiness += HappinessGainPerFullLuxury;
 				else
-					happiness -= HappinessLossPerLuxaryMissing * (1 - luxRatio);
+					happiness -= HappinessLossPerLuxuryMissing * (1 - luxRatio);
 			}
 
 			return PopulationRatio.Create (MathUtilities.Clamp (happiness, 0, 1));
@@ -61,7 +61,7 @@ namespace IncrementalSociety.Population
 
 		public PopulationRatio CalculateHappiness (GameState state)
 		{
-			return CalculateHappiness (state.Population, PopulationResources.FindLuxaryRatios (state), PopulationResources.IsPopulationStarving (state));
+			return CalculateHappiness (state.Population, PopulationResources.FindLuxuryRatios (state), PopulationResources.IsPopulationStarving (state));
 		}
 
 		public PopulationRatio CalculateHealth (double population)

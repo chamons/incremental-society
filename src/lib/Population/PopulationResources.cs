@@ -14,14 +14,14 @@ namespace IncrementalSociety.Population
 		ResourceEngine ResourceEngine;
 		PopulationBuildingInfo PopulationBuildingInfo;
 		JsonLoader Json;
-		List<string> LuxaryNeedsNames;
+		List<string> LuxuryNeedsNames;
 
 		public PopulationResources (ResourceEngine resourceEngine, PopulationBuildingInfo populationBuildingInfo, JsonLoader json)
 		{
 			ResourceEngine = resourceEngine;
 			PopulationBuildingInfo = populationBuildingInfo;
 			Json = json;
-			LuxaryNeedsNames = Json.Game.LuxaryPopulationNeeds.Select (x => x.Name).ToList ();
+			LuxuryNeedsNames = Json.Game.LuxuryPopulationNeeds.Select (x => x.Name).ToList ();
 		}
 
 		public Resources GetRequirementsPerPop (GameState state)
@@ -36,16 +36,16 @@ namespace IncrementalSociety.Population
 			return GetRequirementsPerPop (state).Multiply (population);
 		}
 
-		public Resources GetLuxaryPerPop (GameState state)
+		public Resources GetLuxuryPerPop (GameState state)
 		{
-			return ResourceEngine.GetResourcesBasedOnTech (state, Json.Game.LuxaryPopulationNeeds);
+			return ResourceEngine.GetResourcesBasedOnTech (state, Json.Game.LuxuryPopulationNeeds);
 		}
 
-		public Resources GetLuxaryForCurrentPopulation (GameState state) => GetLuxaryForCurrentPopulation (state, state.Population);
+		public Resources GetLuxuryForCurrentPopulation (GameState state) => GetLuxuryForCurrentPopulation (state, state.Population);
 
-		public Resources GetLuxaryForCurrentPopulation (GameState state, double population)
+		public Resources GetLuxuryForCurrentPopulation (GameState state, double population)
 		{
-			return GetLuxaryPerPop (state).Multiply (population);
+			return GetLuxuryPerPop (state).Multiply (population);
 		}
 
 		public double FindResourceEffectivePopCap (GameState state, Resources resourcesPerTick)
@@ -84,15 +84,15 @@ namespace IncrementalSociety.Population
 			return !nextTickResources.HasMoreThan (neededResource);
 		}
 
-		public IEnumerable<double> FindLuxaryRatios (GameState state)
+		public IEnumerable<double> FindLuxuryRatios (GameState state)
 		{
-			double [] ratios = new double [LuxaryNeedsNames.Count];
+			double [] ratios = new double [LuxuryNeedsNames.Count];
 
-			var luxaryResource = GetLuxaryForCurrentPopulation (state);
+			var luxuryResource = GetLuxuryForCurrentPopulation (state);
 			var nextTickResources = ResourcesWithNextTick (state);
-			for (int i = 0; i < LuxaryNeedsNames.Count; ++i) {
-				string luxaryName = LuxaryNeedsNames[i];
-				ratios [i] = MathUtilities.Clamp (nextTickResources[luxaryName] / luxaryResource[luxaryName], 0, 1);
+			for (int i = 0; i < LuxuryNeedsNames.Count; ++i) {
+				string luxuryName = LuxuryNeedsNames[i];
+				ratios [i] = MathUtilities.Clamp (nextTickResources[luxuryName] / luxuryResource[luxuryName], 0, 1);
 			}
 			return ratios;
 		}

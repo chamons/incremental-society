@@ -41,9 +41,9 @@ namespace IncrementalSociety.Population
 
 			double popGrowthRate = CalculatePopulationGrowthRate (state.Population, happy);
 			double immigrationRate = CalculateImmigrationRate (freeCap, happy);
-			double emmigrationRate = CalculateEmmigrationRate (state.Population, happy, freeCap);
+			double emigrationRate = CalculateEmmigrationRate (state.Population, happy, freeCap);
 			double deathRate = CalculatePopulationDeathRate (state.Population, health);
-			return (popGrowthRate, immigrationRate, emmigrationRate, deathRate);
+			return (popGrowthRate, immigrationRate, emigrationRate, deathRate);
 		}
 
 		public double GetGrowthRate (GameState state, PopulationRatio happy, PopulationRatio health)

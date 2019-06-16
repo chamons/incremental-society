@@ -176,7 +176,7 @@ namespace IncrementalSociety.Tests
 				{ ""name"": ""Water"", ""amount"" : .01 },
 				{ ""required_technology"": ""Bronze Age"", ""name"": ""Food"", ""amount"" : .01 },
 			],
-			""luxary_population_needs"": [
+			""luxury_population_needs"": [
 				{
 					""name"": ""Pottery"", ""amount"": 0.01
 				}
@@ -186,8 +186,8 @@ namespace IncrementalSociety.Tests
 				{  ""required_technology"": ""Expansion"", ""capacity"": 1 }
 			],
 			""min_population"" :  100,
-			""happiness_gain_per_luxary_full"": 0.1,
-			""happiness_loss_per_luxary_missing"": 0.2,
+			""happiness_gain_per_luxury_full"": 0.1,
+			""happiness_loss_per_luxury_missing"": 0.2,
 			""happiness_loss_pop_starting"": 10,
 			""happiness_loss_per_extra_pop"": 0.1,
 			""health_loss_pop_starting"": 10,
@@ -195,9 +195,9 @@ namespace IncrementalSociety.Tests
 			""min_growth"": 0.2,
 			""base_pop_growth_rate"": 0.01,
 			""base_immigration_rate"": 0.01,
-			""base_emmigration_rate"": 0.01,
-			""housing_emmigration_rate_per_missing"": 0.05,
-			""housing_emmigration_rate_base"": 0.01,
+			""base_emigration_rate"": 0.01,
+			""housing_emigration_rate_per_missing"": 0.05,
+			""housing_emigration_rate_base"": 0.01,
 			""base_death_rate"": 0.005
 			%TEST_SPECIFIC%
 		}";

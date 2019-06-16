@@ -59,33 +59,33 @@ namespace IncrementalSociety.Tests.Population
 		}
 
 		[Fact]
-		public void GetLuxaryResourcesForPop ()
+		public void GetLuxuryResourcesForPop ()
 		{
 			var resourceFinder = CreatePopulationResources ();
 			var state = CreateGameState ();
 			state = state.WithPopulation (100);
 
-			var reqs = resourceFinder.GetLuxaryForCurrentPopulation (state);
+			var reqs = resourceFinder.GetLuxuryForCurrentPopulation (state);
 			Assert.Equal (1, reqs["Pottery"]);
 			state = state.WithPopulation (200);
-			reqs = resourceFinder.GetLuxaryForCurrentPopulation (state);
+			reqs = resourceFinder.GetLuxuryForCurrentPopulation (state);
 			Assert.Equal (2, reqs["Pottery"]);
 		}
 
 		[Fact]
-		public void LuxaryResourceRatios ()
+		public void LuxuryResourceRatios ()
 		{
 			GameState state = CreateGameState ();
 			BuildingEngine buildingEngine = CreateBuildingEngine ();
 
 			var resourceFinder = CreatePopulationResources ();
-			var ratios = resourceFinder.FindLuxaryRatios (state).ToList ();
+			var ratios = resourceFinder.FindLuxuryRatios (state).ToList ();
 			Assert.Single (ratios);
 			Assert.Equal(0, ratios[0]);
 
 			state = buildingEngine.Build (state, state.Regions[0].Name, 0, "Potter");
 
-			ratios = resourceFinder.FindLuxaryRatios (state).ToList ();
+			ratios = resourceFinder.FindLuxuryRatios (state).ToList ();
 			Assert.Single (ratios);
 			Assert.Equal(0.1, ratios[0], 3);
 		}

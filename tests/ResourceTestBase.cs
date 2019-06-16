@@ -195,9 +195,9 @@ namespace IncrementalSociety.Tests
 			""min_growth"": 0.2,
 			""base_pop_growth_rate"": 0.01,
 			""base_immigration_rate"": 0.01,
-			""base_emmigration_rate"": 0.01,
-			""housing_emmigration_rate_per_missing"": 0.05,
-			""housing_emmigration_rate_base"": 0.01,
+			""base_emigration_rate"": 0.01,
+			""housing_emigration_rate_per_missing"": 0.05,
+			""housing_emigration_rate_base"": 0.01,
 			""base_death_rate"": 0.005
 			%TEST_SPECIFIC%
 		}";

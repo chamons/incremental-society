@@ -4,6 +4,7 @@ using System.Linq;
 
 using Xunit;
 
+using IncrementalSociety.Generator;
 using IncrementalSociety.Population;
 using IncrementalSociety.Model;
 using IncrementalSociety.Json;
@@ -13,19 +14,28 @@ namespace IncrementalSociety.Tests
 {
 	public abstract class ResourceTestBase
 	{
-		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraRegionJSON ="", string extraFeatureJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
+		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON ="", string extraFeatureJSON = "", string extraClimateJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
 			return new JsonLoader(BuildingJSON.Replace("%TEST_SPECIFIC%", extraBuildingJSON),
 								GameJSON.Replace("%TEST_SPECIFIC%", extraGameJSON),
-								AreaJSON.Replace("%AREA_SPECIFIC%", extraRegionJSON).Replace("%FEATURE_SPECIFIC%", extraFeatureJSON),
+								AreaJSON.Replace("%AREA_SPECIFIC%", extraAreaJSON).
+									Replace("%FEATURE_SPECIFIC%", extraFeatureJSON).
+									Replace ("%CLIMATE_SPECIFIC%", extraClimateJSON),
 								ResourceJSON.Replace("%TEST_SPECIFIC%", extraResourceJSON),
 								ResearchJSON.Replace("%TEST_SPECIFIC%", extraResearchJSON),
 								EdictsJSON.Replace("%TEST_SPECIFIC%", extraEdictsJSON)); ;
 		}
 
-		protected void ConfigureCustomJsonPayload (string extraBuildingJSON = "", string extraGameJSON = "", string extraRegionJSON = "", string extraFeatureJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
+		protected void ConfigureCustomJsonPayload (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON = "", string extraFeatureJSON = "", string extraClimateJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
-			Loader = new Lazy<JsonLoader> (CreateJsonLoader (extraBuildingJSON, extraGameJSON, extraRegionJSON, extraFeatureJSON, extraResourceJSON, extraResearchJSON, extraEdictsJSON));
+			Loader = new Lazy<JsonLoader> (CreateJsonLoader (extraBuildingJSON: extraBuildingJSON,
+				extraGameJSON: extraGameJSON,
+				extraAreaJSON: extraAreaJSON,
+				extraFeatureJSON: extraFeatureJSON,
+				extraClimateJSON: extraClimateJSON,
+				extraResourceJSON: extraResourceJSON,
+				extraResearchJSON: extraResearchJSON,
+				extraEdictsJSON: extraEdictsJSON));
 		}
 
 		Lazy<JsonLoader> Loader = new Lazy<JsonLoader> (() => CreateJsonLoader ());
@@ -168,6 +178,9 @@ namespace IncrementalSociety.Tests
 			],
 			""features"": [
 				%FEATURE_SPECIFIC%
+			],
+			""climates"": [
+				%CLIMATE_SPECIFIC%
 			]
 		}";
 
@@ -258,5 +271,6 @@ namespace IncrementalSociety.Tests
 		protected PopulationBuildingInfo CreatePopulationBuildingInfo () => new PopulationBuildingInfo (CreateResourceEngine(), CreatePopUnits ());
 		protected PopulationGrowthCurve CreatePopulationGrowthCurve () => new PopulationGrowthCurve (CreatePopulationCapacity (), Loader.Value);
 		protected PopulationNeeds CreatePopulationNeeds () => new PopulationNeeds (CreateResourceEngine (), Loader.Value, CreatePopUnits (), CreatePopulationResources ());
+		protected RegionGenerator CreateRegionGenerator () => new RegionGenerator (Loader.Value);
 	}
 }

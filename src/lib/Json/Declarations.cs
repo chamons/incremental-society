@@ -61,8 +61,8 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("population_needs")]
 		public Yield[] PopulationNeeds { get; set; }
 
-		[JsonProperty("luxary_population_needs")]
-		public Yield[] LuxaryPopulationNeeds { get; set; }
+		[JsonProperty("luxury_population_needs")]
+		public Yield[] LuxuryPopulationNeeds { get; set; }
 
 		[JsonProperty ("region_capacity")]
 		public CapacityDeclaration [] RegionCapacityDeclarations { get; set; }
@@ -70,11 +70,11 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("min_population")]
 		public int MinPopulation { get; set; }
 
-		[JsonProperty ("happiness_gain_per_luxary_full")]
-		public double HappinessGainPerFullLuxary { get; set; }
+		[JsonProperty ("happiness_gain_per_luxury_full")]
+		public double HappinessGainPerFullLuxury { get; set; }
 
-		[JsonProperty ("happiness_loss_per_luxary_missing")]
-		public double HappinessLossPerLuxaryMissing { get; set; }
+		[JsonProperty ("happiness_loss_per_luxury_missing")]
+		public double HappinessLossPerLuxuryMissing { get; set; }
 
 		[JsonProperty ("happiness_loss_pop_starting")]
 		public double HappinessLossStaring { get; set; }

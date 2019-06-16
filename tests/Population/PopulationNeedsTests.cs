@@ -17,15 +17,15 @@ namespace IncrementalSociety.Tests.Population
 	public class PopulationNeedsTests : ResourceTestBase
 	{
 		[Fact]
-		public void PopulationNeedsLuxaryGoodsForHappiness ()
+		public void PopulationNeedsLuxuryGoodsForHappiness ()
 		{
-			// Each missing luxary good is up to 20% unhappiness
+			// Each missing luxury good is up to 20% unhappiness
 			var needs = CreatePopulationNeeds ();
 			Assert.Equal (1, needs.CalculateHappiness (200, new double [] { }, false).Value, 3);
 			Assert.Equal (.8, needs.CalculateHappiness (200, new double [] { 0 }, false).Value, 3);
 			Assert.Equal (.6, needs.CalculateHappiness (200, new double [] { 0, 0 }, false).Value, 3);
 
-			// Each complete luxary good needs is 10% bonus
+			// Each complete luxury good needs is 10% bonus
 			Assert.Equal (1, needs.CalculateHappiness (200, new double [] { 1 }, false).Value, 3);
 
 			// And they can cancel out somewhat
@@ -33,7 +33,7 @@ namespace IncrementalSociety.Tests.Population
 		}
 
 		[Fact]
-		public void PopulationLuxaryFromActualBulidings ()
+		public void PopulationLuxuryFromActualBulidings ()
 		{
 			GameState state = CreateGameState ();
 			state = state.WithResources (Create ("Water", 100));

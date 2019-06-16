@@ -22,4 +22,4 @@ records::
 	$(Q) dotnet records src/lib/Model/GameState.csx -o src/lib/Model/
 
 blog::
-	$(Q) cd docs/blog && bundle exec jekyll serve
+	$(Q) cd docs && bundle exec jekyll serve

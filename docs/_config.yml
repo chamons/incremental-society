@@ -17,7 +17,7 @@ title: Incremental Society Development
 email: chris.hamons@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Developing incremental-society, an civilization building incremental game one incremental commit at a time.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/incremental-society" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: IfErrThrowBrick
 github_username: chamons

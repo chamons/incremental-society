@@ -44,12 +44,14 @@ namespace IncrementalSociety.Generator
 	public class RegionGenerator
 	{
 		JsonLoader Json;
+		NameGenerator NameGenerator;
 		Dictionary<string, Ranges> ClimateRanges = new Dictionary<string, Ranges> ();
 		Random Random;
 
 		public RegionGenerator (JsonLoader json)
 		{
 			Json = json;
+			NameGenerator = new NameGenerator (json);
 			Random = new Random ();
 			foreach (var climate in json.Areas.Climates)
 				ClimateRanges [climate.Name] = new Ranges (climate.AreaChances.Select (x => (x.Name, x.Chance)));
@@ -60,6 +62,12 @@ namespace IncrementalSociety.Generator
 			double r = Random.NextDouble ();
 			string areaType = ClimateRanges[climate][r];
 			return new Area (areaType);
+		}
+
+		public Region CreateRegion (string climate)
+		{
+			var region = new Region (NameGenerator.Generate (), null);
+			return region;
 		}
 	}
 }

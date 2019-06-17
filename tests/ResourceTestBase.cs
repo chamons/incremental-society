@@ -14,16 +14,17 @@ namespace IncrementalSociety.Tests
 {
 	public abstract class ResourceTestBase
 	{
-		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON ="", string extraFeatureJSON = "", string extraClimateJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
+		static JsonLoader CreateJsonLoader (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON = "", string extraFeatureJSON = "", string extraClimateJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
 		{
-			return new JsonLoader(BuildingJSON.Replace("%TEST_SPECIFIC%", extraBuildingJSON),
-								GameJSON.Replace("%TEST_SPECIFIC%", extraGameJSON),
-								AreaJSON.Replace("%AREA_SPECIFIC%", extraAreaJSON).
-									Replace("%FEATURE_SPECIFIC%", extraFeatureJSON).
+			return new JsonLoader (BuildingJSON.Replace ("%TEST_SPECIFIC%", extraBuildingJSON),
+								GameJSON.Replace ("%TEST_SPECIFIC%", extraGameJSON),
+								AreaJSON.Replace ("%AREA_SPECIFIC%", extraAreaJSON).
+									Replace ("%FEATURE_SPECIFIC%", extraFeatureJSON).
 									Replace ("%CLIMATE_SPECIFIC%", extraClimateJSON),
-								ResourceJSON.Replace("%TEST_SPECIFIC%", extraResourceJSON),
-								ResearchJSON.Replace("%TEST_SPECIFIC%", extraResearchJSON),
-								EdictsJSON.Replace("%TEST_SPECIFIC%", extraEdictsJSON)); ;
+								ResourceJSON.Replace ("%TEST_SPECIFIC%", extraResourceJSON),
+								ResearchJSON.Replace ("%TEST_SPECIFIC%", extraResearchJSON),
+								EdictsJSON.Replace ("%TEST_SPECIFIC%", extraEdictsJSON),
+								NamesJSON);
 		}
 
 		protected void ConfigureCustomJsonPayload (string extraBuildingJSON = "", string extraGameJSON = "", string extraAreaJSON = "", string extraFeatureJSON = "", string extraClimateJSON = "", string extraResourceJSON = "", string extraResearchJSON = "", string extraEdictsJSON = "")
@@ -236,6 +237,11 @@ namespace IncrementalSociety.Tests
 			""edicts"" : [
 				%TEST_SPECIFIC%
 			]
+		}";
+
+		const string NamesJSON = @"{
+			""start"": [ ""Test"" ],
+			""end"": [ ""Land"" ],
 		}";
 
 		protected GameState CreateGameState (int camps = 0, int workshops = 0, int smokers = 0, int holes = 0)

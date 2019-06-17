@@ -28,6 +28,10 @@ namespace IncrementalSociety.Generator
 		NameData Names;
 		Random Random;
 
+		public NameGenerator (Json.JsonLoader loader) : this (loader.RegionNameJSON)
+		{
+		}
+
 		public NameGenerator (string nameJson)
 		{
 			Names = JsonConvert.DeserializeObject<NameData>(nameJson);

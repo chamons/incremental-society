@@ -78,7 +78,8 @@ namespace IncrementalSociety.Generator.Tests
 		[Fact]
 		public void RegionHasName ()
 		{
-
+			var regionGenerator = CreateRegionGenerator ();
+			Assert.Equal ("TestLand", regionGenerator.CreateRegion ("TestClimate").Name);
 		}
 	}
 }

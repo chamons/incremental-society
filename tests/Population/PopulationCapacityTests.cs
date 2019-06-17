@@ -5,11 +5,12 @@ using System.Collections.Immutable;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
+using IncrementalSociety.Tests;
 
 using Newtonsoft.Json;
 using Xunit;
 
-namespace IncrementalSociety.Tests.Population
+namespace IncrementalSociety.Population.Tests
 {
 	public class PopulationCapacityTests : ResourceTestBase
 	{

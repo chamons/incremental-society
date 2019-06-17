@@ -41,32 +41,56 @@ namespace IncrementalSociety.Generator
 		}
 	}
 
+	public enum RegionSize { Small, Medium, Large }
+
 	public class RegionGenerator
 	{
-		JsonLoader Json;
 		NameGenerator NameGenerator;
 		Dictionary<string, Ranges> ClimateRanges = new Dictionary<string, Ranges> ();
+		Dictionary<string, double> ClimateFeatureChance = new Dictionary<string, double> ();
+
 		Random Random;
 
 		public RegionGenerator (JsonLoader json)
 		{
-			Json = json;
 			NameGenerator = new NameGenerator (json);
 			Random = new Random ();
-			foreach (var climate in json.Areas.Climates)
-				ClimateRanges [climate.Name] = new Ranges (climate.AreaChances.Select (x => (x.Name, x.Chance)));
+			foreach (var climate in json.Areas.Climates) {
+				ClimateRanges[climate.Name] = new Ranges (climate.AreaChances.Select (x => (x.Name, x.Chance)));
+				ClimateFeatureChance[climate.Name] = climate.FeatureChance * 100;
+			}
 		}
 
 		public Area CreateArea (string climate)
 		{
-			double r = Random.NextDouble ();
-			string areaType = ClimateRanges[climate][r];
+			string areaType = ClimateRanges[climate][Random.NextDouble ()];
+			if (Random.WithChance (ClimateFeatureChance[climate)))
+			{
+				// Add a random feature for that area
+			}
+
 			return new Area (areaType);
 		}
 
-		public Region CreateRegion (string climate)
+		int GetRegionCount (RegionSize size)
 		{
-			var region = new Region (NameGenerator.Generate (), null);
+			switch (size)
+			{
+				case RegionSize.Small:
+					return Random.Next (3, 4);
+				case RegionSize.Medium:
+					return Random.Next (4, 5);
+				case RegionSize.Large:
+					return Random.Next (6, 7);
+				default:
+					throw new NotImplementedException ("Unknown RegionSize");
+			}
+		}
+
+		public Region CreateRegion (RegionSize size, string climate)
+		{
+			var areas = GetRegionCount (size).Range ().Select (x => CreateArea (climate));
+			var region = new Region (NameGenerator.Generate (), areas);
 			return region;
 		}
 	}

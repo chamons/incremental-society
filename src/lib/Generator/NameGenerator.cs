@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using IncrementalSociety.Utilities;
+
 namespace IncrementalSociety.Generator
 {
 	public class NameData
@@ -38,11 +40,6 @@ namespace IncrementalSociety.Generator
 			Random = new Random ();
 		}
 
-		bool WithChance (int chance)
-		{
-			return (Random.NextDouble () * 100) < chance;
-		}
-
 		string PickItem (string [] list)
 		{
 			if (list == null)
@@ -55,17 +52,17 @@ namespace IncrementalSociety.Generator
 		{
 			StringBuilder name = new StringBuilder ();
 
-			if (WithChance (15))
+			if (Random.WithChance (15))
 				name.Append (PickItem (Names.Prefixes));
 
 			name.Append (PickItem (Names.Starts));
 
-			if (WithChance (50))
+			if (Random.WithChance (50))
 				name.Append (PickItem (Names.Middles));
 
 			name.Append (PickItem (Names.Ends));
 
-			if (WithChance (15))
+			if (Random.WithChance (15))
 				name.Append (PickItem (Names.Posts));
 
 			return name.ToString ();

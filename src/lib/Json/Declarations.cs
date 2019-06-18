@@ -32,10 +32,6 @@ namespace IncrementalSociety.Json
 	{
 		[JsonProperty ("name")]
 		public string Name { get; set; }
-		[JsonProperty ("resources")]
-		public List<string> Resources { get; set; }
-		[JsonProperty ("can_spawn")]
-		public bool? CanSpawn { get; set; }
 		[JsonProperty ("bonus_yield")]
 		public Yield[] BonusYield { get; set; }
 	}
@@ -168,8 +164,8 @@ namespace IncrementalSociety.Json
 		[JsonProperty ("conversion_yield", NullValueHandling = NullValueHandling.Ignore)]
 		public ConversionYield[] ConversionYield { get; set; }
 
-		[JsonProperty ("RequiredResource", NullValueHandling = NullValueHandling.Ignore)]
-		public string RequiredResource { get; set; }
+		[JsonProperty ("required_feature", NullValueHandling = NullValueHandling.Ignore)]
+		public string RequiredFeature { get; set; }
 
 		[JsonProperty ("storage", NullValueHandling = NullValueHandling.Ignore)]
 		public Yield[] Storage { get; set; }

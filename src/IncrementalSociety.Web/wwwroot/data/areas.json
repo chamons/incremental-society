@@ -2,23 +2,14 @@
 	"areas": [
 		{
 			"name": "Plains",
-			"resources": [
-				"River"
-			],
 			"bonus_yield": [ { "name": "Food", "amount" : 1.10 } ]
 		},
 		{
 			"name": "Forest",
-			"resources": [
-				"River"
-			],
 			"bonus_yield": [ { "name": "Wood", "amount" : 1.50 } ]
 		},
 		{
 			"name": "Coast",
-			"resources": [
-				"River"
-			],
 			"bonus_yield": [
 				{ "name": "Food","amount": 1.2 },
 				{ "name": "Wood","amount": 0.5 }
@@ -26,20 +17,12 @@
 		},
 		{
 			"name": "Mountain",
-			"resources": [
-				"River",
-				"Stone"
-			],
 			"bonus_yield": [
 				{ "name": "Stone","amount": 1.5 }
 			]
 		},
 		{
 			"name": "Hills",
-			"resources": [
-				"River",
-				"Clay"
-			],
 			"bonus_yield": [
 				{
 					"name": "Stone",
@@ -55,6 +38,10 @@
 				{ "name": "Food", "amount": 1.2 }
 			],
 			"valid_areas":  [ "Plains", "Forest", "Coast" ]
+		},
+		{
+			"name": "Clay",
+			"valid_areas": [ "Plains", "Forest", "Coast" ]
 		}
 	],
 	"climates":  [

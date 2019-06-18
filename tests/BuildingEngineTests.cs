@@ -161,5 +161,34 @@ namespace IncrementalSociety.Tests
 			buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
 			Assert.Contains (buildings, x => x == "RequiresTech");
 		}
+
+		[Fact]
+		public void BuildingsMayRequireFeature ()
+		{
+			const string extraBuildingJSON = @",{
+				""name"": ""RequiresFeature"",
+				""required_feature"": ""Feature"",
+				""valid_areas"": [ ""Plains"" ]
+			}";
+			const string extraFeatureJSON = @"{
+				""name"": ""Feature""
+			}";
+			ConfigureCustomJsonPayload (extraBuildingJSON: extraBuildingJSON, extraFeatureJSON: extraFeatureJSON);
+
+			BuildingEngine engine = CreateBuildingEngine ();
+			GameState state = CreateGameState (camps: 1);
+
+			var buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
+			Assert.DoesNotContain (buildings, x => x == "RequiresFeature");
+
+			var firstArea = state.Regions[0].Areas[0].WithFeatures ("Feature".Yield ());
+			var areas = state.Regions[0].Areas.Replace (state.Regions[0].Areas[0], firstArea);
+			var region = state.Regions[0].WithAreas (areas);
+			var regions = state.Regions.Replace (state.Regions[0], region);
+			state = state.WithRegions (regions);
+
+			buildings = engine.GetValidBuildingsForArea (state, state.Regions[0].Areas[0]);
+			Assert.Contains (buildings, x => x == "RequiresFeature");
+		}
 	}
 }

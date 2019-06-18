@@ -15,5 +15,11 @@ namespace IncrementalSociety.Utilities
 		{
 			yield return item;
 		}
+
+
+		public static IEnumerable<int> Range (this int size)
+		{
+			return Enumerable.Range (0, size);
+		}
 	}
 }

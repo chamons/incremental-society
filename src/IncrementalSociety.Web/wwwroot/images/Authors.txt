@@ -15,6 +15,7 @@ coast.png
 desert.png
 swamp.png
 housing.png
+hills.png
 
 lorc
 -----------

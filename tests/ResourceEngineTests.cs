@@ -322,7 +322,7 @@ namespace IncrementalSociety.Tests
 		[Fact]
 		public void ResourcesCanChangeDueToRegionMultipliers ()
 		{
-			const string extraRegionJSON = @",{
+			const string extraAreaJSON = @",{
 				""name"": ""Super Plains"",
 				""bonus_yield"": [
 					{ ""name"": ""Food"", ""amount"" : 2 }
@@ -337,7 +337,7 @@ namespace IncrementalSociety.Tests
 				],
 			}";
 
-			ConfigureCustomJsonPayload (extraRegionJSON: extraRegionJSON, extraBuildingJSON: extraBuildingJSON);
+			ConfigureCustomJsonPayload (extraAreaJSON: extraAreaJSON, extraBuildingJSON: extraBuildingJSON);
 
 			GameState state = CreateGameState (new Area[] { new Area ("Plains", buildings: new string[] { "Camp" }),
 															new Area ("Super Plains", buildings: new string[] { "Camp" })});

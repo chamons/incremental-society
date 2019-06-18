@@ -28,7 +28,9 @@ namespace IncrementalSociety.Json
 		public string EdictsJSON { get; }
 		public EdictsDeclarations Edicts { get; }
 
-		public JsonLoader (string buildings, string game, string areas, string resources, string research, string edicts, bool validate = true)
+		public string RegionNameJSON { get; }
+
+		public JsonLoader (string buildings, string game, string areas, string resources, string research, string edicts, string regionNames, bool validate = true)
 		{
 			BuildingsJSON = buildings;
 			Buildings = JsonConvert.DeserializeObject<BuildingDeclarations> (BuildingsJSON);
@@ -47,6 +49,8 @@ namespace IncrementalSociety.Json
 
 			EdictsJSON = edicts;
 			Edicts = JsonConvert.DeserializeObject<EdictsDeclarations> (EdictsJSON);
+
+			RegionNameJSON = regionNames;
 
 			if (validate)
 				ValidateJson ();
@@ -76,6 +80,16 @@ namespace IncrementalSociety.Json
 				foreach (var region in b.ValidAreas)
 					ValidateArea (region);
 			}
+
+			foreach (var climate in Areas.Climates.AsNotNull ())
+				if (!climate.AreaChances.Select (x => x.Chance).Sum ().Is (1.0))
+					throw new InvalidOperationException ($"JSON failed validation, chances in area {climate.Name	} did not add to 1.0");
+
+			if (Areas.Climates == null)
+				throw new InvalidOperationException ($"JSON failed validation, found no climates");
+
+			if (Areas.Features == null)
+				throw new InvalidOperationException ($"JSON failed validation, found no features");
 		}
 
 		void ValidateResource (string name)

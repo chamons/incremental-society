@@ -53,7 +53,21 @@
 			"name": "Fertile",
 			"bonus_yield": [
 				{ "name": "Food", "amount": 1.2 }
-			]
-		},
+			],
+			"valid_areas":  [ "Plains", "Forest", "Coast" ]
+		}
+	],
+	"climates":  [
+		{
+			"name": "Standard",
+			"area_chances": [
+				{ "name": "Plains", "chance": 0.3 },
+				{ "name": "Forest", "chance": 0.3 },
+				{ "name": "Coast", "chance": 0.2 },
+				{ "name": "Mountain", "chance": 0.1 },
+				{ "name": "Hills", "chance": 0.1 },
+			],
+			"feature_chance": 0.25
+		}
 	]
 }

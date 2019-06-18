@@ -67,7 +67,7 @@
 				{ "name": "Mountain", "chance": 0.1 },
 				{ "name": "Hills", "chance": 0.1 },
 			],
-			"feature_chance": 1
+			"feature_chance": 0.25
 		}
 	]
 }

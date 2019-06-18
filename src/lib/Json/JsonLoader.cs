@@ -84,6 +84,12 @@ namespace IncrementalSociety.Json
 			foreach (var climate in Areas.Climates.AsNotNull ())
 				if (!climate.AreaChances.Select (x => x.Chance).Sum ().Is (1.0))
 					throw new InvalidOperationException ($"JSON failed validation, chances in area {climate.Name	} did not add to 1.0");
+
+			if (Areas.Climates == null)
+				throw new InvalidOperationException ($"JSON failed validation, found no climates");
+
+			if (Areas.Features == null)
+				throw new InvalidOperationException ($"JSON failed validation, found no features");
 		}
 
 		void ValidateResource (string name)

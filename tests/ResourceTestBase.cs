@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xunit;
-
 using IncrementalSociety.Generator;
 using IncrementalSociety.Population;
 using IncrementalSociety.Model;

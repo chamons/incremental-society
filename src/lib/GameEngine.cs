@@ -8,6 +8,7 @@ using IncrementalSociety.Population;
 using IncrementalSociety.Json;
 using IncrementalSociety.Model;
 using IncrementalSociety.Utilities;
+using IncrementalSociety.Generator;
 
 namespace IncrementalSociety
 {
@@ -23,14 +24,16 @@ namespace IncrementalSociety
 		PopulationResources PopulationResources;
 		PopulationNeeds PopulationNeeds;
 		PopUnits PopUnits;
+		JsonLoader Json;
 
 		public static GameEngine Create (JsonLoader loader)
 		{
 			return new GameEngine (loader, new ResourceEngine (loader));
 		}
 
-		public GameEngine (JsonLoader loader, ResourceEngine resourceEngine)
+		GameEngine (JsonLoader loader, ResourceEngine resourceEngine)
 		{
+			Json = loader;
 			ResourceEngine = resourceEngine;
 			PopUnits = new PopUnits (loader.Game.MinPopulation);
 			PopulationBuildingInfo = new PopulationBuildingInfo (ResourceEngine, PopUnits);
@@ -192,13 +195,23 @@ namespace IncrementalSociety
 
 		public const int CurrentVersion = 1;
 
+		Region PlaceSettlement (Region region)
+		{
+			var firstArea = region.Areas[0];
+			var newAreas = region.Areas.Replace (firstArea, firstArea.WithBuildings ("Crude Settlement".Yield ()));
+			return region.WithAreas (newAreas);
+		}
+
 		public GameState CreateNewGame ()
 		{
-			var greenlandRegion = new Region ("Greenland", new Area[] { new Area ("Forest", buildings: new string[] { "Crude Settlement" }), new Area ("Plains", new string[] { "Fertile" }), new Area ("Forest"), new Area ("Forest"), new Area ("Coast") });
+			var generator = new RegionGenerator (Json);
+			var region = generator.CreateRegion (RegionSize.Large, "Standard");
+			region = PlaceSettlement (region);
+
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
 			resources["Wood"] = 50;
-			return new GameState (CurrentVersion, "Stone", new Region[] { greenlandRegion }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
+			return new GameState (CurrentVersion, "Stone", new Region[] { region }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
 		}
 	}
 }

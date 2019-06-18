@@ -65,7 +65,6 @@ namespace IncrementalSociety
 			if (building.PreventDestroy)
 				throw new InvalidOperationException ($"Destroy in {regionName} {regionIndex} but {buildingName} is marked unable to destory");
 
-
 			var newArea = area.WithBuildings (area.Buildings.Remove (buildingName));
 			return UpdateStateWithArea (state, area, newArea, region);
 		}
@@ -90,6 +89,8 @@ namespace IncrementalSociety
 			if (!BuildingValidForArea (building, area))
 				return false;
 			if (!state.HasResearch (building.RequireTechnology))
+				return false;
+			if (building.RequiredFeature != null && !area.Features.Contains (building.RequiredFeature))
 				return false;
 			return true;
 		}

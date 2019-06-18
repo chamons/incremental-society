@@ -52,7 +52,7 @@
 		{
 			"name": "Clay Pit",
 			"valid_areas": [ "Any" ],
-			"RequiredResource ": "Clay",
+			"required_feature": "Clay",
 			"yield": [
 				{ "name": "Clay", "amount" : 2 }
 			],

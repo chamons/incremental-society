@@ -45,6 +45,9 @@ namespace IncrementalSociety.Json
 		[JsonProperty("name")]
 		public string Name { get; set; }
 
+		[JsonProperty ("valid_areas")]
+		public string [] ValidAreas { get; set; }
+
 		[JsonProperty("bonus_yield")]
 		public Yield[] BonusYield { get; set; }
 	}

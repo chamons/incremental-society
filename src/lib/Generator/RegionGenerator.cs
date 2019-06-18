@@ -48,6 +48,7 @@ namespace IncrementalSociety.Generator
 		NameGenerator NameGenerator;
 		Dictionary<string, Ranges> ClimateRanges = new Dictionary<string, Ranges> ();
 		Dictionary<string, double> ClimateFeatureChance = new Dictionary<string, double> ();
+		Dictionary<string, List<string>> AreaFeatures = new Dictionary<string, List<string>> ();
 
 		Random Random;
 
@@ -59,17 +60,28 @@ namespace IncrementalSociety.Generator
 				ClimateRanges[climate.Name] = new Ranges (climate.AreaChances.Select (x => (x.Name, x.Chance)));
 				ClimateFeatureChance[climate.Name] = climate.FeatureChance * 100;
 			}
+			foreach (var feature in json.Areas.Features) {
+				foreach (var area in feature.ValidAreas) {
+					if (!AreaFeatures.ContainsKey (area))
+						AreaFeatures[area] = new List<string> ();
+					AreaFeatures[area].Add (feature.Name);
+				}
+			}
 		}
 
 		public Area CreateArea (string climate)
 		{
 			string areaType = ClimateRanges[climate][Random.NextDouble ()];
-			if (Random.WithChance (ClimateFeatureChance[climate)))
-			{
-				// Add a random feature for that area
+
+			var area = new Area (areaType);
+			if (AreaFeatures.ContainsKey (areaType)) {
+				if (Random.WithChance (ClimateFeatureChance[climate])) {
+					var feature = Random.RandomItem (AreaFeatures[areaType]);
+					area = area.WithFeatures (feature.Yield ());
+				}
 			}
 
-			return new Area (areaType);
+			return area;
 		}
 
 		int GetRegionCount (RegionSize size)

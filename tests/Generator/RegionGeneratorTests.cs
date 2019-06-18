@@ -7,6 +7,7 @@ using Xunit;
 
 using IncrementalSociety.Tests;
 using IncrementalSociety.Utilities;
+using IncrementalSociety.Model;
 
 namespace IncrementalSociety.Generator.Tests
 {
@@ -23,6 +24,10 @@ namespace IncrementalSociety.Generator.Tests
 				""name"": ""Fertile"",
 				""bonus_yield"": [
 					{ ""name"": ""Food"", ""amount"": 1.2 }
+				],
+				""valid_areas"": [
+					""First"",
+					""Third""
 				]
 			}";
 			const string ClimateJson = @"
@@ -63,11 +68,36 @@ namespace IncrementalSociety.Generator.Tests
 			Assert.True (secondClimate.Count (x => x.Type == "Third") > 0);
 		}
 
-		[Fact]
-		public void AreasHaveFeatures ()
+		Region CreateRegionWithCount (string climate, bool hasFirst, bool hasSecond, bool hasThird)
 		{
 			var regionGenerator = CreateRegionGenerator ();
 
+			for (int i = 0; i < 100; ++i)
+			{
+				var region = regionGenerator.CreateRegion (RegionSize.Large, climate);
+				int firstCount = region.Areas.Count (x => x.Type == "First");
+				int secondCount = region.Areas.Count (x => x.Type == "Second");
+				int thirdCount = region.Areas.Count (x => x.Type == "Third");
+				bool first = hasFirst ? firstCount > 0 : firstCount == 0;
+				bool second = hasSecond ? secondCount > 0 : secondCount == 0;
+				bool third = hasThird ? thirdCount > 0 : thirdCount == 0;
+				if (first && second && third)
+					return region;
+			}
+			Assert.True (false, $"Unable to CreateRegionWithCount from {climate} with {hasFirst} {hasSecond} {hasThird}");
+			return null;
+		}
+
+		[Fact]
+		public void AreasHaveFeatures ()
+		{
+			var originalRegion = CreateRegionWithCount ("TestClimate", true, true, false);
+			Assert.True (originalRegion.Areas.Where (x => x.Type == "First").All (x => x.Features.Count () == 1));
+			Assert.Empty (originalRegion.Areas.Where (x => x.Type == "Second" && x.Features.Count () > 0));
+
+			var otherRegion = CreateRegionWithCount ("OtherTestClimate", false, true, true);
+			Assert.Empty (otherRegion.Areas.Where (x => x.Type == "Second" && x.Features.Count () > 0));
+			Assert.Empty (otherRegion.Areas.Where (x => x.Type == "Third" && x.Features.Count () > 0));
 		}
 
 		[Fact]

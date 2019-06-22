@@ -4,7 +4,6 @@
 			"name": "Crude Settlement",
 			"prevent_build": true,
 			"prevent_destory": true,
-			"does_not_require_job" : true,
 			"valid_areas": [ "Any" ],
 			"storage": [
 				{ "name": "Food", "amount" : 200 },
@@ -14,24 +13,24 @@
 			],
 			"yield": [
 				{ "name": "Food", "amount" : 10 },
-				{ "name": "Wood", "amount" : 2 }
+				{ "name": "Wood", "amount" : 1.75 }
 			],
 			"housing_capacity": [
-				{ "capacity": 200 }
+				{ "capacity": 300 }
 			]
 		},
 		{
 			"name": "Huts",
 			"does_not_require_job": true,
-			"valid_areas": [ "Plains", "Forest" ],
+			"valid_areas": [ "Any" ],
 			"cost": [
 				{
 					"name": "Wood",
-					"amount": 100
+					"amount": 200
 				}
 			],
 			"housing_capacity": [
-				{ "capacity": 300 }
+				{ "capacity": 200 }
 			]
 		},
 		{
@@ -39,13 +38,13 @@
 			"valid_areas": [ "Plains", "Forest", "Mountain" ],
 			"yield": [
 				{ "name": "Food", "amount" : 5 },
-				{ "name": "Stone", "amount" : 0.1 },
+				{ "name": "Stone", "amount" : 0.05 },
 				{ "name": "Wood", "amount" : 1 }
 			],
 			"cost": [
 				{
 					"name": "Wood",
-					"amount": 50
+					"amount": 100
 				}
 			]
 		},

@@ -198,7 +198,8 @@ namespace IncrementalSociety
 		Region PlaceSettlement (Region region)
 		{
 			var firstArea = region.Areas[0];
-			var newAreas = region.Areas.Replace (firstArea, firstArea.WithBuildings ("Crude Settlement".Yield ()));
+			// Add a settlement to the initial area, and force it Forest with no features
+			var newAreas = region.Areas.Replace (firstArea, firstArea.WithType ("Forest").WithFeatures (null).WithBuildings ("Crude Settlement".Yield ()));
 			return region.WithAreas (newAreas);
 		}
 
@@ -210,7 +211,7 @@ namespace IncrementalSociety
 
 			var resources = ResourceEngine.ResourceConfig.CreateBuilder ();
 			resources["Food"] = 50;
-			resources["Wood"] = 50;
+			resources["Wood"] = 100;
 			return new GameState (CurrentVersion, "Stone", new Region[] { region }, resources, 200, 200, EdictsEngine.EdictConfig.Create ());
 		}
 	}

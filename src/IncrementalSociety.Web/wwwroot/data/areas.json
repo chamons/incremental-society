@@ -6,7 +6,7 @@
 		},
 		{
 			"name": "Forest",
-			"bonus_yield": [ { "name": "Wood", "amount" : 1.50 } ]
+			"bonus_yield": [ { "name": "Wood", "amount" : 1.2 } ]
 		},
 		{
 			"name": "Coast",

@@ -1,9 +1,2 @@
-.DS_Store
-.vs/
-bin/
-obj/
-.sass-cache/
-src/IncrementalSociety.Web/wwwroot/css/site.css.map
-src/IncrementalSociety.Web/wwwroot/css/site.min.css
-src/IncrementalSociety.Web/wwwroot/css/site.css
-src/IncrementalSociety.Web/wwwroot/css/*.css
+/target
+**/*.rs.bk

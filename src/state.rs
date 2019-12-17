@@ -1,5 +1,7 @@
 use std::ops::Index;
 
+type ResourceQuantity = u64;
+
 #[derive(Copy, Clone, PartialEq)]
 pub enum Resources {
     Food,
@@ -11,7 +13,7 @@ pub enum Resources {
 
 pub struct ResourceAmount {
     pub resource: Resources,
-    pub amount: u32,
+    pub amount: ResourceQuantity,
 }
 
 const NUM_RESOURCES: usize = Resources::Size as usize;
@@ -22,8 +24,17 @@ pub struct Conversion<'a> {
     pub output: [Option<ResourceAmount>; 4],
 }
 
+impl<'a> Conversion<'a> {
+    pub fn has_input(&self, state: &GameState) -> bool {
+        self.input
+            .iter()
+            .filter_map(|e| e.as_ref())
+            .all(|x| state.has(x.resource, x.amount))
+    }
+}
+
 pub struct GameState<'a> {
-    pub resources: [u32; NUM_RESOURCES],
+    pub resources: [ResourceQuantity; NUM_RESOURCES],
     pub conversions: Vec<Conversion<'a>>,
 }
 
@@ -47,15 +58,15 @@ impl<'a> GameState<'a> {
         }
     }
 
-    pub fn has(&self, resource: Resources, amount: u32) -> bool {
+    pub fn has(&self, resource: Resources, amount: ResourceQuantity) -> bool {
         self[resource] >= amount
     }
 }
 
 impl<'a> Index<Resources> for GameState<'a> {
-    type Output = u32;
+    type Output = ResourceQuantity;
 
-    fn index(&self, resource: Resources) -> &u32 {
+    fn index(&self, resource: Resources) -> &ResourceQuantity {
         &self.resources[resource as usize]
     }
 }

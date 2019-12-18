@@ -8,3 +8,14 @@ pub fn process_tick(state: &mut GameState) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn process_tick_smoke() {
+        let mut state = GameState::init();
+        process_tick(&mut state);
+    }
+}

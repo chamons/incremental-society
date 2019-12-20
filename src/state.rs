@@ -1,23 +1,31 @@
 use crate::buildings::*;
 use crate::conversion::Conversion;
+use crate::regions::*;
 use crate::resources::*;
 
 #[derive(Debug)]
 pub struct GameState<'a> {
     pub resources: ResourceTotal,
-    pub buildings: Vec<Building<'a>>,
+    pub regions: Vec<Region<'a>>,
 }
 
 impl<'a> GameState<'a> {
     pub fn init() -> GameState<'a> {
         GameState {
             resources: ResourceTotal::init(),
-            buildings: vec![],
+            regions: vec![],
         }
     }
 
+    pub fn buildings(&self) -> Vec<&Building<'a>> {
+        self.regions.iter().flat_map(|x| &x.buildings).collect()
+    }
+
     pub fn conversions(&self) -> Vec<&Conversion<'a>> {
-        self.buildings.iter().flat_map(|x| &x.conversions).collect()
+        self.buildings()
+            .iter()
+            .flat_map(|x| &x.conversions)
+            .collect()
     }
 }
 
@@ -26,22 +34,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn conversions_all_buildings() {
+    fn all_buildings_and_conversions() {
         let mut state = GameState::init();
-        state.buildings = vec![
-            Building::init(
-                "First",
-                vec![Conversion::init("First Convert", vec![], vec![])],
-            ),
-            Building::init(
-                "Second",
+        state.regions = vec![
+            Region::init(
+                "First Region",
                 vec![
-                    Conversion::init("Second Convert", vec![], vec![]),
-                    Conversion::init("Third Convert", vec![], vec![]),
+                    Building::init(
+                        "First",
+                        vec![Conversion::init("First Convert", vec![], vec![])],
+                    ),
+                    Building::init(
+                        "Second",
+                        vec![
+                            Conversion::init("Second Convert", vec![], vec![]),
+                            Conversion::init("Third Convert", vec![], vec![]),
+                        ],
+                    ),
                 ],
+            ),
+            Region::init(
+                "Second Region",
+                vec![Building::init(
+                    "Third",
+                    vec![Conversion::init("Fourth Convert", vec![], vec![])],
+                )],
             ),
         ];
 
-        assert_eq!(3, state.conversions().len());
+        assert_eq!(2, state.regions.len());
+        assert_eq!(3, state.buildings().len());
+        assert_eq!(4, state.conversions().len());
     }
 }

@@ -10,6 +10,9 @@ pub use self::conversion::*;
 pub mod buildings;
 pub use self::buildings::*;
 
+pub mod regions;
+pub use self::regions::*;
+
 pub fn process_tick(state: &mut GameState) {
     let mut resources = state.resources.clone();
 

@@ -1,6 +1,5 @@
 Short term todo of rewrite
 
-- Get regions to hold buildings
 - Start building rules on how you can make buildings
 - Get some kind of UI/UX up
     - Regions, buildings, conversions, resouces

@@ -12,9 +12,6 @@ impl<'a> Building<'a> {
     }
 
     pub fn init(name: &'a str, conversions: Vec<Conversion<'a>>) -> Building<'a> {
-        Building {
-            name,
-            conversions: conversions,
-        }
+        Building { name, conversions }
     }
 }

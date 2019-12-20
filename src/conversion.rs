@@ -23,9 +23,9 @@ impl<'a> Conversion<'a> {
         output: Vec<ResourceAmount>,
     ) -> Conversion<'a> {
         Conversion {
-            name: name,
-            input: input,
-            output: output,
+            name,
+            input,
+            output,
             input_required_or_output: false,
         }
     }
@@ -44,9 +44,9 @@ impl<'a> Conversion<'a> {
         output: Vec<ResourceAmount>,
     ) -> Conversion<'a> {
         Conversion {
-            name: name,
-            input: input,
-            output: output,
+            name,
+            input,
+            output,
             input_required_or_output: true,
         }
     }

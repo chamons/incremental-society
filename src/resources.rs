@@ -25,7 +25,7 @@ impl ResourceAmount {
 
 pub const NUM_RESOURCES: usize = ResourceKind::Size as usize;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ResourceTotal {
     pub resources: [ResourceQuantity; NUM_RESOURCES],
 }

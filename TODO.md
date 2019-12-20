@@ -1,6 +1,5 @@
 Short term todo of rewrite
 
-- Get negative conversions to work (output happens if goods can't be consumed)
 - Get buildings to provide conversions
 - Get regions to hold buildings
 - Start building rules on how you can make buildings

@@ -115,10 +115,8 @@ impl<'a> Conversion<'a> {
 }
 
 impl<'a> Conversion<'a> {
-    pub fn has_input(&self, state: &GameState) -> bool {
-        self.input
-            .iter()
-            .all(|x| state.resources.has(x.kind, x.amount))
+    pub fn has_input(&self, resources: &ResourceTotal) -> bool {
+        self.input.iter().all(|x| resources.has(x.kind, x.amount))
     }
 
     pub fn total(&self) -> ResourceTotal {
@@ -156,7 +154,8 @@ mod tests {
     fn resource_total_has_enough() {
         let mut total = ResourceTotal::init();
         total[ResourceKind::Fuel] = 5;
-        assert_eq!(true, total.has(ResourceKind::Fuel, 5));
+        assert!(total.has(ResourceKind::Fuel, 1));
+        assert!(total.has(ResourceKind::Fuel, 5));
         assert_eq!(false, total.has(ResourceKind::Fuel, 15));
         assert_eq!(false, total.has(ResourceKind::Food, 1));
     }
@@ -165,17 +164,48 @@ mod tests {
     fn resource_total_add() {
         let mut total = ResourceTotal::init();
         total[ResourceKind::Fuel] = 5;
-        assert_eq!(true, total.has(ResourceKind::Fuel, 5));
+        assert!(total.has(ResourceKind::Fuel, 5));
         total.add(ResourceKind::Fuel, 10);
-        assert_eq!(true, total.has(ResourceKind::Fuel, 15));
+        assert!(total.has(ResourceKind::Fuel, 15));
     }
 
     #[test]
     fn resource_total_remove() {
         let mut total = ResourceTotal::init();
         total[ResourceKind::Fuel] = 5;
-        assert_eq!(true, total.has(ResourceKind::Fuel, 5));
+        assert!(total.has(ResourceKind::Fuel, 5));
         total.remove(ResourceKind::Fuel, 4);
-        assert_eq!(true, total.has(ResourceKind::Fuel, 1));
+        assert!(total.has(ResourceKind::Fuel, 1));
+    }
+
+    #[test]
+    fn resource_combine() {
+        let mut a = ResourceTotal::init();
+        a[ResourceKind::Food] = 5;
+        a[ResourceKind::Fuel] = 5;
+
+        let mut b = ResourceTotal::init();
+        b[ResourceKind::Food] = 5;
+        a.combine(&b);
+
+        assert_eq!(10, a[ResourceKind::Food]);
+        assert_eq!(5, a[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn conversion_has_input() {
+        let mut resources = ResourceTotal::init();
+        resources[ResourceKind::Food] = 10;
+        resources[ResourceKind::Fuel] = 5;
+
+        let conversion = Conversion::init_single(
+            "TestConversion",
+            ResourceAmount::init(ResourceKind::Food, 5),
+            ResourceAmount::init(ResourceKind::Fuel, 10),
+        );
+
+        assert!(conversion.has_input(&resources));
+        resources[ResourceKind::Food] = 0;
+        assert_eq!(false, conversion.has_input(&resources));
     }
 }

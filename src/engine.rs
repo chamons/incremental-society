@@ -25,6 +25,16 @@ pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_inde
 mod tests {
     use super::*;
     use crate::resources::*;
+    use std::error::Error;
+
+    #[test]
+    fn build_invalid_region() {
+        let mut state = GameState::init();
+        state.regions = vec![];
+        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+
+        assert!(build(&mut state, &building, 0).is_err());
+    }
 
     #[test]
     fn build_valid_building() {
@@ -44,6 +54,19 @@ mod tests {
         state.regions = vec![Region::init("First Region", vec![])];
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
-        assert!(build(&mut state, &building, 0).is_err());
+        let error = build(&mut state, &building, 0).unwrap_err();
+        assert_eq!("Insufficient resources for build cost", error.description());
+    }
+
+    #[test]
+    fn build_without_room() {
+        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+
+        let mut state = GameState::init();
+        state.resources[ResourceKind::Fuel] = 20;
+        state.regions = vec![Region::init("First Region", vec![building.clone(), building.clone()])];
+
+        let error = build(&mut state, &building, 0).unwrap_err();
+        assert_eq!("Insufficient room for building", error.description());
     }
 }

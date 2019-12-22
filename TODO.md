@@ -4,7 +4,7 @@ Short term todo of rewrite
     - Regions can only have so many buildings
 
 - Get some kind of UI/UX up
-    - Regions, buildings, conversions, resouces
+    - Regions, buildings, conversions, resources
 - Save
 - Research
 - Edicts
@@ -12,3 +12,7 @@ Short term todo of rewrite
 - Regions Resources
 - Random regions
 - Buildings that require resources
+- Base yield & conversion yield
+
+- Bonus base yield (fixed and %) and same for conversion
+- Infrastructure bonus for goods, and max per tech

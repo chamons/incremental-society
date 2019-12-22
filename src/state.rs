@@ -49,6 +49,7 @@ mod tests {
                     Building::init(
                         "First",
                         vec![Conversion::init("First Convert", vec![], vec![])],
+                        vec![],
                     ),
                     Building::init(
                         "Second",
@@ -56,6 +57,7 @@ mod tests {
                             Conversion::init("Second Convert", vec![], vec![]),
                             Conversion::init("Third Convert", vec![], vec![]),
                         ],
+                        vec![],
                     ),
                 ],
             ),
@@ -64,6 +66,7 @@ mod tests {
                 vec![Building::init(
                     "Third",
                     vec![Conversion::init("Fourth Convert", vec![], vec![])],
+                    vec![],
                 )],
             ),
         ];

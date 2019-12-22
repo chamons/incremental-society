@@ -91,7 +91,7 @@ impl<'a> Conversion<'a> {
     }
 
     pub fn has_input(&self, resources: &ResourceTotal) -> bool {
-        self.input.iter().all(|x| resources.has(x.kind, x.amount))
+        self.input.iter().all(|x| resources.has_amount(x))
     }
 
     pub fn is_ready(&self) -> bool {
@@ -123,6 +123,18 @@ impl<'a> Conversion<'a> {
             total[i.kind] += i.amount;
         }
         total
+    }
+}
+
+impl<'a> Clone for Conversion<'a> {
+    fn clone(&self) -> Self {
+        Conversion {
+            name: self.name,
+            input: self.input.clone(),
+            output: self.output.clone(),
+            input_required_or_output: self.input_required_or_output,
+            ticks: self.ticks,
+        }
     }
 }
 

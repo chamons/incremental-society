@@ -37,6 +37,10 @@ impl ResourceTotal {
         }
     }
 
+    pub fn has_amount(&self, amount: &ResourceAmount) -> bool {
+        self.has(amount.kind, amount.amount)
+    }
+
     pub fn has(&self, resource: ResourceKind, amount: ResourceQuantity) -> bool {
         self[resource] >= amount
     }

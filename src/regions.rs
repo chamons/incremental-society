@@ -17,4 +17,8 @@ impl<'a> Region<'a> {
             b.process_tick(resources);
         }
     }
+
+    pub fn add_building(&mut self, building: Building<'a>) {
+        self.buildings.push(building);
+    }
 }

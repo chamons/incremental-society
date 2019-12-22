@@ -17,6 +17,12 @@ impl<'a> GameState<'a> {
         }
     }
 
+    pub fn process_tick(&mut self) {
+        for r in &mut self.regions {
+            r.process_tick(&mut self.resources);
+        }
+    }
+
     pub fn buildings(&self) -> Vec<&Building<'a>> {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }

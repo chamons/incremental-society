@@ -1,11 +1,14 @@
 use crate::resources::*;
 
+const CONVERSION_TICK_START: u32 = 100;
+
 #[derive(Debug)]
 pub struct Conversion<'a> {
     pub name: &'a str,
     pub input: Vec<ResourceAmount>,
     pub output: Vec<ResourceAmount>,
     pub input_required_or_output: bool,
+    pub ticks: u32,
 }
 
 impl<'a> Conversion<'a> {
@@ -27,6 +30,7 @@ impl<'a> Conversion<'a> {
             input,
             output,
             input_required_or_output: false,
+            ticks: CONVERSION_TICK_START,
         }
     }
 
@@ -48,15 +52,26 @@ impl<'a> Conversion<'a> {
             input,
             output,
             input_required_or_output: true,
+            ticks: CONVERSION_TICK_START,
         }
     }
 
-    pub fn convert(&self, resources: &mut ResourceTotal) {
+    pub fn process_tick(&mut self, resources: &mut ResourceTotal) {
+        self.convert(resources)
+    }
+
+    pub fn convert(&mut self, resources: &mut ResourceTotal) {
+        if !self.is_ready() {
+            self.ticks -= 1;
+            return;
+        }
+
         if self.input_required_or_output {
             self.convert_required(resources);
         } else {
             self.convert_optional(resources);
         }
+        self.ticks = CONVERSION_TICK_START
     }
 
     // If we have input, consume it, else apply "bad" output
@@ -77,6 +92,10 @@ impl<'a> Conversion<'a> {
 
     pub fn has_input(&self, resources: &ResourceTotal) -> bool {
         self.input.iter().all(|x| resources.has(x.kind, x.amount))
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.ticks <= 0
     }
 
     pub fn total_input(&self) -> ResourceTotal {
@@ -112,19 +131,23 @@ mod tests {
     use super::*;
 
     fn create_test_conversion<'a>() -> Conversion<'a> {
-        Conversion::init_single(
+        let mut c = Conversion::init_single(
             "TestConversion",
             ResourceAmount::init(ResourceKind::Food, 10),
             ResourceAmount::init(ResourceKind::Fuel, 10),
-        )
+        );
+        c.ticks = 0;
+        c
     }
 
     fn create_test_required_conversion<'a>() -> Conversion<'a> {
-        Conversion::init_required_single(
+        let mut c = Conversion::init_required_single(
             "TestRequiredConversion",
             ResourceAmount::init(ResourceKind::Food, 10),
             ResourceAmount::init(ResourceKind::Fuel, 10),
-        )
+        );
+        c.ticks = 0;
+        c
     }
 
     #[test]
@@ -138,6 +161,15 @@ mod tests {
         assert!(conversion.has_input(&resources));
         resources[ResourceKind::Food] = 0;
         assert_eq!(false, conversion.has_input(&resources));
+    }
+
+    #[test]
+    fn is_tick_ready() {
+        let mut conversion = create_test_conversion();
+
+        assert!(conversion.is_ready());
+        conversion.ticks = CONVERSION_TICK_START;
+        assert_eq!(false, conversion.is_ready());
     }
 
     #[test]
@@ -165,46 +197,64 @@ mod tests {
     fn conversion_with_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 10;
-        let conversion = create_test_conversion();
+        let mut conversion = create_test_conversion();
 
         conversion.convert(&mut resources);
 
         assert_eq!(0, resources[ResourceKind::Food]);
         assert_eq!(10, resources[ResourceKind::Fuel]);
+        assert_eq!(CONVERSION_TICK_START, conversion.ticks);
     }
 
     #[test]
     fn conversion_without_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 5;
-        let conversion = create_test_conversion();
+        let mut conversion = create_test_conversion();
 
         conversion.convert(&mut resources);
 
         assert_eq!(5, resources[ResourceKind::Food]);
         assert_eq!(0, resources[ResourceKind::Fuel]);
+        assert_eq!(CONVERSION_TICK_START, conversion.ticks);
     }
 
     #[test]
     fn required_conversion_with_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 10;
-        let conversion = create_test_required_conversion();
+        let mut conversion = create_test_required_conversion();
 
         conversion.convert(&mut resources);
 
         assert_eq!(0, resources[ResourceKind::Food]);
         assert_eq!(0, resources[ResourceKind::Fuel]);
+        assert_eq!(CONVERSION_TICK_START, conversion.ticks);
     }
 
     #[test]
     fn required_conversion_without_input() {
         let mut resources = ResourceTotal::init();
-        let conversion = create_test_required_conversion();
+        let mut conversion = create_test_required_conversion();
 
         conversion.convert(&mut resources);
 
         assert_eq!(0, resources[ResourceKind::Food]);
         assert_eq!(10, resources[ResourceKind::Fuel]);
+        assert_eq!(CONVERSION_TICK_START, conversion.ticks);
+    }
+
+    #[test]
+    fn conversion_without_ticks() {
+        let mut resources = ResourceTotal::init();
+        resources[ResourceKind::Food] = 10;
+        let mut conversion = create_test_conversion();
+        conversion.ticks = CONVERSION_TICK_START;
+
+        conversion.convert(&mut resources);
+
+        assert_eq!(10, resources[ResourceKind::Food]);
+        assert_eq!(0, resources[ResourceKind::Fuel]);
+        assert_eq!(CONVERSION_TICK_START - 1, conversion.ticks);
     }
 }

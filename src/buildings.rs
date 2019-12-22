@@ -9,24 +9,12 @@ pub struct Building<'a> {
 }
 
 impl<'a> Building<'a> {
-    pub fn init_single(
-        name: &'a str,
-        conversion: Conversion<'a>,
-        build_cost: Vec<ResourceAmount>,
-    ) -> Building<'a> {
+    pub fn init_single(name: &'a str, conversion: Conversion<'a>, build_cost: Vec<ResourceAmount>) -> Building<'a> {
         Building::init(name, vec![conversion], build_cost)
     }
 
-    pub fn init(
-        name: &'a str,
-        conversions: Vec<Conversion<'a>>,
-        build_cost: Vec<ResourceAmount>,
-    ) -> Building<'a> {
-        Building {
-            name,
-            conversions,
-            build_cost,
-        }
+    pub fn init(name: &'a str, conversions: Vec<Conversion<'a>>, build_cost: Vec<ResourceAmount>) -> Building<'a> {
+        Building { name, conversions, build_cost }
     }
 
     pub fn process_tick(&mut self, resources: &mut ResourceTotal) {

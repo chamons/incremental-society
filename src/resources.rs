@@ -32,9 +32,7 @@ pub struct ResourceTotal {
 
 impl ResourceTotal {
     pub fn init() -> ResourceTotal {
-        ResourceTotal {
-            resources: [0; NUM_RESOURCES],
-        }
+        ResourceTotal { resources: [0; NUM_RESOURCES] }
     }
 
     pub fn has_amount(&self, amount: &ResourceAmount) -> bool {

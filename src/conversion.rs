@@ -12,19 +12,11 @@ pub struct Conversion<'a> {
 }
 
 impl<'a> Conversion<'a> {
-    pub fn init_single(
-        name: &'a str,
-        input: ResourceAmount,
-        output: ResourceAmount,
-    ) -> Conversion<'a> {
+    pub fn init_single(name: &'a str, input: ResourceAmount, output: ResourceAmount) -> Conversion<'a> {
         Conversion::init(name, vec![input], vec![output])
     }
 
-    pub fn init(
-        name: &'a str,
-        input: Vec<ResourceAmount>,
-        output: Vec<ResourceAmount>,
-    ) -> Conversion<'a> {
+    pub fn init(name: &'a str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion<'a> {
         Conversion {
             name,
             input,
@@ -34,19 +26,11 @@ impl<'a> Conversion<'a> {
         }
     }
 
-    pub fn init_required_single(
-        name: &'a str,
-        input: ResourceAmount,
-        output: ResourceAmount,
-    ) -> Conversion<'a> {
+    pub fn init_required_single(name: &'a str, input: ResourceAmount, output: ResourceAmount) -> Conversion<'a> {
         Conversion::init_required(name, vec![input], vec![output])
     }
 
-    pub fn init_required(
-        name: &'a str,
-        input: Vec<ResourceAmount>,
-        output: Vec<ResourceAmount>,
-    ) -> Conversion<'a> {
+    pub fn init_required(name: &'a str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion<'a> {
         Conversion {
             name,
             input,

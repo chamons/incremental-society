@@ -28,10 +28,7 @@ impl<'a> GameState<'a> {
     }
 
     pub fn conversions(&self) -> Vec<&Conversion<'a>> {
-        self.buildings()
-            .iter()
-            .flat_map(|x| &x.conversions)
-            .collect()
+        self.buildings().iter().flat_map(|x| &x.conversions).collect()
     }
 }
 
@@ -46,11 +43,7 @@ mod tests {
             Region::init(
                 "First Region",
                 vec![
-                    Building::init(
-                        "First",
-                        vec![Conversion::init("First Convert", vec![], vec![])],
-                        vec![],
-                    ),
+                    Building::init("First", vec![Conversion::init("First Convert", vec![], vec![])], vec![]),
                     Building::init(
                         "Second",
                         vec![
@@ -63,11 +56,7 @@ mod tests {
             ),
             Region::init(
                 "Second Region",
-                vec![Building::init(
-                    "Third",
-                    vec![Conversion::init("Fourth Convert", vec![], vec![])],
-                    vec![],
-                )],
+                vec![Building::init("Third", vec![Conversion::init("Fourth Convert", vec![], vec![])], vec![])],
             ),
         ];
 

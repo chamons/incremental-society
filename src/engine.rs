@@ -3,6 +3,8 @@ use crate::engine_error::*;
 use crate::regions::*;
 use crate::state::*;
 
+pub const REGION_BUILDING_COUNT: usize = 2;
+
 pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);
     if region.is_none() {
@@ -14,6 +16,10 @@ pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_inde
         if !state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for build cost".to_string()));
         }
+    }
+
+    if region.buildings.len() >= REGION_BUILDING_COUNT {
+        return Err(EngineError::init("Insufficient room for building".to_string()));
     }
 
     region.add_building(building.clone());

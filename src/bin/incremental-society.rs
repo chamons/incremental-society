@@ -29,6 +29,8 @@ fn draw(t: &Term, state: &GameState) -> io::Result<()> {
     // Right Column
     y = 1;
     y = draw_regions(t, state, y)?;
+    y += 1;
+    y = draw_conversions(t, state, y)?;
 
     draw_prompt(t)?;
     t.read_char()?;
@@ -42,11 +44,35 @@ fn write(t: &Term, text: &str, x: usize, y: usize) -> io::Result<usize> {
 }
 
 const RIGHT_COL: usize = 50;
+const RIGHT_COL_WIDTH: usize = 40;
+
 fn write_right(t: &Term, text: &str, x: usize, y: usize) -> io::Result<usize> {
     write(t, text, x + RIGHT_COL, y)
 }
 
+fn draw_conversions(t: &Term, state: &GameState, y: usize) -> io::Result<usize> {
+    let mut y = y;
+    const CONVERSION_BAR_LENGTH: f64 = 30.0;
+
+    y = write_right(t, "Conversions", 0, y)?;
+
+    for c in state.conversions() {
+        // Don't update y, as we have to draw the bar
+        write_right(t, c.name, 0, y)?;
+
+        let percentage = c.tick_percentage();
+        let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
+        let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
+        let filled_width = filled_width as usize;
+
+        let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
+        y = write_right(t, &bar_text, c.name.len() + 2, y)?;
+    }
+    Ok(y)
+}
+
 fn write_region_contents(t: &Term, text: &str, x: usize, y: usize) -> io::Result<usize> {
+    // RIGHT_COL_WIDTH - 2
     write_right(t, &format!("|{: <38}|", text), x, y)
 }
 
@@ -71,12 +97,13 @@ fn draw_regions(t: &Term, state: &GameState, y: usize) -> io::Result<usize> {
                 write(t, "|", RIGHT_COL, y)?;
                 write(t, "|", RIGHT_COL, y + 1)?;
                 write(t, "|", RIGHT_COL, y + 2)?;
+                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y)?;
+                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y + 1)?;
+                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y + 2)?;
+
                 y = write_right(t, &"_".repeat(building_name_length + 2), x + 2, y)?;
                 y = write_right(t, &format!("|{}|", building_name), x + 2, y)?;
                 y = write_right(t, &"-".repeat(building_name_length + 2), x + 2, y)?;
-                write(t, "|", RIGHT_COL + 39, y)?;
-                write(t, "|", RIGHT_COL + 39, y + 1)?;
-                write(t, "|", RIGHT_COL + 39, y + 2)?;
 
                 x += building_name_length + 3;
             }

@@ -16,7 +16,21 @@ impl<'a> GameState<'a> {
             regions: vec![
                 Region::init_with_buildings(
                     "Lusitania",
-                    vec![Building::init("Gathering Camp", vec![], vec![]), Building::init("Camp", vec![], vec![])],
+                    vec![
+                        Building::init(
+                            "Gathering Camp",
+                            vec![
+                                Conversion::init("Gathering", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)]),
+                                Conversion::init("Gathering", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
+                            ],
+                            vec![],
+                        ),
+                        Building::init(
+                            "Camp",
+                            vec![Conversion::init("Gathering", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)])],
+                            vec![],
+                        ),
+                    ],
                 ),
                 Region::init("Illyricum"),
             ],

@@ -82,6 +82,10 @@ impl<'a> Conversion<'a> {
         self.ticks <= 0
     }
 
+    pub fn tick_percentage(&self) -> f64 {
+        f64::from(CONVERSION_TICK_START - self.ticks) / f64::from(CONVERSION_TICK_START)
+    }
+
     pub fn total_input(&self) -> ResourceTotal {
         let mut total = ResourceTotal::init();
         for i in self.input.iter() {

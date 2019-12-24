@@ -1,14 +1,28 @@
+use num_traits::FromPrimitive;
+use std::fmt;
 use std::ops::{Index, IndexMut};
 
 type ResourceQuantity = i64;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
 pub enum ResourceKind {
     Food,
     Fuel,
 
     // This must be incremented every time an item is added
     Size = 2,
+}
+
+impl fmt::Display for ResourceKind {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl ResourceKind {
+    pub fn name_for_index(index: usize) -> ResourceKind {
+        ResourceKind::from_usize(index).unwrap()
+    }
 }
 
 #[derive(Debug, Copy, Clone)]

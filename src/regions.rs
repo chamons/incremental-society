@@ -1,6 +1,8 @@
 use crate::buildings::*;
 use crate::resources::*;
 
+pub const REGION_BUILDING_COUNT: usize = 2;
+
 #[derive(Debug)]
 pub struct Region<'a> {
     pub name: &'a str,
@@ -8,7 +10,11 @@ pub struct Region<'a> {
 }
 
 impl<'a> Region<'a> {
-    pub fn init(name: &'a str, buildings: Vec<Building<'a>>) -> Region<'a> {
+    pub fn init(name: &'a str) -> Region<'a> {
+        Region { name, buildings: vec![] }
+    }
+
+    pub fn init_with_buildings(name: &'a str, buildings: Vec<Building<'a>>) -> Region<'a> {
         Region { name, buildings }
     }
 
@@ -20,5 +26,9 @@ impl<'a> Region<'a> {
 
     pub fn add_building(&mut self, building: Building<'a>) {
         self.buildings.push(building);
+    }
+
+    pub fn max_building_count(&self) -> usize {
+        REGION_BUILDING_COUNT
     }
 }

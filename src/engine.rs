@@ -3,8 +3,6 @@ use crate::engine_error::*;
 use crate::regions::*;
 use crate::state::*;
 
-pub const REGION_BUILDING_COUNT: usize = 2;
-
 pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);
     if region.is_none() {
@@ -18,7 +16,7 @@ pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_inde
         }
     }
 
-    if region.buildings.len() >= REGION_BUILDING_COUNT {
+    if region.buildings.len() >= region.max_building_count() {
         return Err(EngineError::init("Insufficient room for building".to_string()));
     }
 
@@ -45,7 +43,7 @@ mod tests {
     #[test]
     fn build_valid_building() {
         let mut state = GameState::init();
-        state.regions = vec![Region::init("First Region", vec![])];
+        state.regions = vec![Region::init("First Region")];
         state.resources[ResourceKind::Fuel] = 20;
 
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
@@ -57,7 +55,7 @@ mod tests {
     #[test]
     fn build_without_resources() {
         let mut state = GameState::init();
-        state.regions = vec![Region::init("First Region", vec![])];
+        state.regions = vec![Region::init("First Region")];
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
         let error = build(&mut state, &building, 0).unwrap_err();
@@ -70,7 +68,7 @@ mod tests {
 
         let mut state = GameState::init();
         state.resources[ResourceKind::Fuel] = 20;
-        state.regions = vec![Region::init("First Region", vec![building.clone(), building.clone()])];
+        state.regions = vec![Region::init_with_buildings("First Region", vec![building.clone(), building.clone()])];
 
         let error = build(&mut state, &building, 0).unwrap_err();
         assert_eq!("Insufficient room for building", error.description());

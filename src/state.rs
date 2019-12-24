@@ -13,7 +13,13 @@ impl<'a> GameState<'a> {
     pub fn init() -> GameState<'a> {
         GameState {
             resources: ResourceTotal::init(),
-            regions: vec![],
+            regions: vec![
+                Region::init_with_buildings(
+                    "Lusitania",
+                    vec![Building::init("Gathering Camp", vec![], vec![]), Building::init("Camp", vec![], vec![])],
+                ),
+                Region::init("Illyricum"),
+            ],
         }
     }
 
@@ -40,7 +46,7 @@ mod tests {
     fn all_buildings_and_conversions() {
         let mut state = GameState::init();
         state.regions = vec![
-            Region::init(
+            Region::init_with_buildings(
                 "First Region",
                 vec![
                     Building::init("First", vec![Conversion::init("First Convert", vec![], vec![])], vec![]),
@@ -54,7 +60,7 @@ mod tests {
                     ),
                 ],
             ),
-            Region::init(
+            Region::init_with_buildings(
                 "Second Region",
                 vec![Building::init("Third", vec![Conversion::init("Fourth Convert", vec![], vec![])], vec![])],
             ),

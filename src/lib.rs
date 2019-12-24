@@ -5,3 +5,6 @@ pub mod engine_error;
 pub mod regions;
 pub mod resources;
 pub mod state;
+
+#[macro_use]
+extern crate num_derive;

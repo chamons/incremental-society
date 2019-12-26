@@ -29,9 +29,10 @@ fn main() {
 
         state.process_tick();
 
+        const MS_FOR_30_FPS: u128 = 32;
         let processing_duration = now.elapsed().as_millis();
-        if (processing_duration < 32) {
-            let sleep_duration = 32 - processing_duration;
+        if processing_duration < MS_FOR_30_FPS {
+            let sleep_duration = MS_FOR_30_FPS - processing_duration;
             sleep(Duration::from_millis(sleep_duration as u64));
         }
     }

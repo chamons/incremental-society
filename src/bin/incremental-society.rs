@@ -3,6 +3,9 @@ use pancurses::{initscr, Window};
 
 use incremental_society::resources::*;
 use incremental_society::state::*;
+use std::thread::sleep;
+use std::time::Duration;
+use std::time::Instant;
 
 extern crate incremental_society;
 
@@ -16,19 +19,36 @@ fn main() {
     let mut state = GameState::init();
 
     loop {
-        term.clear();
-        draw(&term, &state);
-        if let Some(input) = term.getch() {
-            match input {
-                Character(c) => match c {
-                    'q' => break,
-                    _ => {}
-                },
-                _ => {}
-            }
+        let now = Instant::now();
+
+        if handle_input(&term) {
+            break;
         }
+
+        draw(&term, &state);
+
         state.process_tick();
+
+        let processing_duration = now.elapsed().as_millis();
+        if (processing_duration < 32) {
+            let sleep_duration = 32 - processing_duration;
+            sleep(Duration::from_millis(sleep_duration as u64));
+        }
     }
+}
+
+fn handle_input(t: &Window) -> bool {
+    if let Some(input) = t.getch() {
+        match input {
+            Character(c) => match c {
+                'q' => return true,
+                _ => {}
+            },
+            _ => {}
+        }
+    }
+
+    false
 }
 
 #[allow(unused_assignments)]

@@ -1,9 +1,9 @@
-use crate::buildings::*;
+use crate::building::*;
 use crate::engine_error::*;
-use crate::regions::*;
+use crate::region::*;
 use crate::state::*;
 
-pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_index: usize) -> Result<(), EngineError> {
+pub fn build<'a>(state: &mut GameState<'a>, building: Building<'a>, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
@@ -20,7 +20,7 @@ pub fn build<'a>(state: &mut GameState<'a>, building: &Building<'a>, region_inde
         return Err(EngineError::init("Insufficient room for building".to_string()));
     }
 
-    region.add_building(building.clone());
+    region.add_building(building);
 
     Ok(())
 }

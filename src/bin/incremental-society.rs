@@ -1,27 +1,28 @@
-use pancurses::Input::Character;
-use pancurses::{initscr, Window};
+use pancurses::{initscr, Input, Window};
 
+use incremental_society::console_ui::option_list;
+use incremental_society::data::get_building;
+use incremental_society::engine;
 use incremental_society::resources::*;
 use incremental_society::state::*;
+
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;
 
 extern crate incremental_society;
 
-#[allow(dead_code)]
-
 fn main() {
     let term = initscr();
     term.keypad(true);
     term.nodelay(true);
+    pancurses::noecho();
 
     let mut state = GameState::init();
-
     loop {
         let now = Instant::now();
 
-        if handle_input(&term) {
+        if handle_input(&term, &mut state) {
             break;
         }
 
@@ -38,14 +39,31 @@ fn main() {
     }
 }
 
-fn handle_input(t: &Window) -> bool {
+fn is_char(input: &Input, c: char) -> bool {
+    if let Input::Character(i) = input {
+        if *i == c {
+            return true;
+        }
+    }
+    false
+}
+
+fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
     if let Some(input) = t.getch() {
-        match input {
-            Character(c) => match c {
-                'q' => return true,
-                _ => {}
-            },
-            _ => {}
+        if is_char(&input, 'q') {
+            return true;
+        }
+        if is_char(&input, 'b') {
+            let building_options = vec!["Gathering Camp", "Hunting Grounds"];
+            match option_list::OptionList::init(&t, &building_options).run() {
+                Some(building_index) => match option_list::OptionList::init(&t, &state.regions.iter().map(|x| x.name).collect()).run() {
+                    Some(region_index) => {
+                        engine::build(&mut state, get_building(&building_options[building_index]), region_index);
+                    }
+                    None => {}
+                },
+                None => {}
+            }
         }
     }
 
@@ -54,6 +72,8 @@ fn handle_input(t: &Window) -> bool {
 
 #[allow(unused_assignments)]
 fn draw(t: &Window, state: &GameState) {
+    t.clear();
+
     let mut y = 1;
 
     // Left Column
@@ -147,7 +167,7 @@ fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
 }
 
 #[allow(unused_assignments)]
-fn draw_country_stats(t: &Window, state: &GameState, y: i32) -> i32 {
+fn draw_country_stats(t: &Window, _state: &GameState, y: i32) -> i32 {
     let mut y = write(t, "Elysium", 1, y);
     y = write(t, "Population: 500", 1, y + 1);
     y = write(t, "----------------", 0, y + 1);

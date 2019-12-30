@@ -1,4 +1,4 @@
-use pancurses::{initscr, Input, Window};
+use pancurses::{endwin, initscr, Input, Window};
 
 use incremental_society::console_ui::option_list;
 use incremental_society::data::get_building;
@@ -37,6 +37,8 @@ fn main() {
             sleep(Duration::from_millis(sleep_duration as u64));
         }
     }
+
+    endwin();
 }
 
 fn is_char(input: &Input, c: char) -> bool {

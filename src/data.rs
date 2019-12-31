@@ -49,3 +49,7 @@ pub fn get_conversion(name: &str) -> Conversion {
 pub fn get_building(name: &str) -> Building {
     BUILDINGS[name].clone()
 }
+
+pub fn get_building_names() -> Vec<&'static str> {
+    BUILDINGS.keys().cloned().collect()
+}

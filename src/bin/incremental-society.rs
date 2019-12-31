@@ -1,8 +1,9 @@
 use pancurses::{endwin, initscr, Input, Window};
 
 use incremental_society::console_ui::option_list;
-use incremental_society::data::get_building;
+use incremental_society::data;
 use incremental_society::engine;
+use incremental_society::engine_error::EngineError;
 use incremental_society::resources::*;
 use incremental_society::state::*;
 
@@ -56,11 +57,12 @@ fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
             return true;
         }
         if is_char(&input, 'b') {
-            let building_options = vec!["Gathering Camp", "Hunting Grounds"];
+            let building_options = data::get_building_names();
             match option_list::OptionList::init(&t, &building_options).run() {
                 Some(building_index) => match option_list::OptionList::init(&t, &state.regions.iter().map(|x| x.name).collect()).run() {
                     Some(region_index) => {
-                        engine::build(&mut state, get_building(&building_options[building_index]), region_index);
+                        // Ignore errors for now
+                        let _ = engine::build(&mut state, data::get_building(&building_options[building_index]), region_index);
                     }
                     None => {}
                 },

@@ -1,11 +1,10 @@
-use pancurses::{endwin, initscr, Input, Window};
+use pancurses::{Input, Window};
 
 use incremental_society::console_ui::option_list;
 use incremental_society::data;
 use incremental_society::engine;
-use incremental_society::engine_error::EngineError;
 use incremental_society::resources::*;
-use incremental_society::state::*;
+use incremental_society::state::GameState;
 
 use std::thread::sleep;
 use std::time::Duration;
@@ -14,7 +13,7 @@ use std::time::Instant;
 extern crate incremental_society;
 
 fn main() {
-    let term = initscr();
+    let term = pancurses::initscr();
     term.keypad(true);
     term.nodelay(true);
     pancurses::noecho();
@@ -39,7 +38,7 @@ fn main() {
         }
     }
 
-    endwin();
+    pancurses::endwin();
 }
 
 fn is_char(input: &Input, c: char) -> bool {

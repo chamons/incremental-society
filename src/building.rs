@@ -1,4 +1,4 @@
-use crate::conversion::*;
+use crate::conversion::Conversion;
 use crate::resources::*;
 
 #[derive(Debug)]

@@ -1,7 +1,7 @@
-use crate::building::*;
-use crate::engine_error::*;
-use crate::region::*;
-use crate::state::*;
+use crate::building::Building;
+use crate::engine_error::EngineError;
+use crate::region::Region;
+use crate::state::GameState;
 
 pub fn build<'a>(state: &mut GameState<'a>, building: Building<'a>, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);

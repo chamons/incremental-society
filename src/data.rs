@@ -1,4 +1,4 @@
-use crate::building::*;
+use crate::building::Building;
 use crate::conversion::Conversion;
 use crate::resources::*;
 

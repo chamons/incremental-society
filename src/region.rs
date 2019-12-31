@@ -1,4 +1,4 @@
-use crate::building::*;
+use crate::building::Building;
 use crate::resources::*;
 
 pub const REGION_BUILDING_COUNT: usize = 2;

@@ -1,7 +1,7 @@
-use crate::building::*;
+use crate::building::Building;
 use crate::conversion::Conversion;
-use crate::data::get_building;
-use crate::region::*;
+use crate::data;
+use crate::region::Region;
 use crate::resources::*;
 
 #[derive(Debug)]
@@ -15,7 +15,7 @@ impl<'a> GameState<'a> {
         GameState {
             resources: ResourceTotal::init(),
             regions: vec![
-                Region::init_with_buildings("Lusitania", vec![get_building("Gathering Camp"), get_building("Hunting Grounds")]),
+                Region::init_with_buildings("Lusitania", vec![data::get_building("Gathering Camp"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
             ],
         }

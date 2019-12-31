@@ -1,6 +1,7 @@
-use num_traits::FromPrimitive;
 use std::fmt;
 use std::ops::{Index, IndexMut};
+
+use num_traits::FromPrimitive;
 
 type ResourceQuantity = i64;
 

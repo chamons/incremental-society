@@ -37,7 +37,7 @@ mod tests {
         state.regions = vec![];
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
-        assert!(build(&mut state, &building, 0).is_err());
+        assert!(build(&mut state, building, 0).is_err());
     }
 
     #[test]
@@ -48,7 +48,7 @@ mod tests {
 
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
-        build(&mut state, &building, 0).unwrap();
+        build(&mut state, building, 0).unwrap();
         assert_eq!(1, state.buildings().len());
     }
 
@@ -58,7 +58,7 @@ mod tests {
         state.regions = vec![Region::init("First Region")];
         let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
-        let error = build(&mut state, &building, 0).unwrap_err();
+        let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient resources for build cost", error.description());
     }
 
@@ -70,7 +70,7 @@ mod tests {
         state.resources[ResourceKind::Fuel] = 20;
         state.regions = vec![Region::init_with_buildings("First Region", vec![building.clone(), building.clone()])];
 
-        let error = build(&mut state, &building, 0).unwrap_err();
+        let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient room for building", error.description());
     }
 }

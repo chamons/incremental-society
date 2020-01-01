@@ -1,12 +1,9 @@
 Short term todo of rewrite
 
-- Get some kind of UI/UX up
-    - Regions, buildings, conversions, resources
-
 - Conversion condense
 - Save
 - Research
-- Upgrades (Cost per person/building to upgrade/change  existing)
+- Upgrades (Cost per person/building to upgrade/change existing)
 - Edicts
 - Research 1 of 3
 - Regions Resources

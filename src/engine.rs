@@ -1,4 +1,5 @@
 use crate::building::Building;
+use crate::data::get_conversion;
 use crate::engine_error::EngineError;
 use crate::region::Region;
 use crate::state::GameState;
@@ -23,6 +24,30 @@ pub fn build<'a>(state: &mut GameState<'a>, building: Building<'a>, region_index
     region.add_building(building);
 
     Ok(())
+}
+
+pub const CONVERSION_TICK_START: u32 = 100;
+
+pub fn process_tick<'a>(state: &mut GameState<'a>) {
+    for (conversion, count) in state.conversion_with_counts() {
+        let entry = state.ticks.entry(&conversion).or_insert(CONVERSION_TICK_START);
+        if *entry == 0 {
+            *entry = CONVERSION_TICK_START;
+            let conversion = get_conversion(&conversion);
+            for _ in 0..count {
+                conversion.convert(&mut state.resources);
+            }
+        } else {
+            *entry -= 1;
+        }
+    }
+}
+
+pub fn get_conversion_tick<'a>(state: &GameState<'a>, conversion_name: &'a str) -> Option<u32> {
+    match state.ticks.get(conversion_name) {
+        Some(x) => Some(CONVERSION_TICK_START - *x),
+        None => None,
+    }
 }
 
 #[cfg(test)]

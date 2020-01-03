@@ -28,7 +28,7 @@ fn main() {
 
         draw(&term, &state);
 
-        state.process_tick();
+        engine::process_tick(&mut state);
 
         const MS_FOR_30_FPS: u128 = 32;
         let processing_duration = now.elapsed().as_millis();
@@ -111,17 +111,21 @@ fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
 
     y = write_right(t, "Conversions", 0, y);
 
-    for c in state.conversions() {
-        // Don't update y, as we have to draw the bar
-        write_right(t, c.name, 0, y);
+    for c in state.conversion_names() {
+        match engine::get_conversion_tick(state, c) {
+            Some(ticks) => {
+                // Don't update y, as we have to draw the bar
+                write_right(t, c, 0, y);
 
-        let percentage = c.tick_percentage();
-        let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
-        let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
-        let filled_width = filled_width as usize;
-
-        let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
-        y = write_right(t, &bar_text, c.name.len() as i32 + 2, y);
+                let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
+                let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
+                let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
+                let filled_width = filled_width as usize;
+                let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
+                y = write_right(t, &bar_text, c.len() as i32 + 2, y);
+            }
+            _ => {}
+        }
     }
     y
 }

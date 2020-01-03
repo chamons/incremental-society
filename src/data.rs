@@ -1,9 +1,11 @@
 use crate::building::Building;
 use crate::conversion::Conversion;
-use crate::resources::*;
 
+#[allow(unused_imports)] // Used in non-test version
+use crate::resources::*;
 use std::collections::HashMap;
 
+#[cfg(not(test))]
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion<'static>> = {
         let mut m = HashMap::new();
@@ -29,18 +31,47 @@ lazy_static! {
             "Gathering Camp",
             Building::init(
                 "Gathering Camp",
-                vec![CONVERSIONS["Gathering"].clone(), CONVERSIONS["Gathering"].clone()],
+                vec!["Gathering", "Gathering"],
                 vec![],
             ),
         );
         m.insert(
             "Hunting Grounds",
-            Building::init("Hunting Grounds", vec![CONVERSIONS["Hunting"].clone()], vec![]),
+            Building::init("Hunting Grounds", vec!["Hunting"], vec![]),
         );
 
         m
     };
 }
+
+#[cfg(test)]
+lazy_static! {
+    static ref CONVERSIONS: HashMap<&'static str, Conversion<'static>> = {
+        let mut m = HashMap::new();
+        m.insert(
+            "TestEmptyConvert",
+            Conversion::init(
+                "TestEmptyConvert",
+                vec![],
+                vec![],
+            ),
+        );
+        m
+    };
+    static ref BUILDINGS: HashMap<&'static str, Building<'static>> = {
+        let mut m = HashMap::new();
+        m.insert(
+            "Test Building",
+            Building::init(
+                "Test Building",
+                vec!["TestEmptyConvert", "TestEmptyConvert"],
+                vec![],
+            ),
+        );
+        m
+    };
+}
+
 
 pub fn get_conversion(name: &str) -> Conversion {
     CONVERSIONS[name].clone()

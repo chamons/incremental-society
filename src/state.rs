@@ -1,13 +1,16 @@
 use crate::building::Building;
-use crate::conversion::Conversion;
 use crate::data;
 use crate::region::Region;
 use crate::resources::*;
+
+use itertools::Itertools;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct GameState<'a> {
     pub resources: ResourceTotal,
     pub regions: Vec<Region<'a>>,
+    pub ticks: HashMap<&'a str, u32>,
 }
 
 impl<'a> GameState<'a> {
@@ -18,12 +21,7 @@ impl<'a> GameState<'a> {
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Gathering Camp"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
             ],
-        }
-    }
-
-    pub fn process_tick(&mut self) {
-        for r in &mut self.regions {
-            r.process_tick(&mut self.resources);
+            ticks: HashMap::new(),
         }
     }
 
@@ -31,41 +29,22 @@ impl<'a> GameState<'a> {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
-    pub fn conversions(&self) -> Vec<&Conversion<'a>> {
-        self.buildings().iter().flat_map(|x| &x.conversions).collect()
+    pub fn conversion_with_counts(&self) -> Vec<(&'a str, u32)> {
+        let mut conversion_count = HashMap::new();
+        for c in self.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.conversions) {
+            let entry = conversion_count.entry(c).or_insert(0);
+            *entry += 1;
+        }
+        conversion_count.iter().map(|x| (**x.0, *x.1)).collect()
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn all_buildings_and_conversions() {
-        let mut state = GameState::init();
-        state.regions = vec![
-            Region::init_with_buildings(
-                "First Region",
-                vec![
-                    Building::init("First", vec![Conversion::init("First Convert", vec![], vec![])], vec![]),
-                    Building::init(
-                        "Second",
-                        vec![
-                            Conversion::init("Second Convert", vec![], vec![]),
-                            Conversion::init("Third Convert", vec![], vec![]),
-                        ],
-                        vec![],
-                    ),
-                ],
-            ),
-            Region::init_with_buildings(
-                "Second Region",
-                vec![Building::init("Third", vec![Conversion::init("Fourth Convert", vec![], vec![])], vec![])],
-            ),
-        ];
-
-        assert_eq!(2, state.regions.len());
-        assert_eq!(3, state.buildings().len());
-        assert_eq!(4, state.conversions().len());
+    pub fn conversion_names(&self) -> Vec<&'a str> {
+        self.regions
+            .iter()
+            .flat_map(|x| &x.buildings)
+            .flat_map(|x| &x.conversions)
+            .unique()
+            .copied()
+            .collect()
     }
 }

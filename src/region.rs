@@ -1,5 +1,4 @@
 use crate::building::Building;
-use crate::resources::*;
 
 pub const REGION_BUILDING_COUNT: usize = 2;
 
@@ -16,12 +15,6 @@ impl<'a> Region<'a> {
 
     pub fn init_with_buildings(name: &'a str, buildings: Vec<Building<'a>>) -> Region<'a> {
         Region { name, buildings }
-    }
-
-    pub fn process_tick(&mut self, resources: &mut ResourceTotal) {
-        for b in &mut self.buildings {
-            b.process_tick(resources);
-        }
     }
 
     pub fn add_building(&mut self, building: Building<'a>) {

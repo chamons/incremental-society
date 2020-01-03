@@ -1,6 +1,5 @@
 Short term todo of rewrite
 
-- Conversion condense
 - Save
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)

@@ -17,6 +17,14 @@ impl<'a> GameState<'a> {
     pub fn init() -> GameState<'a> {
         GameState {
             resources: ResourceTotal::init(),
+            regions: vec![],
+            ticks: HashMap::new(),
+        }
+    }
+
+    pub fn init_new_game_state() -> GameState<'a> {
+        GameState {
+            resources: ResourceTotal::init(),
             regions: vec![
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Gathering Camp"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
@@ -46,5 +54,25 @@ impl<'a> GameState<'a> {
             .unique()
             .copied()
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn conversion_with_counts() {
+        //
+    }
+
+    #[test]
+    fn conversion_names() {
+        //
+    }
+
+    #[test]
+    fn buildings() {
+        //
     }
 }

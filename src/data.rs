@@ -27,18 +27,8 @@ lazy_static! {
     };
     static ref BUILDINGS: HashMap<&'static str, Building<'static>> = {
         let mut m = HashMap::new();
-        m.insert(
-            "Gathering Camp",
-            Building::init(
-                "Gathering Camp",
-                vec!["Gathering", "Gathering"],
-                vec![],
-            ),
-        );
-        m.insert(
-            "Hunting Grounds",
-            Building::init("Hunting Grounds", vec!["Hunting"], vec![]),
-        );
+        m.insert("Gathering Camp", Building::init("Gathering Camp", vec!["Gathering", "Gathering"], vec![]));
+        m.insert("Hunting Grounds", Building::init("Hunting Grounds", vec!["Hunting"], vec![]));
 
         m
     };
@@ -48,14 +38,7 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion<'static>> = {
         let mut m = HashMap::new();
-        m.insert(
-            "TestEmptyConvert",
-            Conversion::init(
-                "TestEmptyConvert",
-                vec![],
-                vec![],
-            ),
-        );
+        m.insert("TestEmptyConvert", Conversion::init("TestEmptyConvert", vec![], vec![]));
         m
     };
     static ref BUILDINGS: HashMap<&'static str, Building<'static>> = {
@@ -65,13 +48,12 @@ lazy_static! {
             Building::init(
                 "Test Building",
                 vec!["TestEmptyConvert", "TestEmptyConvert"],
-                vec![],
+                vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
             ),
         );
         m
     };
 }
-
 
 pub fn get_conversion(name: &str) -> Conversion {
     CONVERSIONS[name].clone()

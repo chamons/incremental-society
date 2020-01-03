@@ -57,10 +57,40 @@ mod tests {
     use std::error::Error;
 
     #[test]
+    fn get_conversion_tick() {
+        //
+    }
+
+    #[test]
+    fn get_conversion_tick_with_no_ticks() {
+        //
+    }
+
+    #[test]
+    fn get_non_existent_conversion_tick() {
+        //
+    }
+
+    #[test]
+    fn process_tick_none_ready() {
+        //
+    }
+
+    #[test]
+    fn process_tick_none_one_ready() {
+        //
+    }
+
+    #[test]
+    fn process_tick_none_many_ready() {
+        //
+    }
+
+    #[test]
     fn build_invalid_region() {
         let mut state = GameState::init();
         state.regions = vec![];
-        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
         assert!(build(&mut state, building, 0).is_err());
     }
@@ -71,7 +101,7 @@ mod tests {
         state.regions = vec![Region::init("First Region")];
         state.resources[ResourceKind::Fuel] = 20;
 
-        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
         build(&mut state, building, 0).unwrap();
         assert_eq!(1, state.buildings().len());
@@ -81,7 +111,7 @@ mod tests {
     fn build_without_resources() {
         let mut state = GameState::init();
         state.regions = vec![Region::init("First Region")];
-        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
         let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient resources for build cost", error.description());
@@ -89,7 +119,7 @@ mod tests {
 
     #[test]
     fn build_without_room() {
-        let building = Building::init("Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
+        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)]);
 
         let mut state = GameState::init();
         state.resources[ResourceKind::Fuel] = 20;

@@ -18,7 +18,7 @@ fn main() {
     term.nodelay(true);
     pancurses::noecho();
 
-    let mut state = GameState::init();
+    let mut state = GameState::init_new_game_state();
     loop {
         let now = Instant::now();
 

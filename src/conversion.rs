@@ -160,7 +160,7 @@ mod tests {
     fn conversion_with_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 10;
-        let mut conversion = create_test_conversion();
+        let conversion = create_test_conversion();
 
         conversion.convert(&mut resources);
 
@@ -172,7 +172,7 @@ mod tests {
     fn conversion_without_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 5;
-        let mut conversion = create_test_conversion();
+        let conversion = create_test_conversion();
 
         conversion.convert(&mut resources);
 
@@ -184,7 +184,7 @@ mod tests {
     fn required_conversion_with_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 10;
-        let mut conversion = create_test_required_conversion();
+        let conversion = create_test_required_conversion();
 
         conversion.convert(&mut resources);
 

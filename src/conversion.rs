@@ -1,19 +1,19 @@
 use crate::resources::*;
 
 #[derive(Debug)]
-pub struct Conversion<'a> {
-    pub name: &'a str,
+pub struct Conversion {
+    pub name: &'static str,
     pub input: Vec<ResourceAmount>,
     pub output: Vec<ResourceAmount>,
     pub input_required_or_output: bool,
 }
 
-impl<'a> Conversion<'a> {
-    pub fn init_single(name: &'a str, input: ResourceAmount, output: ResourceAmount) -> Conversion<'a> {
+impl Conversion {
+    pub fn init_single(name: &'static str, input: ResourceAmount, output: ResourceAmount) -> Conversion {
         Conversion::init(name, vec![input], vec![output])
     }
 
-    pub fn init(name: &'a str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion<'a> {
+    pub fn init(name: &'static str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion {
         Conversion {
             name,
             input,
@@ -22,11 +22,11 @@ impl<'a> Conversion<'a> {
         }
     }
 
-    pub fn init_required_single(name: &'a str, input: ResourceAmount, output: ResourceAmount) -> Conversion<'a> {
+    pub fn init_required_single(name: &'static str, input: ResourceAmount, output: ResourceAmount) -> Conversion {
         Conversion::init_required(name, vec![input], vec![output])
     }
 
-    pub fn init_required(name: &'a str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion<'a> {
+    pub fn init_required(name: &'static str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion {
         Conversion {
             name,
             input,
@@ -91,7 +91,7 @@ impl<'a> Conversion<'a> {
     }
 }
 
-impl<'a> Clone for Conversion<'a> {
+impl Clone for Conversion {
     fn clone(&self) -> Self {
         Conversion {
             name: self.name,
@@ -106,7 +106,7 @@ impl<'a> Clone for Conversion<'a> {
 mod tests {
     use super::*;
 
-    fn create_test_conversion<'a>() -> Conversion<'a> {
+    fn create_test_conversion() -> Conversion {
         Conversion::init_single(
             "TestConversion",
             ResourceAmount::init(ResourceKind::Food, 10),
@@ -114,7 +114,7 @@ mod tests {
         )
     }
 
-    fn create_test_required_conversion<'a>() -> Conversion<'a> {
+    fn create_test_required_conversion() -> Conversion {
         Conversion::init_required_single(
             "TestRequiredConversion",
             ResourceAmount::init(ResourceKind::Food, 10),
@@ -195,7 +195,7 @@ mod tests {
     #[test]
     fn required_conversion_without_input() {
         let mut resources = ResourceTotal::init();
-        let mut conversion = create_test_required_conversion();
+        let conversion = create_test_required_conversion();
 
         conversion.convert(&mut resources);
 

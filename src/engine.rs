@@ -4,7 +4,7 @@ use crate::engine_error::EngineError;
 use crate::region::Region;
 use crate::state::GameState;
 
-pub fn build<'a>(state: &mut GameState<'a>, building: Building<'a>, region_index: usize) -> Result<(), EngineError> {
+pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
@@ -28,13 +28,13 @@ pub fn build<'a>(state: &mut GameState<'a>, building: Building<'a>, region_index
 
 pub const CONVERSION_TICK_START: u32 = 100;
 
-pub fn process_tick<'a>(state: &mut GameState<'a>) {
-    for (conversion, count) in state.conversion_with_counts() {
-        let entry = state.ticks.entry(&conversion).or_insert(CONVERSION_TICK_START);
+pub fn process_tick(state: &mut GameState) {
+    for c in state.conversion_with_counts() {
+        let entry = state.ticks.entry(&c.name).or_insert(CONVERSION_TICK_START);
         if *entry == 0 {
             *entry = CONVERSION_TICK_START;
-            let conversion = get_conversion(&conversion);
-            for _ in 0..count {
+            let conversion = get_conversion(&c.name);
+            for _ in 0..c.count {
                 conversion.convert(&mut state.resources);
             }
         } else {
@@ -43,7 +43,7 @@ pub fn process_tick<'a>(state: &mut GameState<'a>) {
     }
 }
 
-pub fn get_conversion_tick<'a>(state: &GameState<'a>, conversion_name: &'a str) -> Option<u32> {
+pub fn get_conversion_tick<'a>(state: &GameState, conversion_name: &'a str) -> Option<u32> {
     match state.ticks.get(conversion_name) {
         Some(x) => Some(CONVERSION_TICK_START - *x),
         None => None,

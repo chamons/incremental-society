@@ -3,21 +3,21 @@ use crate::building::Building;
 pub const REGION_BUILDING_COUNT: usize = 2;
 
 #[derive(Debug)]
-pub struct Region<'a> {
-    pub name: &'a str,
-    pub buildings: Vec<Building<'a>>,
+pub struct Region {
+    pub name: &'static str,
+    pub buildings: Vec<Building>,
 }
 
-impl<'a> Region<'a> {
-    pub fn init(name: &'a str) -> Region<'a> {
+impl Region {
+    pub fn init(name: &'static str) -> Region {
         Region { name, buildings: vec![] }
     }
 
-    pub fn init_with_buildings(name: &'a str, buildings: Vec<Building<'a>>) -> Region<'a> {
+    pub fn init_with_buildings(name: &'static str, buildings: Vec<Building>) -> Region {
         Region { name, buildings }
     }
 
-    pub fn add_building(&mut self, building: Building<'a>) {
+    pub fn add_building(&mut self, building: Building) {
         self.buildings.push(building);
     }
 

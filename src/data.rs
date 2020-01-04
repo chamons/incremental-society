@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 #[cfg(not(test))]
 lazy_static! {
-    static ref CONVERSIONS: HashMap<&'static str, Conversion<'static>> = {
+    static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
         m.insert(
             "Gathering",
@@ -25,7 +25,7 @@ lazy_static! {
 
         m
     };
-    static ref BUILDINGS: HashMap<&'static str, Building<'static>> = {
+    static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
         m.insert("Gathering Camp", Building::init("Gathering Camp", vec!["Gathering", "Gathering"], vec![]));
         m.insert("Hunting Grounds", Building::init("Hunting Grounds", vec!["Hunting"], vec![]));
@@ -36,12 +36,16 @@ lazy_static! {
 
 #[cfg(test)]
 lazy_static! {
-    static ref CONVERSIONS: HashMap<&'static str, Conversion<'static>> = {
+    static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
         m.insert("TestEmptyConvert", Conversion::init("TestEmptyConvert", vec![], vec![]));
+        m.insert(
+            "TestGather",
+            Conversion::init("TestEmptyConvert", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)]),
+        );
         m
     };
-    static ref BUILDINGS: HashMap<&'static str, Building<'static>> = {
+    static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
         m.insert(
             "Test Building",
@@ -51,6 +55,7 @@ lazy_static! {
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
             ),
         );
+        m.insert("Test Gather Hut", Building::init("Test Gather Hut", vec!["TestGather"], vec![]));
         m
     };
 }

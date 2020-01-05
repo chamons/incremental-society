@@ -112,10 +112,10 @@ fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
     y = write_right(t, "Conversions", 0, y);
 
     for c in state.conversion_names() {
-        match engine::get_conversion_tick(state, c) {
+        match engine::get_conversion_tick(state, &c) {
             Some(ticks) => {
                 // Don't update y, as we have to draw the bar
-                write_right(t, c, 0, y);
+                write_right(t, &c, 0, y);
 
                 let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
                 let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
@@ -149,7 +149,7 @@ fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
             if let Some(building) = r.buildings.get(b) {
                 y = building_top_line;
 
-                let building_name = building.name;
+                let building_name = &building.name;
                 let building_name_length: usize = building_name.len();
 
                 // Draw box manually

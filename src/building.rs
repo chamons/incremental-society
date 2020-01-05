@@ -2,24 +2,24 @@ use crate::resources::*;
 
 #[derive(Debug)]
 pub struct Building {
-    pub name: &'static str,
-    pub conversions: Vec<&'static str>,
+    pub name: String,
+    pub conversions: Vec<String>,
     pub build_cost: Vec<ResourceAmount>,
 }
 
 impl Building {
     pub fn init_single(name: &'static str, conversion: &'static str, build_cost: Vec<ResourceAmount>) -> Building {
         Building {
-            name: name,
-            conversions: vec![conversion],
+            name: name.to_owned(),
+            conversions: vec![conversion.to_owned()],
             build_cost,
         }
     }
 
     pub fn init(name: &'static str, conversions: Vec<&'static str>, build_cost: Vec<ResourceAmount>) -> Building {
         Building {
-            name: name,
-            conversions,
+            name: name.to_owned(),
+            conversions: conversions.iter().map(|x| x.to_string()).collect(),
             build_cost,
         }
     }
@@ -27,6 +27,10 @@ impl Building {
 
 impl<'a> Clone for Building {
     fn clone(&self) -> Self {
-        Building::init(&self.name, self.conversions.clone(), self.build_cost.clone())
+        Building {
+            name: self.name.to_string(),
+            conversions: self.conversions.clone(),
+            build_cost: self.build_cost.clone(),
+        }
     }
 }

@@ -10,17 +10,17 @@ use std::collections::HashMap;
 pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
-    pub ticks: HashMap<&'static str, u32>,
+    pub ticks: HashMap<String, u32>,
 }
 
 pub struct ConversionTotal {
-    pub name: &'static str,
+    pub name: String,
     pub count: u32,
 }
 
 impl ConversionTotal {
-    pub fn init(name: &'static str, count: u32) -> ConversionTotal {
-        ConversionTotal { name, count }
+    pub fn init(name: &str, count: u32) -> ConversionTotal {
+        ConversionTotal { name: name.to_owned(), count }
     }
 }
 
@@ -49,26 +49,27 @@ impl GameState {
     }
 
     pub fn conversion_with_counts(&self) -> Vec<ConversionTotal> {
-        let mut counts = HashMap::new();
+        let mut counts: HashMap<&str, u32> = HashMap::new();
         for c in self.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.conversions) {
             let entry = counts.entry(c).or_insert(0);
             *entry += 1;
         }
         let mut conversion_with_counts = Vec::with_capacity(counts.len());
         for name in self.conversion_names() {
-            conversion_with_counts.push(ConversionTotal::init(name, *counts.get(&name).unwrap()));
+            let count = counts.get::<str>(&name).unwrap();
+            conversion_with_counts.push(ConversionTotal::init(&name, *count));
         }
         conversion_with_counts
     }
 
-    pub fn conversion_names(&self) -> Vec<&'static str> {
-        let mut names: Vec<&'static str> = self
+    pub fn conversion_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = self
             .regions
             .iter()
             .flat_map(|x| &x.buildings)
             .flat_map(|x| &x.conversions)
             .unique()
-            .copied()
+            .cloned()
             .collect();
         names.sort();
         names

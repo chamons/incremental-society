@@ -30,7 +30,7 @@ pub const CONVERSION_TICK_START: u32 = 100;
 
 pub fn process_tick(state: &mut GameState) {
     for c in state.conversion_with_counts() {
-        let entry = state.ticks.entry(&c.name).or_insert(CONVERSION_TICK_START);
+        let entry = state.ticks.entry(c.name.to_string()).or_insert(CONVERSION_TICK_START);
         if *entry == 0 {
             *entry = CONVERSION_TICK_START;
             let conversion = get_conversion(&c.name);
@@ -43,7 +43,7 @@ pub fn process_tick(state: &mut GameState) {
     }
 }
 
-pub fn get_conversion_tick(state: &GameState, conversion_name: &'static str) -> Option<u32> {
+pub fn get_conversion_tick(state: &GameState, conversion_name: &str) -> Option<u32> {
     match state.ticks.get(conversion_name) {
         Some(x) => Some(CONVERSION_TICK_START - *x),
         None => None,
@@ -91,7 +91,7 @@ mod tests {
     #[test]
     fn process_tick_none_one_ready() {
         let mut state = GameState::init_test_game_state();
-        *state.ticks.entry("TestChop").or_default() = 0;
+        *state.ticks.entry("TestChop".to_string()).or_default() = 0;
         process_tick(&mut state);
 
         assert_eq!(0, state.resources[ResourceKind::Food]);
@@ -101,8 +101,8 @@ mod tests {
     #[test]
     fn process_tick_none_many_ready() {
         let mut state = GameState::init_test_game_state();
-        *state.ticks.entry("TestChop").or_default() = 0;
-        *state.ticks.entry("TestGather").or_default() = 0;
+        *state.ticks.entry("TestChop".to_string()).or_default() = 0;
+        *state.ticks.entry("TestGather".to_string()).or_default() = 0;
         process_tick(&mut state);
 
         assert_eq!(1, state.resources[ResourceKind::Food]);

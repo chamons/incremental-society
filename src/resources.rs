@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
@@ -5,7 +6,7 @@ use num_traits::FromPrimitive;
 
 type ResourceQuantity = i64;
 
-#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
+#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive, Deserialize, Serialize)]
 pub enum ResourceKind {
     Food,
     Fuel,
@@ -26,7 +27,7 @@ impl ResourceKind {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct ResourceAmount {
     pub kind: ResourceKind,
     pub amount: ResourceQuantity,
@@ -40,7 +41,7 @@ impl ResourceAmount {
 
 pub const NUM_RESOURCES: usize = ResourceKind::Size as usize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceTotal {
     pub resources: [ResourceQuantity; NUM_RESOURCES],
 }

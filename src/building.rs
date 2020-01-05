@@ -1,6 +1,7 @@
 use crate::resources::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Building {
     pub name: String,
     pub conversions: Vec<String>,

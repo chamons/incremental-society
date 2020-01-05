@@ -71,6 +71,6 @@ pub fn get_building(name: &str) -> Building {
     BUILDINGS[name].clone()
 }
 
-pub fn get_building_names() -> Vec<&'static str> {
-    BUILDINGS.keys().cloned().collect()
+pub fn get_building_names() -> Vec<String> {
+    BUILDINGS.keys().map(|x| x.to_string()).collect()
 }

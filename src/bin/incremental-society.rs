@@ -58,13 +58,16 @@ fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
         if is_char(&input, 'b') {
             let building_options = data::get_building_names();
             match option_list::OptionList::init(&t, &building_options).run() {
-                Some(building_index) => match option_list::OptionList::init(&t, &state.regions.iter().map(|x| x.name).collect()).run() {
-                    Some(region_index) => {
-                        // Ignore errors for now
-                        let _ = engine::build(&mut state, data::get_building(&building_options[building_index]), region_index);
+                Some(building_index) => {
+                    let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+                    match option_list::OptionList::init(&t, &regions).run() {
+                        Some(region_index) => {
+                            // Ignore errors for now
+                            let _ = engine::build(&mut state, data::get_building(&building_options[building_index]), region_index);
+                        }
+                        None => {}
                     }
-                    None => {}
-                },
+                }
                 None => {}
             }
         }
@@ -141,7 +144,7 @@ fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
     for r in &state.regions {
         y = write_right(t, "----------------------------------------", 0, y);
 
-        y = write_region_contents(t, r.name, 0, y);
+        y = write_region_contents(t, &r.name, 0, y);
 
         let mut x = 0;
         let building_top_line = y;

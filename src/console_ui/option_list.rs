@@ -3,7 +3,7 @@ use pancurses::Window;
 
 pub struct OptionList<'a> {
     term: &'a Window,
-    options: &'a Vec<&'a str>,
+    options: &'a Vec<String>,
     height: usize,
     start_x: i32,
     start_y: i32,
@@ -14,7 +14,7 @@ pub struct OptionList<'a> {
 impl<'a> OptionList<'a> {
     const MODAL_WIDTH: usize = 60;
 
-    pub fn init(term: &'a Window, options: &'a Vec<&'a str>) -> OptionList<'a> {
+    pub fn init(term: &'a Window, options: &'a Vec<String>) -> OptionList<'a> {
         let height = options.len() + 2;
         let max_x = term.get_max_x() as usize;
         let max_y = term.get_max_y() as usize;

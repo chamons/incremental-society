@@ -4,9 +4,10 @@ use crate::region::Region;
 use crate::resources::*;
 
 use itertools::Itertools;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
@@ -42,6 +43,14 @@ impl GameState {
             ],
             ticks: HashMap::new(),
         }
+    }
+
+    pub fn init_from_json(json: String) -> GameState {
+        serde_json::from_str(&json).unwrap()
+    }
+
+    pub fn save(&self) -> String {
+        serde_json::to_string(&self).unwrap()
     }
 
     pub fn buildings(&self) -> Vec<&Building> {
@@ -91,6 +100,14 @@ impl GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn serialization() {
+        let state = GameState::init_test_game_state();
+        let save = state.save();
+        let state = GameState::init_from_json(save);
+        assert_eq!(2, state.regions.len());
+    }
 
     #[test]
     fn conversion_with_counts() {

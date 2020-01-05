@@ -1,6 +1,5 @@
 Short term todo of rewrite
 
-- Save
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)
 - Edicts

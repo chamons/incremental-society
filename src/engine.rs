@@ -43,7 +43,7 @@ pub fn process_tick(state: &mut GameState) {
     }
 }
 
-pub fn get_conversion_tick<'a>(state: &GameState, conversion_name: &'a str) -> Option<u32> {
+pub fn get_conversion_tick(state: &GameState, conversion_name: &'static str) -> Option<u32> {
     match state.ticks.get(conversion_name) {
         Some(x) => Some(CONVERSION_TICK_START - *x),
         None => None,
@@ -57,33 +57,56 @@ mod tests {
     use std::error::Error;
 
     #[test]
-    fn get_conversion_tick() {
-        //
+    fn simple_conversion_tick() {
+        let mut state = GameState::init_test_game_state();
+        process_tick(&mut state);
+
+        assert_eq!(1, get_conversion_tick(&state, "TestChop").unwrap());
+        assert_eq!(1, get_conversion_tick(&state, "TestGather").unwrap());
     }
 
     #[test]
     fn get_conversion_tick_with_no_ticks() {
-        //
+        let state = GameState::init_test_game_state();
+        assert!(get_conversion_tick(&state, "TestChop").is_none());
+        assert!(get_conversion_tick(&state, "TestGather").is_none());
     }
 
     #[test]
     fn get_non_existent_conversion_tick() {
-        //
+        let mut state = GameState::init_test_game_state();
+        process_tick(&mut state);
+
+        assert!(get_conversion_tick(&state, "NonExistentConvert").is_none());
     }
 
     #[test]
     fn process_tick_none_ready() {
-        //
+        let mut state = GameState::init_test_game_state();
+        process_tick(&mut state);
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        assert_eq!(0, state.resources[ResourceKind::Fuel]);
     }
 
     #[test]
     fn process_tick_none_one_ready() {
-        //
+        let mut state = GameState::init_test_game_state();
+        *state.ticks.entry("TestChop").or_default() = 0;
+        process_tick(&mut state);
+
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        assert_eq!(4, state.resources[ResourceKind::Fuel]);
     }
 
     #[test]
     fn process_tick_none_many_ready() {
-        //
+        let mut state = GameState::init_test_game_state();
+        *state.ticks.entry("TestChop").or_default() = 0;
+        *state.ticks.entry("TestGather").or_default() = 0;
+        process_tick(&mut state);
+
+        assert_eq!(1, state.resources[ResourceKind::Food]);
+        assert_eq!(4, state.resources[ResourceKind::Fuel]);
     }
 
     #[test]

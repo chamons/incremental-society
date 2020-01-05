@@ -38,10 +38,13 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert("TestEmptyConvert", Conversion::init("TestEmptyConvert", vec![], vec![]));
+        m.insert(
+            "TestChop",
+            Conversion::init("TestChop", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
+        );
         m.insert(
             "TestGather",
-            Conversion::init("TestEmptyConvert", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)]),
+            Conversion::init("TestGather", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)]),
         );
         m
     };
@@ -51,7 +54,7 @@ lazy_static! {
             "Test Building",
             Building::init(
                 "Test Building",
-                vec!["TestEmptyConvert", "TestEmptyConvert"],
+                vec!["TestChop", "TestChop"],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
             ),
         );

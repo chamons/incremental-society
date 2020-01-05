@@ -73,12 +73,8 @@ impl GameState {
         names.sort();
         names
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
+    #[cfg(test)]
     pub fn init_test_game_state() -> GameState {
         GameState {
             resources: ResourceTotal::init(),
@@ -89,12 +85,17 @@ mod tests {
             ticks: HashMap::new(),
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
 
     #[test]
     fn conversion_with_counts() {
-        let state = init_test_game_state();
+        let state = GameState::init_test_game_state();
         let conversions = state.conversion_with_counts();
-        assert_eq!("TestEmptyConvert", conversions[0].name);
+        assert_eq!("TestChop", conversions[0].name);
         assert_eq!(4, conversions[0].count);
         assert_eq!("TestGather", conversions[1].name);
         assert_eq!(1, conversions[1].count);
@@ -102,15 +103,15 @@ mod tests {
 
     #[test]
     fn conversion_names() {
-        let state = init_test_game_state();
+        let state = GameState::init_test_game_state();
         let conversions = state.conversion_names();
-        assert_eq!("TestEmptyConvert", conversions[0]);
+        assert_eq!("TestChop", conversions[0]);
         assert_eq!("TestGather", conversions[1]);
     }
 
     #[test]
     fn buildings() {
-        let state = init_test_game_state();
+        let state = GameState::init_test_game_state();
         let buildings = state.buildings();
         assert_eq!(3, buildings.len());
         assert_eq!("Test Building", buildings.get(0).unwrap().name);

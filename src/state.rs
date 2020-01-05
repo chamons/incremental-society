@@ -36,7 +36,7 @@ impl GameState {
 
     pub fn init_new_game_state() -> GameState {
         GameState {
-            resources: ResourceTotal::init(),
+            resources: ResourceTotal::init_with_storage(10),
             regions: vec![
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Gathering Camp"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
@@ -87,7 +87,7 @@ impl GameState {
     #[cfg(test)]
     pub fn init_test_game_state() -> GameState {
         GameState {
-            resources: ResourceTotal::init(),
+            resources: ResourceTotal::init_with_storage(10),
             regions: vec![
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Test Building"), data::get_building("Test Building")]),
                 Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),

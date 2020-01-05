@@ -44,11 +44,22 @@ pub const NUM_RESOURCES: usize = ResourceKind::Size as usize;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceTotal {
     pub resources: [ResourceQuantity; NUM_RESOURCES],
+    pub storage: [ResourceQuantity; NUM_RESOURCES],
 }
 
 impl ResourceTotal {
     pub fn init() -> ResourceTotal {
-        ResourceTotal { resources: [0; NUM_RESOURCES] }
+        ResourceTotal {
+            resources: [0; NUM_RESOURCES],
+            storage: [0; NUM_RESOURCES],
+        }
+    }
+
+    pub fn init_with_storage(amount: ResourceQuantity) -> ResourceTotal {
+        ResourceTotal {
+            resources: [0; NUM_RESOURCES],
+            storage: [amount; NUM_RESOURCES],
+        }
     }
 
     pub fn has_amount(&self, amount: &ResourceAmount) -> bool {
@@ -59,8 +70,15 @@ impl ResourceTotal {
         self[resource] >= amount
     }
 
-    pub fn add(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
+    fn add_raw(&mut self, resource: usize, amount: ResourceQuantity) {
         self[resource] += amount;
+        if self[resource] > self.storage[resource] {
+            self[resource] = self.storage[resource];
+        }
+    }
+
+    pub fn add(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
+        self.add_raw(resource as usize, amount);
     }
 
     pub fn remove(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
@@ -70,7 +88,7 @@ impl ResourceTotal {
 
     pub fn combine(&mut self, other: &ResourceTotal) {
         for i in 0..NUM_RESOURCES {
-            self[i] += other[i];
+            self.add_raw(i, other[i]);
         }
     }
 }
@@ -109,8 +127,9 @@ mod tests {
 
     #[test]
     fn resource_total_has_enough() {
-        let mut total = ResourceTotal::init();
+        let mut total = ResourceTotal::init_with_storage(10);
         total[ResourceKind::Fuel] = 5;
+
         assert!(total.has(ResourceKind::Fuel, 1));
         assert!(total.has(ResourceKind::Fuel, 5));
         assert_eq!(false, total.has(ResourceKind::Fuel, 15));
@@ -119,8 +138,9 @@ mod tests {
 
     #[test]
     fn resource_total_add() {
-        let mut total = ResourceTotal::init();
+        let mut total = ResourceTotal::init_with_storage(15);
         total[ResourceKind::Fuel] = 5;
+
         assert!(total.has(ResourceKind::Fuel, 5));
         total.add(ResourceKind::Fuel, 10);
         assert!(total.has(ResourceKind::Fuel, 15));
@@ -128,7 +148,7 @@ mod tests {
 
     #[test]
     fn resource_total_remove() {
-        let mut total = ResourceTotal::init();
+        let mut total = ResourceTotal::init_with_storage(10);
         total[ResourceKind::Fuel] = 5;
         assert!(total.has(ResourceKind::Fuel, 5));
         total.remove(ResourceKind::Fuel, 4);
@@ -137,12 +157,31 @@ mod tests {
 
     #[test]
     fn resource_combine() {
-        let mut a = ResourceTotal::init();
+        let mut a = ResourceTotal::init_with_storage(10);
         a[ResourceKind::Food] = 5;
         a[ResourceKind::Fuel] = 5;
 
         let mut b = ResourceTotal::init();
         b[ResourceKind::Food] = 5;
+        a.combine(&b);
+
+        assert_eq!(10, a[ResourceKind::Food]);
+        assert_eq!(5, a[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn resource_combine_with_storage() {
+        let mut a = ResourceTotal::init();
+        a[ResourceKind::Food] = 5;
+        a[ResourceKind::Fuel] = 5;
+
+        // FIXME
+        a.storage[ResourceKind::Food as usize] = 10;
+        a.storage[ResourceKind::Fuel as usize] = 5;
+
+        let mut b = ResourceTotal::init();
+        b[ResourceKind::Food] = 5;
+        b[ResourceKind::Fuel] = 5;
         a.combine(&b);
 
         assert_eq!(10, a[ResourceKind::Food]);

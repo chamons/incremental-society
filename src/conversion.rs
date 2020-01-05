@@ -124,7 +124,7 @@ mod tests {
 
     #[test]
     fn has_input() {
-        let mut resources = ResourceTotal::init();
+        let mut resources = ResourceTotal::init_with_storage(10);
         resources[ResourceKind::Food] = 10;
         resources[ResourceKind::Fuel] = 5;
 
@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn conversion_with_input() {
-        let mut resources = ResourceTotal::init();
+        let mut resources = ResourceTotal::init_with_storage(10);
         resources[ResourceKind::Food] = 10;
         let conversion = create_test_conversion();
 
@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn conversion_without_input() {
-        let mut resources = ResourceTotal::init();
+        let mut resources = ResourceTotal::init_with_storage(10);
         resources[ResourceKind::Food] = 5;
         let conversion = create_test_conversion();
 
@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     fn required_conversion_with_input() {
-        let mut resources = ResourceTotal::init();
+        let mut resources = ResourceTotal::init_with_storage(10);
         resources[ResourceKind::Food] = 10;
         let conversion = create_test_required_conversion();
 
@@ -194,7 +194,7 @@ mod tests {
 
     #[test]
     fn required_conversion_without_input() {
-        let mut resources = ResourceTotal::init();
+        let mut resources = ResourceTotal::init_with_storage(10);
         let conversion = create_test_required_conversion();
 
         conversion.convert(&mut resources);

@@ -27,8 +27,19 @@ lazy_static! {
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
-        m.insert("Gathering Camp", Building::init("Gathering Camp", vec!["Gathering", "Gathering"], vec![]));
-        m.insert("Hunting Grounds", Building::init("Hunting Grounds", vec!["Hunting"], vec![]));
+        m.insert(
+            "Gathering Camp",
+            Building::init(
+                "Gathering Camp",
+                vec!["Gathering", "Gathering"],
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Fuel, 25)],
+            ),
+        );
+        m.insert(
+            "Hunting Grounds",
+            Building::init("Hunting Grounds", vec!["Hunting"], vec![], vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+        );
 
         m
     };
@@ -56,9 +67,18 @@ lazy_static! {
                 "Test Building",
                 vec!["TestChop", "TestChop"],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
+                vec![ResourceAmount::init(ResourceKind::Food, 15)],
             ),
         );
-        m.insert("Test Gather Hut", Building::init("Test Gather Hut", vec!["TestGather"], vec![]));
+        m.insert(
+            "Test Gather Hut",
+            Building::init(
+                "Test Gather Hut",
+                vec!["TestGather"],
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Fuel, 20)],
+            ),
+        );
         m
     };
 }

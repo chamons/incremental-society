@@ -189,7 +189,7 @@ fn draw_resources(t: &Window, state: &GameState, y: i32) -> i32 {
     let mut y = y;
 
     for i in 0..NUM_RESOURCES {
-        let line = &format!("{}: {}", ResourceKind::name_for_index(i), state.resources[i]);
+        let line = &format!("{}: {} / {}", ResourceKind::name_for_index(i), state.resources[i], state.resources.storage[i]);
         y = write(t, line, 1, y);
     }
     y

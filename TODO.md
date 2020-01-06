@@ -3,9 +3,10 @@
 ## Needed for game
 
 - Pops:
-    - How to get more
-    - How to support
-    - What they give
+    - Pops are provided by building structures that provide room. We grant them right away for now. 
+    - Each pop provides a negative conversion that converts food and fuel to nothing, giving morale penality otherwise
+    - Each building requires a pop to run. Too many pops for capacity will give morale penality (?)
+- Morale
 - Edicts
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)

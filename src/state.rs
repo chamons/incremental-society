@@ -59,7 +59,7 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
-    #[cfg(test)]
+    //#[cfg(test)]
     pub fn init_test_game_state() -> GameState {
         let mut state = GameState {
             resources: ResourceTotal::init(),

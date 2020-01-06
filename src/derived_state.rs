@@ -105,7 +105,7 @@ mod tests {
     fn storage() {
         let state = GameState::init_test_game_state();
         let storage = state.derived_state.storage;
-        assert!(storage[ResourceKind::Food] >= 30);
-        assert!(storage[ResourceKind::Fuel] >= 20);
+        assert!(storage[ResourceKind::Food] >= 20);
+        assert!(storage[ResourceKind::Fuel] >= 30);
     }
 }

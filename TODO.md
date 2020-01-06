@@ -2,12 +2,10 @@
 
 ## Needed for game
 
-- Storage
 - Pops:
     - How to get more
     - How to support
     - What they give
-- Destroy buildings
 - Edicts
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)

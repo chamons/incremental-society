@@ -55,6 +55,7 @@ fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
         if is_char(&input, 'q') {
             return true;
         }
+
         if is_char(&input, 'b') {
             let building_options = data::get_building_names();
             match option_list::OptionList::init(&t, &building_options).run() {
@@ -66,6 +67,25 @@ fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
                             let _ = engine::build(&mut state, data::get_building(&building_options[building_index]), region_index);
                         }
                         None => {}
+                    }
+                }
+                None => {}
+            }
+        }
+
+        if is_char(&input, 'd') {
+            let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+            match option_list::OptionList::init(&t, &regions).run() {
+                Some(region_index) => {
+                    let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
+                    if buildings.len() != 0 {
+                        match option_list::OptionList::init(&t, &buildings).run() {
+                            Some(building_index) => {
+                                // // Ignore errors for now
+                                let _ = engine::destroy(&mut state, region_index, building_index);
+                            }
+                            None => {}
+                        }
                     }
                 }
                 None => {}

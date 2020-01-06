@@ -1,5 +1,6 @@
 use crate::building::Building;
 use crate::data::get_conversion;
+use crate::derived_state::DerivedState;
 use crate::engine_error::EngineError;
 use crate::region::Region;
 use crate::resources::NUM_RESOURCES;
@@ -25,7 +26,24 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
     }
 
     region.add_building(building);
+    state.derived_state = crate::derived_state::DerivedState::calculate(&state);
+    Ok(())
+}
 
+pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
+    let region = state.regions.get_mut(region_index);
+    if region.is_none() {
+        return Err(EngineError::init(format!("Could not find index {}", region_index)));
+    }
+    let region: &mut Region = region.unwrap();
+
+    let building = region.buildings.get_mut(building_index);
+    if building.is_none() {
+        return Err(EngineError::init(format!("Could not find building at {}", building_index)));
+    }
+
+    region.remove_building(building_index);
+    state.derived_state = DerivedState::calculate(&state);
     Ok(())
 }
 
@@ -67,6 +85,7 @@ pub fn get_conversion_current_tick(state: &GameState, conversion_name: &str) -> 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::data::get_building;
     use crate::resources::*;
     use std::error::Error;
 
@@ -140,9 +159,8 @@ mod tests {
     fn build_invalid_region() {
         let mut state = GameState::init();
         state.regions = vec![];
-        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)], vec![]);
 
-        assert!(build(&mut state, building, 0).is_err());
+        assert!(build(&mut state, get_building("Test Building"), 0).is_err());
     }
 
     #[test]
@@ -150,26 +168,26 @@ mod tests {
         let mut state = GameState::init();
         state.regions = vec![Region::init("First Region")];
         state.resources[ResourceKind::Fuel] = 20;
+        let old_storage = state.derived_state.storage[ResourceKind::Fuel];
 
-        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)], vec![]);
+        build(&mut state, get_building("Test Building"), 0).unwrap();
 
-        build(&mut state, building, 0).unwrap();
         assert_eq!(1, state.buildings().len());
+        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }
 
     #[test]
     fn build_without_resources() {
         let mut state = GameState::init();
         state.regions = vec![Region::init("First Region")];
-        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)], vec![]);
 
-        let error = build(&mut state, building, 0).unwrap_err();
+        let error = build(&mut state, get_building("Test Building"), 0).unwrap_err();
         assert_eq!("Insufficient resources for build cost", error.description());
     }
 
     #[test]
     fn build_without_room() {
-        let building = Building::init("Test Building", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 10)], vec![]);
+        let building = get_building("Test Building");
 
         let mut state = GameState::init();
         state.resources[ResourceKind::Fuel] = 20;
@@ -177,5 +195,27 @@ mod tests {
 
         let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient room for building", error.description());
+    }
+
+    #[test]
+    fn destory_invalid_region() {
+        let mut state = GameState::init_test_game_state();
+        assert!(destroy(&mut state, 2, 0).is_err());
+    }
+
+    #[test]
+    fn destory_invalid_building() {
+        let mut state = GameState::init_test_game_state();
+        assert!(destroy(&mut state, 0, 2).is_err());
+    }
+
+    #[test]
+    fn destory_valid_building() {
+        let mut state = GameState::init_test_game_state();
+        let old_storage = state.derived_state.storage[ResourceKind::Fuel];
+        assert!(destroy(&mut state, 0, 0).is_ok());
+
+        assert_eq!(2, state.buildings().len());
+        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }
 }

@@ -29,6 +29,10 @@ impl Region {
         self.buildings.push(building);
     }
 
+    pub fn remove_building(&mut self, index: usize) {
+        self.buildings.remove(index);
+    }
+
     pub fn max_building_count(&self) -> usize {
         REGION_BUILDING_COUNT
     }

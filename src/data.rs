@@ -67,7 +67,7 @@ lazy_static! {
                 "Test Building",
                 vec!["TestChop", "TestChop"],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
-                vec![ResourceAmount::init(ResourceKind::Food, 15)],
+                vec![ResourceAmount::init(ResourceKind::Fuel, 15)],
             ),
         );
         m.insert(
@@ -76,7 +76,7 @@ lazy_static! {
                 "Test Gather Hut",
                 vec!["TestGather"],
                 vec![],
-                vec![ResourceAmount::init(ResourceKind::Fuel, 20)],
+                vec![ResourceAmount::init(ResourceKind::Food, 20)],
             ),
         );
         m

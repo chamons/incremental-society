@@ -114,7 +114,7 @@ fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
 
     y = write_right(t, "Conversions", 0, y);
 
-    for c in state.conversion_names() {
+    for c in &state.derived_state.conversion_name {
         match engine::get_conversion_tick(state, &c) {
             Some(ticks) => {
                 // Don't update y, as we have to draw the bar

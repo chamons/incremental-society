@@ -29,7 +29,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 pub const CONVERSION_TICK_START: u32 = 100;
 
 pub fn process_tick(state: &mut GameState) {
-    for c in state.conversion_with_counts() {
+    for c in &state.derived_state.conversion_counts {
         let entry = state.ticks.entry(c.name.to_string()).or_insert(CONVERSION_TICK_START);
         if *entry == 0 {
             *entry = CONVERSION_TICK_START;

@@ -44,6 +44,15 @@ pub const NUM_RESOURCES: usize = ResourceKind::Size as usize;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceTotal {
     pub resources: [ResourceQuantity; NUM_RESOURCES],
+    // The problem is that this should be a calculated item.
+    // Walk all buildings, apply bonuses, etc
+    // And it really doesn't belong here
+    // However, if it doesn't belong here then every modification has to pull in the entire DerivedState
+    //
+    // Or we could could pass in a reference to the storage, but then making a total pain to create one
+    // as it needs this external reference
+    // Or we could have engine mutate this during building creation, but that seems error prone
+    // Derived data should be where it lives...
     pub storage: [ResourceQuantity; NUM_RESOURCES],
 }
 

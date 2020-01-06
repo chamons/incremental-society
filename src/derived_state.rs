@@ -1,3 +1,4 @@
+use crate::resources::*;
 use crate::state::GameState;
 
 use std::collections::HashMap;
@@ -20,6 +21,7 @@ impl ConversionTotal {
 pub struct DerivedState {
     pub conversion_name: Vec<String>,
     pub conversion_counts: Vec<ConversionTotal>,
+    pub storage: ResourceTotal,
 }
 
 impl DerivedState {
@@ -27,6 +29,7 @@ impl DerivedState {
         DerivedState {
             conversion_name: vec![],
             conversion_counts: vec![],
+            storage: ResourceTotal::init(),
         }
     }
 
@@ -34,6 +37,7 @@ impl DerivedState {
         DerivedState {
             conversion_name: DerivedState::conversion_names(&state),
             conversion_counts: DerivedState::conversion_with_counts(&state),
+            storage: DerivedState::calculate_storage(&state),
         }
     }
 
@@ -63,6 +67,16 @@ impl DerivedState {
         names.sort();
         names
     }
+
+    fn calculate_storage(state: &GameState) -> ResourceTotal {
+        let mut storage = ResourceTotal::init();
+        for building in state.regions.iter().flat_map(|x| &x.buildings) {
+            for resource in &building.storage {
+                storage.add(resource.kind, resource.amount);
+            }
+        }
+        storage
+    }
 }
 
 #[cfg(test)]
@@ -85,5 +99,13 @@ mod tests {
         let conversions = &state.derived_state.conversion_name;
         assert_eq!("TestChop", conversions[0]);
         assert_eq!("TestGather", conversions[1]);
+    }
+
+    #[test]
+    fn storage() {
+        let state = GameState::init_test_game_state();
+        let storage = state.derived_state.storage;
+        assert!(storage[ResourceKind::Food] >= 30);
+        assert!(storage[ResourceKind::Fuel] >= 20);
     }
 }

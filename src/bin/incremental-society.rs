@@ -115,7 +115,7 @@ fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
     y = write_right(t, "Conversions", 0, y);
 
     for c in &state.derived_state.conversion_name {
-        match engine::get_conversion_tick(state, &c) {
+        match engine::get_conversion_current_tick(state, &c) {
             Some(ticks) => {
                 // Don't update y, as we have to draw the bar
                 write_right(t, &c, 0, y);
@@ -189,7 +189,12 @@ fn draw_resources(t: &Window, state: &GameState, y: i32) -> i32 {
     let mut y = y;
 
     for i in 0..NUM_RESOURCES {
-        let line = &format!("{}: {} / {}", ResourceKind::name_for_index(i), state.resources[i], state.resources.storage[i]);
+        let line = &format!(
+            "{}: {} / {}",
+            ResourceKind::name_for_index(i),
+            state.resources[i],
+            state.derived_state.storage[i]
+        );
         y = write(t, line, 1, y);
     }
     y

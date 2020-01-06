@@ -2,7 +2,10 @@ use crate::building::Building;
 use crate::data::get_conversion;
 use crate::engine_error::EngineError;
 use crate::region::Region;
+use crate::resources::NUM_RESOURCES;
 use crate::state::GameState;
+
+use std::cmp;
 
 pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get_mut(region_index);
@@ -28,7 +31,12 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
 pub const CONVERSION_TICK_START: u32 = 100;
 
-pub fn process_tick(state: &mut GameState) {
+pub fn process_tick(mut state: &mut GameState) {
+    process_conversion(&mut state);
+    honor_storage_limits(&mut state);
+}
+
+fn process_conversion(state: &mut GameState) {
     for c in &state.derived_state.conversion_counts {
         let entry = state.ticks.entry(c.name.to_string()).or_insert(CONVERSION_TICK_START);
         if *entry == 0 {
@@ -43,7 +51,13 @@ pub fn process_tick(state: &mut GameState) {
     }
 }
 
-pub fn get_conversion_tick(state: &GameState, conversion_name: &str) -> Option<u32> {
+fn honor_storage_limits(state: &mut GameState) {
+    for i in 0..NUM_RESOURCES {
+        state.resources[i] = cmp::min(state.resources[i], state.derived_state.storage[i]);
+    }
+}
+
+pub fn get_conversion_current_tick(state: &GameState, conversion_name: &str) -> Option<u32> {
     match state.ticks.get(conversion_name) {
         Some(x) => Some(CONVERSION_TICK_START - *x),
         None => None,
@@ -61,15 +75,15 @@ mod tests {
         let mut state = GameState::init_test_game_state();
         process_tick(&mut state);
 
-        assert_eq!(1, get_conversion_tick(&state, "TestChop").unwrap());
-        assert_eq!(1, get_conversion_tick(&state, "TestGather").unwrap());
+        assert_eq!(1, get_conversion_current_tick(&state, "TestChop").unwrap());
+        assert_eq!(1, get_conversion_current_tick(&state, "TestGather").unwrap());
     }
 
     #[test]
     fn get_conversion_tick_with_no_ticks() {
         let state = GameState::init_test_game_state();
-        assert!(get_conversion_tick(&state, "TestChop").is_none());
-        assert!(get_conversion_tick(&state, "TestGather").is_none());
+        assert!(get_conversion_current_tick(&state, "TestChop").is_none());
+        assert!(get_conversion_current_tick(&state, "TestGather").is_none());
     }
 
     #[test]
@@ -77,7 +91,7 @@ mod tests {
         let mut state = GameState::init_test_game_state();
         process_tick(&mut state);
 
-        assert!(get_conversion_tick(&state, "NonExistentConvert").is_none());
+        assert!(get_conversion_current_tick(&state, "NonExistentConvert").is_none());
     }
 
     #[test]
@@ -107,6 +121,19 @@ mod tests {
 
         assert_eq!(1, state.resources[ResourceKind::Food]);
         assert_eq!(4, state.resources[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn process_tick_storage_limits_honored() {
+        let mut state = GameState::init_test_game_state();
+        state.resources[ResourceKind::Food] = state.derived_state.storage[ResourceKind::Food] - 1;
+        state.resources[ResourceKind::Fuel] = state.derived_state.storage[ResourceKind::Fuel] - 1;
+        *state.ticks.entry("TestChop".to_string()).or_default() = 0;
+        *state.ticks.entry("TestGather".to_string()).or_default() = 0;
+
+        process_tick(&mut state);
+        assert_eq!(state.resources[ResourceKind::Food], state.derived_state.storage[ResourceKind::Food]);
+        assert_eq!(state.resources[ResourceKind::Fuel], state.derived_state.storage[ResourceKind::Fuel]);
     }
 
     #[test]

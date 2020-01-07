@@ -44,6 +44,11 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
     if building.is_none() {
         return Err(EngineError::init(format!("Could not find building at {}", building_index)));
     }
+    let building = building.unwrap();
+
+    if building.pops > 0 && state.derived_state.used_pops > state.derived_state.pops - building.pops {
+        return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
+    }
 
     region.remove_building(building_index);
     state.recalculate();
@@ -240,11 +245,21 @@ mod tests {
     #[test]
     fn destroy_valid_building() {
         let mut state = GameState::init_test_game_state();
-        let old_storage = state.derived_state.storage[ResourceKind::Fuel];
-        assert!(destroy(&mut state, 0, 0).is_ok());
+        let old_storage = state.derived_state.storage[ResourceKind::Food];
+        assert!(destroy(&mut state, 1, 0).is_ok());
 
         assert_eq!(2, state.buildings().len());
-        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
+        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Food]);
+    }
+
+    #[test]
+    fn destroy_drops_pops_too_low_fails() {
+        let mut state = GameState::init_test_game_state();
+
+        assert_eq!(
+            "Insufficient pops for remaining buildings after destruction",
+            destroy(&mut state, 0, 0).unwrap_err().description()
+        );
     }
 
     #[test]

@@ -91,6 +91,16 @@ fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
                 None => {}
             }
         }
+
+        if is_char(&input, 'e') {
+            let edicts = data::get_edict_names();
+            match option_list::OptionList::init(&t, &edicts).run() {
+                Some(edict_index) => {
+                    let _ = engine::edict(&mut state, edicts.get(edict_index).unwrap());
+                }
+                None => {}
+            }
+        }
     }
 
     false

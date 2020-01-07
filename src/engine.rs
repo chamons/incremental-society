@@ -1,5 +1,5 @@
 use crate::building::Building;
-use crate::data::get_conversion;
+use crate::data::{get_conversion, get_edict};
 use crate::derived_state::DerivedState;
 use crate::engine_error::EngineError;
 use crate::region::Region;
@@ -17,12 +17,12 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
     for cost in &building.build_cost {
         if !state.resources.has_amount(&cost) {
-            return Err(EngineError::init("Insufficient resources for build cost".to_string()));
+            return Err(EngineError::init("Insufficient resources for build cost"));
         }
     }
 
     if region.buildings.len() >= region.max_building_count() {
-        return Err(EngineError::init("Insufficient room for building".to_string()));
+        return Err(EngineError::init("Insufficient room for building"));
     }
 
     region.add_building(building);
@@ -44,6 +44,18 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
 
     region.remove_building(building_index);
     state.derived_state = DerivedState::calculate(&state);
+    Ok(())
+}
+
+pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
+    let edict = get_edict(edict);
+    for cost in &edict.input {
+        if !state.resources.has_amount(&cost) {
+            return Err(EngineError::init("Insufficient resources for edict"));
+        }
+    }
+
+    edict.convert(&mut state.resources);
     Ok(())
 }
 
@@ -198,24 +210,39 @@ mod tests {
     }
 
     #[test]
-    fn destory_invalid_region() {
+    fn destroy_invalid_region() {
         let mut state = GameState::init_test_game_state();
         assert!(destroy(&mut state, 2, 0).is_err());
     }
 
     #[test]
-    fn destory_invalid_building() {
+    fn destroy_invalid_building() {
         let mut state = GameState::init_test_game_state();
         assert!(destroy(&mut state, 0, 2).is_err());
     }
 
     #[test]
-    fn destory_valid_building() {
+    fn destroy_valid_building() {
         let mut state = GameState::init_test_game_state();
         let old_storage = state.derived_state.storage[ResourceKind::Fuel];
         assert!(destroy(&mut state, 0, 0).is_ok());
 
         assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn invoke_valid_edict() {
+        let mut state = GameState::init_test_game_state();
+        state.resources[ResourceKind::Fuel] = 1;
+
+        edict(&mut state, "TestEdict").unwrap();
+        assert_eq!(1, state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn invoke_edict_no_resources() {
+        let mut state = GameState::init_test_game_state();
+        assert!(edict(&mut state, "TestEdict").is_err());
     }
 }

@@ -7,8 +7,11 @@ pub struct EngineError {
 }
 
 impl EngineError {
-    pub fn init(details: String) -> EngineError {
-        EngineError { details }
+    pub fn init<S>(details: S) -> EngineError
+    where
+        S: Into<String>,
+    {
+        EngineError { details: details.into() }
     }
 }
 

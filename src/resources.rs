@@ -10,9 +10,10 @@ pub type ResourceQuantity = i64;
 pub enum ResourceKind {
     Food,
     Fuel,
+    Knowledge,
 
     // This must be incremented every time an item is added
-    Size = 2,
+    Size = 3,
 }
 
 impl fmt::Display for ResourceKind {

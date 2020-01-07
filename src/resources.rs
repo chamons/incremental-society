@@ -11,9 +11,10 @@ pub enum ResourceKind {
     Food,
     Fuel,
     Knowledge,
+    Morale,
 
     // This must be incremented every time an item is added
-    Size = 3,
+    Size = 4,
 }
 
 impl fmt::Display for ResourceKind {

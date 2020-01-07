@@ -3,7 +3,11 @@
 ## Needed for game
 
 - Pops:
-    - Each pop provides a negative conversion that converts food and fuel to nothing, giving morale penalty otherwise
+    - Need a building to provide knowledge/morale storage
+    - Need to start with 100 morale
+    - Set conversion to give -x morale if missed, else positive 1 morale
+    - If moral <= 0, stop loop
+
 - Info on edict/building pane
 - Morale
 - Research
@@ -11,6 +15,8 @@
 
 ## Longer Term
 
+- Should DerivedState logic move somewhere?
+- Should we split engine from state?
 - Research 1 of 3
 - Regions Resources
 - Random regions

@@ -7,24 +7,27 @@ pub struct Building {
     pub conversions: Vec<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
+    pub pops: u32,
 }
 
 impl Building {
-    pub fn init_single(name: &'static str, conversion: &'static str, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>) -> Building {
+    pub fn init_single(name: &'static str, conversion: &'static str, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>, pops: u32) -> Building {
         Building {
             name: name.to_owned(),
             conversions: vec![conversion.to_owned()],
             build_cost,
             storage,
+            pops,
         }
     }
 
-    pub fn init(name: &'static str, conversions: Vec<&'static str>, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>) -> Building {
+    pub fn init(name: &'static str, conversions: Vec<&'static str>, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>, pops: u32) -> Building {
         Building {
             name: name.to_owned(),
             conversions: conversions.iter().map(|x| x.to_string()).collect(),
             build_cost,
             storage,
+            pops,
         }
     }
 }
@@ -36,6 +39,7 @@ impl<'a> Clone for Building {
             conversions: self.conversions.clone(),
             build_cost: self.build_cost.clone(),
             storage: self.storage.clone(),
+            pops: self.pops,
         }
     }
 }

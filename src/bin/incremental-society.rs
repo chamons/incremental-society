@@ -126,8 +126,11 @@ fn draw(t: &Window, state: &GameState) {
     draw_prompt(t);
 }
 
-fn write(t: &Window, text: &str, x: i32, y: i32) -> i32 {
-    t.mvaddstr(y, x, text);
+fn write<S>(t: &Window, text: S, x: i32, y: i32) -> i32
+where
+    S: Into<String>,
+{
+    t.mvaddstr(y, x, text.into());
     y + 1
 }
 
@@ -207,9 +210,9 @@ fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
 }
 
 #[allow(unused_assignments)]
-fn draw_country_stats(t: &Window, _state: &GameState, y: i32) -> i32 {
+fn draw_country_stats(t: &Window, state: &GameState, y: i32) -> i32 {
     let mut y = write(t, "Elysium", 1, y);
-    y = write(t, "Population: 500", 1, y + 1);
+    y = write(t, format!("Population: {}", state.derived_state.pops), 1, y + 1);
     y = write(t, "----------------", 0, y + 1);
 
     y

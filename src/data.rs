@@ -42,11 +42,18 @@ lazy_static! {
                 vec!["Gathering", "Gathering"],
                 vec![],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 25)],
+                3,
             ),
         );
         m.insert(
             "Hunting Grounds",
-            Building::init("Hunting Grounds", vec!["Hunting"], vec![], vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+            Building::init(
+                "Hunting Grounds",
+                vec!["Hunting"],
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                0,
+            ),
         );
 
         m
@@ -89,6 +96,7 @@ lazy_static! {
                 vec!["TestChop", "TestChop"],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 15)],
+                1,
             ),
         );
         m.insert(
@@ -98,6 +106,7 @@ lazy_static! {
                 vec!["TestGather"],
                 vec![],
                 vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                0,
             ),
         );
         m

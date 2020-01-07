@@ -73,6 +73,10 @@ impl GameState {
         state.derived_state = DerivedState::calculate(&state);
         state
     }
+
+    pub fn recalculate(&mut self) {
+        self.derived_state = DerivedState::calculate(&self);
+    }
 }
 
 #[cfg(test)]

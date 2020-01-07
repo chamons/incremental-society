@@ -1,6 +1,5 @@
 use crate::building::Building;
 use crate::data::{get_conversion, get_edict};
-use crate::derived_state::DerivedState;
 use crate::engine_error::EngineError;
 use crate::region::Region;
 use crate::resources::NUM_RESOURCES;
@@ -25,8 +24,12 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
         return Err(EngineError::init("Insufficient room for building"));
     }
 
+    if state.derived_state.used_pops + 1 > state.derived_state.pops {
+        return Err(EngineError::init("Insufficient pops for building"));
+    }
+
     region.add_building(building);
-    state.derived_state = crate::derived_state::DerivedState::calculate(&state);
+    state.recalculate();
     Ok(())
 }
 
@@ -43,7 +46,7 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
     }
 
     region.remove_building(building_index);
-    state.derived_state = DerivedState::calculate(&state);
+    state.recalculate();
     Ok(())
 }
 
@@ -56,6 +59,7 @@ pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
     }
 
     edict.convert(&mut state.resources);
+    state.recalculate();
     Ok(())
 }
 
@@ -178,13 +182,15 @@ mod tests {
     #[test]
     fn build_valid_building() {
         let mut state = GameState::init();
-        state.regions = vec![Region::init("First Region")];
+        state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];
         state.resources[ResourceKind::Fuel] = 20;
+        state.recalculate();
+
         let old_storage = state.derived_state.storage[ResourceKind::Fuel];
 
         build(&mut state, get_building("Test Building"), 0).unwrap();
 
-        assert_eq!(1, state.buildings().len());
+        assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }
 
@@ -207,6 +213,16 @@ mod tests {
 
         let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient room for building", error.description());
+    }
+
+    #[test]
+    fn build_without_pops() {
+        let mut state = GameState::init();
+        state.regions = vec![Region::init("Test Region")];
+        state.recalculate();
+
+        let error = build(&mut state, get_building("Test Gather Hut"), 0).unwrap_err();
+        assert_eq!("Insufficient pops for building", error.description());
     }
 
     #[test]

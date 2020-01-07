@@ -27,7 +27,7 @@ impl GameState {
             ticks: HashMap::new(),
             derived_state: DerivedState::init(),
         };
-        state.derived_state = DerivedState::calculate(&state);
+        state.recalculate();
         state
     }
 
@@ -41,13 +41,13 @@ impl GameState {
             ticks: HashMap::new(),
             derived_state: DerivedState::init(),
         };
-        state.derived_state = DerivedState::calculate(&state);
+        state.recalculate();
         state
     }
 
     pub fn init_from_json(json: String) -> GameState {
         let mut state: GameState = serde_json::from_str(&json).unwrap();
-        state.derived_state = DerivedState::calculate(&state);
+        state.recalculate();
         state
     }
 
@@ -70,7 +70,7 @@ impl GameState {
             ticks: HashMap::new(),
             derived_state: DerivedState::init(),
         };
-        state.derived_state = DerivedState::calculate(&state);
+        state.recalculate();
         state
     }
 

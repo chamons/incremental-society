@@ -1,7 +1,7 @@
 use crate::resources::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Building {
     pub name: String,
     pub conversions: Vec<String>,
@@ -31,19 +31,6 @@ impl Building {
             storage,
             pops,
             can_not_destroy: false,
-        }
-    }
-}
-
-impl<'a> Clone for Building {
-    fn clone(&self) -> Self {
-        Building {
-            name: self.name.to_string(),
-            conversions: self.conversions.clone(),
-            build_cost: self.build_cost.clone(),
-            storage: self.storage.clone(),
-            pops: self.pops,
-            can_not_destroy: self.can_not_destroy,
         }
     }
 }

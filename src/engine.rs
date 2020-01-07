@@ -75,11 +75,11 @@ pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
 pub const CONVERSION_TICK_START: u32 = 100;
 
 pub fn process_tick(mut state: &mut GameState) {
-    process_conversion(&mut state);
+    process_conversions(&mut state);
     honor_storage_limits(&mut state);
 }
 
-fn process_conversion(state: &mut GameState) {
+fn process_conversions(state: &mut GameState) {
     for c in &state.derived_state.conversion_counts {
         let entry = state.ticks.entry(c.name.to_string()).or_insert(CONVERSION_TICK_START);
         if *entry == 0 {

@@ -9,6 +9,7 @@ use std::collections::HashMap;
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
+        m.insert("Sustain Population", Conversion::init("Sustain Population", vec![], vec![]));
         m.insert(
             "Gathering",
             Conversion::init(
@@ -69,6 +70,7 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
+        m.insert("Sustain Population", Conversion::init("Sustain Population", vec![], vec![]));
         m.insert(
             "TestChop",
             Conversion::init("TestChop", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),

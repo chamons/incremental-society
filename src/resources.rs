@@ -64,9 +64,21 @@ impl ResourceTotal {
         self[resource] += amount;
     }
 
+    pub fn add_range(&mut self, elements: &Vec<ResourceAmount>) {
+        for x in elements {
+            self.add(x.kind, x.amount);
+        }
+    }
+
     pub fn remove(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
         debug_assert!(self.has(resource, amount));
         self[resource] -= amount;
+    }
+
+    pub fn remove_range(&mut self, elements: &Vec<ResourceAmount>) {
+        for x in elements {
+            self.remove(x.kind, x.amount);
+        }
     }
 
     pub fn combine(&mut self, other: &ResourceTotal) {

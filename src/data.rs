@@ -96,7 +96,7 @@ lazy_static! {
                 vec!["TestChop", "TestChop"],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 15)],
-                1,
+                2,
             ),
         );
         m.insert(

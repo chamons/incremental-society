@@ -23,6 +23,7 @@ pub struct DerivedState {
     pub conversion_counts: Vec<ConversionTotal>,
     pub storage: ResourceTotal,
     pub pops: u32,
+    pub used_pops: u32,
 }
 
 impl DerivedState {
@@ -32,6 +33,7 @@ impl DerivedState {
             conversion_counts: vec![],
             storage: ResourceTotal::init(),
             pops: 0,
+            used_pops: 0,
         }
     }
 
@@ -41,6 +43,7 @@ impl DerivedState {
             conversion_counts: DerivedState::conversion_with_counts(&state),
             storage: DerivedState::calculate_storage(&state),
             pops: DerivedState::calculate_pops(&state),
+            used_pops: DerivedState::calculate_used_pops(&state),
         }
     }
 
@@ -84,6 +87,10 @@ impl DerivedState {
     fn calculate_pops(state: &GameState) -> u32 {
         state.regions.iter().flat_map(|x| &x.buildings).map(|x| x.pops).sum()
     }
+
+    fn calculate_used_pops(state: &GameState) -> u32 {
+        state.regions.iter().flat_map(|x| &x.buildings).count() as u32
+    }
 }
 
 #[cfg(test)]
@@ -119,6 +126,7 @@ mod tests {
     #[test]
     fn pops() {
         let state = GameState::init_test_game_state();
-        assert!(state.derived_state.pops >= 2);
+        assert!(state.derived_state.pops >= 4);
+        assert!(state.derived_state.used_pops >= 3);
     }
 }

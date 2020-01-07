@@ -213,6 +213,7 @@ fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
 fn draw_country_stats(t: &Window, state: &GameState, y: i32) -> i32 {
     let mut y = write(t, "Elysium", 1, y);
     y = write(t, format!("Population: {}", state.derived_state.pops), 1, y + 1);
+    y = write(t, format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
     y = write(t, "----------------", 0, y + 1);
 
     y

@@ -8,6 +8,7 @@ pub struct Building {
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
     pub pops: u32,
+    pub can_not_destroy: bool,
 }
 
 impl Building {
@@ -18,6 +19,7 @@ impl Building {
             build_cost,
             storage,
             pops,
+            can_not_destroy: false,
         }
     }
 
@@ -28,6 +30,7 @@ impl Building {
             build_cost,
             storage,
             pops,
+            can_not_destroy: false,
         }
     }
 }
@@ -40,6 +43,7 @@ impl<'a> Clone for Building {
             build_cost: self.build_cost.clone(),
             storage: self.storage.clone(),
             pops: self.pops,
+            can_not_destroy: self.can_not_destroy,
         }
     }
 }

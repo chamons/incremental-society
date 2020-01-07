@@ -109,6 +109,12 @@ lazy_static! {
                 0,
             ),
         );
+
+        {
+            let mut building = Building::init("Test Immortal", vec![""], vec![], vec![], 0);
+            building.can_not_destroy = true;
+            m.insert("Test Immortal", building);
+        }
         m
     };
     static ref EDICTS: Vec<&'static str> = {

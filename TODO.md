@@ -4,7 +4,6 @@
 
 - Pops:
     - Each pop provides a negative conversion that converts food and fuel to nothing, giving morale penalty otherwise
-- Can't destroy building attribute
 - Info on edict/building pane
 - Morale
 - Research

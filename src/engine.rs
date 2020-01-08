@@ -28,6 +28,10 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
         return Err(EngineError::init("Insufficient pops for building"));
     }
 
+    if building.immortal {
+        return Err(EngineError::init(format!("Unable to build {}", building.name)));
+    }
+
     region.add_building(building);
     state.recalculate();
     Ok(())
@@ -50,7 +54,7 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
         return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
     }
 
-    if building.can_not_destroy {
+    if building.immortal {
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
 
@@ -269,8 +273,17 @@ mod tests {
     #[test]
     fn destroy_immortal_building() {
         let mut state = GameState::init_test_game_state();
-        build(&mut state, get_building("Test Immortal"), 1).unwrap();
+        state.regions[1].add_building(get_building("Test Immortal"));
         assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
+    }
+
+    #[test]
+    fn build_immortal_building() {
+        let mut state = GameState::init_test_game_state();
+        assert_eq!(
+            "Unable to build Test Immortal",
+            build(&mut state, get_building("Test Immortal"), 1).unwrap_err().description()
+        );
     }
 
     #[test]

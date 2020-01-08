@@ -147,18 +147,18 @@ fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
 
     y = write_right(t, "Conversions", 0, y);
 
-    for c in &state.derived_state.conversion_name {
-        match engine::get_conversion_current_tick(state, &c) {
+    for c in &state.derived_state.conversion_counts {
+        match engine::get_conversion_current_tick(state, &c.name) {
             Some(ticks) => {
                 // Don't update y, as we have to draw the bar
-                write_right(t, &c, 0, y);
+                write_right(t, &format!("{} ({})", c.name, c.count), 0, y);
 
                 let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
                 let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
                 let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
                 let filled_width = filled_width as usize;
                 let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
-                y = write_right(t, &bar_text, c.len() as i32 + 2, y);
+                y = write_right(t, &bar_text, c.name.len() as i32 + 5, y);
             }
             _ => {}
         }

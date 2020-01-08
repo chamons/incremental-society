@@ -38,22 +38,23 @@ impl DerivedState {
     }
 
     pub fn calculate(state: &GameState) -> DerivedState {
+        let pops = DerivedState::calculate_pops(&state);
         DerivedState {
             conversion_name: DerivedState::conversion_names(&state),
-            conversion_counts: DerivedState::conversion_with_counts(&state),
+            conversion_counts: DerivedState::conversion_with_counts(&state, pops),
             storage: DerivedState::calculate_storage(&state),
             pops: DerivedState::calculate_pops(&state),
             used_pops: DerivedState::calculate_used_pops(&state),
         }
     }
 
-    fn conversion_with_counts(state: &GameState) -> Vec<ConversionTotal> {
+    fn conversion_with_counts(state: &GameState, pops: u32) -> Vec<ConversionTotal> {
         let mut counts: HashMap<&str, u32> = HashMap::new();
         for c in state.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.conversions) {
             let entry = counts.entry(c).or_insert(0);
             *entry += 1;
         }
-        counts.insert("Sustain Population", state.derived_state.pops);
+        counts.insert("Sustain Population", pops);
 
         let mut conversion_with_counts = Vec::with_capacity(counts.len());
         for name in DerivedState::conversion_names(&state) {
@@ -74,8 +75,8 @@ impl DerivedState {
             .cloned()
             .collect();
         names.sort();
-        // Sustain Population is always first
-        names.insert(0, String::from("Sustain Population"));
+        // Sustain Population is always last
+        names.push(String::from("Sustain Population"));
         names
     }
 

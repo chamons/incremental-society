@@ -35,7 +35,7 @@ impl GameState {
         let mut state = GameState {
             resources: ResourceTotal::init(),
             regions: vec![
-                Region::init_with_buildings("Lusitania", vec![data::get_building("Gathering Camp"), data::get_building("Hunting Grounds")]),
+                Region::init_with_buildings("Lusitania", vec![data::get_building("Settlement"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
             ],
             ticks: HashMap::new(),
@@ -59,7 +59,7 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
-    //#[cfg(test)]
+    #[cfg(test)]
     pub fn init_test_game_state() -> GameState {
         let mut state = GameState {
             resources: ResourceTotal::init(),

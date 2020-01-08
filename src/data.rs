@@ -9,7 +9,15 @@ use std::collections::HashMap;
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert("Sustain Population", Conversion::init("Sustain Population", vec![], vec![]));
+        m.insert(
+            "Sustain Population",
+            Conversion::init_required(
+                "Sustain Population",
+                vec![ResourceAmount::init(ResourceKind::Food, 1)],
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Morale, 1)],
+            ),
+        );
         m.insert(
             "Gathering",
             Conversion::init(
@@ -36,6 +44,22 @@ lazy_static! {
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
+        {
+            let mut building = Building::init(
+                "Settlement",
+                vec!["Hunting"],
+                vec![],
+                vec![
+                    ResourceAmount::init(ResourceKind::Food, 50),
+                    ResourceAmount::init(ResourceKind::Fuel, 50),
+                    ResourceAmount::init(ResourceKind::Knowledge, 50),
+                    ResourceAmount::init(ResourceKind::Morale, 100),
+                ],
+                3,
+            );
+            building.immortal = true;
+            m.insert("Settlement", building);
+        }
         m.insert(
             "Gathering Camp",
             Building::init(
@@ -114,7 +138,7 @@ lazy_static! {
 
         {
             let mut building = Building::init("Test Immortal", vec![""], vec![], vec![], 0);
-            building.can_not_destroy = true;
+            building.immortal = true;
             m.insert("Test Immortal", building);
         }
         m
@@ -135,7 +159,11 @@ pub fn get_building(name: &str) -> Building {
 }
 
 pub fn get_building_names() -> Vec<String> {
-    BUILDINGS.keys().map(|x| x.to_string()).collect()
+    BUILDINGS
+        .iter()
+        .filter(|(_, building)| !building.immortal)
+        .map(|(name, _)| name.to_string())
+        .collect()
 }
 
 pub fn get_edict(name: &str) -> Conversion {

@@ -8,6 +8,8 @@
     - Set conversion to give -x morale if missed, else positive 1 morale
     - If moral <= 0, stop loop
 
+- Refresh bug on multiple nested dialogs?
+- Different lengths for conversions (Set eating more frequent)
 - Info on edict/building pane
 - Morale
 - Research

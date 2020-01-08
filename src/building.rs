@@ -8,7 +8,7 @@ pub struct Building {
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
     pub pops: u32,
-    pub can_not_destroy: bool,
+    pub immortal: bool,
 }
 
 impl Building {
@@ -19,7 +19,7 @@ impl Building {
             build_cost,
             storage,
             pops,
-            can_not_destroy: false,
+            immortal: false,
         }
     }
 
@@ -30,7 +30,7 @@ impl Building {
             build_cost,
             storage,
             pops,
-            can_not_destroy: false,
+            immortal: false,
         }
     }
 }

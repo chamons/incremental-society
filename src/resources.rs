@@ -6,12 +6,12 @@ use num_traits::FromPrimitive;
 
 pub type ResourceQuantity = i64;
 
-#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive, Deserialize, Serialize, PartialEq)]
 pub enum ResourceKind {
     Food,
     Fuel,
     Knowledge,
-    Morale,
+    Instability,
 
     // This must be incremented every time an item is added
     Size = 4,

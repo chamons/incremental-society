@@ -14,8 +14,8 @@ lazy_static! {
             Conversion::init_required(
                 "Sustain Population",
                 vec![ResourceAmount::init(ResourceKind::Food, 1)],
-                vec![],
-                vec![ResourceAmount::init(ResourceKind::Morale, 1)],
+                vec![ResourceAmount::init(ResourceKind::Instability, -1)],
+                vec![ResourceAmount::init(ResourceKind::Instability, 15)],
             ),
         );
         m.insert(
@@ -53,7 +53,7 @@ lazy_static! {
                     ResourceAmount::init(ResourceKind::Food, 50),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
-                    ResourceAmount::init(ResourceKind::Morale, 100),
+                    ResourceAmount::init(ResourceKind::Instability, 1000),
                 ],
                 3,
             );

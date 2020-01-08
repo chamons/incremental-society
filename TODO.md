@@ -3,15 +3,11 @@
 ## Needed for game
 
 - Pops:
-    - Need a building to provide knowledge/morale storage
-    - Need to start with 100 morale
-    - Set conversion to give -x morale if missed, else positive 1 morale
-    - If moral <= 0, stop loop
+    - If Instability >= 1000, stop loop
 
 - Refresh bug on multiple nested dialogs?
 - Different lengths for conversions (Set eating more frequent)
 - Info on edict/building pane
-- Morale
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)
 

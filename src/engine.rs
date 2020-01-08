@@ -2,7 +2,7 @@ use crate::building::Building;
 use crate::data::{get_conversion, get_edict};
 use crate::engine_error::EngineError;
 use crate::region::Region;
-use crate::resources::NUM_RESOURCES;
+use crate::resources::{ResourceKind, NUM_RESOURCES};
 use crate::state::GameState;
 
 use std::cmp;
@@ -81,6 +81,25 @@ pub const CONVERSION_TICK_START: u32 = 100;
 pub fn process_tick(mut state: &mut GameState) {
     process_conversions(&mut state);
     honor_storage_limits(&mut state);
+    verify_resource_floor(&mut state);
+}
+
+fn verify_resource_floor(state: &mut GameState) {
+    for i in 0..NUM_RESOURCES {
+        if state.resources[i] < 0 {
+            // Instability can go negative and that's fine (everyone is happy)
+            if ResourceKind::Instability == ResourceKind::name_for_index(i) {
+                state.resources[i] = 0;
+            } else {
+                panic!(
+                    "Resource {} had invalid value {} at end of tick processing",
+                    ResourceKind::name_for_index(i),
+                    state.resources[i]
+                );
+            }
+        }
+        state.resources[i] = cmp::min(state.resources[i], state.derived_state.storage[i]);
+    }
 }
 
 fn process_conversions(state: &mut GameState) {
@@ -182,6 +201,22 @@ mod tests {
         process_tick(&mut state);
         assert_eq!(state.resources[ResourceKind::Food], state.derived_state.storage[ResourceKind::Food]);
         assert_eq!(state.resources[ResourceKind::Fuel], state.derived_state.storage[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn process_tick_instability_floor_negative() {
+        let mut state = GameState::init();
+        state.resources[ResourceKind::Instability] = -10;
+        process_tick(&mut state);
+        assert_eq!(0, state.resources[ResourceKind::Instability]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn process_tick_other_negative_die() {
+        let mut state = GameState::init();
+        state.resources[ResourceKind::Food] = -10;
+        process_tick(&mut state);
     }
 
     #[test]

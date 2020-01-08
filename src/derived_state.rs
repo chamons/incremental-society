@@ -107,21 +107,21 @@ mod tests {
     fn conversion_with_counts() {
         let state = GameState::init_test_game_state();
         let conversions = &state.derived_state.conversion_counts;
-        assert_eq!("Sustain Population", conversions[0].name);
+        assert_eq!("TestChop", conversions[0].name);
+        assert_eq!(4, conversions[0].count);
+        assert_eq!("TestGather", conversions[1].name);
+        assert_eq!(1, conversions[1].count);
+        assert_eq!("Sustain Population", conversions[2].name);
         assert_eq!(4, state.derived_state.pops);
-        assert_eq!("TestChop", conversions[1].name);
-        assert_eq!(4, conversions[1].count);
-        assert_eq!("TestGather", conversions[2].name);
-        assert_eq!(1, conversions[2].count);
     }
 
     #[test]
     fn conversion_names() {
         let state = GameState::init_test_game_state();
         let conversions = &state.derived_state.conversion_name;
-        assert_eq!("Sustain Population", conversions[0]);
-        assert_eq!("TestChop", conversions[1]);
-        assert_eq!("TestGather", conversions[2]);
+        assert_eq!("TestChop", conversions[0]);
+        assert_eq!("TestGather", conversions[1]);
+        assert_eq!("Sustain Population", conversions[2]);
     }
 
     #[test]

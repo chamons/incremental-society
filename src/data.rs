@@ -53,7 +53,7 @@ lazy_static! {
                     ResourceAmount::init(ResourceKind::Food, 50),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
-                    ResourceAmount::init(ResourceKind::Instability, 1000),
+                    ResourceAmount::init(ResourceKind::Instability, 50),
                 ],
                 3,
             );
@@ -115,6 +115,7 @@ lazy_static! {
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
+        m.insert("Empty Building", Building::init("Empty Building", vec![], vec![], vec![], 0));
         m.insert(
             "Test Building",
             Building::init(
@@ -132,6 +133,20 @@ lazy_static! {
                 vec!["TestGather"],
                 vec![],
                 vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                0,
+            ),
+        );
+
+        m.insert(
+            "Stability Building",
+            Building::init(
+                "Stability Building",
+                vec![""],
+                vec![],
+                vec![
+                    ResourceAmount::init(ResourceKind::Knowledge, 10),
+                    ResourceAmount::init(ResourceKind::Instability, 10),
+                ],
                 0,
             ),
         );

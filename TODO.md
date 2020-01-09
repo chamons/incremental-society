@@ -2,19 +2,21 @@
 
 ## Needed for game
 
-- Pops:
-    - If Instability >= 1000, stop loop
-
+- Message Ability
 - Refresh bug on multiple nested dialogs?
 - Different lengths for conversions (Set eating more frequent)
 - Info on edict/building pane
-- Research
-- Upgrades (Cost per person/building to upgrade/change existing)
 
 ## Longer Term
 
+- Research
+- Upgrades (Cost per person/building to upgrade/change existing)
 - Should DerivedState logic move somewhere?
 - Should we split engine from state?
+- Over time
+   - Building build/destroy over time
+   - Edict over time
+   - Pop growth over time
 - Research 1 of 3
 - Regions Resources
 - Random regions

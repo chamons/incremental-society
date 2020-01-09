@@ -2,6 +2,7 @@ pub mod building;
 pub mod conversion;
 pub mod data;
 pub mod derived_state;
+pub mod disaster;
 pub mod engine;
 pub mod engine_error;
 pub mod region;

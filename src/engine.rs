@@ -1,5 +1,6 @@
 use crate::building::Building;
 use crate::data::{get_conversion, get_edict};
+use crate::disaster::disaster;
 use crate::engine_error::EngineError;
 use crate::region::Region;
 use crate::resources::{ResourceKind, NUM_RESOURCES};
@@ -78,10 +79,17 @@ pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
 
 pub const CONVERSION_TICK_START: u32 = 100;
 
-pub fn process_tick(mut state: &mut GameState) {
-    process_conversions(&mut state);
-    honor_storage_limits(&mut state);
-    verify_resource_floor(&mut state);
+pub fn process_tick(state: &mut GameState) {
+    process_conversions(state);
+    honor_storage_limits(state);
+    verify_resource_floor(state);
+    invoke_disaster_if_needed(state);
+}
+
+fn invoke_disaster_if_needed(state: &mut GameState) {
+    if state.resources[ResourceKind::Instability] > 0 && state.resources[ResourceKind::Instability] == state.derived_state.storage[ResourceKind::Instability] {
+        disaster(state);
+    }
 }
 
 fn verify_resource_floor(state: &mut GameState) {
@@ -334,5 +342,18 @@ mod tests {
     fn invoke_edict_no_resources() {
         let mut state = GameState::init_test_game_state();
         assert!(edict(&mut state, "TestEdict").is_err());
+    }
+
+    #[test]
+    fn invoke_disaster_if_instability_full() {
+        let mut state = GameState::init_test_game_state();
+        state.regions[1].add_building(get_building("Stability Building"));
+        state.recalculate();
+        state.resources[ResourceKind::Knowledge] = state.derived_state.storage[ResourceKind::Knowledge];
+        state.resources[ResourceKind::Instability] = state.derived_state.storage[ResourceKind::Instability];
+
+        process_tick(&mut state);
+
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
     }
 }

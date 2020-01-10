@@ -5,8 +5,11 @@
     "tasks": [
         {
             "label": "build",
-            "type": "cargo",
-            "subcommand": "build",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build"
+            ],
             "problemMatcher": [
                 "$rustc"
             ],
@@ -14,8 +17,11 @@
         },
         {
             "label": "check",
-            "type": "cargo",
-            "subcommand": "check",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "check"
+            ],
             "problemMatcher": [
                 "$rustc"
             ],
@@ -23,12 +29,15 @@
         },
         {
             "label": "test",
-            "type": "cargo",
-            "subcommand": "test",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "test"
+            ],
             "problemMatcher": [
                 "$rustc"
             ],
             "group": "test"
-        }
+        },
     ]
 }

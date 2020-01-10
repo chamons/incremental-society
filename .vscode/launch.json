@@ -9,7 +9,7 @@
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "cargo build",
+            "preLaunchTask": "build",
             "type": "lldb",
             "windows": {
                 "type": "cppvsdbg",

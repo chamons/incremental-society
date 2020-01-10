@@ -28,7 +28,7 @@
             "group": "build"
         },
         {
-            "label": "test",
+            "label": "run tests",
             "type": "shell",
             "command": "cargo",
             "args": [
@@ -37,7 +37,7 @@
             "problemMatcher": [
                 "$rustc"
             ],
-            "group": "test"
+            "group": "build"
         },
     ]
 }

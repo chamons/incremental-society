@@ -34,6 +34,7 @@ impl<'a> OptionList<'a> {
     }
 
     pub fn run(&self) -> Option<usize> {
+        let original_win = self.term.dupwin();
         self.draw_border();
         for (i, o) in self.options.iter().enumerate() {
             let option_text = format!("|  {} - {}", ('a' as u8 + i as u8) as char, o);
@@ -69,6 +70,7 @@ impl<'a> OptionList<'a> {
         }
 
         self.term.nodelay(true);
+        original_win.overwrite(&self.term);
 
         selected
     }

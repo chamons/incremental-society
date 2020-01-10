@@ -3,7 +3,6 @@
 ## Needed for game
 
 - Message Ability
-- Refresh bug on multiple nested dialogs?
 - Different lengths for conversions (Set eating more frequent)
 - Info on edict/building pane
 

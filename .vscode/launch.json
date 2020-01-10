@@ -5,16 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Launch",
-            "type": "cppvsdbg",
+            "name": "Launch",
             "request": "launch",
-            "program": "target\\debug\\incremental-society.exe",
             "args": [],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "preLaunchTask": "build"
-        }
+            "preLaunchTask": "cargo build",
+            "type": "lldb",
+            "windows": {
+                "type": "cppvsdbg",
+                "stopAtEntry": false,
+                "environment": [],
+                "externalConsole": true,
+                "program": "target\\debug\\incremental-society.exe",
+            },
+            "osx": {
+                "terminal": "external",
+                "program": "target/debug/incremental-society",
+            },
+        },
     ]
 }

@@ -1,5 +1,5 @@
 use crate::building::Building;
-use crate::conversion::Conversion;
+use crate::conversion::{Conversion, ConversionLength};
 
 #[allow(unused_imports)] // Used in non-test version
 use crate::resources::*;
@@ -13,6 +13,7 @@ lazy_static! {
             "Sustain Population",
             Conversion::init_required(
                 "Sustain Population",
+                ConversionLength::Short,
                 vec![ResourceAmount::init(ResourceKind::Food, 1)],
                 vec![ResourceAmount::init(ResourceKind::Instability, -1)],
                 vec![ResourceAmount::init(ResourceKind::Instability, 15)],
@@ -22,6 +23,7 @@ lazy_static! {
             "Gathering",
             Conversion::init(
                 "Gathering",
+                ConversionLength::Long,
                 vec![],
                 vec![ResourceAmount::init(ResourceKind::Food, 1), ResourceAmount::init(ResourceKind::Fuel, 1)],
             ),
@@ -29,12 +31,13 @@ lazy_static! {
 
         m.insert(
             "Hunting",
-            Conversion::init("Hunting", vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
+            Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
         );
         m.insert(
             "Feast",
             Conversion::init(
                 "Feast",
+                ConversionLength::Epic,
                 vec![ResourceAmount::init(ResourceKind::Food, 20)],
                 vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
             ),
@@ -94,19 +97,28 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert("Sustain Population", Conversion::init("Sustain Population", vec![], vec![]));
+        m.insert(
+            "Sustain Population",
+            Conversion::init("Sustain Population", ConversionLength::Medium, vec![], vec![]),
+        );
         m.insert(
             "TestChop",
-            Conversion::init("TestChop", vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
+            Conversion::init("TestChop", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
         );
         m.insert(
             "TestGather",
-            Conversion::init("TestGather", vec![], vec![ResourceAmount::init(ResourceKind::Food, 1)]),
+            Conversion::init(
+                "TestGather",
+                ConversionLength::Medium,
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Food, 1)],
+            ),
         );
         m.insert(
             "TestEdict",
             Conversion::init(
                 "TestEdict",
+                ConversionLength::Medium,
                 vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
                 vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
             ),

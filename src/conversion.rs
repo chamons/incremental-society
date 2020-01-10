@@ -1,34 +1,57 @@
 use crate::resources::*;
 
 #[derive(Debug, Clone)]
+pub enum ConversionLength {
+    Short,
+    Medium,
+    Long,
+    Epic,
+}
+
+#[derive(Debug, Clone)]
 pub struct Conversion {
     pub name: &'static str,
+    pub length: ConversionLength,
     pub input: Vec<ResourceAmount>,
     pub output: Vec<ResourceAmount>,
     pub output_if_no_input: Vec<ResourceAmount>,
 }
 
 impl Conversion {
-    pub fn init_single(name: &'static str, input: ResourceAmount, output: ResourceAmount) -> Conversion {
-        Conversion::init(name, vec![input], vec![output])
+    pub fn init_single(name: &'static str, length: ConversionLength, input: ResourceAmount, output: ResourceAmount) -> Conversion {
+        Conversion::init(name, length, vec![input], vec![output])
     }
 
-    pub fn init(name: &'static str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion {
+    pub fn init(name: &'static str, length: ConversionLength, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion {
         Conversion {
             name,
+            length,
             input,
             output,
             output_if_no_input: vec![],
         }
     }
 
-    pub fn init_required_single(name: &'static str, input: ResourceAmount, output: ResourceAmount, output_if_no_input: ResourceAmount) -> Conversion {
-        Conversion::init_required(name, vec![input], vec![output], vec![output_if_no_input])
+    pub fn init_required_single(
+        name: &'static str,
+        length: ConversionLength,
+        input: ResourceAmount,
+        output: ResourceAmount,
+        output_if_no_input: ResourceAmount,
+    ) -> Conversion {
+        Conversion::init_required(name, length, vec![input], vec![output], vec![output_if_no_input])
     }
 
-    pub fn init_required(name: &'static str, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>, output_if_no_input: Vec<ResourceAmount>) -> Conversion {
+    pub fn init_required(
+        name: &'static str,
+        length: ConversionLength,
+        input: Vec<ResourceAmount>,
+        output: Vec<ResourceAmount>,
+        output_if_no_input: Vec<ResourceAmount>,
+    ) -> Conversion {
         Conversion {
             name,
+            length,
             input,
             output,
             output_if_no_input,
@@ -73,6 +96,7 @@ mod tests {
     fn create_test_conversion() -> Conversion {
         Conversion::init_single(
             "TestConversion",
+            ConversionLength::Medium,
             ResourceAmount::init(ResourceKind::Food, 10),
             ResourceAmount::init(ResourceKind::Fuel, 10),
         )
@@ -81,6 +105,7 @@ mod tests {
     fn create_test_required_conversion() -> Conversion {
         Conversion::init_required_single(
             "TestRequiredConversion",
+            ConversionLength::Medium,
             ResourceAmount::init(ResourceKind::Food, 10),
             ResourceAmount::init(ResourceKind::Fuel, 10),
             ResourceAmount::init(ResourceKind::Knowledge, 1),

@@ -79,17 +79,20 @@ pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
 
 pub const CONVERSION_TICK_START: u32 = 100;
 
-pub fn process_tick(state: &mut GameState) {
+pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     process_conversions(state);
     honor_storage_limits(state);
     verify_resource_floor(state);
-    invoke_disaster_if_needed(state);
+    return invoke_disaster_if_needed(state);
 }
 
-fn invoke_disaster_if_needed(state: &mut GameState) {
+fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> {
     if state.resources[ResourceKind::Instability] > 0 && state.resources[ResourceKind::Instability] == state.derived_state.storage[ResourceKind::Instability] {
         disaster(state);
+        return Some("Disaster: People riot due to instability.");
     }
+
+    None
 }
 
 fn verify_resource_floor(state: &mut GameState) {

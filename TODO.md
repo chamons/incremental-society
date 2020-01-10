@@ -2,7 +2,6 @@
 
 ## Needed for game
 
-- Message Ability
 - Different lengths for conversions (Set eating more frequent)
 - Info on edict/building pane
 

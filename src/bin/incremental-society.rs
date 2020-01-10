@@ -12,33 +12,278 @@ use std::time::Instant;
 
 extern crate incremental_society;
 
+use std::error::Error;
+
 fn main() {
     let term = pancurses::initscr();
-    term.keypad(true);
-    term.nodelay(true);
-    pancurses::noecho();
+    let mut ui = UI {
+        messages: "".to_string(),
+        message_timeout: 0,
+        term: &term,
+    };
+    ui.main();
+}
 
-    let mut state = GameState::init_new_game_state();
-    loop {
-        let now = Instant::now();
+struct UI<'a> {
+    messages: String,
+    message_timeout: u32,
+    term: &'a Window,
+}
 
-        if handle_input(&term, &mut state) {
-            break;
+impl<'a> UI<'a> {
+    fn main(&mut self) {
+        self.term.keypad(true);
+        self.term.nodelay(true);
+        pancurses::noecho();
+
+        let mut state = GameState::init_new_game_state();
+        loop {
+            let now = Instant::now();
+
+            if self.handle_input(&mut state) {
+                break;
+            }
+
+            self.draw(&state);
+
+            match engine::process_tick(&mut state) {
+                Some(msg) => self.set_message(msg),
+                _ => {}
+            }
+
+            const MS_FOR_30_FPS: u128 = 32;
+            let processing_duration = now.elapsed().as_millis();
+            if processing_duration < MS_FOR_30_FPS {
+                let sleep_duration = MS_FOR_30_FPS - processing_duration;
+                sleep(Duration::from_millis(sleep_duration as u64));
+            }
+            self.tick_message();
         }
 
-        draw(&term, &state);
+        pancurses::endwin();
+    }
 
-        engine::process_tick(&mut state);
-
-        const MS_FOR_30_FPS: u128 = 32;
-        let processing_duration = now.elapsed().as_millis();
-        if processing_duration < MS_FOR_30_FPS {
-            let sleep_duration = MS_FOR_30_FPS - processing_duration;
-            sleep(Duration::from_millis(sleep_duration as u64));
+    fn tick_message(&mut self) {
+        if self.message_timeout > 0 {
+            self.message_timeout -= 1;
+        } else {
+            self.clear_message();
         }
     }
 
-    pancurses::endwin();
+    fn set_message<S>(&mut self, message: S)
+    where
+        S: Into<String>,
+    {
+        self.messages = message.into();
+        self.message_timeout = 120;
+    }
+
+    fn clear_message(&mut self) {
+        self.messages.clear();
+        self.message_timeout = 0;
+    }
+
+    fn handle_input(&mut self, mut state: &mut GameState) -> bool {
+        if let Some(input) = self.term.getch() {
+            if is_char(&input, 'q') {
+                return true;
+            }
+
+            if is_char(&input, 'b') {
+                let building_options = data::get_building_names();
+                match option_list::OptionList::init(&self.term, &building_options).run() {
+                    Some(building_index) => {
+                        let building = data::get_building(&building_options[building_index]);
+                        let name = building.name.clone();
+                        let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+                        match option_list::OptionList::init(&self.term, &regions).run() {
+                            Some(region_index) => match engine::build(&mut state, building, region_index) {
+                                Err(e) => self.set_message(e.description()),
+                                _ => self.set_message(format!("Built {}", name)),
+                            },
+                            None => self.clear_message(),
+                        }
+                    }
+                    None => self.clear_message(),
+                }
+            }
+
+            if is_char(&input, 'd') {
+                let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+                match option_list::OptionList::init(&self.term, &regions).run() {
+                    Some(region_index) => {
+                        let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
+                        if buildings.len() != 0 {
+                            match option_list::OptionList::init(&self.term, &buildings).run() {
+                                Some(building_index) => {
+                                    let building = data::get_building(&buildings[building_index]);
+                                    match engine::destroy(&mut state, region_index, building_index) {
+                                        Err(e) => self.set_message(e.description()),
+                                        _ => self.set_message(format!("Destroyed {}", building.name)),
+                                    }
+                                }
+                                None => self.clear_message(),
+                            }
+                        }
+                    }
+                    None => self.clear_message(),
+                }
+            }
+
+            if is_char(&input, 'e') {
+                let edicts = data::get_edict_names();
+                match option_list::OptionList::init(&self.term, &edicts).run() {
+                    Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {
+                        Err(e) => self.set_message(e.description()),
+                        _ => self.clear_message(),
+                    },
+                    None => self.clear_message(),
+                }
+            }
+        }
+
+        false
+    }
+
+    #[allow(unused_assignments)]
+    fn draw(&self, state: &GameState) {
+        self.term.clear();
+
+        let mut y = 1;
+
+        // Left Column
+        y = self.draw_country_stats(state, y);
+        y += 1;
+        y = self.draw_resources(state, y);
+
+        // Right Column
+        y = 1;
+        y = self.draw_regions(state, y);
+        y += 1;
+        y = self.draw_conversions(state, y);
+
+        self.draw_messages();
+        self.draw_prompt();
+    }
+
+    fn draw_conversions(&self, state: &GameState, y: i32) -> i32 {
+        let mut y = y;
+        const CONVERSION_BAR_LENGTH: f64 = 30.0;
+
+        y = self.write_right("Conversions", 0, y);
+
+        for c in &state.derived_state.conversion_counts {
+            match engine::get_conversion_current_tick(state, &c.name) {
+                Some(ticks) => {
+                    // Don't update y, as we have to draw the bar
+                    self.write_right(&format!("{} ({})", c.name, c.count), 0, y);
+
+                    let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
+                    let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
+                    let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
+                    let filled_width = filled_width as usize;
+                    let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
+                    y = self.write_right(&bar_text, c.name.len() as i32 + 5, y);
+                }
+                _ => {}
+            }
+        }
+        y
+    }
+
+    fn write_region_contents(&self, text: &str, x: i32, y: i32) -> i32 {
+        // RIGHT_COL_WIDTH - 2
+        self.write_right(&format!("|{: <38}|", text), x, y)
+    }
+
+    #[allow(unused_assignments)]
+    fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
+        let mut y = y;
+        for r in &state.regions {
+            y = self.write_right("----------------------------------------", 0, y);
+
+            y = self.write_region_contents(&r.name, 0, y);
+
+            let mut x = 0;
+            let building_top_line = y;
+            for b in 0..r.max_building_count() {
+                if let Some(building) = r.buildings.get(b) {
+                    y = building_top_line;
+
+                    let building_name = &building.name;
+                    let building_name_length: usize = building_name.len();
+
+                    // Draw box manually
+                    self.write("|", UI::RIGHT_COL, y);
+                    self.write("|", UI::RIGHT_COL, y + 1);
+                    self.write("|", UI::RIGHT_COL, y + 2);
+                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y);
+                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y + 1);
+                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y + 2);
+
+                    y = self.write_right(&"_".repeat(building_name_length + 2), x + 2, y);
+                    y = self.write_right(&format!("|{}|", building_name), x + 2, y);
+                    y = self.write_right(&"-".repeat(building_name_length + 2), x + 2, y);
+
+                    x += building_name_length as i32 + 3;
+                }
+            }
+            y = self.write_right("----------------------------------------", 0, y);
+        }
+
+        y
+    }
+
+    #[allow(unused_assignments)]
+    fn draw_country_stats(&self, state: &GameState, y: i32) -> i32 {
+        let mut y = self.write("Elysium", 1, y);
+        y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
+        y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
+        y = self.write("----------------", 0, y + 1);
+
+        y
+    }
+
+    fn draw_resources(&self, state: &GameState, y: i32) -> i32 {
+        let mut y = y;
+
+        for i in 0..NUM_RESOURCES {
+            let line = &format!(
+                "{}: {} / {}",
+                ResourceKind::name_for_index(i),
+                state.resources[i],
+                state.derived_state.storage[i]
+            );
+            y = self.write(line, 1, y);
+        }
+        y
+    }
+
+    fn draw_messages(&self) {
+        self.write(&self.messages, 2, self.term.get_max_y() - 2);
+    }
+
+    fn draw_prompt(&self) {
+        let x = self.term.get_max_x();
+        let y = self.term.get_max_y();
+        self.write(" ", x - 1, y - 1);
+    }
+
+    fn write<S>(&self, text: S, x: i32, y: i32) -> i32
+    where
+        S: Into<String>,
+    {
+        self.term.mvaddstr(y, x, text.into());
+        y + 1
+    }
+
+    const RIGHT_COL: i32 = 50;
+    const RIGHT_COL_WIDTH: i32 = 40;
+
+    fn write_right(&self, text: &str, x: i32, y: i32) -> i32 {
+        self.write(text, x + UI::RIGHT_COL, y)
+    }
 }
 
 fn is_char(input: &Input, c: char) -> bool {
@@ -48,193 +293,4 @@ fn is_char(input: &Input, c: char) -> bool {
         }
     }
     false
-}
-
-fn handle_input(t: &Window, mut state: &mut GameState) -> bool {
-    if let Some(input) = t.getch() {
-        if is_char(&input, 'q') {
-            return true;
-        }
-
-        if is_char(&input, 'b') {
-            let building_options = data::get_building_names();
-            match option_list::OptionList::init(&t, &building_options).run() {
-                Some(building_index) => {
-                    let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-                    match option_list::OptionList::init(&t, &regions).run() {
-                        Some(region_index) => {
-                            // Ignore errors for now
-                            let _ = engine::build(&mut state, data::get_building(&building_options[building_index]), region_index);
-                        }
-                        None => {}
-                    }
-                }
-                None => {}
-            }
-        }
-
-        if is_char(&input, 'd') {
-            let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-            match option_list::OptionList::init(&t, &regions).run() {
-                Some(region_index) => {
-                    let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
-                    if buildings.len() != 0 {
-                        match option_list::OptionList::init(&t, &buildings).run() {
-                            Some(building_index) => {
-                                // // Ignore errors for now
-                                let _ = engine::destroy(&mut state, region_index, building_index);
-                            }
-                            None => {}
-                        }
-                    }
-                }
-                None => {}
-            }
-        }
-
-        if is_char(&input, 'e') {
-            let edicts = data::get_edict_names();
-            match option_list::OptionList::init(&t, &edicts).run() {
-                Some(edict_index) => {
-                    let _ = engine::edict(&mut state, edicts.get(edict_index).unwrap());
-                }
-                None => {}
-            }
-        }
-    }
-
-    false
-}
-
-#[allow(unused_assignments)]
-fn draw(t: &Window, state: &GameState) {
-    t.clear();
-
-    let mut y = 1;
-
-    // Left Column
-    y = draw_country_stats(t, state, y);
-    y += 1;
-    y = draw_resources(t, state, y);
-
-    // Right Column
-    y = 1;
-    y = draw_regions(t, state, y);
-    y += 1;
-    y = draw_conversions(t, state, y);
-
-    draw_prompt(t);
-}
-
-fn write<S>(t: &Window, text: S, x: i32, y: i32) -> i32
-where
-    S: Into<String>,
-{
-    t.mvaddstr(y, x, text.into());
-    y + 1
-}
-
-const RIGHT_COL: i32 = 50;
-const RIGHT_COL_WIDTH: i32 = 40;
-
-fn write_right(t: &Window, text: &str, x: i32, y: i32) -> i32 {
-    write(t, text, x + RIGHT_COL, y)
-}
-
-fn draw_conversions(t: &Window, state: &GameState, y: i32) -> i32 {
-    let mut y = y;
-    const CONVERSION_BAR_LENGTH: f64 = 30.0;
-
-    y = write_right(t, "Conversions", 0, y);
-
-    for c in &state.derived_state.conversion_counts {
-        match engine::get_conversion_current_tick(state, &c.name) {
-            Some(ticks) => {
-                // Don't update y, as we have to draw the bar
-                write_right(t, &format!("{} ({})", c.name, c.count), 0, y);
-
-                let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
-                let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
-                let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
-                let filled_width = filled_width as usize;
-                let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
-                y = write_right(t, &bar_text, c.name.len() as i32 + 5, y);
-            }
-            _ => {}
-        }
-    }
-    y
-}
-
-fn write_region_contents(t: &Window, text: &str, x: i32, y: i32) -> i32 {
-    // RIGHT_COL_WIDTH - 2
-    write_right(t, &format!("|{: <38}|", text), x, y)
-}
-
-#[allow(unused_assignments)]
-fn draw_regions(t: &Window, state: &GameState, y: i32) -> i32 {
-    let mut y = y;
-    for r in &state.regions {
-        y = write_right(t, "----------------------------------------", 0, y);
-
-        y = write_region_contents(t, &r.name, 0, y);
-
-        let mut x = 0;
-        let building_top_line = y;
-        for b in 0..r.max_building_count() {
-            if let Some(building) = r.buildings.get(b) {
-                y = building_top_line;
-
-                let building_name = &building.name;
-                let building_name_length: usize = building_name.len();
-
-                // Draw box manually
-                write(t, "|", RIGHT_COL, y);
-                write(t, "|", RIGHT_COL, y + 1);
-                write(t, "|", RIGHT_COL, y + 2);
-                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y);
-                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y + 1);
-                write(t, "|", RIGHT_COL + RIGHT_COL_WIDTH - 1, y + 2);
-
-                y = write_right(t, &"_".repeat(building_name_length + 2), x + 2, y);
-                y = write_right(t, &format!("|{}|", building_name), x + 2, y);
-                y = write_right(t, &"-".repeat(building_name_length + 2), x + 2, y);
-
-                x += building_name_length as i32 + 3;
-            }
-        }
-        y = write_right(t, "----------------------------------------", 0, y);
-    }
-
-    y
-}
-
-#[allow(unused_assignments)]
-fn draw_country_stats(t: &Window, state: &GameState, y: i32) -> i32 {
-    let mut y = write(t, "Elysium", 1, y);
-    y = write(t, format!("Population: {}", state.derived_state.pops), 1, y + 1);
-    y = write(t, format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
-    y = write(t, "----------------", 0, y + 1);
-
-    y
-}
-
-fn draw_resources(t: &Window, state: &GameState, y: i32) -> i32 {
-    let mut y = y;
-
-    for i in 0..NUM_RESOURCES {
-        let line = &format!(
-            "{}: {} / {}",
-            ResourceKind::name_for_index(i),
-            state.resources[i],
-            state.derived_state.storage[i]
-        );
-        y = write(t, line, 1, y);
-    }
-    y
-}
-
-fn draw_prompt(t: &Window) {
-    let y = t.get_max_y();
-    t.mv(y, 0);
 }

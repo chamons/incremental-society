@@ -87,6 +87,15 @@ impl Conversion {
     pub fn has_input(&self, resources: &ResourceTotal) -> bool {
         self.input.iter().all(|x| resources.has_amount(x))
     }
+
+    pub fn tick_length(&self) -> u32 {
+        match &self.length {
+            ConversionLength::Short => 50,
+            ConversionLength::Medium => 100,
+            ConversionLength::Long => 200,
+            ConversionLength::Epic => 400,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -172,5 +181,11 @@ mod tests {
         assert_eq!(5, resources[ResourceKind::Food]);
         assert_eq!(0, resources[ResourceKind::Fuel]);
         assert_eq!(1, resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn conversion_tick_length() {
+        let conversion = create_test_conversion();
+        assert!(conversion.tick_length() > 0)
     }
 }

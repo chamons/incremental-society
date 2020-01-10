@@ -174,12 +174,11 @@ impl<'a> UI<'a> {
         y = self.write_right("Conversions", 0, y);
 
         for c in &state.derived_state.conversion_counts {
-            match engine::get_conversion_current_tick(state, &c.name) {
-                Some(ticks) => {
+            match engine::get_conversion_percentage(state, &c.name) {
+                Some(percentage) => {
                     // Don't update y, as we have to draw the bar
                     self.write_right(&format!("{} ({})", c.name, c.count), 0, y);
 
-                    let percentage = ticks as f64 / engine::CONVERSION_TICK_START as f64;
                     let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
                     let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
                     let filled_width = filled_width as usize;

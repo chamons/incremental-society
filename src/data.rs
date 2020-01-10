@@ -153,7 +153,7 @@ lazy_static! {
             "Stability Building",
             Building::init(
                 "Stability Building",
-                vec![""],
+                vec![],
                 vec![],
                 vec![
                     ResourceAmount::init(ResourceKind::Knowledge, 10),

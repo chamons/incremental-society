@@ -77,8 +77,6 @@ pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
     Ok(())
 }
 
-pub const CONVERSION_TICK_START: u32 = 100;
-
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     process_conversions(state);
     honor_storage_limits(state);
@@ -115,9 +113,11 @@ fn verify_resource_floor(state: &mut GameState) {
 
 fn process_conversions(state: &mut GameState) {
     for c in &state.derived_state.conversion_counts {
-        let entry = state.ticks.entry(c.name.to_string()).or_insert(CONVERSION_TICK_START);
+        let conversion_length = get_conversion(&c.name).tick_length();
+
+        let entry = state.ticks.entry(c.name.to_string()).or_insert(conversion_length);
         if *entry == 0 {
-            *entry = CONVERSION_TICK_START;
+            *entry = conversion_length;
             let conversion = get_conversion(&c.name);
             for _ in 0..c.count {
                 conversion.convert(&mut state.resources);
@@ -134,9 +134,12 @@ fn honor_storage_limits(state: &mut GameState) {
     }
 }
 
-pub fn get_conversion_current_tick(state: &GameState, conversion_name: &str) -> Option<u32> {
+pub fn get_conversion_percentage(state: &GameState, conversion_name: &str) -> Option<f64> {
     match state.ticks.get(conversion_name) {
-        Some(x) => Some(CONVERSION_TICK_START - *x),
+        Some(x) => {
+            let conversion_length = get_conversion(conversion_name).tick_length();
+            Some((conversion_length - *x) as f64 / conversion_length as f64)
+        }
         None => None,
     }
 }
@@ -153,15 +156,15 @@ mod tests {
         let mut state = GameState::init_test_game_state();
         process_tick(&mut state);
 
-        assert_eq!(1, get_conversion_current_tick(&state, "TestChop").unwrap());
-        assert_eq!(1, get_conversion_current_tick(&state, "TestGather").unwrap());
+        assert_eq!(0.01, get_conversion_percentage(&state, "TestChop").unwrap());
+        assert_eq!(0.01, get_conversion_percentage(&state, "TestGather").unwrap());
     }
 
     #[test]
     fn get_conversion_tick_with_no_ticks() {
         let state = GameState::init_test_game_state();
-        assert!(get_conversion_current_tick(&state, "TestChop").is_none());
-        assert!(get_conversion_current_tick(&state, "TestGather").is_none());
+        assert!(get_conversion_percentage(&state, "TestChop").is_none());
+        assert!(get_conversion_percentage(&state, "TestGather").is_none());
     }
 
     #[test]
@@ -169,7 +172,7 @@ mod tests {
         let mut state = GameState::init_test_game_state();
         process_tick(&mut state);
 
-        assert!(get_conversion_current_tick(&state, "NonExistentConvert").is_none());
+        assert!(get_conversion_percentage(&state, "NonExistentConvert").is_none());
     }
 
     #[test]

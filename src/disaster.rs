@@ -36,7 +36,7 @@ pub fn disaster(state: &mut GameState) {
 
     let mut all_buildings = find_all_vulnerable_building_indexes(&state);
 
-    if all_buildings.len() > 0 {
+    if !all_buildings.is_empty() {
         let mut rng = rand::thread_rng();
         let number_to_destroy = random_in_overlap_range(&mut rng, 1, cmp::min(4, all_buildings.len()));
         for _ in 0..number_to_destroy {

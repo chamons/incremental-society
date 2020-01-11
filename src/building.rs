@@ -26,7 +26,7 @@ impl Building {
     pub fn init(name: &'static str, conversions: Vec<&'static str>, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>, pops: u32) -> Building {
         Building {
             name: name.to_owned(),
-            conversions: conversions.iter().map(|x| x.to_string()).collect(),
+            conversions: conversions.iter().map(|x| (*x).to_string()).collect(),
             build_cost,
             storage,
             pops,

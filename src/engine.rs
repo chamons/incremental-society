@@ -114,7 +114,7 @@ pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     process_conversions(state);
     honor_storage_limits(state);
     verify_resource_floor(state);
-    return invoke_disaster_if_needed(state);
+    invoke_disaster_if_needed(state)
 }
 
 fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> {

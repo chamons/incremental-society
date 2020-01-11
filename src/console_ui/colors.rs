@@ -9,9 +9,9 @@ pub fn init() {
 }
 
 pub fn set_color(color: Colors, term: &Window) {
-    term.attron(pancurses::COLOR_PAIR(color as u64));
+    term.attron(pancurses::COLOR_PAIR(color as pancurses::chtype));
 }
 
 pub fn clear_color(color: Colors, term: &Window) {
-    term.attroff(pancurses::COLOR_PAIR(color as u64));
+    term.attroff(pancurses::COLOR_PAIR(color as pancurses::chtype));
 }

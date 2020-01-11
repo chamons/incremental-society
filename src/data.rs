@@ -189,7 +189,7 @@ pub fn get_building_names() -> Vec<String> {
     BUILDINGS
         .iter()
         .filter(|(_, building)| !building.immortal)
-        .map(|(name, _)| name.to_string())
+        .map(|(name, _)| (*name).to_string())
         .collect()
 }
 
@@ -198,5 +198,5 @@ pub fn get_edict(name: &str) -> Conversion {
 }
 
 pub fn get_edict_names() -> Vec<String> {
-    EDICTS.iter().map(|x| x.to_string()).collect()
+    EDICTS.iter().map(|x| (*x).to_string()).collect()
 }

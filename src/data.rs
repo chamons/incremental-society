@@ -189,7 +189,7 @@ pub fn get_building_names() -> Vec<String> {
     BUILDINGS
         .iter()
         .filter(|(_, building)| !building.immortal)
-        .map(|(name, _)| name.to_string())
+        .map(|(name, _)| (*name).to_string())
         .collect()
 }
 

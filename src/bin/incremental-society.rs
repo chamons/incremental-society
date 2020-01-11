@@ -86,6 +86,13 @@ impl<'a> UI<'a> {
 
     fn handle_input(&mut self, mut state: &mut GameState) -> bool {
         if let Some(input) = self.term.getch() {
+            match input {
+                Input::KeyResize => {
+                    pancurses::resize_term(0, 0);
+                }
+                _ => {}
+            };
+
             if is_char(&input, 'q') {
                 return true;
             }

@@ -16,7 +16,6 @@
    - Building build/destroy over time
    - Edict over time
    - Pop growth over time
-- Maybe fix resize console glitch
 - Research 1 of 3
 - Regions Resources
 - Random regions

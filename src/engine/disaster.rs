@@ -53,11 +53,33 @@ pub fn disaster(state: &mut GameState) {
     state.resources[ResourceKind::Instability] = 0;
 }
 
+pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> {
+    if state.resources[ResourceKind::Instability] > 0 && state.resources[ResourceKind::Instability] == state.derived_state.storage[ResourceKind::Instability] {
+        disaster(state);
+        return Some("Disaster: People riot due to instability.");
+    }
+
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::data::get_building;
     use crate::region::Region;
+
+    #[test]
+    fn invoke_disaster_if_instability_full() {
+        let mut state = GameState::init_test_game_state();
+        state.regions[1].add_building(get_building("Stability Building"));
+        state.recalculate();
+        state.resources[ResourceKind::Knowledge] = state.derived_state.storage[ResourceKind::Knowledge];
+        state.resources[ResourceKind::Instability] = state.derived_state.storage[ResourceKind::Instability];
+
+        invoke_disaster_if_needed(&mut state).unwrap();
+
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+    }
 
     #[test]
     fn disaster_removes_resources_but_food() {

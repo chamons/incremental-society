@@ -102,13 +102,16 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'b') {
                 let building_options = data::get_building_names();
-                let selection = Selection::init_list(&building_options, || true);
+                let selection = Selection::init_list(&building_options, |o| {
+                    engine::can_build_building(&state, &data::get_building(&building_options[o])).is_ok()
+                });
+
                 match option_list::OptionList::init(&self.term, selection).run() {
                     Some(building_index) => {
                         let building = data::get_building(&building_options[building_index]);
                         let name = building.name.clone();
                         let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-                        let selection = Selection::init_list(&regions, || true);
+                        let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok());
                         match option_list::OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
                                 Err(e) => self.set_message(e.description()),
@@ -123,12 +126,12 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'd') {
                 let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-                let selection = Selection::init_list(&regions, || true);
+                let selection = Selection::init_list(&regions, |_| true /* Any region can have buildings destroyed */);
                 match option_list::OptionList::init(&self.term, selection).run() {
                     Some(region_index) => {
                         let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
                         if buildings.len() != 0 {
-                            let selection = Selection::init_list(&buildings, || true);
+                            let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok());
                             match option_list::OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
                                     let building = data::get_building(&buildings[building_index]);
@@ -147,7 +150,7 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'e') {
                 let edicts = data::get_edict_names();
-                let selection = Selection::init_list(&edicts, || true);
+                let selection = Selection::init_list(&edicts, |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok());
                 match option_list::OptionList::init(&self.term, selection).run() {
                     Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {
                         Err(e) => self.set_message(e.description()),

@@ -2,27 +2,29 @@ use crate::building::Building;
 use crate::data::{get_conversion, get_edict};
 use crate::disaster::disaster;
 use crate::engine_error::EngineError;
-use crate::region::Region;
 use crate::resources::{ResourceKind, NUM_RESOURCES};
 use crate::state::GameState;
 
 use std::cmp;
 
-pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
-    let region = state.regions.get_mut(region_index);
+pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
+    let region = state.regions.get(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
     }
-    let region: &mut Region = region.unwrap();
+    let region = region.unwrap();
 
+    if region.buildings.len() >= region.max_building_count() {
+        return Err(EngineError::init("Insufficient room for building"));
+    }
+    Ok(())
+}
+
+pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), EngineError> {
     for cost in &building.build_cost {
         if !state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for build cost"));
         }
-    }
-
-    if region.buildings.len() >= region.max_building_count() {
-        return Err(EngineError::init("Insufficient room for building"));
     }
 
     if state.derived_state.used_pops + 1 > state.derived_state.pops {
@@ -33,23 +35,47 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
         return Err(EngineError::init(format!("Unable to build {}", building.name)));
     }
 
+    Ok(())
+}
+
+pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
+    can_build_in_region(state, region_index)?;
+    can_build_building(state, &building)?;
+
+    let region = state.regions.get_mut(region_index).unwrap();
     region.add_building(building);
     state.recalculate();
     Ok(())
 }
 
-pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
-    let region = state.regions.get_mut(region_index);
+pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
+    let region = state.regions.get(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
     }
-    let region: &mut Region = region.unwrap();
+    let region = region.unwrap();
 
-    let building = region.buildings.get_mut(building_index);
+    let building = region.buildings.get(building_index);
     if building.is_none() {
         return Err(EngineError::init(format!("Could not find building at {}", building_index)));
     }
     let building = building.unwrap();
+
+    if building.pops > 0 && state.derived_state.used_pops > state.derived_state.pops - building.pops {
+        return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
+    }
+
+    if building.immortal {
+        return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
+    }
+
+    Ok(())
+}
+
+pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
+    can_destroy_building(state, region_index, building_index)?;
+    let region = state.regions.get_mut(region_index).unwrap();
+    let building = region.buildings.get(building_index).unwrap();
 
     if building.pops > 0 && state.derived_state.used_pops > state.derived_state.pops - building.pops {
         return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
@@ -64,13 +90,20 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
     Ok(())
 }
 
-pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
+pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineError> {
     let edict = get_edict(edict);
     for cost in &edict.input {
         if !state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for edict"));
         }
     }
+
+    Ok(())
+}
+
+pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
+    can_invoke_edict(&state, edict)?;
+    let edict = get_edict(edict);
 
     edict.convert(&mut state.resources);
     state.recalculate();
@@ -148,6 +181,7 @@ pub fn get_conversion_percentage(state: &GameState, conversion_name: &str) -> Op
 mod tests {
     use super::*;
     use crate::data::get_building;
+    use crate::region::Region;
     use crate::resources::*;
     use std::error::Error;
 

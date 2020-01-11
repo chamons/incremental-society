@@ -19,12 +19,13 @@ pub struct Selection {
 }
 
 impl Selection {
-    pub fn init_list(names: &Vec<String>, active: fn() -> bool) -> Vec<Selection> {
+    pub fn init_list(names: &Vec<String>, active: impl Fn(usize) -> bool) -> Vec<Selection> {
         names
             .iter()
-            .map(|n| Selection {
+            .enumerate()
+            .map(|(i, n)| Selection {
                 name: n.to_string(),
-                active: active(),
+                active: active(i),
             })
             .collect()
     }

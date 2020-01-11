@@ -3,6 +3,10 @@
 ## Needed for game
 
 - Info on edict/building pane
+   - Invalid -> Red
+   - Resource Cost
+   - Benefits
+
 - Edicts have cooldown
 
 ## Longer Term

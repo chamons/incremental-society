@@ -1,9 +1,11 @@
+use crate::console_ui::colors::{clear_color, set_color, Colors};
+
 use pancurses::Input::Character;
 use pancurses::Window;
 
 pub struct OptionList<'a> {
     term: &'a Window,
-    options: &'a Vec<String>,
+    options: Vec<Selection>,
     height: usize,
     start_x: i32,
     start_y: i32,
@@ -11,10 +13,27 @@ pub struct OptionList<'a> {
     content_border: String,
 }
 
+pub struct Selection {
+    name: String,
+    active: bool,
+}
+
+impl Selection {
+    pub fn init_list(names: &Vec<String>, active: fn() -> bool) -> Vec<Selection> {
+        names
+            .iter()
+            .map(|n| Selection {
+                name: n.to_string(),
+                active: active(),
+            })
+            .collect()
+    }
+}
+
 impl<'a> OptionList<'a> {
     const MODAL_WIDTH: usize = 60;
 
-    pub fn init(term: &'a Window, options: &'a Vec<String>) -> OptionList<'a> {
+    pub fn init(term: &'a Window, options: Vec<Selection>) -> OptionList<'a> {
         let height = options.len() + 2;
         let max_x = term.get_max_x() as usize;
         let max_y = term.get_max_y() as usize;
@@ -36,9 +55,16 @@ impl<'a> OptionList<'a> {
     pub fn run(&self) -> Option<usize> {
         let original_win = self.term.dupwin();
         self.draw_border();
+
         for (i, o) in self.options.iter().enumerate() {
-            let option_text = format!("|  {} - {}", ('a' as u8 + i as u8) as char, o);
-            self.term.mvaddstr(self.start_y + i as i32, self.start_x, option_text);
+            let option_text = format!("{} - {}", ('a' as u8 + i as u8) as char, o.name);
+            if !o.active {
+                set_color(Colors::Red, self.term);
+            }
+            self.term.mvaddstr(self.start_y + i as i32, self.start_x + 3, option_text);
+            if !o.active {
+                clear_color(Colors::Red, self.term);
+            }
         }
 
         self.term
@@ -54,8 +80,10 @@ impl<'a> OptionList<'a> {
                         if c.is_ascii_alphabetic() {
                             let index = c as u8 - 'a' as u8;
                             if index < self.options.len() as u8 {
-                                selected = Some(index as usize);
-                                break;
+                                if self.options.get(index as usize).unwrap().active {
+                                    selected = Some(index as usize);
+                                    break;
+                                }
                             }
                         }
                         // Escape

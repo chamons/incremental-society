@@ -1,6 +1,6 @@
 use pancurses::{Input, Window};
 
-use incremental_society::console_ui::option_list;
+use incremental_society::console_ui::{colors, option_list, option_list::Selection};
 use incremental_society::data;
 use incremental_society::engine;
 use incremental_society::resources::*;
@@ -16,6 +16,9 @@ use std::error::Error;
 
 fn main() {
     let term = pancurses::initscr();
+    pancurses::start_color();
+    colors::init();
+
     let mut ui = UI {
         messages: "".to_string(),
         message_timeout: 0,
@@ -99,12 +102,14 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'b') {
                 let building_options = data::get_building_names();
-                match option_list::OptionList::init(&self.term, &building_options).run() {
+                let selection = Selection::init_list(&building_options, || true);
+                match option_list::OptionList::init(&self.term, selection).run() {
                     Some(building_index) => {
                         let building = data::get_building(&building_options[building_index]);
                         let name = building.name.clone();
                         let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-                        match option_list::OptionList::init(&self.term, &regions).run() {
+                        let selection = Selection::init_list(&regions, || true);
+                        match option_list::OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
                                 Err(e) => self.set_message(e.description()),
                                 _ => self.set_message(format!("Built {}", name)),
@@ -118,11 +123,13 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'd') {
                 let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
-                match option_list::OptionList::init(&self.term, &regions).run() {
+                let selection = Selection::init_list(&regions, || true);
+                match option_list::OptionList::init(&self.term, selection).run() {
                     Some(region_index) => {
                         let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
                         if buildings.len() != 0 {
-                            match option_list::OptionList::init(&self.term, &buildings).run() {
+                            let selection = Selection::init_list(&buildings, || true);
+                            match option_list::OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
                                     let building = data::get_building(&buildings[building_index]);
                                     match engine::destroy(&mut state, region_index, building_index) {
@@ -140,7 +147,8 @@ impl<'a> UI<'a> {
 
             if is_char(&input, 'e') {
                 let edicts = data::get_edict_names();
-                match option_list::OptionList::init(&self.term, &edicts).run() {
+                let selection = Selection::init_list(&edicts, || true);
+                match option_list::OptionList::init(&self.term, selection).run() {
                     Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {
                         Err(e) => self.set_message(e.description()),
                         _ => self.clear_message(),

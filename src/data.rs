@@ -198,5 +198,5 @@ pub fn get_edict(name: &str) -> Conversion {
 }
 
 pub fn get_edict_names() -> Vec<String> {
-    EDICTS.iter().map(|x| x.to_string()).collect()
+    EDICTS.iter().map(|x| (*x).to_string()).collect()
 }

@@ -19,7 +19,7 @@ pub struct Selection {
 }
 
 impl Selection {
-    pub fn init_list(names: &Vec<String>, active: impl Fn(usize) -> bool) -> Vec<Selection> {
+    pub fn init_list(names: &[String], active: impl Fn(usize) -> bool) -> Vec<Selection> {
         names
             .iter()
             .enumerate()
@@ -58,7 +58,7 @@ impl<'a> OptionList<'a> {
         self.draw_border();
 
         for (i, o) in self.options.iter().enumerate() {
-            let option_text = format!("{} - {}", ('a' as u8 + i as u8) as char, o.name);
+            let option_text = format!("{} - {}", (b'a' + i as u8) as char, o.name);
             if !o.active {
                 set_color(Colors::Red, self.term);
             }
@@ -75,26 +75,20 @@ impl<'a> OptionList<'a> {
 
         let mut selected = None;
         loop {
-            match self.term.getch() {
-                Some(input) => match input {
-                    Character(c) => {
-                        if c.is_ascii_alphabetic() {
-                            let index = c as u8 - 'a' as u8;
-                            if index < self.options.len() as u8 {
-                                if self.options.get(index as usize).unwrap().active {
-                                    selected = Some(index as usize);
-                                    break;
-                                }
-                            }
-                        }
-                        // Escape
-                        if c as u8 == 27 {
+            if let Some(input) = self.term.getch() {
+                if let Character(c) = input {
+                    if c.is_ascii_alphabetic() {
+                        let index = c as u8 - b'a';
+                        if index < self.options.len() as u8 && self.options.get(index as usize).unwrap().active {
+                            selected = Some(index as usize);
                             break;
                         }
                     }
-                    _ => {}
-                },
-                _ => {}
+                    // Escape
+                    if c as u8 == 27 {
+                        break;
+                    }
+                }
             }
         }
 

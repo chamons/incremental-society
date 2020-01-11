@@ -58,8 +58,12 @@ impl Conversion {
         }
     }
 
+    pub fn is_required(&self) -> bool {
+        !self.output_if_no_input.is_empty()
+    }
+
     pub fn convert(&self, resources: &mut ResourceTotal) {
-        if self.output_if_no_input.len() > 0 {
+        if self.is_required() {
             self.convert_required(resources);
         } else {
             self.convert_optional(resources);

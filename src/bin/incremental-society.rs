@@ -49,9 +49,8 @@ impl<'a> UI<'a> {
 
             self.draw(&state);
 
-            match engine::process_tick(&mut state) {
-                Some(msg) => self.set_message(msg),
-                _ => {}
+            if let Some(msg) = engine::process_tick(&mut state) {
+                self.set_message(msg);
             }
 
             const MS_FOR_30_FPS: u128 = 32;
@@ -89,18 +88,15 @@ impl<'a> UI<'a> {
 
     fn handle_input(&mut self, mut state: &mut GameState) -> bool {
         if let Some(input) = self.term.getch() {
-            match input {
-                Input::KeyResize => {
-                    pancurses::resize_term(0, 0);
-                }
-                _ => {}
-            };
+            if let Input::KeyResize = input {
+                pancurses::resize_term(0, 0);
+            }
 
-            if is_char(&input, 'q') {
+            if is_char(input, 'q') {
                 return true;
             }
 
-            if is_char(&input, 'b') {
+            if is_char(input, 'b') {
                 let building_options = data::get_building_names();
                 let selection = Selection::init_list(&building_options, |o| {
                     engine::can_build_building(&state, &data::get_building(&building_options[o])).is_ok()
@@ -110,7 +106,7 @@ impl<'a> UI<'a> {
                     Some(building_index) => {
                         let building = data::get_building(&building_options[building_index]);
                         let name = building.name.clone();
-                        let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+                        let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
                         let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok());
                         match option_list::OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
@@ -124,13 +120,13 @@ impl<'a> UI<'a> {
                 }
             }
 
-            if is_char(&input, 'd') {
-                let regions = state.regions.iter().map(|x| x.name.to_string()).collect();
+            if is_char(input, 'd') {
+                let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
                 let selection = Selection::init_list(&regions, |_| true /* Any region can have buildings destroyed */);
                 match option_list::OptionList::init(&self.term, selection).run() {
                     Some(region_index) => {
                         let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
-                        if buildings.len() != 0 {
+                        if !buildings.is_empty() {
                             let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok());
                             match option_list::OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
@@ -148,7 +144,7 @@ impl<'a> UI<'a> {
                 }
             }
 
-            if is_char(&input, 'e') {
+            if is_char(input, 'e') {
                 let edicts = data::get_edict_names();
                 let selection = Selection::init_list(&edicts, |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok());
                 match option_list::OptionList::init(&self.term, selection).run() {
@@ -192,18 +188,15 @@ impl<'a> UI<'a> {
         y = self.write_right("Conversions", 0, y);
 
         for c in &state.derived_state.conversion_counts {
-            match engine::get_conversion_percentage(state, &c.name) {
-                Some(percentage) => {
-                    // Don't update y, as we have to draw the bar
-                    self.write_right(&format!("{} ({})", c.name, c.count), 0, y);
+            if let Some(percentage) = engine::get_conversion_percentage(state, &c.name) {
+                // Don't update y, as we have to draw the bar
+                self.write_right(&format!("{} ({})", c.name, c.count), 0, y);
 
-                    let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
-                    let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
-                    let filled_width = filled_width as usize;
-                    let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
-                    y = self.write_right(&bar_text, c.name.len() as i32 + 5, y);
-                }
-                _ => {}
+                let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
+                let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
+                let filled_width = filled_width as usize;
+                let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
+                y = self.write_right(&bar_text, c.name.len() as i32 + 5, y);
             }
         }
         y
@@ -303,9 +296,9 @@ impl<'a> UI<'a> {
     }
 }
 
-fn is_char(input: &Input, c: char) -> bool {
+fn is_char(input: Input, c: char) -> bool {
     if let Input::Character(i) = input {
-        if *i == c {
+        if i == c {
             return true;
         }
     }

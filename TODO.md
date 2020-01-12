@@ -9,6 +9,7 @@
 
 ## Longer Term
 
+- Remove all mutable from state items and shift into module
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)
 - Research 1 of 3

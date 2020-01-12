@@ -1,7 +1,7 @@
-use crate::conversion::Conversion;
 use crate::data::get_edict;
+use crate::engine::delayed::add_delayed;
 use crate::engine::EngineError;
-use crate::state::GameState;
+use crate::state::{DelayedAction, GameState};
 
 pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineError> {
     if state.ticks.contains_key(edict) {
@@ -18,16 +18,11 @@ pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineErro
     Ok(())
 }
 
-pub fn edict(state: &mut GameState, edict: &str) -> Result<(), EngineError> {
-    can_invoke_edict(&state, edict)?;
-    let edict = get_edict(edict);
-
+pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError> {
+    can_invoke_edict(&state, edict_name)?;
+    let edict = get_edict(edict_name);
+    add_delayed(state, edict_name, edict.tick_length(), DelayedAction::Edict(edict_name.to_string()));
     Ok(())
-}
-
-pub fn complete(state: &mut GameState, edict: &Conversion) {
-    edict.convert(&mut state.resources);
-    state.recalculate();
 }
 
 #[cfg(test)]
@@ -42,7 +37,7 @@ mod tests {
         state.resources[ResourceKind::Fuel] = 1;
 
         edict(&mut state, "TestEdict").unwrap();
-        assert_eq!(1, state.resources[ResourceKind::Knowledge]);
+        assert!(state.actions.contains_key("TestEdict"));
     }
 
     #[test]

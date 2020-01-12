@@ -1,3 +1,4 @@
+use crate::conversion::Conversion;
 use crate::data::get_conversion;
 use crate::state::GameState;
 
@@ -16,6 +17,7 @@ pub fn process_conversions(state: &mut GameState) {
             *entry -= 1;
         }
     }
+    state.recalculate();
 }
 
 pub fn get_conversion_percentage(state: &GameState, conversion_name: &str) -> Option<f64> {
@@ -26,6 +28,11 @@ pub fn get_conversion_percentage(state: &GameState, conversion_name: &str) -> Op
         }
         None => None,
     }
+}
+
+pub fn single_convert(state: &mut GameState, conversion: &Conversion) {
+    conversion.convert(&mut state.resources);
+    state.recalculate();
 }
 
 #[cfg(test)]

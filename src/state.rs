@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use crate::building::Building;
-use crate::conversion::Conversion;
 use crate::data;
 use crate::engine::DerivedState;
 use crate::region::Region;
@@ -11,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum DelayedAction {
-    Edict(Conversion),
+    Edict(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -86,14 +85,6 @@ impl GameState {
 
     pub fn recalculate(&mut self) {
         self.derived_state = DerivedState::calculate(&self);
-    }
-
-    pub fn add_delayed_action(&mut self, name: &str, length: u32, action: DelayedAction) {
-        assert!(!self.ticks.contains_key(name));
-        self.ticks.insert(name.to_string(), length);
-
-        assert!(!self.actions.contains_key(name));
-        self.actions.insert(name.to_string(), action);
     }
 }
 

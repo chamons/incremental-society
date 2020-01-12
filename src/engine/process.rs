@@ -2,11 +2,7 @@ use crate::state::GameState;
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     super::conversions::process_conversions(state);
-    // Walk all delayed actions and process them
-    // Remove sustain hack from derived state and add as a delayed recuring action?
-    // Update the conversion listing code to also look here?
-    // Or do we somehow unify and reduce
-
+    super::delayed::process_delayed_tick(state);
     super::limits::honor_storage_and_floors(state);
     super::disaster::invoke_disaster_if_needed(state)
 }
@@ -38,7 +34,7 @@ mod tests {
 
         edict(&mut state, "TestEdict").unwrap();
         let edict_length = data::get_edict("TestEdict").tick_length();
-        for _ in 0..edict_length {
+        for _ in 0..=edict_length {
             assert!(state.ticks.contains_key("TestEdict"));
             process_tick(&mut state);
         }

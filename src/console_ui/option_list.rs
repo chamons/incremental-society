@@ -6,7 +6,6 @@ use pancurses::Window;
 pub struct OptionList<'a> {
     term: &'a Window,
     options: Vec<Selection>,
-    height: usize,
     start_x: i32,
     start_y: i32,
     border: String,
@@ -36,17 +35,15 @@ impl<'a> OptionList<'a> {
     const MODAL_WIDTH: usize = 60;
 
     pub fn init(term: &'a Window, options: Vec<Selection>) -> OptionList<'a> {
-        let height = options.len() + 2;
         let max_x = term.get_max_x() as usize;
         let max_y = term.get_max_y() as usize;
 
         let start_x = ((max_x - OptionList::MODAL_WIDTH) / 2) as i32;
-        let start_y = ((max_y - height) / 2) as i32;
+        let start_y = ((max_y - options.len()) / 2) as i32;
 
         OptionList {
             term,
             options,
-            height,
             start_x,
             start_y,
             border: "-".repeat(OptionList::MODAL_WIDTH + 1),
@@ -82,8 +79,7 @@ impl<'a> OptionList<'a> {
         }
         self.draw_border(y - self.start_y);
 
-        self.term
-            .mv(self.start_y + self.height as i32, (self.start_x + OptionList::MODAL_WIDTH as i32 - 1) as i32);
+        self.term.mv(y, (self.start_x + OptionList::MODAL_WIDTH as i32) as i32);
 
         self.term.nodelay(false);
 

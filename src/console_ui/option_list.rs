@@ -50,7 +50,7 @@ impl<'a> OptionList<'a> {
         }
     }
 
-    fn write_with_clear(&self, y: i32, x: i32, text: &String) {
+    fn write_with_clear(&self, y: i32, x: i32, text: &str) {
         self.term.mvaddstr(y, x, " ".repeat(OptionList::MODAL_WIDTH));
         self.term.mvaddstr(y, x + 3, text.to_string());
     }

@@ -57,8 +57,8 @@ impl Building {
 
 fn format_details((name, val): (&&String, &usize)) -> String {
     if *val < 2 {
-        return name.to_string();
+        (*name).to_string()
     } else {
-        return format!("{} ({})", name, val);
+        format!("{} ({})", name, val)
     }
 }

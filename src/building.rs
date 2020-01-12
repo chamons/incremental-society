@@ -33,4 +33,8 @@ impl Building {
             immortal: false,
         }
     }
+
+    pub fn details(&self) -> Vec<String> {
+        vec![]
+    }
 }

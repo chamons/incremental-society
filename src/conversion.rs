@@ -100,6 +100,10 @@ impl Conversion {
             ConversionLength::Epic => 400,
         }
     }
+
+    pub fn details(&self) -> Vec<String> {
+        vec![]
+    }
 }
 
 #[cfg(test)]

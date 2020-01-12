@@ -2,10 +2,6 @@
 
 ## Needed for game
 
-- Info on edict/building pane
-   - Resource Cost
-   - Benefits
-
 - Edicts have cooldown
 
 ## Longer Term

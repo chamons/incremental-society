@@ -67,8 +67,8 @@ lazy_static! {
             "Gathering Camp",
             Building::init(
                 "Gathering Camp",
-                vec!["Gathering", "Gathering"],
-                vec![],
+                vec!["Gathering", "Gathering", "Hunting"],
+                vec![ResourceAmount::init(ResourceKind::Fuel, 0)],
                 vec![ResourceAmount::init(ResourceKind::Fuel, 25)],
                 3,
             ),

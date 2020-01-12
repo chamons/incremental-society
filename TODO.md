@@ -2,16 +2,15 @@
 
 ## Needed for game
 
-- Edicts have cooldown
+- Over time
+   - Building build/destroy over time
+   - Edict over time
+   - Pop growth over time
 
 ## Longer Term
 
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)
-- Over time
-   - Building build/destroy over time
-   - Edict over time
-   - Pop growth over time
 - Research 1 of 3
 - Regions Resources
 - Random regions

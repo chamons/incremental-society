@@ -1,9 +1,11 @@
 use crate::resources::*;
 
+use serde::{Deserialize, Serialize};
+
 use itertools::Itertools;
 use std::fmt;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ConversionLength {
     Short,
     Medium,
@@ -17,9 +19,9 @@ impl fmt::Display for ConversionLength {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Conversion {
-    pub name: &'static str,
+    pub name: String,
     pub length: ConversionLength,
     pub input: Vec<ResourceAmount>,
     pub output: Vec<ResourceAmount>,
@@ -33,7 +35,7 @@ impl Conversion {
 
     pub fn init(name: &'static str, length: ConversionLength, input: Vec<ResourceAmount>, output: Vec<ResourceAmount>) -> Conversion {
         Conversion {
-            name,
+            name: name.to_owned(),
             length,
             input,
             output,
@@ -59,7 +61,7 @@ impl Conversion {
         output_if_no_input: Vec<ResourceAmount>,
     ) -> Conversion {
         Conversion {
-            name,
+            name: name.to_owned(),
             length,
             input,
             output,

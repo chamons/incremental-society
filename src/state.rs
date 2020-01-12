@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::building::Building;
+use crate::conversion::Conversion;
 use crate::data;
 use crate::engine::DerivedState;
 use crate::region::Region;
@@ -9,10 +10,16 @@ use crate::resources::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
+pub enum DelayedAction {
+    Edict(Conversion),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
     pub ticks: HashMap<String, u32>,
+    pub actions: HashMap<String, DelayedAction>,
 
     #[serde(skip)]
     #[serde(default = "DerivedState::init")]
@@ -24,6 +31,7 @@ impl GameState {
         let mut state = GameState {
             resources: ResourceTotal::init(),
             regions: vec![],
+            actions: HashMap::new(),
             ticks: HashMap::new(),
             derived_state: DerivedState::init(),
         };
@@ -38,6 +46,7 @@ impl GameState {
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Settlement"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
             ],
+            actions: HashMap::new(),
             ticks: HashMap::new(),
             derived_state: DerivedState::init(),
         };
@@ -68,6 +77,7 @@ impl GameState {
                 Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),
             ],
             ticks: HashMap::new(),
+            actions: HashMap::new(),
             derived_state: DerivedState::init(),
         };
         state.recalculate();
@@ -76,6 +86,14 @@ impl GameState {
 
     pub fn recalculate(&mut self) {
         self.derived_state = DerivedState::calculate(&self);
+    }
+
+    pub fn add_delayed_action(&mut self, name: &str, length: u32, action: DelayedAction) {
+        assert!(!self.ticks.contains_key(name));
+        self.ticks.insert(name.to_string(), length);
+
+        assert!(!self.actions.contains_key(name));
+        self.actions.insert(name.to_string(), action);
     }
 }
 

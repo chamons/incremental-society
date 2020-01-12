@@ -1,11 +1,20 @@
 use crate::resources::*;
 
-#[derive(Debug, Clone)]
+use itertools::Itertools;
+use std::fmt;
+
+#[derive(Debug, Copy, Clone)]
 pub enum ConversionLength {
     Short,
     Medium,
     Long,
     Epic,
+}
+
+impl fmt::Display for ConversionLength {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -102,7 +111,17 @@ impl Conversion {
     }
 
     pub fn details(&self) -> Vec<String> {
-        vec![]
+        let mut details: Vec<String> = vec![];
+        details.push(format!(
+            "Requires: {}",
+            self.input.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")
+        ));
+        details.push(format!(
+            "Provides: {}",
+            self.output.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")
+        ));
+        details.push(format!("Length: {} ({})", self.length, self.tick_length()));
+        details
     }
 }
 

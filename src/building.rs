@@ -49,25 +49,13 @@ impl Building {
             *entry += 1;
         }
 
-        details.push(format!(
-            "Provides: {}",
-            conversion_count
-                .iter()
-                .map(|(key, val)| {
-                    if *val < 2 {
-                        return key.to_string();
-                    } else {
-                        return format!("{} ({})", key, val);
-                    }
-                })
-                .format(", ")
-        ));
+        details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
 
         details
     }
 }
 
-fn format_details((name, val): (&String, &usize)) -> String {
+fn format_details((name, val): (&&String, &usize)) -> String {
     if *val < 2 {
         return name.to_string();
     } else {

@@ -35,6 +35,12 @@ pub struct ResourceAmount {
     pub amount: ResourceQuantity,
 }
 
+impl fmt::Display for ResourceAmount {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {}", self.amount, self.kind)
+    }
+}
+
 impl ResourceAmount {
     pub fn init(kind: ResourceKind, amount: ResourceQuantity) -> ResourceAmount {
         ResourceAmount { kind, amount }

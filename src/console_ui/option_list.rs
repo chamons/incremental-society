@@ -69,7 +69,7 @@ impl<'a> OptionList<'a> {
             self.write_with_clear(y, self.start_x, &option_text);
             y += 1;
             for l in o.details.iter() {
-                self.write_with_clear(y, self.start_x, &l);
+                self.write_with_clear(y, self.start_x + 2, &l);
                 y += 1;
             }
 

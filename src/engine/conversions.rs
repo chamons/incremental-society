@@ -1,95 +1,71 @@
-use crate::conversion::Conversion;
+use crate::actions::{DelayedAction, Waiter};
 use crate::data::get_conversion;
 use crate::state::GameState;
 
-pub fn process_conversions(state: &mut GameState) {
-    for c in &state.derived_state.conversion_counts {
-        let conversion_length = get_conversion(&c.name).tick_length();
+use std::collections::HashSet;
 
-        let entry = state.ticks.entry(c.name.to_string()).or_insert(conversion_length);
-        if *entry == 0 {
-            *entry = conversion_length;
-            let conversion = get_conversion(&c.name);
-            for _ in 0..c.count {
-                conversion.convert(&mut state.resources);
-            }
-        } else {
-            *entry -= 1;
-        }
+pub fn apply_convert(state: &mut GameState, name: &str) {
+    get_conversion(name).convert(&mut state.resources);
+}
+
+// There is a modeling problem the engine conversion code needs to handle:
+// - The game state actions system (actions.rs) handles all conversions
+// - That assumes that none of canceled in flight.
+// - That makes sense for most things, but the source of conversions are buildings, which can appear/disappear at a whim
+// - Imagine:
+//     Region 1 has Library which gives Conversion Research
+//     Build it on tick 100, Destroy on tick 110
+//     There will be a Research conversion in flight with zero buildings "powering" it.
+//     You really don't want to get research when it finishes, and you don't want to see it in your UI
+// - You also need to "kick" a new delayed action on the first building, or anything adding a brand new conversion
+//
+// Ideally you'd be able to put this in DerivedState, as it gets blapped every major state change.
+// However, you need to remember the ticks. If you have library 1 built and are 10 tick into a research
+// and build a second, you want to still be ten ticks in.
+// DerivedState also is not serialized on save, so we can't depend on it existing always.
+//
+// So after recalculating the derived state, we then "synchronize" the derived state conversion list with the actions list
+// Make a list of every conversion provided, and every conversion in flight.
+// - If there are new ones on the building side kick them.
+// - If there any in the action list not in the conversion list, kill them
+pub fn sync_building_to_conversions(state: &mut GameState) {
+    let in_flight = get_in_flight(state);
+    let active_conversions = &state.derived_state.conversions;
+    for orphan in in_flight.iter().filter(|x| !active_conversions.contains_key(*x)) {
+        let position = state.actions.iter().position(|x| matches_conversion_name(x, orphan)).unwrap();
+        state.actions.remove(position);
     }
-    state.recalculate();
-}
 
-pub fn get_conversion_percentage(state: &GameState, conversion_name: &str) -> Option<f64> {
-    match state.ticks.get(conversion_name) {
-        Some(x) => {
-            let conversion_length = get_conversion(conversion_name).tick_length();
-            Some((conversion_length - *x) as f64 / conversion_length as f64)
-        }
-        None => None,
+    for not_started in active_conversions.keys().filter(|x| !in_flight.contains(*x)) {
+        let conversion = get_conversion(not_started);
+        let action = Waiter::init_repeating(conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
+        state.actions.push(action);
     }
 }
 
-pub fn single_convert(state: &mut GameState, conversion: &Conversion) {
-    conversion.convert(&mut state.resources);
-    state.recalculate();
+fn get_in_flight(state: &GameState) -> HashSet<String> {
+    state.actions.iter().filter_map(filter_map_conversion_name).collect()
 }
 
+fn filter_map_conversion_name(waiter: &Waiter) -> Option<String> {
+    if let DelayedAction::Conversion(name) = &waiter.action {
+        Some(name.to_string())
+    } else {
+        None
+    }
+}
+
+fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
+    if let DelayedAction::Conversion(conversion_name) = &waiter.action {
+        conversion_name == name
+    } else {
+        false
+    }
+}
+
+// Write many tests
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::resources::*;
-
     #[test]
-    fn simple_process() {
-        let mut state = GameState::init_test_game_state();
-        process_conversions(&mut state);
-
-        assert_eq!(0.01, get_conversion_percentage(&state, "TestChop").unwrap());
-        assert_eq!(0.01, get_conversion_percentage(&state, "TestGather").unwrap());
-    }
-
-    #[test]
-    fn get_percentage_with_no_ticks() {
-        let state = GameState::init_test_game_state();
-        assert!(get_conversion_percentage(&state, "TestChop").is_none());
-        assert!(get_conversion_percentage(&state, "TestGather").is_none());
-    }
-
-    #[test]
-    fn get_non_existent_percentage() {
-        let mut state = GameState::init_test_game_state();
-        process_conversions(&mut state);
-
-        assert!(get_conversion_percentage(&state, "NonExistentConvert").is_none());
-    }
-
-    #[test]
-    fn process_conversions_none_ready() {
-        let mut state = GameState::init_test_game_state();
-        process_conversions(&mut state);
-        assert_eq!(0, state.resources[ResourceKind::Food]);
-        assert_eq!(0, state.resources[ResourceKind::Fuel]);
-    }
-
-    #[test]
-    fn process_conversions_one_ready() {
-        let mut state = GameState::init_test_game_state();
-        *state.ticks.entry("TestChop".to_string()).or_default() = 0;
-        process_conversions(&mut state);
-
-        assert_eq!(0, state.resources[ResourceKind::Food]);
-        assert_eq!(4, state.resources[ResourceKind::Fuel]);
-    }
-
-    #[test]
-    fn process_conversions_many_ready() {
-        let mut state = GameState::init_test_game_state();
-        *state.ticks.entry("TestChop".to_string()).or_default() = 0;
-        *state.ticks.entry("TestGather".to_string()).or_default() = 0;
-        process_conversions(&mut state);
-
-        assert_eq!(1, state.resources[ResourceKind::Food]);
-        assert_eq!(4, state.resources[ResourceKind::Fuel]);
-    }
+    fn tick_actions_none_ready() {}
 }

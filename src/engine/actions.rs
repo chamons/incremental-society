@@ -30,7 +30,6 @@ pub fn tick_actions(actions: &mut Vec<Waiter>) -> Vec<DelayedAction> {
 mod tests {
     use super::*;
     use crate::actions::DelayedAction;
-    use crate::state::GameState;
 
     #[test]
     fn tick_actions_none_ready() {

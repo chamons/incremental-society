@@ -123,6 +123,10 @@ lazy_static! {
                 vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
             ),
         );
+        m.insert(
+            "TestHunt",
+            Conversion::init("TestHunt", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
+        );
         m
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
@@ -143,6 +147,17 @@ lazy_static! {
             Building::init(
                 "Test Gather Hut",
                 vec!["TestGather"],
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                0,
+            ),
+        );
+
+        m.insert(
+            "Test Hunt Cabin",
+            Building::init(
+                "Test Hunt Cabin",
+                vec!["TestHunt", "TestHunt"],
                 vec![],
                 vec![ResourceAmount::init(ResourceKind::Food, 20)],
                 0,

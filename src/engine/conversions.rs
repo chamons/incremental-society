@@ -38,7 +38,7 @@ pub fn sync_building_to_conversions(state: &mut GameState) {
 
     for not_started in active_conversions.keys().filter(|x| !in_flight.contains(*x)) {
         let conversion = get_conversion(not_started);
-        let action = Waiter::init_repeating(conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
+        let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
         state.actions.push(action);
     }
 }

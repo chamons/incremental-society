@@ -30,7 +30,7 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
     can_invoke_edict(&state, edict_name)?;
     let edict = get_edict(edict_name);
 
-    let action = Waiter::init_one_shot(edict.tick_length(), DelayedAction::Edict(edict_name.to_string()));
+    let action = Waiter::init_one_shot(edict_name, edict.tick_length(), DelayedAction::Edict(edict_name.to_string()));
     state.actions.push(action);
     state.recalculate();
 

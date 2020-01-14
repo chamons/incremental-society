@@ -34,8 +34,8 @@ mod tests {
     #[test]
     fn tick_actions_none_ready() {
         let mut waiters = vec![
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_repeating(10, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test", 10, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test2", 10, DelayedAction::SustainPops()),
         ];
 
         let fired = tick_actions(&mut waiters);
@@ -48,8 +48,8 @@ mod tests {
     #[test]
     fn tick_actions_one_repeating_ready() {
         let mut waiters = vec![
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_repeating(10, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test", 10, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test2", 10, DelayedAction::SustainPops()),
         ];
         waiters.get_mut(1).unwrap().current_tick = 1;
 
@@ -63,8 +63,8 @@ mod tests {
     #[test]
     fn tick_actions_one_single_shot_ready() {
         let mut waiters = vec![
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_repeating(10, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test", 10, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test2", 10, DelayedAction::SustainPops()),
         ];
         waiters.get_mut(0).unwrap().current_tick = 1;
         let fired = tick_actions(&mut waiters);
@@ -78,10 +78,10 @@ mod tests {
     #[test]
     fn tick_actions_multiple_single_shot_ready() {
         let mut waiters = vec![
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_repeating(5, DelayedAction::SustainPops()),
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_one_shot(15, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test", 10, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test2", 5, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test3", 10, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test4", 15, DelayedAction::SustainPops()),
         ];
         waiters.get_mut(0).unwrap().current_tick = 1;
         waiters.get_mut(2).unwrap().current_tick = 1;
@@ -99,11 +99,11 @@ mod tests {
     #[test]
     fn tick_actions_multiple_both_ready() {
         let mut waiters = vec![
-            Waiter::init_one_shot(5, DelayedAction::SustainPops()),
-            Waiter::init_repeating(10, DelayedAction::SustainPops()),
-            Waiter::init_one_shot(10, DelayedAction::SustainPops()),
-            Waiter::init_repeating(15, DelayedAction::SustainPops()),
-            Waiter::init_repeating(20, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test", 5, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test2", 10, DelayedAction::SustainPops()),
+            Waiter::init_one_shot("Test3", 10, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test4", 15, DelayedAction::SustainPops()),
+            Waiter::init_repeating("Test5", 20, DelayedAction::SustainPops()),
         ];
         waiters.get_mut(1).unwrap().current_tick = 1;
         waiters.get_mut(2).unwrap().current_tick = 1;

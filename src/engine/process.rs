@@ -12,8 +12,8 @@ pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
 
 fn apply_actions(state: &mut GameState) {
     let fired_actions = super::actions::tick_actions(&mut state.actions);
-    for a in fired_actions.iter() {
-        match a {
+    for action in fired_actions.iter() {
+        match action {
             DelayedAction::Edict(name) => apply_convert(state, name),
             DelayedAction::Conversion(name) => {
                 for _ in 0..*state.derived_state.conversions.get(name).unwrap() {

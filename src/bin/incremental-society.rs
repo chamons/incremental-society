@@ -202,7 +202,7 @@ impl<'a> UI<'a> {
                 let count = state.derived_state.conversions.get(name).unwrap();
                 self.write_right(&format!("{} ({})", name, count), 0, y);
             } else {
-                self.write_right(&format!("{}", c.name), 0, y);
+                self.write_right(&c.name, 0, y);
             }
 
             let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();

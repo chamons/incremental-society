@@ -20,7 +20,11 @@ fn apply_actions(state: &mut GameState) {
                     apply_convert(state, name);
                 }
             }
-            DelayedAction::SustainPops() => {}
+            DelayedAction::SustainPops() => {
+                for _ in 0..state.derived_state.pops {
+                    apply_convert(state, "Sustain Population");
+                }
+            }
         }
     }
 }

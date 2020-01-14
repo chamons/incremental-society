@@ -41,7 +41,14 @@ pub fn sync_building_to_conversions(state: &mut GameState) {
         let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
         state.actions.push(action);
     }
+
+    if !state.actions.iter().any(|x| x.name == "Sustain Population") {
+        let action = Waiter::init_repeating("Sustain Population", SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+        state.actions.push(action);
+    }
 }
+
+const SUSTAIN_POP_DURATION: u32 = 30;
 
 fn get_in_flight(state: &GameState) -> HashSet<String> {
     state.actions.iter().filter_map(filter_map_conversion_name).collect()

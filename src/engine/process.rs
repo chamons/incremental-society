@@ -3,9 +3,7 @@ use crate::engine::conversions::apply_convert;
 use crate::state::GameState;
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
-    super::conversions::sync_building_to_conversions(state);
     apply_actions(state);
-
     super::limits::honor_storage_and_floors(state);
     super::disaster::invoke_disaster_if_needed(state)
 }

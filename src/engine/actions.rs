@@ -22,10 +22,6 @@ pub fn tick_actions(actions: &mut Vec<Waiter>) -> Vec<DelayedAction> {
     actions_to_apply
 }
 
-// Right now no way to get starting length of delayed action
-// Remove sustain hack from derived state and add as a delayed recuring action?
-// Update the conversion listing code to also look here?
-
 #[cfg(test)]
 mod tests {
     use super::*;

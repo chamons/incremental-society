@@ -73,7 +73,11 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
-    pub fn action_with_name(&mut self, name: &str) -> Option<&mut Waiter> {
+    pub fn action_with_name(&self, name: &str) -> Option<&Waiter> {
+        self.actions.iter().filter(|x| x.name == name).nth(0)
+    }
+
+    pub fn action_with_name_mut(&mut self, name: &str) -> Option<&mut Waiter> {
         self.actions.iter_mut().filter(|x| x.name == name).nth(0)
     }
 

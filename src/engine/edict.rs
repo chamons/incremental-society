@@ -4,15 +4,7 @@ use crate::engine::EngineError;
 use crate::state::GameState;
 
 pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineError> {
-    if state.actions.iter().any(|x| {
-        if let DelayedAction::Edict(name) = &x.action {
-            if name == edict {
-                return true;
-            }
-        }
-
-        false
-    }) {
+    if state.action_with_name(edict).is_some() {
         return Err(EngineError::init("Edict already in progress"));
     }
 

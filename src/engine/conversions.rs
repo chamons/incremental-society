@@ -136,7 +136,7 @@ mod tests {
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
         state.recalculate();
 
-        state.action_with_name("TestGather").unwrap().current_tick = 10;
+        state.action_with_name_mut("TestGather").unwrap().current_tick = 10;
         state.recalculate();
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);

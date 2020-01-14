@@ -80,23 +80,21 @@ impl DerivedState {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn conversion_with_counts() {
-    //     let state = GameState::init_test_game_state();
-    //     let conversions = &state.derived_state.conversion_counts;
-    //     assert_eq!("TestChop", conversions[0].name);
-    //     assert_eq!(4, conversions[0].count);
-    //     assert_eq!("TestGather", conversions[1].name);
-    //     assert_eq!(1, conversions[1].count);
-    // }
+    #[test]
+    fn conversion_with_counts() {
+        let state = GameState::init_test_game_state();
+        let conversions = &state.derived_state.conversions;
+        assert_eq!(4, *conversions.get("TestChop").unwrap());
+        assert_eq!(1, *conversions.get("TestGather").unwrap());
+    }
 
-    // #[test]
-    // fn conversion_names() {
-    //     let state = GameState::init_test_game_state();
-    //     let conversions = &state.derived_state.conversion_name;
-    //     assert_eq!("TestChop", conversions[0]);
-    //     assert_eq!("TestGather", conversions[1]);
-    // }
+    #[test]
+    fn conversion_names() {
+        let state = GameState::init_test_game_state();
+        let conversions = &state.derived_state.conversions_names;
+        assert_eq!("TestChop", conversions[0]);
+        assert_eq!("TestGather", conversions[1]);
+    }
 
     #[test]
     fn storage() {

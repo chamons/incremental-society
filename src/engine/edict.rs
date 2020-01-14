@@ -50,11 +50,7 @@ mod tests {
         state.resources[ResourceKind::Fuel] = 1;
 
         edict(&mut state, "TestEdict").unwrap();
-        if let DelayedAction::Edict(name) = &state.actions.get(0).unwrap().action {
-            assert_eq!(name, "TestEdict");
-        } else {
-            assert!(false);
-        }
+        state.action_with_name("TestEdict").unwrap();
     }
 
     #[test]

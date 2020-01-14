@@ -73,6 +73,10 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
+    pub fn action_with_name(&mut self, name: &str) -> Option<&mut Waiter> {
+        self.actions.iter_mut().filter(|x| x.name == name).nth(0)
+    }
+
     // Despite state.rs being a state and not engine component, we have one lie here
     // We must recalculate some state here
     pub fn recalculate(&mut self) {

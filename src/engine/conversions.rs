@@ -10,7 +10,7 @@ pub fn apply_convert(state: &mut GameState, name: &str) {
 
 // There is a modeling problem the engine conversion code needs to handle:
 // - The game state actions system (actions.rs) handles all conversions
-// - That assumes that none of canceled in flight.
+// - That assumes that none of them are canceled in flight.
 // - That makes sense for most things, but the source of conversions are buildings, which can appear/disappear at a whim
 // - Imagine:
 //     Region 1 has Library which gives Conversion Research
@@ -80,10 +80,10 @@ mod tests {
     #[test]
     fn existing_conversions_untouched_on_sync() {
         let mut state = GameState::init_test_game_state();
-        assert_eq!(2, state.actions.len());
+        assert_eq!(3, state.actions.len());
 
         state.recalculate();
-        assert_eq!(2, state.actions.len());
+        assert_eq!(3, state.actions.len());
     }
 
     #[test]
@@ -91,24 +91,24 @@ mod tests {
         let mut state = GameState::init();
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
         state.recalculate();
-        assert_eq!(1, state.actions.len());
+        assert_eq!(2, state.actions.len());
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
         state.recalculate();
 
-        assert_eq!(0, state.actions.len());
+        assert_eq!(1, state.actions.len());
     }
 
     #[test]
     fn added_buildings_add_conversions_on_sync() {
         let mut state = GameState::init();
         state.recalculate();
-        assert_eq!(0, state.actions.len());
+        assert_eq!(1, state.actions.len());
 
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
         state.recalculate();
 
-        assert_eq!(1, state.actions.len());
+        assert_eq!(2, state.actions.len());
     }
 
     #[test]
@@ -119,7 +119,7 @@ mod tests {
             vec![get_building("Test Building"), get_building("Test Gather Hut")],
         ));
         state.recalculate();
-        assert_eq!(2, state.actions.len());
+        assert_eq!(3, state.actions.len());
 
         let region = state.regions.get_mut(0).unwrap();
         region.buildings.remove(0);
@@ -127,7 +127,7 @@ mod tests {
 
         state.recalculate();
 
-        assert_eq!(2, state.actions.len());
+        assert_eq!(3, state.actions.len());
     }
 
     #[test]
@@ -136,7 +136,7 @@ mod tests {
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
         state.recalculate();
 
-        state.actions.get_mut(0).unwrap().current_tick = 10;
+        state.action_with_name("TestGather").unwrap().current_tick = 10;
         state.recalculate();
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
@@ -145,6 +145,6 @@ mod tests {
         state.regions.get_mut(0).unwrap().buildings.push(get_building("Test Gather Hut"));
         state.recalculate();
 
-        assert_eq!(100, state.actions.get_mut(0).unwrap().current_tick);
+        assert_eq!(100, state.action_with_name("TestGather").unwrap().current_tick);
     }
 }

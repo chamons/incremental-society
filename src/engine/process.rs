@@ -41,8 +41,8 @@ mod tests {
         let mut state = GameState::init_test_game_state();
         state.resources[ResourceKind::Food] = state.derived_state.storage[ResourceKind::Food] - 1;
         state.resources[ResourceKind::Fuel] = state.derived_state.storage[ResourceKind::Fuel] - 1;
-        state.actions.get_mut(0).unwrap().current_tick = 1;
-        state.actions.get_mut(1).unwrap().current_tick = 1;
+        state.action_with_name("TestGather").unwrap().current_tick = 1;
+        state.action_with_name("TestChop").unwrap().current_tick = 1;
 
         process_tick(&mut state);
         assert_eq!(state.resources[ResourceKind::Food], state.derived_state.storage[ResourceKind::Food]);
@@ -57,10 +57,10 @@ mod tests {
         edict(&mut state, "TestEdict").unwrap();
         let edict_length = get_edict("TestEdict").tick_length();
         for _ in 0..edict_length {
-            assert_eq!(1, state.actions.len());
+            assert_eq!(2, state.actions.len());
             process_tick(&mut state);
         }
-        assert_eq!(0, state.actions.len());
+        assert_eq!(1, state.actions.len());
     }
 
     #[test]
@@ -74,7 +74,7 @@ mod tests {
     #[test]
     fn process_conversions_one_ready() {
         let mut state = GameState::init_test_game_state();
-        state.actions.get_mut(1).unwrap().current_tick = 1;
+        state.action_with_name("TestChop").unwrap().current_tick = 1;
         process_tick(&mut state);
 
         assert_eq!(0, state.resources[ResourceKind::Food]);
@@ -84,8 +84,8 @@ mod tests {
     #[test]
     fn process_conversions_many_ready() {
         let mut state = GameState::init_test_game_state();
-        state.actions.get_mut(0).unwrap().current_tick = 1;
-        state.actions.get_mut(1).unwrap().current_tick = 1;
+        state.action_with_name("TestGather").unwrap().current_tick = 1;
+        state.action_with_name("TestChop").unwrap().current_tick = 1;
         process_tick(&mut state);
 
         assert_eq!(1, state.resources[ResourceKind::Food]);

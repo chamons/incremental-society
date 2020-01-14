@@ -70,7 +70,6 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
     }
 }
 
-// Write many tests
 #[cfg(test)]
 mod tests {
     use super::*;

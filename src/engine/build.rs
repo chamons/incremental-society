@@ -45,9 +45,10 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::error::Error;
+
     use crate::data::get_building;
     use crate::state::{Region, ResourceKind};
-    use std::error::Error;
 
     #[test]
     fn build_invalid_region() {

@@ -1,17 +1,14 @@
-use pancurses::{Input, Window};
+use std::error::Error;
+use std::thread::sleep;
+use std::time::Duration;
+use std::time::Instant;
 
 use incremental_society::console_ui::{colors, option_list, option_list::Selection};
 use incremental_society::data;
 use incremental_society::engine;
 use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
-use std::thread::sleep;
-use std::time::Duration;
-use std::time::Instant;
-
-//extern crate incremental_society;
-
-use std::error::Error;
+use pancurses::{Input, Window};
 
 fn main() {
     let term = pancurses::initscr();

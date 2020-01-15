@@ -1,7 +1,7 @@
+use std::collections::HashSet;
+
 use crate::data::get_conversion;
 use crate::state::{DelayedAction, GameState, Waiter};
-
-use std::collections::HashSet;
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
     get_conversion(name).convert(&mut state.resources);
@@ -72,6 +72,7 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     use crate::data::get_building;
     use crate::state::Region;
 

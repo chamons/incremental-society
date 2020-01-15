@@ -1,6 +1,5 @@
+use crate::engine::conversions;
 use crate::state::{DelayedAction, GameState};
-
-use crate::engine::conversions::apply_convert;
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     apply_actions(state);
@@ -12,15 +11,15 @@ fn apply_actions(state: &mut GameState) {
     let fired_actions = super::actions::tick_actions(&mut state.actions);
     for action in fired_actions.iter() {
         match action {
-            DelayedAction::Edict(name) => apply_convert(state, name),
+            DelayedAction::Edict(name) => conversions::apply_convert(state, name),
             DelayedAction::Conversion(name) => {
                 for _ in 0..*state.derived_state.conversions.get(name).unwrap() {
-                    apply_convert(state, name);
+                    conversions::apply_convert(state, name);
                 }
             }
             DelayedAction::SustainPops() => {
                 for _ in 0..state.derived_state.pops {
-                    apply_convert(state, "Sustain Population");
+                    conversions::apply_convert(state, "Sustain Population");
                 }
             }
         }

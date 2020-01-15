@@ -1,6 +1,6 @@
-use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
-
 use std::cmp;
+
+use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 pub fn honor_storage_and_floors(state: &mut GameState) {
     for i in 0..NUM_RESOURCES {

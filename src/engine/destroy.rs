@@ -46,9 +46,10 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::error::Error;
+
     use crate::data::get_building;
     use crate::state::ResourceKind;
-    use std::error::Error;
 
     #[test]
     fn destroy_invalid_region() {

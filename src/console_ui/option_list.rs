@@ -1,4 +1,4 @@
-use crate::console_ui::colors::{clear_color, set_color, Colors};
+use super::colors::{clear_color, set_color, Colors};
 
 use pancurses::Input::Character;
 use pancurses::Window;

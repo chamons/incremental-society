@@ -1,6 +1,5 @@
-use crate::actions::{DelayedAction, Waiter};
 use crate::data::get_conversion;
-use crate::state::GameState;
+use crate::state::{DelayedAction, GameState, Waiter};
 
 use std::collections::HashSet;
 
@@ -74,7 +73,7 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 mod tests {
     use super::*;
     use crate::data::get_building;
-    use crate::region::Region;
+    use crate::state::Region;
 
     #[test]
     fn existing_conversions_untouched_on_sync() {

@@ -1,7 +1,6 @@
-use crate::resources::*;
-use crate::state::GameState;
-
 use std::collections::HashMap;
+
+use crate::state::{GameState, ResourceTotal};
 
 use itertools::Itertools;
 
@@ -79,6 +78,7 @@ impl DerivedState {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::state::ResourceKind;
 
     #[test]
     fn conversion_with_counts() {

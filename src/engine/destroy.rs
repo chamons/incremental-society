@@ -47,7 +47,7 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
 mod tests {
     use super::*;
     use crate::data::get_building;
-    use crate::resources::*;
+    use crate::state::ResourceKind;
     use std::error::Error;
 
     #[test]

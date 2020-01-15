@@ -1,5 +1,4 @@
-use crate::resources::*;
-use crate::state::GameState;
+use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 use std::cmp;
 

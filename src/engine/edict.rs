@@ -1,7 +1,6 @@
-use crate::actions::{DelayedAction, Waiter};
 use crate::data::get_edict;
 use crate::engine::EngineError;
-use crate::state::GameState;
+use crate::state::{DelayedAction, GameState, Waiter};
 
 pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineError> {
     if state.action_with_name(edict).is_some() {
@@ -32,9 +31,10 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::engine::edict;
-    use crate::resources::*;
     use std::error::Error;
+
+    use crate::engine::edict;
+    use crate::state::ResourceKind;
 
     #[test]
     fn invoke_valid() {

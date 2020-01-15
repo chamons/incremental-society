@@ -1,17 +1,15 @@
 use pancurses::{Input, Window};
 
-use incremental_society::actions::DelayedAction;
 use incremental_society::console_ui::{colors, option_list, option_list::Selection};
 use incremental_society::data;
 use incremental_society::engine;
-use incremental_society::resources::*;
-use incremental_society::state::GameState;
+use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;
 
-extern crate incremental_society;
+//extern crate incremental_society;
 
 use std::error::Error;
 

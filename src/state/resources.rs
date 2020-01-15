@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
 use num_traits::FromPrimitive;
+use serde::{Deserialize, Serialize};
 
 pub type ResourceQuantity = i64;
 

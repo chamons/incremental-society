@@ -1,8 +1,7 @@
-use crate::engine::destroy;
-use crate::resources::{ResourceKind, NUM_RESOURCES};
-use crate::state::GameState;
-
 use std::cmp;
+
+use crate::engine::destroy;
+use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 use rand::prelude::*;
 
@@ -66,7 +65,7 @@ pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> 
 mod tests {
     use super::*;
     use crate::data::get_building;
-    use crate::region::Region;
+    use crate::state::Region;
 
     #[test]
     fn invoke_disaster_if_instability_full() {

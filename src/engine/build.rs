@@ -1,6 +1,5 @@
-use crate::building::Building;
 use crate::engine::EngineError;
-use crate::state::GameState;
+use crate::state::{Building, GameState};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -47,8 +46,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 mod tests {
     use super::*;
     use crate::data::get_building;
-    use crate::region::Region;
-    use crate::resources::*;
+    use crate::state::{Region, ResourceKind};
     use std::error::Error;
 
     #[test]

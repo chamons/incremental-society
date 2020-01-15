@@ -1,6 +1,6 @@
-use crate::actions::DelayedAction;
+use crate::state::{DelayedAction, GameState};
+
 use crate::engine::conversions::apply_convert;
-use crate::state::GameState;
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     apply_actions(state);
@@ -32,7 +32,7 @@ mod tests {
     use super::*;
     use crate::data::get_edict;
     use crate::engine::edict;
-    use crate::resources::*;
+    use crate::state::ResourceKind;
 
     #[test]
     fn process_tick_storage_limits_honored() {

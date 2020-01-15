@@ -1,9 +1,9 @@
-use crate::resources::*;
+use std::fmt;
 
-use serde::{Deserialize, Serialize};
+use super::resources::*;
 
 use itertools::Itertools;
-use std::fmt;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum ConversionLength {

@@ -35,7 +35,7 @@ impl<'a> UI<'a> {
         self.term.nodelay(true);
         pancurses::noecho();
 
-        let mut state = GameState::init_new_game_state();
+        let mut state = engine::init_new_game_state();
         loop {
             let now = Instant::now();
 

@@ -1,4 +1,5 @@
-use crate::engine::EngineError;
+use super::process;
+use super::EngineError;
 use crate::state::GameState;
 
 pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
@@ -39,7 +40,8 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
     }
 
     region.remove_building(building_index);
-    state.recalculate();
+    process::recalculate(state);
+
     Ok(())
 }
 
@@ -53,19 +55,19 @@ mod tests {
 
     #[test]
     fn destroy_invalid_region() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         assert!(destroy(&mut state, 2, 0).is_err());
     }
 
     #[test]
     fn destroy_invalid_building() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         assert!(destroy(&mut state, 0, 2).is_err());
     }
 
     #[test]
     fn destroy_valid_building() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         let old_storage = state.derived_state.storage[ResourceKind::Food];
         assert!(destroy(&mut state, 1, 0).is_ok());
 
@@ -75,7 +77,7 @@ mod tests {
 
     #[test]
     fn destroy_drops_pops_too_low_fails() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
 
         assert_eq!(
             "Insufficient pops for remaining buildings after destruction",
@@ -85,7 +87,7 @@ mod tests {
 
     #[test]
     fn destroy_immortal_building() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         state.regions[1].add_building(get_building("Test Immortal"));
         assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
     }

@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use crate::actions::Waiter;
 use crate::building::Building;
 use crate::data;
 use crate::engine::DerivedState;
@@ -12,7 +11,7 @@ use serde::{Deserialize, Serialize};
 pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
-    pub ticks: HashMap<String, u32>,
+    pub actions: Vec<Waiter>,
 
     #[serde(skip)]
     #[serde(default = "DerivedState::init")]
@@ -24,7 +23,7 @@ impl GameState {
         let mut state = GameState {
             resources: ResourceTotal::init(),
             regions: vec![],
-            ticks: HashMap::new(),
+            actions: vec![],
             derived_state: DerivedState::init(),
         };
         state.recalculate();
@@ -38,7 +37,22 @@ impl GameState {
                 Region::init_with_buildings("Lusitania", vec![data::get_building("Settlement"), data::get_building("Hunting Grounds")]),
                 Region::init("Illyricum"),
             ],
-            ticks: HashMap::new(),
+            actions: vec![],
+            derived_state: DerivedState::init(),
+        };
+        state.recalculate();
+        state
+    }
+
+    #[cfg(test)]
+    pub fn init_test_game_state() -> GameState {
+        let mut state = GameState {
+            resources: ResourceTotal::init(),
+            regions: vec![
+                Region::init_with_buildings("Lusitania", vec![data::get_building("Test Building"), data::get_building("Test Building")]),
+                Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),
+            ],
+            actions: vec![],
             derived_state: DerivedState::init(),
         };
         state.recalculate();
@@ -59,23 +73,20 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
-    #[cfg(test)]
-    pub fn init_test_game_state() -> GameState {
-        let mut state = GameState {
-            resources: ResourceTotal::init(),
-            regions: vec![
-                Region::init_with_buildings("Lusitania", vec![data::get_building("Test Building"), data::get_building("Test Building")]),
-                Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),
-            ],
-            ticks: HashMap::new(),
-            derived_state: DerivedState::init(),
-        };
-        state.recalculate();
-        state
+    pub fn action_with_name(&self, name: &str) -> Option<&Waiter> {
+        self.actions.iter().filter(|x| x.name == name).nth(0)
     }
 
+    pub fn action_with_name_mut(&mut self, name: &str) -> Option<&mut Waiter> {
+        self.actions.iter_mut().filter(|x| x.name == name).nth(0)
+    }
+
+    // Despite state.rs being a state and not engine component, we have one lie here
+    // We must recalculate some state here
     pub fn recalculate(&mut self) {
         self.derived_state = DerivedState::calculate(&self);
+        // See sync_building_to_conversions for the story on why we're doing this :(
+        crate::engine::sync_building_to_conversions(self);
     }
 }
 

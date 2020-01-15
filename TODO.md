@@ -2,15 +2,13 @@
 
 ## Needed for game
 
-- Edicts have cooldown
-
 ## Longer Term
 
+- Remove all mutable from state items and shift into module
 - Research
 - Upgrades (Cost per person/building to upgrade/change existing)
 - Over time
    - Building build/destroy over time
-   - Edict over time
    - Pop growth over time
 - Research 1 of 3
 - Regions Resources

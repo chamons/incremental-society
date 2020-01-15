@@ -1,5 +1,6 @@
 use pancurses::{Input, Window};
 
+use incremental_society::actions::DelayedAction;
 use incremental_society::console_ui::{colors, option_list, option_list::Selection};
 use incremental_society::data;
 use incremental_society::engine;
@@ -193,17 +194,22 @@ impl<'a> UI<'a> {
 
         y = self.write_right("Conversions", 0, y);
 
-        for c in &state.derived_state.conversion_counts {
-            if let Some(percentage) = engine::get_conversion_percentage(state, &c.name) {
-                // Don't update y, as we have to draw the bar
-                self.write_right(&format!("{} ({})", c.name, c.count), 0, y);
+        for c in &state.actions {
+            let percentage = c.percentage();
 
-                let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
-                let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
-                let filled_width = filled_width as usize;
-                let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
-                y = self.write_right(&bar_text, c.name.len() as i32 + 5, y);
+            // Don't update y, as we have to draw the bar
+            if let DelayedAction::Conversion(name) = &c.action {
+                let count = state.derived_state.conversions.get(name).unwrap();
+                self.write_right(&format!("{} ({})", name, count), 0, y);
+            } else {
+                self.write_right(&c.name, 0, y);
             }
+
+            let filled_width = (CONVERSION_BAR_LENGTH * percentage).round();
+            let empty_width = (CONVERSION_BAR_LENGTH - filled_width).round() as usize;
+            let filled_width = filled_width as usize;
+            let bar_text = format!("{}{}", "#".repeat(filled_width), "-".repeat(empty_width));
+            y = self.write_right(&bar_text, c.name.len() as i32 + 5, y);
         }
         y
     }

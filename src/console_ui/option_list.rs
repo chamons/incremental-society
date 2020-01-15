@@ -1,4 +1,4 @@
-use super::colors::{clear_color, set_color, Colors};
+use super::{clear_color, set_color, Colors};
 
 use pancurses::Input::Character;
 use pancurses::Window;

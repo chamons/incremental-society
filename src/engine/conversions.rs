@@ -72,7 +72,6 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::super::process;
-    use super::*;
     use crate::data::get_building;
     use crate::state::Region;
 

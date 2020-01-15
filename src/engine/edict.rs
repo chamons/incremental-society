@@ -31,11 +31,9 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
 
 #[cfg(test)]
 mod tests {
-    use super::process;
-    use super::*;
+    use super::{super::process, *};
     use std::error::Error;
 
-    use crate::engine::edict;
     use crate::state::ResourceKind;
 
     #[test]

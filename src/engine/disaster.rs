@@ -63,8 +63,7 @@ pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> 
 
 #[cfg(test)]
 mod tests {
-    use super::super::process;
-    use super::*;
+    use super::{super::process, *};
     use crate::data::get_building;
     use crate::state::Region;
 

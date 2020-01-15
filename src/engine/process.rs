@@ -79,10 +79,9 @@ pub fn init_test_game_state() -> GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data;
     use crate::data::get_edict;
     use crate::engine::edict;
-    use crate::state::{GameState, ResourceKind, ResourceTotal};
+    use crate::state::{GameState, ResourceKind};
 
     #[test]
     fn serialization() {

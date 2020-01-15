@@ -25,7 +25,6 @@ pub fn tick_actions(actions: &mut Vec<Waiter>) -> Vec<DelayedAction> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::state::DelayedAction;
 
     #[test]
     fn tick_actions_none_ready() {

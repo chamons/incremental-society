@@ -1,5 +1,4 @@
-use super::process;
-use super::EngineError;
+use super::{process, EngineError};
 use crate::state::{Building, GameState};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
@@ -45,8 +44,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
 #[cfg(test)]
 mod tests {
-    use super::process;
-    use super::*;
+    use super::{super::process, *};
 
     use std::error::Error;
 

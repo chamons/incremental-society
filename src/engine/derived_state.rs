@@ -78,7 +78,6 @@ impl DerivedState {
 #[cfg(test)]
 mod tests {
     use super::super::process;
-    use super::*;
     use crate::state::ResourceKind;
 
     #[test]

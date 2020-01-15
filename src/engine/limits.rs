@@ -23,8 +23,7 @@ pub fn honor_storage_and_floors(state: &mut GameState) {
 
 #[cfg(test)]
 mod tests {
-    use super::super::process;
-    use super::*;
+    use super::{super::process, *};
 
     #[test]
     fn storage_limits_honored() {

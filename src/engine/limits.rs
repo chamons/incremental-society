@@ -1,7 +1,6 @@
-use crate::resources::*;
-use crate::state::GameState;
-
 use std::cmp;
+
+use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 pub fn honor_storage_and_floors(state: &mut GameState) {
     for i in 0..NUM_RESOURCES {
@@ -24,11 +23,11 @@ pub fn honor_storage_and_floors(state: &mut GameState) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{super::process, *};
 
     #[test]
     fn storage_limits_honored() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         state.resources[ResourceKind::Food] = state.derived_state.storage[ResourceKind::Food] + 1;
         state.resources[ResourceKind::Fuel] = state.derived_state.storage[ResourceKind::Fuel] + 1;
 
@@ -39,7 +38,7 @@ mod tests {
 
     #[test]
     fn process_tick_instability_floor_negative() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.resources[ResourceKind::Instability] = -10;
         honor_storage_and_floors(&mut state);
         assert_eq!(0, state.resources[ResourceKind::Instability]);
@@ -48,7 +47,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn process_tick_other_negative_die() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.resources[ResourceKind::Food] = -10;
         honor_storage_and_floors(&mut state);
     }

@@ -1,6 +1,5 @@
-use crate::building::Building;
-use crate::engine::EngineError;
-use crate::state::GameState;
+use super::{process, EngineError};
+use crate::state::{Building, GameState};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -39,21 +38,22 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
     let region = state.regions.get_mut(region_index).unwrap();
     region.add_building(building);
-    state.recalculate();
+    process::recalculate(state);
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::data::get_building;
-    use crate::region::Region;
-    use crate::resources::*;
+    use super::{super::process, *};
+
     use std::error::Error;
+
+    use crate::data::get_building;
+    use crate::state::{Region, ResourceKind};
 
     #[test]
     fn build_invalid_region() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions = vec![];
 
         assert!(build(&mut state, get_building("Test Building"), 0).is_err());
@@ -61,10 +61,10 @@ mod tests {
 
     #[test]
     fn build_valid_building() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];
         state.resources[ResourceKind::Fuel] = 20;
-        state.recalculate();
+        process::recalculate(&mut state);
 
         let old_storage = state.derived_state.storage[ResourceKind::Fuel];
 
@@ -76,7 +76,7 @@ mod tests {
 
     #[test]
     fn build_without_resources() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions = vec![Region::init("First Region")];
 
         let error = build(&mut state, get_building("Test Building"), 0).unwrap_err();
@@ -87,7 +87,7 @@ mod tests {
     fn build_without_room() {
         let building = get_building("Test Building");
 
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 20;
         state.regions = vec![Region::init_with_buildings("First Region", vec![building.clone(), building.clone()])];
 
@@ -97,9 +97,9 @@ mod tests {
 
     #[test]
     fn build_without_pops() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions = vec![Region::init("Test Region")];
-        state.recalculate();
+        process::recalculate(&mut state);
 
         let error = build(&mut state, get_building("Test Gather Hut"), 0).unwrap_err();
         assert_eq!("Insufficient pops for building", error.description());
@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn build_immortal_building() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         assert_eq!(
             "Unable to build Test Immortal",
             build(&mut state, get_building("Test Immortal"), 1).unwrap_err().description()

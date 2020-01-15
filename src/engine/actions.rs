@@ -1,4 +1,4 @@
-use crate::actions::{DelayedAction, Waiter};
+use crate::state::{DelayedAction, Waiter};
 
 pub fn tick_actions(actions: &mut Vec<Waiter>) -> Vec<DelayedAction> {
     let mut actions_to_remove = vec![];
@@ -25,7 +25,6 @@ pub fn tick_actions(actions: &mut Vec<Waiter>) -> Vec<DelayedAction> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::actions::DelayedAction;
 
     #[test]
     fn tick_actions_none_ready() {

@@ -1,4 +1,4 @@
-use crate::building::Building;
+use super::building::Building;
 
 use serde::{Deserialize, Serialize};
 

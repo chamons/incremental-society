@@ -1,24 +1,18 @@
-use pancurses::{Input, Window};
-
-use incremental_society::actions::DelayedAction;
-use incremental_society::console_ui::{colors, option_list, option_list::Selection};
-use incremental_society::data;
-use incremental_society::engine;
-use incremental_society::resources::*;
-use incremental_society::state::GameState;
-
+use std::error::Error;
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;
 
-extern crate incremental_society;
+use incremental_society::console_ui::{self, OptionList, Selection};
+use incremental_society::data;
+use incremental_society::engine;
+use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
-use std::error::Error;
+use pancurses::{Input, Window};
 
 fn main() {
     let term = pancurses::initscr();
-    pancurses::start_color();
-    colors::init();
+    console_ui::init_colors();
 
     let mut ui = UI {
         messages: "".to_string(),
@@ -40,7 +34,7 @@ impl<'a> UI<'a> {
         self.term.nodelay(true);
         pancurses::noecho();
 
-        let mut state = GameState::init_new_game_state();
+        let mut state = engine::init_new_game_state();
         loop {
             let now = Instant::now();
 
@@ -105,13 +99,13 @@ impl<'a> UI<'a> {
                     |o| data::get_building(&building_options[o]).details(),
                 );
 
-                match option_list::OptionList::init(&self.term, selection).run() {
+                match OptionList::init(&self.term, selection).run() {
                     Some(building_index) => {
                         let building = data::get_building(&building_options[building_index]);
                         let name = building.name.clone();
                         let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
                         let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok(), |_| vec![]);
-                        match option_list::OptionList::init(&self.term, selection).run() {
+                        match OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
                                 Err(e) => self.set_message(e.description()),
                                 _ => self.set_message(format!("Built {}", name)),
@@ -126,12 +120,12 @@ impl<'a> UI<'a> {
             if is_char(input, 'd') {
                 let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
                 let selection = Selection::init_list(&regions, |_| true /* Any region can have buildings destroyed */, |_| vec![]);
-                match option_list::OptionList::init(&self.term, selection).run() {
+                match OptionList::init(&self.term, selection).run() {
                     Some(region_index) => {
                         let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
                         if !buildings.is_empty() {
                             let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok(), |_| vec![]);
-                            match option_list::OptionList::init(&self.term, selection).run() {
+                            match OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
                                     let building = data::get_building(&buildings[building_index]);
                                     match engine::destroy(&mut state, region_index, building_index) {
@@ -154,7 +148,7 @@ impl<'a> UI<'a> {
                     |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok(),
                     |o| data::get_edict(edicts.get(o).unwrap()).details(),
                 );
-                match option_list::OptionList::init(&self.term, selection).run() {
+                match OptionList::init(&self.term, selection).run() {
                     Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {
                         Err(e) => self.set_message(e.description()),
                         _ => self.clear_message(),

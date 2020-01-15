@@ -1,8 +1,7 @@
-use crate::actions::{DelayedAction, Waiter};
-use crate::data::get_conversion;
-use crate::state::GameState;
-
 use std::collections::HashSet;
+
+use crate::data::get_conversion;
+use crate::state::{DelayedAction, GameState, Waiter};
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
     get_conversion(name).convert(&mut state.resources);
@@ -72,77 +71,77 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::super::process;
     use crate::data::get_building;
-    use crate::region::Region;
+    use crate::state::Region;
 
     #[test]
     fn existing_conversions_untouched_on_sync() {
-        let mut state = GameState::init_test_game_state();
+        let mut state = process::init_test_game_state();
         assert_eq!(3, state.actions.len());
 
-        state.recalculate();
+        process::recalculate(&mut state);
         assert_eq!(3, state.actions.len());
     }
 
     #[test]
     fn removed_buildings_remove_conversion_on_sync() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        state.recalculate();
+        process::recalculate(&mut state);
         assert_eq!(2, state.actions.len());
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
-        state.recalculate();
+        process::recalculate(&mut state);
 
         assert_eq!(1, state.actions.len());
     }
 
     #[test]
     fn added_buildings_add_conversions_on_sync() {
-        let mut state = GameState::init();
-        state.recalculate();
+        let mut state = process::init_empty_game_state();
+        process::recalculate(&mut state);
         assert_eq!(1, state.actions.len());
 
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        state.recalculate();
+        process::recalculate(&mut state);
 
         assert_eq!(2, state.actions.len());
     }
 
     #[test]
     fn add_and_remove_multiple_on_sync() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
             vec![get_building("Test Building"), get_building("Test Gather Hut")],
         ));
-        state.recalculate();
+        process::recalculate(&mut state);
         assert_eq!(3, state.actions.len());
 
         let region = state.regions.get_mut(0).unwrap();
         region.buildings.remove(0);
         region.buildings.push(get_building("Test Hunt Cabin"));
 
-        state.recalculate();
+        process::recalculate(&mut state);
 
         assert_eq!(3, state.actions.len());
     }
 
     #[test]
     fn removed_then_readded_starts_at_zero_on_sync() {
-        let mut state = GameState::init();
+        let mut state = process::init_empty_game_state();
         state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        state.recalculate();
+        process::recalculate(&mut state);
 
         state.action_with_name_mut("TestGather").unwrap().current_tick = 10;
-        state.recalculate();
+        process::recalculate(&mut state);
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
-        state.recalculate();
+        process::recalculate(&mut state);
 
         state.regions.get_mut(0).unwrap().buildings.push(get_building("Test Gather Hut"));
-        state.recalculate();
+        process::recalculate(&mut state);
 
         assert_eq!(100, state.action_with_name("TestGather").unwrap().current_tick);
     }

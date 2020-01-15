@@ -1,7 +1,6 @@
-use crate::resources::*;
-use crate::state::GameState;
-
 use std::collections::HashMap;
+
+use crate::state::{GameState, ResourceTotal};
 
 use itertools::Itertools;
 
@@ -78,11 +77,12 @@ impl DerivedState {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::super::process;
+    use crate::state::ResourceKind;
 
     #[test]
     fn conversion_with_counts() {
-        let state = GameState::init_test_game_state();
+        let state = process::init_test_game_state();
         let conversions = &state.derived_state.conversions;
         assert_eq!(4, *conversions.get("TestChop").unwrap());
         assert_eq!(1, *conversions.get("TestGather").unwrap());
@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn conversion_names() {
-        let state = GameState::init_test_game_state();
+        let state = process::init_test_game_state();
         let conversions = &state.derived_state.conversions_names;
         assert_eq!("TestChop", conversions[0]);
         assert_eq!("TestGather", conversions[1]);
@@ -98,7 +98,7 @@ mod tests {
 
     #[test]
     fn storage() {
-        let state = GameState::init_test_game_state();
+        let state = process::init_test_game_state();
         let storage = state.derived_state.storage;
         assert!(storage[ResourceKind::Food] >= 20);
         assert!(storage[ResourceKind::Fuel] >= 30);
@@ -106,7 +106,7 @@ mod tests {
 
     #[test]
     fn pops() {
-        let state = GameState::init_test_game_state();
+        let state = process::init_test_game_state();
         assert!(state.derived_state.pops >= 4);
         assert!(state.derived_state.used_pops >= 3);
     }

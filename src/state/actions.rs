@@ -5,6 +5,8 @@ pub enum DelayedAction {
     Edict(String),
     Conversion(String),
     SustainPops(),
+    Build(),
+    Destroy(usize, usize),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

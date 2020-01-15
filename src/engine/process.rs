@@ -1,4 +1,5 @@
 use super::conversions;
+use super::destroy;
 use super::DerivedState;
 use crate::data;
 use crate::state::{DelayedAction, GameState, Region, ResourceTotal};
@@ -24,6 +25,8 @@ fn apply_actions(state: &mut GameState) {
                     conversions::apply_convert(state, "Sustain Population");
                 }
             }
+            DelayedAction::Build() => {}
+            DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
         }
     }
 }

@@ -44,8 +44,7 @@ pub fn disaster(state: &mut GameState) {
 
             let (region_index, building_index) = *all_buildings.get(index_to_destroy).unwrap();
 
-            // Ignore buildings unable to be destroy
-            let _ = destroy(state, region_index, building_index);
+            destroy::apply_destroy(state, region_index, building_index);
         }
     }
 

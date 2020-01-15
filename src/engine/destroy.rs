@@ -1,6 +1,6 @@
 use super::process;
 use super::EngineError;
-use crate::state::GameState;
+use crate::state::{DelayedAction, GameState, Waiter};
 
 pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -26,23 +26,29 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
     Ok(())
 }
 
+const DESTROY_LENGTH: u32 = 50;
+
 pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
     can_destroy_building(state, region_index, building_index)?;
-    let region = state.regions.get_mut(region_index).unwrap();
+
+    let region = state.regions.get(region_index).unwrap();
     let building = region.buildings.get(building_index).unwrap();
 
-    if building.pops > 0 && state.derived_state.used_pops > state.derived_state.pops - building.pops {
-        return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
-    }
-
-    if building.immortal {
-        return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
-    }
-
-    region.remove_building(building_index);
+    let action = Waiter::init_one_shot(
+        &format!("Destroy {}", building.name)[..],
+        DESTROY_LENGTH,
+        DelayedAction::Destroy(region_index, building_index),
+    );
+    state.actions.push(action);
     process::recalculate(state);
 
     Ok(())
+}
+
+pub fn apply_destroy(state: &mut GameState, region_index: usize, building_index: usize) {
+    let region = state.regions.get_mut(region_index).unwrap();
+    region.remove_building(building_index);
+    process::recalculate(state);
 }
 
 #[cfg(test)]
@@ -66,16 +72,6 @@ mod tests {
     }
 
     #[test]
-    fn destroy_valid_building() {
-        let mut state = process::init_test_game_state();
-        let old_storage = state.derived_state.storage[ResourceKind::Food];
-        assert!(destroy(&mut state, 1, 0).is_ok());
-
-        assert_eq!(2, state.buildings().len());
-        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Food]);
-    }
-
-    #[test]
     fn destroy_drops_pops_too_low_fails() {
         let mut state = process::init_test_game_state();
 
@@ -90,5 +86,20 @@ mod tests {
         let mut state = process::init_test_game_state();
         state.regions[1].add_building(get_building("Test Immortal"));
         assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
+    }
+
+    #[test]
+    fn destroy_building_already_being_destroyed() {
+        let mut state = process::init_test_game_state();
+    }
+
+    #[test]
+    fn destroy_valid_building() {
+        let mut state = process::init_test_game_state();
+        let old_storage = state.derived_state.storage[ResourceKind::Food];
+        assert!(destroy(&mut state, 1, 0).is_ok());
+
+        assert_eq!(2, state.buildings().len());
+        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Food]);
     }
 }

@@ -2,6 +2,11 @@ use crate::state::{Building, Conversion, ConversionLength, ResourceAmount, Resou
 
 use std::collections::HashMap;
 
+pub const BUILD_LENGTH: u32 = 250;
+pub const SUSTAIN_POP_DURATION: u32 = 30;
+pub const DESTROY_LENGTH: u32 = 50;
+pub const REGION_BUILDING_COUNT: usize = 2;
+
 #[cfg(not(test))]
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {

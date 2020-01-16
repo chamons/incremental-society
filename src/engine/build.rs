@@ -42,8 +42,6 @@ pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), 
     Ok(())
 }
 
-const BUILD_LENGTH: u32 = 250;
-
 pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
     can_build_in_region(state, region_index)?;
     can_build_building(state, &building)?;
@@ -52,7 +50,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
     let action = Waiter::init_one_shot(
         &format!("Build {}", building.name)[..],
-        BUILD_LENGTH,
+        data::BUILD_LENGTH,
         DelayedAction::Build(building.name.to_string(), region_index),
     );
     state.actions.push(action);
@@ -146,7 +144,7 @@ mod tests {
         build(&mut state, get_building("Test Building"), 0).unwrap();
         assert_eq!(10, state.resources[ResourceKind::Fuel]);
 
-        for _ in 0..BUILD_LENGTH {
+        for _ in 0..data::BUILD_LENGTH {
             assert_eq!(1, state.buildings().len());
             process::process_tick(&mut state);
         }

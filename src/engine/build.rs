@@ -61,7 +61,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
     Ok(())
 }
 
-pub fn apply_build(state: &mut GameState, building: &String, region_index: usize) {
+pub fn apply_build(state: &mut GameState, building: &str, region_index: usize) {
     let region = state.regions.get_mut(region_index).unwrap();
     region.add_building(data::get_building(building));
     process::recalculate(state);

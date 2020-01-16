@@ -7,6 +7,11 @@ pub const SUSTAIN_POP_DURATION: u32 = 30;
 pub const DESTROY_LENGTH: u32 = 50;
 pub const REGION_BUILDING_COUNT: usize = 2;
 
+pub const SHORT_CONVERSION: u32 = 50;
+pub const MEDIUM_CONVERSION: u32 = 100;
+pub const LONG_CONVERSION: u32 = 200;
+pub const EPIC_CONVERSION: u32 = 400;
+
 #[cfg(not(test))]
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {

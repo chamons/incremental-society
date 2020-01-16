@@ -36,6 +36,8 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
     can_build_in_region(state, region_index)?;
     can_build_building(state, &building)?;
 
+    state.resources.remove_range(&building.build_cost);
+
     let region = state.regions.get_mut(region_index).unwrap();
     region.add_building(building);
     process::recalculate(state);
@@ -57,21 +59,6 @@ mod tests {
         state.regions = vec![];
 
         assert!(build(&mut state, get_building("Test Building"), 0).is_err());
-    }
-
-    #[test]
-    fn build_valid_building() {
-        let mut state = process::init_empty_game_state();
-        state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];
-        state.resources[ResourceKind::Fuel] = 20;
-        process::recalculate(&mut state);
-
-        let old_storage = state.derived_state.storage[ResourceKind::Fuel];
-
-        build(&mut state, get_building("Test Building"), 0).unwrap();
-
-        assert_eq!(2, state.buildings().len());
-        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }
 
     #[test]
@@ -112,5 +99,24 @@ mod tests {
             "Unable to build Test Immortal",
             build(&mut state, get_building("Test Immortal"), 1).unwrap_err().description()
         );
+    }
+
+    #[test]
+    fn start_building_but_empty_before_finished() {}
+
+    #[test]
+    fn build_valid_building() {
+        let mut state = process::init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];
+        state.resources[ResourceKind::Fuel] = 20;
+        process::recalculate(&mut state);
+
+        let old_storage = state.derived_state.storage[ResourceKind::Fuel];
+
+        build(&mut state, get_building("Test Building"), 0).unwrap();
+
+        assert_eq!(10, state.resources[ResourceKind::Fuel]);
+        assert_eq!(2, state.buildings().len());
+        assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }
 }

@@ -2,15 +2,15 @@ use crate::state::{Building, Conversion, ConversionLength, ResourceAmount, Resou
 
 use std::collections::HashMap;
 
-pub const BUILD_LENGTH: u32 = 250;
-pub const SUSTAIN_POP_DURATION: u32 = 30;
-pub const DESTROY_LENGTH: u32 = 50;
+pub const BUILD_LENGTH: u32 = 30 * 8;
+pub const SUSTAIN_POP_DURATION: u32 = 80;
+pub const DESTROY_LENGTH: u32 = 30 * 5;
 pub const REGION_BUILDING_COUNT: usize = 2;
 
 pub const SHORT_CONVERSION: u32 = 50;
 pub const MEDIUM_CONVERSION: u32 = 100;
-pub const LONG_CONVERSION: u32 = 200;
-pub const EPIC_CONVERSION: u32 = 400;
+pub const LONG_CONVERSION: u32 = 150;
+pub const EPIC_CONVERSION: u32 = 300;
 
 #[cfg(not(test))]
 lazy_static! {

@@ -1,5 +1,4 @@
-- Building build/destroy over time
-
+- Gameplay pass 1
 
 ## Longer Term
 

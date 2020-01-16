@@ -1,5 +1,6 @@
 use super::conversions;
 use super::destroy;
+use super::edict;
 use super::DerivedState;
 use crate::data;
 use crate::state::{DelayedAction, GameState, Region, ResourceTotal};
@@ -14,7 +15,7 @@ fn apply_actions(state: &mut GameState) {
     let fired_actions = super::actions::tick_actions(&mut state.actions);
     for action in fired_actions.iter() {
         match action {
-            DelayedAction::Edict(name) => conversions::apply_convert(state, name),
+            DelayedAction::Edict(name) => edict::apply_edict(state, name),
             DelayedAction::Conversion(name) => {
                 for _ in 0..*state.derived_state.conversions.get(name).unwrap() {
                     conversions::apply_convert(state, name);

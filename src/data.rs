@@ -115,7 +115,7 @@ lazy_static! {
             "TestEdict",
             Conversion::init(
                 "TestEdict",
-                ConversionLength::Medium,
+                ConversionLength::Short,
                 vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
                 vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
             ),

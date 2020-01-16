@@ -102,9 +102,6 @@ mod tests {
     }
 
     #[test]
-    fn start_building_but_empty_before_finished() {}
-
-    #[test]
     fn build_valid_building() {
         let mut state = process::init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];

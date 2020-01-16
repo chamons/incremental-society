@@ -5,7 +5,7 @@ pub enum DelayedAction {
     Edict(String),
     Conversion(String),
     SustainPops(),
-    Build(),
+    Build(String, usize),
     Destroy(usize, usize),
 }
 

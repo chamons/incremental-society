@@ -1,5 +1,6 @@
 use super::{process, EngineError};
-use crate::state::{Building, GameState};
+use crate::data;
+use crate::state::{Building, DelayedAction, GameState, Waiter};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -11,6 +12,15 @@ pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(),
     if region.buildings.len() >= region.max_building_count() {
         return Err(EngineError::init("Insufficient room for building"));
     }
+
+    if state
+        .actions
+        .iter()
+        .any(|x| if let DelayedAction::Build(_, _) = x.action { true } else { false })
+    {
+        return Err(EngineError::init("Unable to build due to another building already in progress."));
+    }
+
     Ok(())
 }
 
@@ -32,16 +42,29 @@ pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), 
     Ok(())
 }
 
+const BUILD_LENGTH: u32 = 250;
+
 pub fn build(state: &mut GameState, building: Building, region_index: usize) -> Result<(), EngineError> {
     can_build_in_region(state, region_index)?;
     can_build_building(state, &building)?;
 
     state.resources.remove_range(&building.build_cost);
 
-    let region = state.regions.get_mut(region_index).unwrap();
-    region.add_building(building);
+    let action = Waiter::init_one_shot(
+        &format!("Build {}", building.name)[..],
+        BUILD_LENGTH,
+        DelayedAction::Build(building.name.to_string(), region_index),
+    );
+    state.actions.push(action);
     process::recalculate(state);
+
     Ok(())
+}
+
+pub fn apply_build(state: &mut GameState, building: &str, region_index: usize) {
+    let region = state.regions.get_mut(region_index).unwrap();
+    region.add_building(data::get_building(building));
+    process::recalculate(state);
 }
 
 #[cfg(test)]
@@ -102,6 +125,16 @@ mod tests {
     }
 
     #[test]
+    fn build_multiple_buildings_at_once() {
+        let mut state = process::init_empty_game_state();
+        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Building")]));
+        process::recalculate(&mut state);
+
+        build(&mut state, get_building("Test Gather Hut"), 0).unwrap();
+        assert!(build(&mut state, get_building("Test Gather Hut"), 0).is_err());
+    }
+
+    #[test]
     fn build_valid_building() {
         let mut state = process::init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_building("Test Building")])];
@@ -111,8 +144,15 @@ mod tests {
         let old_storage = state.derived_state.storage[ResourceKind::Fuel];
 
         build(&mut state, get_building("Test Building"), 0).unwrap();
-
         assert_eq!(10, state.resources[ResourceKind::Fuel]);
+
+        for _ in 0..BUILD_LENGTH {
+            assert_eq!(1, state.buildings().len());
+            process::process_tick(&mut state);
+        }
+
+        // Chops from Test Building
+        assert_eq!(10 + 4, state.resources[ResourceKind::Fuel]);
         assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }

@@ -113,6 +113,11 @@ mod tests {
         let old_storage = state.derived_state.storage[ResourceKind::Food];
         assert!(destroy(&mut state, 1, 0).is_ok());
 
+        for _ in 0..DESTROY_LENGTH {
+            assert_eq!(3, state.buildings().len());
+            process::process_tick(&mut state);
+        }
+
         assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Food]);
     }

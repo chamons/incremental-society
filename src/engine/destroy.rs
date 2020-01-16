@@ -23,6 +23,14 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
 
+    if state
+        .actions
+        .iter()
+        .any(|x| if let DelayedAction::Destroy(_, _) = x.action { true } else { false })
+    {
+        return Err(EngineError::init(format!("Unable to destroy due to another destruction taking place already.")));
+    }
+
     Ok(())
 }
 
@@ -57,7 +65,7 @@ mod tests {
     use std::error::Error;
 
     use crate::data::get_building;
-    use crate::state::ResourceKind;
+    use crate::state::{Region, ResourceKind};
 
     #[test]
     fn destroy_invalid_region() {
@@ -90,7 +98,13 @@ mod tests {
 
     #[test]
     fn destroy_building_already_being_destroyed() {
-        let mut state = process::init_test_game_state();
+        let mut state = process::init_empty_game_state();
+        state.regions.push(Region::init_with_buildings(
+            "Region",
+            vec![get_building("Empty Building"), get_building("Empty Building")],
+        ));
+        assert!(destroy(&mut state, 0, 0).is_ok());
+        assert!(destroy(&mut state, 0, 1).is_err());
     }
 
     #[test]

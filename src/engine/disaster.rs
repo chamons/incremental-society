@@ -1,7 +1,7 @@
 use std::cmp;
 
 use super::destroy;
-use crate::state::{DelayedAction, GameState, ResourceKind, Waiter, NUM_RESOURCES};
+use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
 use rand::prelude::*;
 

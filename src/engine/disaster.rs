@@ -1,7 +1,7 @@
 use std::cmp;
 
 use super::destroy;
-use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
+use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
 use rand::prelude::*;
 
@@ -44,12 +44,23 @@ pub fn disaster(state: &mut GameState) {
 
             let (region_index, building_index) = *all_buildings.get(index_to_destroy).unwrap();
 
-            // Ignore buildings unable to be destroy
-            let _ = destroy(state, region_index, building_index);
+            destroy::apply_destroy(state, region_index, building_index);
         }
     }
 
     state.resources[ResourceKind::Instability] = 0;
+
+    // Cancel any buildings being destroyed, as they may already be gone and we'll kill the wrong building
+    let actions_to_cancel: Vec<usize> = state
+        .actions
+        .iter()
+        .enumerate()
+        .filter_map(|(i, x)| if let DelayedAction::Destroy(_, _) = x.action { Some(i) } else { None })
+        .collect();
+
+    for i in actions_to_cancel.iter().rev() {
+        state.actions.remove(*i);
+    }
 }
 
 pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> {
@@ -65,6 +76,7 @@ pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> 
 mod tests {
     use super::{super::process, *};
     use crate::data::get_building;
+    use crate::engine::destroy;
     use crate::state::Region;
 
     #[test]
@@ -126,6 +138,16 @@ mod tests {
         state.resources[ResourceKind::Instability] = 100;
         disaster(&mut state);
         assert_eq!(0, state.resources[ResourceKind::Instability]);
+    }
+
+    #[test]
+    fn disaster_cancels_any_buildings_to_be_destroyed() {
+        let mut state = process::init_empty_game_state();
+        state.resources[ResourceKind::Instability] = 100;
+        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Empty Building")]));
+        destroy(&mut state, 0, 0).unwrap();
+        disaster(&mut state);
+        assert!(state.action_with_name("Destroy Empty Building").is_none());
     }
 
     #[test]

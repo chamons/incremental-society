@@ -130,7 +130,7 @@ impl<'a> UI<'a> {
                                     let building = data::get_building(&buildings[building_index]);
                                     match engine::destroy(&mut state, region_index, building_index) {
                                         Err(e) => self.set_message(e.description()),
-                                        _ => self.set_message(format!("Destroyed {}", building.name)),
+                                        _ => self.set_message(format!("Destroying {}", building.name)),
                                     }
                                 }
                                 None => self.clear_message(),

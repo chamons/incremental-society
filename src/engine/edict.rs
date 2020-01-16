@@ -22,6 +22,8 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
     can_invoke_edict(&state, edict_name)?;
     let edict = get_edict(edict_name);
 
+    state.resources.remove_range(&edict.input);
+
     let action = Waiter::init_one_shot(edict_name, edict.tick_length(), DelayedAction::Edict(edict_name.to_string()));
     state.actions.push(action);
     process::recalculate(state);
@@ -29,20 +31,40 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
     Ok(())
 }
 
+pub fn apply_edict(state: &mut GameState, name: &str) {
+    // We've already paid the cost on queue, so just get the output
+    state.resources.add_range(&get_edict(name).output);
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{super::process, *};
     use std::error::Error;
 
-    use crate::state::ResourceKind;
+    use super::{super::process, *};
+    use crate::data;
+    use crate::state::{Region, ResourceKind};
 
     #[test]
     fn invoke_valid() {
-        let mut state = process::init_test_game_state();
+        let mut state = process::init_empty_game_state();
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![data::get_building("Stability Building")]));
         state.resources[ResourceKind::Fuel] = 1;
 
         edict(&mut state, "TestEdict").unwrap();
         state.action_with_name("TestEdict").unwrap();
+        assert_eq!(0, state.resources[ResourceKind::Fuel]);
+
+        for _ in 0..get_edict("TestEdict").tick_length() {
+            assert_eq!(0, state.resources[ResourceKind::Fuel]);
+            assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+
+            process::process_tick(&mut state);
+        }
+
+        assert_eq!(0, state.resources[ResourceKind::Fuel]);
+        assert_eq!(1, state.resources[ResourceKind::Knowledge]);
     }
 
     #[test]

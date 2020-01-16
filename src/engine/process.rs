@@ -1,3 +1,4 @@
+use super::build;
 use super::conversions;
 use super::destroy;
 use super::edict;
@@ -26,7 +27,7 @@ fn apply_actions(state: &mut GameState) {
                     conversions::apply_convert(state, "Sustain Population");
                 }
             }
-            DelayedAction::Build() => {}
+            DelayedAction::Build(building, region_index) => build::apply_build(state, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
         }
     }

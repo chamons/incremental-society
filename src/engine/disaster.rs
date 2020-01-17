@@ -1,7 +1,7 @@
 use std::cmp;
 
 use super::destroy;
-use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
+use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 use rand::prelude::*;
 
@@ -55,7 +55,7 @@ pub fn disaster(state: &mut GameState) {
         .actions
         .iter()
         .enumerate()
-        .filter_map(|(i, x)| if let DelayedAction::Destroy(_, _) = x.action { Some(i) } else { None })
+        .filter_map(|(i, x)| if x.action.is_destroy() { Some(i) } else { None })
         .collect();
 
     for i in actions_to_cancel.iter().rev() {

@@ -1,6 +1,7 @@
 use std::fmt;
 
 use super::resources::*;
+use crate::data;
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -105,10 +106,10 @@ impl Conversion {
 
     pub fn tick_length(&self) -> u32 {
         match &self.length {
-            ConversionLength::Short => 50,
-            ConversionLength::Medium => 100,
-            ConversionLength::Long => 200,
-            ConversionLength::Epic => 400,
+            ConversionLength::Short => data::SHORT_CONVERSION,
+            ConversionLength::Medium => data::MEDIUM_CONVERSION,
+            ConversionLength::Long => data::LONG_CONVERSION,
+            ConversionLength::Epic => data::EPIC_CONVERSION,
         }
     }
 

@@ -1,8 +1,7 @@
 use super::building::Building;
+use crate::data;
 
 use serde::{Deserialize, Serialize};
-
-pub const REGION_BUILDING_COUNT: usize = 2;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Region {
@@ -34,6 +33,6 @@ impl Region {
     }
 
     pub fn max_building_count(&self) -> usize {
-        REGION_BUILDING_COUNT
+        data::REGION_BUILDING_COUNT
     }
 }

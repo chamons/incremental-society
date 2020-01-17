@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, is_enum_variant)]
 pub enum DelayedAction {
     Edict(String),
     Conversion(String),

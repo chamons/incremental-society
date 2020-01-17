@@ -1,10 +1,19 @@
-- Gameplay pass 1
+## Todo
+
+- Research
+- Debug Menu
+    - Jump to hard coded states
+    - Dump state to file
+- Upgrades (Cost per person/building to upgrade/change existing)
+
+- Gameplay pass through middle stone age
+
+
+- Research 1 of 3
+- Gameplay pass through late stone age
 
 ## Longer Term
 
-- Research
-- Upgrades (Cost per person/building to upgrade/change existing)
-- Research 1 of 3
 - Regions Resources
 - Random regions
 - Buildings that require resources

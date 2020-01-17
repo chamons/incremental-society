@@ -1,5 +1,5 @@
-use super::process;
-use super::EngineError;
+use super::{process, EngineError};
+use crate::data;
 use crate::state::{DelayedAction, GameState, Waiter};
 
 pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
@@ -23,18 +23,12 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
 
-    if state
-        .actions
-        .iter()
-        .any(|x| if let DelayedAction::Destroy(_, _) = x.action { true } else { false })
-    {
+    if state.actions.iter().any(|x| x.action.is_destroy()) {
         return Err(EngineError::init("Unable to destroy due to another destruction taking place already."));
     }
 
     Ok(())
 }
-
-const DESTROY_LENGTH: u32 = 50;
 
 pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
     can_destroy_building(state, region_index, building_index)?;
@@ -44,7 +38,7 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
 
     let action = Waiter::init_one_shot(
         &format!("Destroy {}", building.name)[..],
-        DESTROY_LENGTH,
+        data::DESTROY_LENGTH,
         DelayedAction::Destroy(region_index, building_index),
     );
     state.actions.push(action);
@@ -113,7 +107,7 @@ mod tests {
         let old_storage = state.derived_state.storage[ResourceKind::Food];
         assert!(destroy(&mut state, 1, 0).is_ok());
 
-        for _ in 0..DESTROY_LENGTH {
+        for _ in 0..data::DESTROY_LENGTH {
             assert_eq!(3, state.buildings().len());
             process::process_tick(&mut state);
         }

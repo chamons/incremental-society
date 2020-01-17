@@ -1,7 +1,5 @@
 ## Todo
 
-- Only one edict at a time
-- Conversions without required inputs (without bad effect) should pause until input satisfied
 - Research
 - Debug Menu
     - Jump to hard coded states

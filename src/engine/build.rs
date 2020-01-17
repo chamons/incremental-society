@@ -13,11 +13,7 @@ pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(),
         return Err(EngineError::init("Insufficient room for building"));
     }
 
-    if state
-        .actions
-        .iter()
-        .any(|x| if let DelayedAction::Build(_, _) = x.action { true } else { false })
-    {
+    if state.actions.iter().any(|x| x.action.is_build()) {
         return Err(EngineError::init("Unable to build due to another building already in progress."));
     }
 

@@ -130,6 +130,7 @@ lazy_static! {
                 vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
             ),
         );
+        m.insert("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![]));
         m.insert(
             "TestHunt",
             Conversion::init("TestHunt", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),

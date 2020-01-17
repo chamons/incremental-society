@@ -41,7 +41,7 @@ pub fn sync_building_to_conversions(state: &mut GameState) {
         state.actions.push(action);
     }
 
-    if !state.actions.iter().any(|x| x.name == "Sustain Population") {
+    if state.action_with_name("Sustain Population").is_none() {
         let action = Waiter::init_repeating("Sustain Population", data::SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
         state.actions.push(action);
     }

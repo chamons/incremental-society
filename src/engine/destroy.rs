@@ -23,11 +23,7 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
 
-    if state
-        .actions
-        .iter()
-        .any(|x| if let DelayedAction::Destroy(_, _) = x.action { true } else { false })
-    {
+    if state.actions.iter().any(|x| x.action.is_destroy()) {
         return Err(EngineError::init("Unable to destroy due to another destruction taking place already."));
     }
 

@@ -4,7 +4,7 @@ use crate::data::get_edict;
 use crate::state::{DelayedAction, GameState, Waiter};
 
 pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineError> {
-    if state.action_with_name(edict).is_some() {
+    if state.actions.iter().any(|x| x.action.is_edict()) {
         return Err(EngineError::init("Edict already in progress"));
     }
 
@@ -74,12 +74,12 @@ mod tests {
     }
 
     #[test]
-    fn invoke_can_not_while_itself_in_flight() {
+    fn invoke_can_not_while_any_edict_in_flight() {
         let mut state = process::init_test_game_state();
         state.resources[ResourceKind::Fuel] = 1;
         edict(&mut state, "TestEdict").unwrap();
 
-        assert_eq!("Edict already in progress", edict(&mut state, "TestEdict").unwrap_err().description());
+        assert_eq!("Edict already in progress", edict(&mut state, "OtherTestEdict").unwrap_err().description());
     }
 
     #[test]

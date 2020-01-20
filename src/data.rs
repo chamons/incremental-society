@@ -187,7 +187,7 @@ lazy_static! {
             ]),
         );
 
-        m.insert("Test Immortal", *Building::init("Test Immortal").as_immortal());
+        m.insert("Test Immortal", Building::init("Test Immortal").as_immortal());
 
         m
     };

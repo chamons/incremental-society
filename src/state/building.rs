@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub struct Building {
     pub name: String,
     pub conversions: Vec<String>,
+    pub research: Vec<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
     pub pops: u32,
@@ -20,6 +21,7 @@ impl Building {
         Building {
             name: name.to_owned(),
             conversions: vec![],
+            research: vec![],
             build_cost: vec![],
             storage: vec![],
             pops: 0,
@@ -47,6 +49,11 @@ impl Building {
         self
     }
 
+    pub fn with_research(mut self, research: Vec<&str>) -> Building {
+        self.research = research.iter().map(|x| (*x).to_owned()).collect();
+        self
+    }
+
     pub fn as_immortal(mut self) -> Building {
         self.immortal = true;
         self
@@ -64,6 +71,10 @@ impl Building {
         }
 
         details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
+
+        if self.research.len() > 0 {
+            details.push(format!("Requires Research: {}", self.research.iter().format(", ")));
+        }
 
         details
     }

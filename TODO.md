@@ -1,10 +1,8 @@
 ## Todo
 
 - Research
-    - Research is stored, and can have dependencies
-    - Available items for research
+    - Conversion builder pattern like building
     - Research unlocks edicts
-    - Research unlocks buildings
     - Research action itself
     - Research in UI
 

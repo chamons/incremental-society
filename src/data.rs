@@ -187,6 +187,11 @@ lazy_static! {
             ]),
         );
 
+        m.insert(
+            "Requires Research Building",
+            Building::init("Requires Research Building").with_research(vec!["TestNoDeps"]),
+        );
+
         m.insert("Test Immortal", Building::init("Test Immortal").as_immortal());
 
         m

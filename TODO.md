@@ -1,6 +1,14 @@
 ## Todo
 
 - Research
+    - Research is stored, and can have dependencies
+    - Available items for research
+    - Research unlocks edicts
+    - Research unlocks buildings
+    - Research action itself
+    - Research in UI
+
+
 - Debug Menu
     - Jump to hard coded states
     - Dump state to file

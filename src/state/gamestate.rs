@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use super::actions::Waiter;
 use super::building::Building;
 use super::region::Region;
@@ -10,6 +12,7 @@ pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
     pub actions: Vec<Waiter>,
+    pub research: HashSet<String>,
 
     #[serde(skip)]
     #[serde(default = "crate::engine::DerivedState::init")]

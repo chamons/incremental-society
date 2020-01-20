@@ -16,3 +16,6 @@ pub use destroy::{can_destroy_building, destroy};
 pub use edict::{can_invoke_edict, edict};
 pub use error::EngineError;
 pub use process::{init_new_game_state, process_tick};
+
+#[cfg(test)]
+pub use process::init_empty_game_state;

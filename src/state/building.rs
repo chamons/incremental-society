@@ -16,26 +16,40 @@ pub struct Building {
 }
 
 impl Building {
-    pub fn init_single(name: &'static str, conversion: &'static str, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>, pops: u32) -> Building {
+    pub fn init(name: &'static str) -> Building {
         Building {
             name: name.to_owned(),
-            conversions: vec![conversion.to_owned()],
-            build_cost,
-            storage,
-            pops,
+            conversions: vec![],
+            build_cost: vec![],
+            storage: vec![],
+            pops: 0,
             immortal: false,
         }
     }
 
-    pub fn init(name: &'static str, conversions: Vec<&'static str>, build_cost: Vec<ResourceAmount>, storage: Vec<ResourceAmount>, pops: u32) -> Building {
-        Building {
-            name: name.to_owned(),
-            conversions: conversions.iter().map(|x| (*x).to_string()).collect(),
-            build_cost,
-            storage,
-            pops,
-            immortal: false,
-        }
+    pub fn with_conversions(mut self, conversions: Vec<&str>) -> Building {
+        self.conversions = conversions.iter().map(|x| (*x).to_owned()).collect();
+        self
+    }
+
+    pub fn with_build_cost(mut self, cost: Vec<ResourceAmount>) -> Building {
+        self.build_cost = cost;
+        self
+    }
+
+    pub fn with_storage(mut self, storage: Vec<ResourceAmount>) -> Building {
+        self.storage = storage;
+        self
+    }
+
+    pub fn with_pops(mut self, pops: u32) -> Building {
+        self.pops = pops;
+        self
+    }
+
+    pub fn as_immortal(mut self) -> Building {
+        self.immortal = true;
+        self
     }
 
     pub fn details(&self) -> Vec<String> {

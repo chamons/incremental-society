@@ -30,16 +30,6 @@ lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
         m.insert(
-            "Sustain Population",
-            Conversion::init_required(
-                "Sustain Population",
-                ConversionLength::Short,
-                vec![ResourceAmount::init(ResourceKind::Food, 1)],
-                vec![ResourceAmount::init(ResourceKind::Instability, -1)],
-                vec![ResourceAmount::init(ResourceKind::Instability, 15)],
-            ),
-        );
-        m.insert(
             "Gathering",
             Conversion::init(
                 "Gathering",
@@ -121,10 +111,6 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert(
-            "Sustain Population",
-            Conversion::init("Sustain Population", ConversionLength::Medium, vec![], vec![]),
-        );
         m.insert(
             "TestChop",
             Conversion::init("TestChop", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),

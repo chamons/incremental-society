@@ -6,7 +6,7 @@ use super::destroy;
 use super::edict;
 use super::DerivedState;
 use crate::data;
-use crate::state::{DelayedAction, GameState, Region, ResourceTotal};
+use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     apply_actions(state);
@@ -24,14 +24,25 @@ fn apply_actions(state: &mut GameState) {
                     conversions::apply_convert(state, name);
                 }
             }
-            DelayedAction::SustainPops() => {
-                for _ in 0..state.derived_state.pops {
-                    conversions::apply_convert(state, "Sustain Population");
-                }
-            }
+            DelayedAction::SustainPops() => sustain_population(state),
             DelayedAction::Build(building, region_index) => build::apply_build(state, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
         }
+    }
+}
+
+fn sustain_population(state: &mut GameState) {
+    const FOOD_PER_POP: i64 = 1;
+    const INSTABILITY_PER_MISSING_FOOD: i64 = 15;
+
+    let required_food = state.derived_state.pops as i64 * FOOD_PER_POP;
+    if state.resources[ResourceKind::Food] >= required_food {
+        state.resources.remove(ResourceKind::Food, required_food);
+        state.resources.remove(ResourceKind::Instability, state.derived_state.pops as i64);
+    } else {
+        let missing_food = required_food - state.resources[ResourceKind::Food];
+        state.resources.remove(ResourceKind::Food, state.resources[ResourceKind::Food]);
+        state.resources.add(ResourceKind::Instability, missing_food * INSTABILITY_PER_MISSING_FOOD);
     }
 }
 
@@ -165,5 +176,26 @@ mod tests {
 
         assert_eq!(1, state.resources[ResourceKind::Food]);
         assert_eq!(4, state.resources[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn sustain_population_with_food() {
+        let mut state = init_test_game_state();
+        state.resources[ResourceKind::Food] = 10;
+        state.resources[ResourceKind::Instability] = 50;
+        sustain_population(&mut state);
+
+        assert_eq!(6, state.resources[ResourceKind::Food]);
+        assert!(state.resources[ResourceKind::Instability] < 50);
+    }
+
+    #[test]
+    fn sustain_population_without_enough_food() {
+        let mut state = init_test_game_state();
+        state.resources[ResourceKind::Food] = 2;
+        sustain_population(&mut state);
+
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        assert!(state.resources[ResourceKind::Instability] > 0);
     }
 }

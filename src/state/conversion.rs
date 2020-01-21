@@ -33,8 +33,8 @@ impl Conversion {
         Conversion {
             name: name.to_owned(),
             length,
-            input: input,
-            output: output,
+            input,
+            output,
         }
     }
 

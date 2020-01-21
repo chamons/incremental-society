@@ -54,7 +54,7 @@ impl Building {
         self
     }
 
-    pub fn as_immortal(mut self) -> Building {
+    pub fn with_immortal(mut self) -> Building {
         self.immortal = true;
         self
     }
@@ -72,7 +72,7 @@ impl Building {
 
         details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
 
-        if self.research.len() > 0 {
+        if !self.research.is_empty() {
             details.push(format!("Requires Research: {}", self.research.iter().format(", ")));
         }
 

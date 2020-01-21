@@ -47,7 +47,7 @@ lazy_static! {
                     ResourceAmount::init(ResourceKind::Instability, 50),
                 ])
                 .with_pops(3)
-                .as_immortal(),
+                .with_immortal(),
         );
 
         m.insert(
@@ -158,7 +158,7 @@ lazy_static! {
             Building::init("Requires Research Building").with_research(vec!["TestNoDeps"]),
         );
 
-        m.insert("Test Immortal", Building::init("Test Immortal").as_immortal());
+        m.insert("Test Immortal", Building::init("Test Immortal").with_immortal());
 
         m
     };

@@ -78,7 +78,10 @@ impl ResourceTotal {
     }
 
     pub fn remove(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
-        debug_assert!(self.has(resource, amount));
+        crate::engine::die_unless(
+            self.has(resource, amount),
+            &format!("Tried to remove {} {} from state which only had {}.", amount, resource, self[resource]),
+        );
         self[resource] -= amount;
     }
 

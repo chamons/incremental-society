@@ -1,9 +1,5 @@
 ## Todo
 
-- Research
-    - Research in UI
-
-
 - Debug Menu
     - Jump to hard coded states
     - Dump state to file

@@ -1,3 +1,4 @@
+use std::cmp::min;
 use std::collections::HashSet;
 
 use super::build;
@@ -40,7 +41,10 @@ fn sustain_population(state: &mut GameState) {
     let required_food = state.derived_state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {
         state.resources.remove(ResourceKind::Food, required_food);
-        state.resources.remove(ResourceKind::Instability, state.derived_state.pops as i64);
+        state.resources.remove(
+            ResourceKind::Instability,
+            min(state.derived_state.pops as i64, state.resources[ResourceKind::Instability]),
+        );
     } else {
         let missing_food = required_food - state.resources[ResourceKind::Food];
         state.resources.remove(ResourceKind::Food, state.resources[ResourceKind::Food]);

@@ -1,4 +1,4 @@
-use crate::state::{Building, Conversion, ConversionLength, ResourceAmount, ResourceKind};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind};
 
 use std::collections::HashMap;
 
@@ -6,6 +6,7 @@ pub const BUILD_LENGTH: u32 = 30 * 8;
 pub const SUSTAIN_POP_DURATION: u32 = 80;
 pub const DESTROY_LENGTH: u32 = 30 * 5;
 pub const REGION_BUILDING_COUNT: usize = 2;
+pub const RESEARCH_LENGTH: u32 = 30 * 8;
 
 pub const SHORT_CONVERSION: u32 = 50;
 pub const MEDIUM_CONVERSION: u32 = 100;
@@ -16,16 +17,6 @@ pub const EPIC_CONVERSION: u32 = 300;
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert(
-            "Sustain Population",
-            Conversion::init_required(
-                "Sustain Population",
-                ConversionLength::Short,
-                vec![ResourceAmount::init(ResourceKind::Food, 1)],
-                vec![ResourceAmount::init(ResourceKind::Instability, -1)],
-                vec![ResourceAmount::init(ResourceKind::Instability, 15)],
-            ),
-        );
         m.insert(
             "Gathering",
             Conversion::init(
@@ -40,63 +31,67 @@ lazy_static! {
             "Hunting",
             Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
         );
-        m.insert(
-            "Feast",
-            Conversion::init(
-                "Feast",
-                ConversionLength::Epic,
-                vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
-            ),
-        );
 
         m
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
-        let mut m = HashMap::new();
-        {
-            let mut building = Building::init(
-                "Settlement",
-                vec!["Hunting"],
-                vec![],
-                vec![
+        let mut m: HashMap<&'static str, Building> = HashMap::new();
+        m.insert(
+            "Settlement",
+            Building::init("Settlement")
+                .with_conversions(vec!["Hunting"])
+                .with_storage(vec![
                     ResourceAmount::init(ResourceKind::Food, 50),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
-                ],
-                3,
-            );
-            building.immortal = true;
-            m.insert("Settlement", building);
-        }
+                ])
+                .with_pops(3)
+                .with_immortal(),
+        );
+
         m.insert(
             "Gathering Camp",
-            Building::init(
-                "Gathering Camp",
-                vec!["Gathering", "Gathering", "Hunting"],
-                vec![ResourceAmount::init(ResourceKind::Fuel, 0)],
-                vec![ResourceAmount::init(ResourceKind::Fuel, 25)],
-                3,
-            ),
+            Building::init("Gathering Camp")
+                .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
+                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
+                .with_pops(3),
         );
+
         m.insert(
             "Hunting Grounds",
-            Building::init(
-                "Hunting Grounds",
-                vec!["Hunting"],
-                vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                0,
-            ),
+            Building::init("Hunting Grounds")
+                .with_conversions(vec!["Hunting"])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
         );
 
         m
     };
-    static ref EDICTS: Vec<&'static str> = {
-        let mut e = Vec::new();
-        e.push("Feast");
+    static ref EDICTS: HashMap<&'static str, Edict> = {
+        let mut e: HashMap<&'static str, Edict> = HashMap::new();
+        e.insert(
+            "Feast",
+            Edict::init(
+                "Feast",
+                Conversion::init(
+                    "Feast",
+                    ConversionLength::Epic,
+                    vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
+                ),
+            ),
+        );
+
         e
+    };
+    static ref RESEARCH: HashMap<&'static str, Research> = {
+        let mut m = HashMap::new();
+        m.insert(
+            "Settlement",
+            Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+        );
+        m
     };
 }
 
@@ -104,10 +99,6 @@ lazy_static! {
 lazy_static! {
     static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
-        m.insert(
-            "Sustain Population",
-            Conversion::init("Sustain Population", ConversionLength::Medium, vec![], vec![]),
-        );
         m.insert(
             "TestChop",
             Conversion::init("TestChop", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
@@ -121,15 +112,7 @@ lazy_static! {
                 vec![ResourceAmount::init(ResourceKind::Food, 1)],
             ),
         );
-        m.insert(
-            "TestEdict",
-            Conversion::init(
-                "TestEdict",
-                ConversionLength::Short,
-                vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
-                vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
-            ),
-        );
+
         m.insert("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![]));
         m.insert(
             "TestHunt",
@@ -139,64 +122,83 @@ lazy_static! {
     };
     static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
-        m.insert("Empty Building", Building::init("Empty Building", vec![], vec![], vec![], 0));
+        m.insert("Empty Building", Building::init("Empty Building"));
         m.insert(
             "Test Building",
-            Building::init(
-                "Test Building",
-                vec!["TestChop", "TestChop"],
-                vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
-                vec![ResourceAmount::init(ResourceKind::Fuel, 15)],
-                2,
-            ),
+            Building::init("Test Building")
+                .with_conversions(vec!["TestChop", "TestChop"])
+                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 10)])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 15)])
+                .with_pops(2),
         );
         m.insert(
             "Test Gather Hut",
-            Building::init(
-                "Test Gather Hut",
-                vec!["TestGather"],
-                vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                0,
-            ),
+            Building::init("Test Gather Hut")
+                .with_conversions(vec!["TestGather"])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
         );
 
         m.insert(
             "Test Hunt Cabin",
-            Building::init(
-                "Test Hunt Cabin",
-                vec!["TestHunt", "TestHunt"],
-                vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                0,
-            ),
+            Building::init("Test Hunt Cabin")
+                .with_conversions(vec!["TestHunt", "TestHunt"])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
         );
 
         m.insert(
             "Stability Building",
-            Building::init(
-                "Stability Building",
-                vec![],
-                vec![],
-                vec![
-                    ResourceAmount::init(ResourceKind::Knowledge, 10),
-                    ResourceAmount::init(ResourceKind::Instability, 10),
-                ],
-                0,
-            ),
+            Building::init("Stability Building").with_storage(vec![
+                ResourceAmount::init(ResourceKind::Knowledge, 10),
+                ResourceAmount::init(ResourceKind::Instability, 10),
+            ]),
         );
 
-        {
-            let mut building = Building::init("Test Immortal", vec![""], vec![], vec![], 0);
-            building.immortal = true;
-            m.insert("Test Immortal", building);
-        }
+        m.insert(
+            "Requires Research Building",
+            Building::init("Requires Research Building").with_research(vec!["TestNoDeps"]),
+        );
+
+        m.insert("Test Immortal", Building::init("Test Immortal").with_immortal());
+
         m
     };
-    static ref EDICTS: Vec<&'static str> = {
-        let mut e = Vec::new();
-        e.push("TestEdict");
+    static ref EDICTS: HashMap<&'static str, Edict> = {
+        let mut e: HashMap<&'static str, Edict> = HashMap::new();
+        e.insert(
+            "TestEdict",
+            Edict::init(
+                "TestEdict",
+                Conversion::init(
+                    "TestEdict",
+                    ConversionLength::Short,
+                    vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
+                ),
+            ),
+        );
+        e.insert(
+            "TestEdictWithResearch",
+            Edict::init(
+                "TestEdictWithResearch",
+                Conversion::init("TestEdictWithResearch", ConversionLength::Short, vec![], vec![]),
+            )
+            .with_research(vec!["TestNoDeps"]),
+        );
+
         e
+    };
+    static ref RESEARCH: HashMap<&'static str, Research> = {
+        let mut m = HashMap::new();
+
+        m.insert("TestNoDeps", Research::init("TestNoDeps"));
+        m.insert("Dep", Research::init("Dep"));
+        m.insert("TestWithDep", Research::init("TestWithDep").with_dependencies(vec!["Dep"]));
+        m.insert(
+            "TestWithCost",
+            Research::init("TestWithCost").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+        );
+
+        m
     };
 }
 
@@ -216,10 +218,18 @@ pub fn get_building_names() -> Vec<String> {
         .collect()
 }
 
-pub fn get_edict(name: &str) -> Conversion {
-    CONVERSIONS[name].clone()
+pub fn get_edict(name: &str) -> Edict {
+    EDICTS[name].clone()
 }
 
 pub fn get_edict_names() -> Vec<String> {
-    EDICTS.iter().map(|x| (*x).to_string()).collect()
+    EDICTS.keys().map(|x| (*x).to_string()).collect()
+}
+
+pub fn get_research(name: &str) -> Research {
+    RESEARCH[name].clone()
+}
+
+pub fn get_research_names() -> Vec<String> {
+    RESEARCH.keys().map(|x| (*x).to_string()).collect()
 }

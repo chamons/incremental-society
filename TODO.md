@@ -1,9 +1,12 @@
 ## Todo
 
-- Research
 - Debug Menu
     - Jump to hard coded states
     - Dump state to file
+- Debug Assert
+    - Dump game state to file
+    - Print something
+    - Then die
 - Upgrades (Cost per person/building to upgrade/change existing)
 
 - Gameplay pass through middle stone age
@@ -21,5 +24,6 @@
 - Pop growth over time
 
 ## Ideas
+
 - Infrastructure bonus for goods, and max per tech
 - Morale in each region? Lose regions if conquered or rebel?

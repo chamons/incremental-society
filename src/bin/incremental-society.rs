@@ -92,7 +92,7 @@ impl<'a> UI<'a> {
             }
 
             if is_char(input, 'b') {
-                let building_options = data::get_building_names();
+                let building_options = &state.derived_state.available_buildings;
                 let selection = Selection::init_list(
                     &building_options,
                     |o| engine::can_build_building(&state, &data::get_building(&building_options[o])).is_ok(),
@@ -142,17 +142,41 @@ impl<'a> UI<'a> {
             }
 
             if is_char(input, 'e') {
-                let edicts = data::get_edict_names();
+                let edicts = &state.derived_state.available_edicts;
                 let selection = Selection::init_list(
                     &edicts,
                     |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok(),
-                    |o| data::get_edict(edicts.get(o).unwrap()).details(),
+                    |o| data::get_edict(edicts.get(o).unwrap()).conversion.details(),
                 );
                 match OptionList::init(&self.term, selection).run() {
-                    Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {
-                        Err(e) => self.set_message(e.description()),
-                        _ => self.clear_message(),
-                    },
+                    Some(edict_index) => {
+                        let edict_name = edicts.get(edict_index).unwrap().to_string();
+
+                        match engine::edict(&mut state, &edict_name) {
+                            Err(e) => self.set_message(e.description()),
+                            _ => self.clear_message(),
+                        }
+                    }
+                    None => self.clear_message(),
+                }
+            }
+
+            if is_char(input, 'r') {
+                let research = &state.derived_state.available_research;
+                let selection = Selection::init_list(
+                    &research,
+                    |o| engine::can_research(&state, research.get(o).unwrap()).is_ok(),
+                    |o| data::get_research(research.get(o).unwrap()).details(),
+                );
+                match OptionList::init(&self.term, selection).run() {
+                    Some(edict_index) => {
+                        let research_name = research.get(edict_index).unwrap().to_string();
+
+                        match engine::research(&mut state, &research_name) {
+                            Err(e) => self.set_message(e.description()),
+                            _ => self.clear_message(),
+                        }
+                    }
                     None => self.clear_message(),
                 }
             }

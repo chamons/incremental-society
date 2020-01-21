@@ -18,12 +18,12 @@ pub struct Selection {
 }
 
 impl Selection {
-    pub fn init_list(names: &[String], active: impl Fn(usize) -> bool, details: impl Fn(usize) -> Vec<String>) -> Vec<Selection> {
+    pub fn init_list<T: AsRef<str>>(names: &[T], active: impl Fn(usize) -> bool, details: impl Fn(usize) -> Vec<String>) -> Vec<Selection> {
         names
             .iter()
             .enumerate()
             .map(|(i, n)| Selection {
-                name: n.to_string(),
+                name: n.as_ref().to_string(),
                 active: active(i),
                 details: details(i),
             })

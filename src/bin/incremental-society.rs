@@ -180,6 +180,24 @@ impl<'a> UI<'a> {
                     None => self.clear_message(),
                 }
             }
+
+            #[cfg(debug_assertions)]
+            {
+                if is_char(input, '~') {
+                    let debug_options = vec!["Dump State", "Load Default GameState", "Max Resources", "Complete Actions"];
+                    let selection = Selection::init_list(&debug_options, |_| true, |_| vec![]);
+                    match OptionList::init(&self.term, selection).run() {
+                        Some(debug_index) => match debug_index {
+                            0 => engine::dump_state(&state),
+                            1 => engine::load_default_state(&mut state),
+                            2 => engine::max_resources(&mut state),
+                            3 => engine::complete_actions(&mut state),
+                            _ => self.clear_message(),
+                        },
+                        None => self.clear_message(),
+                    }
+                }
+            }
         }
 
         false

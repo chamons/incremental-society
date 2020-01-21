@@ -8,7 +8,7 @@ use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 use dirs::home_dir;
 
 fn get_home_dir_file_path(file_name: &str) -> PathBuf {
-    let home = PathBuf::from(home_dir().unwrap_or(PathBuf::from("")));
+    let home = home_dir().unwrap_or_default();
     let file = PathBuf::from(file_name);
     home.join(file)
 }

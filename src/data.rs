@@ -1,4 +1,4 @@
-use crate::state::{Building, Conversion, ConversionLength, Research, ResourceAmount, ResourceKind};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind};
 
 use std::collections::HashMap;
 
@@ -6,24 +6,12 @@ pub const BUILD_LENGTH: u32 = 30 * 8;
 pub const SUSTAIN_POP_DURATION: u32 = 80;
 pub const DESTROY_LENGTH: u32 = 30 * 5;
 pub const REGION_BUILDING_COUNT: usize = 2;
+pub const RESEARCH_LENGTH: u32 = 30 * 8;
 
 pub const SHORT_CONVERSION: u32 = 50;
 pub const MEDIUM_CONVERSION: u32 = 100;
 pub const LONG_CONVERSION: u32 = 150;
 pub const EPIC_CONVERSION: u32 = 300;
-
-macro_rules! set(
-    { $($key:expr),* } => {
-        {
-            #[allow(unused_mut)]
-            let mut m = ::std::collections::HashSet::new();
-            $(
-                m.insert($key.to_owned());
-            )*
-            m
-        }
-     };
-);
 
 #[cfg(not(test))]
 lazy_static! {
@@ -42,15 +30,6 @@ lazy_static! {
         m.insert(
             "Hunting",
             Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
-        );
-        m.insert(
-            "Feast",
-            Conversion::init(
-                "Feast",
-                ConversionLength::Epic,
-                vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
-            ),
         );
 
         m
@@ -89,20 +68,25 @@ lazy_static! {
 
         m
     };
-    static ref EDICTS: Vec<&'static str> = {
-        let mut e = Vec::new();
-        e.push("Feast");
+    static ref EDICTS: HashMap<&'static str, Edict> = {
+        let mut e: HashMap<&'static str, Edict> = HashMap::new();
+        e.insert(
+            "Feast",
+            Edict::init(
+                "Feast",
+                Conversion::init(
+                    "Feast",
+                    ConversionLength::Epic,
+                    vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
+                ),
+            ),
+        );
+
         e
     };
     static ref RESEARCH: HashMap<&'static str, Research> = {
         let mut m = HashMap::new();
-        m.insert(
-            "X",
-            Research {
-                name: "X".to_owned(),
-                dependencies: set![],
-            },
-        );
         m
     };
 }
@@ -124,15 +108,7 @@ lazy_static! {
                 vec![ResourceAmount::init(ResourceKind::Food, 1)],
             ),
         );
-        m.insert(
-            "TestEdict",
-            Conversion::init(
-                "TestEdict",
-                ConversionLength::Short,
-                vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
-                vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
-            ),
-        );
+
         m.insert("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![]));
         m.insert(
             "TestHunt",
@@ -182,35 +158,42 @@ lazy_static! {
 
         m
     };
-    static ref EDICTS: Vec<&'static str> = {
-        let mut e = Vec::new();
-        e.push("TestEdict");
+    static ref EDICTS: HashMap<&'static str, Edict> = {
+        let mut e: HashMap<&'static str, Edict> = HashMap::new();
+        e.insert(
+            "TestEdict",
+            Edict::init(
+                "TestEdict",
+                Conversion::init(
+                    "TestEdict",
+                    ConversionLength::Short,
+                    vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
+                ),
+            ),
+        );
+        e.insert(
+            "TestEdictWithResearch",
+            Edict::init(
+                "TestEdictWithResearch",
+                Conversion::init("TestEdictWithResearch", ConversionLength::Short, vec![], vec![]),
+            )
+            .with_research(vec!["TestNoDeps"]),
+        );
+
         e
     };
     static ref RESEARCH: HashMap<&'static str, Research> = {
         let mut m = HashMap::new();
 
+        m.insert("TestNoDeps", Research::init("TestNoDeps"));
+        m.insert("Dep", Research::init("Dep"));
+        m.insert("TestWithDep", Research::init("TestWithDep").with_dependencies(vec!["Dep"]));
         m.insert(
-            "TestNoDeps",
-            Research {
-                name: "TestNoDeps".to_owned(),
-                dependencies: set![],
-            },
+            "TestWithCost",
+            Research::init("TestWithCost").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
         );
-        m.insert(
-            "Dep",
-            Research {
-                name: "Dep".to_owned(),
-                dependencies: set![],
-            },
-        );
-        m.insert(
-            "TestWithDep",
-            Research {
-                name: "TestWithDep".to_owned(),
-                dependencies: set!["Dep"],
-            },
-        );
+
         m
     };
 }
@@ -231,12 +214,12 @@ pub fn get_building_names() -> Vec<String> {
         .collect()
 }
 
-pub fn get_edict(name: &str) -> Conversion {
-    CONVERSIONS[name].clone()
+pub fn get_edict(name: &str) -> Edict {
+    EDICTS[name].clone()
 }
 
 pub fn get_edict_names() -> Vec<String> {
-    EDICTS.iter().map(|x| (*x).to_string()).collect()
+    EDICTS.keys().map(|x| (*x).to_string()).collect()
 }
 
 pub fn get_research(name: &str) -> Research {

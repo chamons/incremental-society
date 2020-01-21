@@ -9,7 +9,7 @@ pub fn can_invoke_edict(state: &GameState, edict: &str) -> Result<(), EngineErro
     }
 
     let edict = get_edict(edict);
-    for cost in &edict.input {
+    for cost in &edict.conversion.input {
         if !state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for edict"));
         }
@@ -22,9 +22,9 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
     can_invoke_edict(&state, edict_name)?;
     let edict = get_edict(edict_name);
 
-    state.resources.remove_range(&edict.input);
+    state.resources.remove_range(&edict.conversion.input);
 
-    let action = Waiter::init_one_shot(edict_name, edict.tick_length(), DelayedAction::Edict(edict_name.to_string()));
+    let action = Waiter::init_one_shot(edict_name, edict.conversion.tick_length(), DelayedAction::Edict(edict_name.to_string()));
     state.actions.push(action);
     process::recalculate(state);
 
@@ -33,7 +33,7 @@ pub fn edict(state: &mut GameState, edict_name: &str) -> Result<(), EngineError>
 
 pub fn apply_edict(state: &mut GameState, name: &str) {
     // We've already paid the cost on queue, so just get the output
-    state.resources.add_range(&get_edict(name).output);
+    state.resources.add_range(&get_edict(name).conversion.output);
 }
 
 #[cfg(test)]
@@ -56,7 +56,7 @@ mod tests {
         state.action_with_name("TestEdict").unwrap();
         assert_eq!(0, state.resources[ResourceKind::Fuel]);
 
-        for _ in 0..get_edict("TestEdict").tick_length() {
+        for _ in 0..get_edict("TestEdict").conversion.tick_length() {
             assert_eq!(0, state.resources[ResourceKind::Fuel]);
             assert_eq!(0, state.resources[ResourceKind::Knowledge]);
 

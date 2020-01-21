@@ -146,7 +146,7 @@ impl<'a> UI<'a> {
                 let selection = Selection::init_list(
                     &edicts,
                     |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok(),
-                    |o| data::get_edict(edicts.get(o).unwrap()).details(),
+                    |o| data::get_edict(edicts.get(o).unwrap()).conversion.details(),
                 );
                 match OptionList::init(&self.term, selection).run() {
                     Some(edict_index) => match engine::edict(&mut state, edicts.get(edict_index).unwrap()) {

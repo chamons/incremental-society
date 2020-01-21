@@ -1,9 +1,6 @@
 ## Todo
 
 - Research
-    - Conversion builder pattern like building
-    - Research unlocks edicts
-    - Research action itself
     - Research in UI
 
 
@@ -27,5 +24,6 @@
 - Pop growth over time
 
 ## Ideas
+
 - Infrastructure bonus for goods, and max per tech
 - Morale in each region? Lose regions if conquered or rebel?

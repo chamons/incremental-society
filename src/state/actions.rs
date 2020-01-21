@@ -7,6 +7,7 @@ pub enum DelayedAction {
     SustainPops(),
     Build(String, usize),
     Destroy(usize, usize),
+    Research(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

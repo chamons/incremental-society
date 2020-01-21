@@ -4,6 +4,7 @@ use super::build;
 use super::conversions;
 use super::destroy;
 use super::edict;
+use super::research;
 use super::DerivedState;
 use crate::data;
 use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
@@ -27,6 +28,7 @@ fn apply_actions(state: &mut GameState) {
             DelayedAction::SustainPops() => sustain_population(state),
             DelayedAction::Build(building, region_index) => build::apply_build(state, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
+            DelayedAction::Research(research) => research::apply_research(state, research),
         }
     }
 }
@@ -141,7 +143,7 @@ mod tests {
         state.resources[ResourceKind::Fuel] = 2;
 
         edict(&mut state, "TestEdict").unwrap();
-        let edict_length = get_edict("TestEdict").tick_length();
+        let edict_length = get_edict("TestEdict").conversion.tick_length();
         for _ in 0..edict_length {
             assert_eq!(2, state.actions.len());
             process_tick(&mut state);

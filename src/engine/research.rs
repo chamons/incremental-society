@@ -31,7 +31,7 @@ pub fn research(state: &mut GameState, research: &str) -> Result<(), EngineError
     state.resources.remove_range(&research.cost);
 
     let action = Waiter::init_one_shot(
-        &format!("Research {}", research.name)[..],
+        &format!("Researching {}", research.name)[..],
         data::RESEARCH_LENGTH,
         DelayedAction::Research(research.name.to_string()),
     );

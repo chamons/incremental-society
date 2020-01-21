@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::state::{GameState, ResourceTotal};
+use crate::state::{available_to_build, available_to_invoke, available_to_research, GameState, ResourceTotal};
 
 use itertools::Itertools;
 
@@ -11,6 +11,9 @@ pub struct DerivedState {
     pub storage: ResourceTotal,
     pub pops: u32,
     pub used_pops: u32,
+    pub available_buildings: Vec<String>,
+    pub available_edicts: Vec<String>,
+    pub available_research: Vec<String>,
 }
 
 impl DerivedState {
@@ -21,6 +24,9 @@ impl DerivedState {
             storage: ResourceTotal::init(),
             pops: 0,
             used_pops: 0,
+            available_buildings: vec![],
+            available_edicts: vec![],
+            available_research: vec![],
         }
     }
 
@@ -31,6 +37,9 @@ impl DerivedState {
             storage: DerivedState::calculate_storage(state),
             pops: DerivedState::calculate_pops(state),
             used_pops: DerivedState::calculate_used_pops(state),
+            available_buildings: available_to_build(state),
+            available_edicts: available_to_invoke(state),
+            available_research: available_to_research(state),
         }
     }
 

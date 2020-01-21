@@ -3,6 +3,8 @@ use std::collections::HashSet;
 use super::{GameState, ResourceAmount};
 use crate::data;
 
+use itertools::Itertools;
+
 #[derive(Clone, Debug)]
 pub struct Research {
     pub name: String,
@@ -40,6 +42,12 @@ impl Research {
             }
         }
         true
+    }
+
+    pub fn details(&self) -> Vec<String> {
+        let mut details: Vec<String> = vec![];
+        details.push(format!("Cost: {}", self.cost.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")));
+        details
     }
 }
 

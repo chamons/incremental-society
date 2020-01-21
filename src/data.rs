@@ -87,6 +87,10 @@ lazy_static! {
     };
     static ref RESEARCH: HashMap<&'static str, Research> = {
         let mut m = HashMap::new();
+        m.insert(
+            "Settlement",
+            Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+        );
         m
     };
 }

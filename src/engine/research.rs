@@ -1,6 +1,6 @@
 use super::{process, EngineError};
-use crate::data;
-use crate::state::{DelayedAction, GameState, Research, Waiter};
+
+use crate::state::{DelayedAction, GameState, Research, Waiter, RESEARCH_LENGTH};
 
 pub fn can_research(state: &GameState, research: &Research) -> Result<(), EngineError> {
     if state.actions.iter().any(|x| x.action.is_research()) {
@@ -29,7 +29,7 @@ pub fn research(state: &mut GameState, research: &Research) -> Result<(), Engine
 
     let action = Waiter::init_one_shot(
         &format!("Researching {}", research.name)[..],
-        data::RESEARCH_LENGTH,
+        RESEARCH_LENGTH,
         DelayedAction::Research(research.name.to_string()),
     );
     state.actions.push(action);
@@ -46,12 +46,13 @@ pub fn apply_research(state: &mut GameState, research: &str) {
 #[cfg(test)]
 mod tests {
     use super::{super::process, *};
-    use crate::state::ResourceKind;
+    use crate::engine::tests::*;
+    use crate::state::{ResourceKind, RESEARCH_LENGTH};
 
     #[test]
     fn research_without_resources() {
         let mut state = process::init_empty_game_state();
-        let test_cost_research = data::get_research("TestWithCost");
+        let test_cost_research = get_research("TestWithCost");
 
         assert!(research(&mut state, &test_cost_research).is_err());
         state.resources[ResourceKind::Knowledge] = 10;
@@ -61,8 +62,8 @@ mod tests {
     #[test]
     fn research_already_in_progress() {
         let mut state = process::init_empty_game_state();
-        let nodep_research = data::get_research("TestNoDeps");
-        let dep_research = data::get_research("Dep");
+        let nodep_research = get_research("TestNoDeps");
+        let dep_research = get_research("Dep");
 
         research(&mut state, &nodep_research).unwrap();
         assert!(research(&mut state, &dep_research).is_err());
@@ -71,7 +72,7 @@ mod tests {
     #[test]
     fn research_dependency_unmet() {
         let mut state = process::init_empty_game_state();
-        let dep_research = data::get_research("TestWithDep");
+        let dep_research = get_research("TestWithDep");
 
         assert!(research(&mut state, &dep_research).is_err());
         state.research.insert("Dep".to_owned());
@@ -81,11 +82,11 @@ mod tests {
     #[test]
     fn valid_research() {
         let mut state = process::init_empty_game_state();
-        let nodep_research = data::get_research("TestNoDeps");
+        let nodep_research = get_research("TestNoDeps");
 
         research(&mut state, &nodep_research).unwrap();
 
-        for _ in 0..data::RESEARCH_LENGTH {
+        for _ in 0..RESEARCH_LENGTH {
             assert_eq!(0, state.research.len());
             process::process_tick(&mut state);
         }

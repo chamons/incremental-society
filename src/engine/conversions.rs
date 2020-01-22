@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
-use crate::data;
-use crate::state::{DelayedAction, GameState, Waiter};
+use super::data::get_conversion;
+use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION};
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
-    data::get_conversion(name).convert(&mut state.resources);
+    get_conversion(name).convert(&mut state.resources);
 }
 
 // There is a modeling problem the engine conversion code needs to handle:
@@ -36,13 +36,13 @@ pub fn sync_building_to_conversions(state: &mut GameState) {
     }
 
     for not_started in active_conversions.keys().filter(|x| !in_flight.contains(*x)) {
-        let conversion = data::get_conversion(not_started);
+        let conversion = get_conversion(not_started);
         let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
         state.actions.push(action);
     }
 
     if state.action_with_name("Sustain Population").is_none() {
-        let action = Waiter::init_repeating("Sustain Population", data::SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+        let action = Waiter::init_repeating("Sustain Population", SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
         state.actions.push(action);
     }
 }
@@ -69,8 +69,8 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::super::process;
-    use crate::data::get_building;
+    use crate::engine::process;
+    use crate::engine::tests::*;
     use crate::state::Region;
 
     #[test]

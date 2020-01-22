@@ -1,10 +1,8 @@
 use std::error::Error;
 use std::thread::sleep;
-use std::time::Duration;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use incremental_society::console_ui::{self, OptionList, Selection};
-use incremental_society::data;
 use incremental_society::engine;
 use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 
@@ -128,10 +126,10 @@ impl<'a> UI<'a> {
                             let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok(), |_| vec![]);
                             match OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
-                                    let building = data::get_building(&buildings[building_index]);
+                                    let building_name = &buildings[building_index];
                                     match engine::destroy(&mut state, region_index, building_index) {
                                         Err(e) => self.set_message(e.description()),
-                                        _ => self.set_message(format!("Destroying {}", building.name)),
+                                        _ => self.set_message(format!("Destroying {}", building_name)),
                                     }
                                 }
                                 None => self.clear_message(),

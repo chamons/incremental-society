@@ -7,7 +7,6 @@ use super::destroy;
 use super::edict;
 use super::research;
 use super::DerivedState;
-use crate::data;
 use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
@@ -58,11 +57,13 @@ pub fn recalculate(state: &mut GameState) {
     crate::engine::sync_building_to_conversions(state);
 }
 
+use super::data::get_building;
+
 pub fn init_new_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
         regions: vec![
-            Region::init_with_buildings("Lusitania", vec![data::get_building("Settlement"), data::get_building("Hunting Grounds")]),
+            Region::init_with_buildings("Lusitania", vec![get_building("Settlement"), get_building("Hunting Grounds")]),
             Region::init("Illyricum"),
         ],
         actions: vec![],
@@ -91,8 +92,8 @@ pub fn init_test_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
         regions: vec![
-            Region::init_with_buildings("Lusitania", vec![data::get_building("Test Building"), data::get_building("Test Building")]),
-            Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),
+            Region::init_with_buildings("Lusitania", vec![get_building("Test Building"), get_building("Test Building")]),
+            Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
         ],
         actions: vec![],
         derived_state: DerivedState::init(),
@@ -107,6 +108,7 @@ pub fn init_test_game_state() -> GameState {
 mod tests {
     use super::*;
     use crate::engine::edict;
+    use crate::engine::tests::*;
     use crate::state::{GameState, ResourceKind};
 
     #[test]
@@ -144,7 +146,7 @@ mod tests {
     fn invoke_takes_times_to_complete() {
         let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 2;
-        let test_edict = data::get_edict("TestEdict");
+        let test_edict = get_edict("TestEdict");
 
         edict(&mut state, &test_edict).unwrap();
         let edict_length = test_edict.conversion.tick_length();

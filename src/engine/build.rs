@@ -1,6 +1,5 @@
 use super::{process, EngineError};
-use crate::data;
-use crate::state::{Building, DelayedAction, GameState, Waiter};
+use crate::state::{Building, DelayedAction, GameState, Waiter, BUILD_LENGTH};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -46,7 +45,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
     let action = Waiter::init_one_shot(
         &format!("Build {}", building.name)[..],
-        data::BUILD_LENGTH,
+        BUILD_LENGTH,
         DelayedAction::Build(building.name.to_string(), region_index),
     );
     state.actions.push(action);
@@ -57,7 +56,8 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
 
 pub fn apply_build(state: &mut GameState, building: &str, region_index: usize) {
     let region = state.regions.get_mut(region_index).unwrap();
-    region.add_building(data::get_building(building));
+    let building = state.derived_state.find_building(building);
+    region.add_building(building.clone());
     process::recalculate(state);
 }
 
@@ -67,8 +67,8 @@ mod tests {
 
     use std::error::Error;
 
-    use crate::data::get_building;
-    use crate::state::{Region, ResourceKind};
+    use crate::engine::tests::*;
+    use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 
     #[test]
     fn build_invalid_region() {
@@ -140,7 +140,7 @@ mod tests {
         build(&mut state, get_building("Test Building"), 0).unwrap();
         assert_eq!(10, state.resources[ResourceKind::Fuel]);
 
-        for _ in 0..data::BUILD_LENGTH {
+        for _ in 0..BUILD_LENGTH {
             assert_eq!(1, state.buildings().len());
             process::process_tick(&mut state);
         }

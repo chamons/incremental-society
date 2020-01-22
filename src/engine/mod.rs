@@ -1,6 +1,7 @@
 mod actions;
 mod build;
 mod conversions;
+mod data;
 mod debug;
 mod derived_state;
 mod destroy;
@@ -23,4 +24,7 @@ pub use process::{init_new_game_state, process_tick};
 pub use research::{can_research, research};
 
 #[cfg(test)]
-pub use process::init_empty_game_state;
+pub mod tests {
+    pub use super::data::*;
+    pub use super::process::init_empty_game_state;
+}

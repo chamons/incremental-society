@@ -1,6 +1,5 @@
 use super::{process, EngineError};
-use crate::data;
-use crate::state::{DelayedAction, GameState, Waiter};
+use crate::state::{DelayedAction, GameState, Waiter, DESTROY_LENGTH};
 
 pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
     let region = state.regions.get(region_index);
@@ -38,7 +37,7 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
 
     let action = Waiter::init_one_shot(
         &format!("Destroy {}", building.name)[..],
-        data::DESTROY_LENGTH,
+        DESTROY_LENGTH,
         DelayedAction::Destroy(region_index, building_index),
     );
     state.actions.push(action);
@@ -58,8 +57,8 @@ mod tests {
     use super::*;
     use std::error::Error;
 
-    use crate::data::get_building;
-    use crate::state::{Region, ResourceKind};
+    use crate::engine::tests::*;
+    use crate::state::{Region, ResourceKind, DESTROY_LENGTH};
 
     #[test]
     fn destroy_invalid_region() {
@@ -107,7 +106,7 @@ mod tests {
         let old_storage = state.derived_state.storage[ResourceKind::Food];
         assert!(destroy(&mut state, 1, 0).is_ok());
 
-        for _ in 0..data::DESTROY_LENGTH {
+        for _ in 0..DESTROY_LENGTH {
             assert_eq!(3, state.buildings().len());
             process::process_tick(&mut state);
         }

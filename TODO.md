@@ -2,7 +2,6 @@
 
 - Upgrades (Cost per person/building to upgrade/change existing)
     - Create available_to_research/available_to_build/available_to_invoke in upgrade that clone the data copy, add modifications
-    - Audit all data.rs usages in program
     - Create a set of upgrade actions in upgrade.rs
     - Create a set of upgrades in data/reserach.rs/upgrade.rs
     - Create code to apply them 

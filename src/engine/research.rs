@@ -1,13 +1,11 @@
 use super::{process, EngineError};
 use crate::data;
-use crate::state::{DelayedAction, GameState, Waiter};
+use crate::state::{DelayedAction, GameState, Research, Waiter};
 
-pub fn can_research(state: &GameState, research: &str) -> Result<(), EngineError> {
+pub fn can_research(state: &GameState, research: &Research) -> Result<(), EngineError> {
     if state.actions.iter().any(|x| x.action.is_research()) {
         return Err(EngineError::init("Research already in progress"));
     }
-
-    let research = data::get_research(research);
 
     for dep in &research.dependencies {
         if !state.research.contains(dep) {
@@ -24,9 +22,8 @@ pub fn can_research(state: &GameState, research: &str) -> Result<(), EngineError
     Ok(())
 }
 
-pub fn research(state: &mut GameState, research: &str) -> Result<(), EngineError> {
+pub fn research(state: &mut GameState, research: &Research) -> Result<(), EngineError> {
     can_research(state, research)?;
-    let research = data::get_research(research);
 
     state.resources.remove_range(&research.cost);
 
@@ -54,33 +51,39 @@ mod tests {
     #[test]
     fn research_without_resources() {
         let mut state = process::init_empty_game_state();
-        assert!(research(&mut state, "TestWithCost").is_err());
+        let test_cost_research = data::get_research("TestWithCost");
+
+        assert!(research(&mut state, &test_cost_research).is_err());
         state.resources[ResourceKind::Knowledge] = 10;
-        assert!(research(&mut state, "TestWithCost").is_ok());
+        assert!(research(&mut state, &test_cost_research).is_ok());
     }
 
     #[test]
     fn research_already_in_progress() {
         let mut state = process::init_empty_game_state();
+        let nodep_research = data::get_research("TestNoDeps");
+        let dep_research = data::get_research("Dep");
 
-        research(&mut state, "TestNoDeps").unwrap();
-        assert!(research(&mut state, "Dep").is_err());
+        research(&mut state, &nodep_research).unwrap();
+        assert!(research(&mut state, &dep_research).is_err());
     }
 
     #[test]
     fn research_dependency_unmet() {
         let mut state = process::init_empty_game_state();
+        let dep_research = data::get_research("TestWithDep");
 
-        assert!(research(&mut state, "TestWithDep").is_err());
+        assert!(research(&mut state, &dep_research).is_err());
         state.research.insert("Dep".to_owned());
-        assert!(research(&mut state, "TestWithDep").is_ok());
+        assert!(research(&mut state, &dep_research).is_ok());
     }
 
     #[test]
     fn valid_research() {
         let mut state = process::init_empty_game_state();
+        let nodep_research = data::get_research("TestNoDeps");
 
-        research(&mut state, "TestNoDeps").unwrap();
+        research(&mut state, &nodep_research).unwrap();
 
         for _ in 0..data::RESEARCH_LENGTH {
             assert_eq!(0, state.research.len());

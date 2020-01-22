@@ -113,7 +113,6 @@ lazy_static! {
             ),
         );
 
-        m.insert("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![]));
         m.insert(
             "TestHunt",
             Conversion::init("TestHunt", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
@@ -183,6 +182,10 @@ lazy_static! {
                 Conversion::init("TestEdictWithResearch", ConversionLength::Short, vec![], vec![]),
             )
             .with_research(vec!["TestNoDeps"]),
+        );
+        e.insert(
+            "OtherTestEdict",
+            Edict::init("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![])),
         );
 
         e

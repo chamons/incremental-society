@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use crate::state::{available_to_build, available_to_invoke, available_to_research, GameState, ResourceTotal};
+pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research};
+pub use crate::state::{Building, Edict, GameState, Research, ResourceTotal};
 
 use itertools::Itertools;
 
@@ -11,9 +12,9 @@ pub struct DerivedState {
     pub storage: ResourceTotal,
     pub pops: u32,
     pub used_pops: u32,
-    pub available_buildings: Vec<String>,
-    pub available_edicts: Vec<String>,
-    pub available_research: Vec<String>,
+    pub available_buildings: Vec<Building>,
+    pub available_edicts: Vec<Edict>,
+    pub available_research: Vec<Research>,
 }
 
 impl DerivedState {
@@ -81,6 +82,18 @@ impl DerivedState {
 
     fn calculate_used_pops(state: &GameState) -> u32 {
         state.regions.iter().flat_map(|x| &x.buildings).count() as u32
+    }
+
+    pub fn find_building(&self, name: &str) -> &Building {
+        self.available_buildings.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_edict(&self, name: &str) -> &Edict {
+        self.available_edicts.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_research(&self, name: &str) -> &Research {
+        self.available_research.iter().filter(|x| x.name == name).nth(0).unwrap()
     }
 }
 

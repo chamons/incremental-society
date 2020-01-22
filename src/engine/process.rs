@@ -106,7 +106,6 @@ pub fn init_test_game_state() -> GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::get_edict;
     use crate::engine::edict;
     use crate::state::{GameState, ResourceKind};
 
@@ -145,9 +144,10 @@ mod tests {
     fn invoke_takes_times_to_complete() {
         let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 2;
+        let test_edict = data::get_edict("TestEdict");
 
-        edict(&mut state, "TestEdict").unwrap();
-        let edict_length = get_edict("TestEdict").conversion.tick_length();
+        edict(&mut state, &test_edict).unwrap();
+        let edict_length = test_edict.conversion.tick_length();
         for _ in 0..edict_length {
             assert_eq!(2, state.actions.len());
             process_tick(&mut state);

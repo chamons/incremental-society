@@ -10,6 +10,7 @@ mod error;
 mod limits;
 mod process;
 mod research;
+mod upgrade;
 
 pub use build::{build, can_build_building, can_build_in_region};
 pub use conversions::sync_building_to_conversions;

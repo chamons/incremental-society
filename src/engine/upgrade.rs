@@ -4,8 +4,8 @@ use crate::state::{Building, Edict, GameState, Research};
 pub fn available_to_research(state: &GameState) -> Vec<Research> {
     let mut available = vec![];
 
-    for r in available_to_research_names(&state) {
-        available.push(get_research(&r));
+    for r in get_research_by_research(&state) {
+        available.push(r);
     }
 
     available
@@ -14,8 +14,8 @@ pub fn available_to_research(state: &GameState) -> Vec<Research> {
 pub fn available_to_build(state: &GameState) -> Vec<Building> {
     let mut available = vec![];
 
-    for b in available_to_build_names(&state) {
-        available.push(get_building(&b));
+    for b in get_build_by_research(&state) {
+        available.push(b);
     }
 
     available
@@ -24,49 +24,46 @@ pub fn available_to_build(state: &GameState) -> Vec<Building> {
 pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
     let mut available = vec![];
 
-    for e in available_to_invoke_names(&state) {
-        available.push(get_edict(&e));
+    for e in get_edict_by_research(&state) {
+        available.push(e);
     }
 
     available
 }
 
-fn available_to_research_names(state: &GameState) -> Vec<String> {
+fn get_research_by_research(state: &GameState) -> Vec<Research> {
     let mut available = vec![];
-    for res in get_research_names() {
-        let res = get_research(&res);
-        if res.is_available(state) {
-            available.push(res.name);
+    for research in get_research_names().iter().map(|x| get_research(x)) {
+        if research.is_available(state) {
+            available.push(research);
         }
     }
 
     available
 }
 
-fn available_to_build_names(state: &GameState) -> Vec<String> {
+fn get_build_by_research(state: &GameState) -> Vec<Building> {
     let mut available = vec![];
 
-    for building_name in get_building_names() {
-        let building = get_building(&building_name);
+    for building in get_building_names().iter().map(|x| get_building(x)) {
         let has_missing_dep = building.research.iter().any(|x| !state.research.contains(x));
 
         if !(has_missing_dep || building.immortal) {
-            available.push(building_name);
+            available.push(building);
         }
     }
 
     available
 }
 
-fn available_to_invoke_names(state: &GameState) -> Vec<String> {
+fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
     let mut available = vec![];
 
-    for edict_name in get_edict_names() {
-        let edict = get_edict(&edict_name);
+    for edict in get_edict_names().iter().map(|x| get_edict(x)) {
         let has_missing_dep = edict.research.iter().any(|x| !state.research.contains(x));
 
         if !(has_missing_dep) {
-            available.push(edict_name);
+            available.push(edict);
         }
     }
 

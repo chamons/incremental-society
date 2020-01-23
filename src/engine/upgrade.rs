@@ -1,19 +1,16 @@
+use super::die;
 use crate::engine::data::{get_building, get_building_names, get_edict, get_edict_names, get_research, get_research_names};
-use crate::state::{Building, Edict, GameState, Research};
+use crate::state::{Building, Edict, GameState, Research, UpgradeActions};
 
 pub fn available_to_research(state: &GameState) -> Vec<Research> {
-    let mut available = vec![];
-
-    for r in get_research_by_research(&state) {
-        available.push(r);
-    }
-
-    available
+    get_research_by_research(&state)
 }
 
 pub fn available_to_build(state: &GameState) -> Vec<Building> {
     let mut available = vec![];
 
+    // Split upgrades by building affected
+    // Apply upgrades for each as they come up
     for b in get_build_by_research(&state) {
         available.push(b);
     }
@@ -24,11 +21,38 @@ pub fn available_to_build(state: &GameState) -> Vec<Building> {
 pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
     let mut available = vec![];
 
+    // Split upgrades by edict affected
+    // Apply upgrades for each as they come up
     for e in get_edict_by_research(&state) {
         available.push(e);
     }
 
     available
+}
+
+pub fn apply_building_upgrade(building: &mut Building, upgrade: UpgradeActions) {
+    match upgrade {
+        UpgradeActions::AddBuildingPops(pops) => building.pops += pops,
+        UpgradeActions::AddBuildingConversion(name) => building.conversions.push(name),
+        UpgradeActions::AddBuildingStorage(storage) => {
+            if let Some(position) = building.storage.iter().position(|x| x.kind == storage.kind) {
+                let current = &mut building.storage.get_mut(position).unwrap();
+                current.amount += current.amount + storage.amount;
+            } else {
+                building.storage.push(storage);
+            }
+        }
+        UpgradeActions::ChangeEdictLength(_) => die(&"ChangeEdictLength upgrade on building"),
+    }
+}
+
+pub fn apply_edict_upgrade(edict: &mut Edict, upgrade: UpgradeActions) {
+    match upgrade {
+        UpgradeActions::ChangeEdictLength(length) => edict.conversion.length = length,
+        UpgradeActions::AddBuildingPops(_) => die(&"AddBuildingPops upgrade on edict"),
+        UpgradeActions::AddBuildingConversion(_) => die(&"AddBuildingConversion upgrade on edict"),
+        UpgradeActions::AddBuildingStorage(_) => die(&"AddBuildingStorage upgrade on edict"),
+    }
 }
 
 fn get_research_by_research(state: &GameState) -> Vec<Research> {

@@ -7,6 +7,7 @@ mod gamestate;
 mod region;
 mod research;
 mod resources;
+mod upgrade;
 
 pub use actions::{DelayedAction, Waiter};
 pub use building::Building;
@@ -17,3 +18,4 @@ pub use gamestate::GameState;
 pub use region::Region;
 pub use research::Research;
 pub use resources::{ResourceAmount, ResourceKind, ResourceQuantity, ResourceTotal, NUM_RESOURCES};
+pub use upgrade::UpgradeActions;

@@ -85,7 +85,9 @@ mod tests {
     #[test]
     fn removed_buildings_remove_conversion_on_sync() {
         let mut state = process::init_empty_game_state();
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
         process::recalculate(&mut state);
         assert_eq!(2, state.actions.len());
 
@@ -101,7 +103,9 @@ mod tests {
         process::recalculate(&mut state);
         assert_eq!(1, state.actions.len());
 
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
         process::recalculate(&mut state);
 
         assert_eq!(2, state.actions.len());
@@ -112,14 +116,14 @@ mod tests {
         let mut state = process::init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
-            vec![get_building("Test Building"), get_building("Test Gather Hut")],
+            vec![get_test_building("Test Building"), get_test_building("Test Gather Hut")],
         ));
         process::recalculate(&mut state);
         assert_eq!(3, state.actions.len());
 
         let region = state.regions.get_mut(0).unwrap();
         region.buildings.remove(0);
-        region.buildings.push(get_building("Test Hunt Cabin"));
+        region.buildings.push(get_test_building("Test Hunt Cabin"));
 
         process::recalculate(&mut state);
 
@@ -129,7 +133,9 @@ mod tests {
     #[test]
     fn removed_then_readded_starts_at_zero_on_sync() {
         let mut state = process::init_empty_game_state();
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
         process::recalculate(&mut state);
 
         state.action_with_name_mut("TestGather").unwrap().current_tick = 10;
@@ -138,7 +144,7 @@ mod tests {
         state.regions.get_mut(0).unwrap().buildings.remove(0);
         process::recalculate(&mut state);
 
-        state.regions.get_mut(0).unwrap().buildings.push(get_building("Test Gather Hut"));
+        state.regions.get_mut(0).unwrap().buildings.push(get_test_building("Test Gather Hut"));
         process::recalculate(&mut state);
 
         assert_eq!(100, state.action_with_name("TestGather").unwrap().current_tick);

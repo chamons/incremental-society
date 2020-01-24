@@ -61,7 +61,7 @@ mod tests {
     #[test]
     fn is_available_no_dependencies() {
         let state = init_empty_game_state();
-        let research = get_research("TestNoDeps");
+        let research = get_test_research("TestNoDeps");
         assert!(research.is_available(&state));
     }
 
@@ -69,21 +69,21 @@ mod tests {
     fn is_available_dependencies_met() {
         let mut state = init_empty_game_state();
         state.research.insert("Dep".to_owned());
-        let research = get_research("TestWithDep");
+        let research = get_test_research("TestWithDep");
         assert!(research.is_available(&state));
     }
 
     #[test]
     fn is_not_available_dependencies_unmet() {
         let state = init_empty_game_state();
-        let research = get_research("TestWithDep");
+        let research = get_test_research("TestWithDep");
         assert!(!research.is_available(&state));
     }
 
     #[test]
     fn is_not_available_already_researched() {
         let mut state = init_empty_game_state();
-        let research = get_research("TestNoDeps");
+        let research = get_test_research("TestNoDeps");
         assert!(research.is_available(&state));
         state.research.insert("TestNoDeps".to_owned());
         assert!(!research.is_available(&state));

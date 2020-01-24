@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, get_upgrade_by_research};
+pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade};
 pub use crate::state::{Building, Edict, GameState, Research, ResourceTotal, Upgrade};
 
 use itertools::Itertools;
@@ -43,7 +43,7 @@ impl DerivedState {
             available_buildings: available_to_build(state),
             available_edicts: available_to_invoke(state),
             available_research: available_to_research(state),
-            available_upgrade: get_upgrade_by_research(state),
+            available_upgrade: available_to_upgrade(state),
         }
     }
 

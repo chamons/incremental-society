@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn destroy_immortal_building() {
         let mut state = process::init_test_game_state();
-        state.regions[1].add_building(get_building("Test Immortal"));
+        state.regions[1].add_building(get_test_building("Test Immortal"));
         assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
     }
 
@@ -94,7 +94,7 @@ mod tests {
         let mut state = process::init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
-            vec![get_building("Empty Building"), get_building("Empty Building")],
+            vec![get_test_building("Empty Building"), get_test_building("Empty Building")],
         ));
         assert!(destroy(&mut state, 0, 0).is_ok());
         assert!(destroy(&mut state, 0, 1).is_err());

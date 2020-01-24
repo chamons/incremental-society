@@ -43,7 +43,7 @@ pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
     available
 }
 
-pub fn get_upgrade_by_research(state: &GameState) -> Vec<Upgrade> {
+pub fn available_to_upgrade(state: &GameState) -> Vec<Upgrade> {
     let mut available = vec![];
     for upgrade in get_upgrade_names().iter().map(|x| get_upgrade(x)) {
         if upgrade.is_available(state) {

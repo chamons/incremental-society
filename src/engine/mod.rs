@@ -25,6 +25,10 @@ pub use research::{can_research, research};
 
 #[cfg(test)]
 pub mod tests {
-    pub use super::data::*;
+    pub use super::data::get_building as get_test_building;
+    pub use super::data::get_edict as get_test_edict;
+    pub use super::data::get_research as get_test_research;
+    pub use super::data::get_upgrade as get_test_upgrade;
+
     pub use super::process::init_empty_game_state;
 }

@@ -50,7 +50,7 @@ mod tests {
     #[test]
     fn research_without_resources() {
         let mut state = process::init_empty_game_state();
-        let test_cost_research = get_research("TestWithCost");
+        let test_cost_research = get_test_research("TestWithCost");
 
         assert!(research(&mut state, &test_cost_research).is_err());
         state.resources[ResourceKind::Knowledge] = 10;
@@ -60,8 +60,8 @@ mod tests {
     #[test]
     fn research_already_in_progress() {
         let mut state = process::init_empty_game_state();
-        let nodep_research = get_research("TestNoDeps");
-        let dep_research = get_research("Dep");
+        let nodep_research = get_test_research("TestNoDeps");
+        let dep_research = get_test_research("Dep");
 
         research(&mut state, &nodep_research).unwrap();
         assert!(research(&mut state, &dep_research).is_err());
@@ -70,7 +70,7 @@ mod tests {
     #[test]
     fn research_dependency_unmet() {
         let mut state = process::init_empty_game_state();
-        let dep_research = get_research("TestWithDep");
+        let dep_research = get_test_research("TestWithDep");
 
         assert!(research(&mut state, &dep_research).is_err());
         state.research.insert("Dep".to_owned());
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn valid_research() {
         let mut state = process::init_empty_game_state();
-        let nodep_research = get_research("TestNoDeps");
+        let nodep_research = get_test_research("TestNoDeps");
 
         research(&mut state, &nodep_research).unwrap();
 

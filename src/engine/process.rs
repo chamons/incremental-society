@@ -149,7 +149,7 @@ mod tests {
     fn invoke_takes_times_to_complete() {
         let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 2;
-        let test_edict = get_edict("TestEdict");
+        let test_edict = get_test_edict("TestEdict");
 
         edict(&mut state, &test_edict).unwrap();
         let edict_length = test_edict.conversion.tick_length();

@@ -131,10 +131,26 @@ mod tests {
     use super::*;
     use crate::engine::tests::*;
 
-    // Apply each upgrade to a building
-    // Apply each upgrade to an edict
-    // Test upgrade unlock by research
-    // Test upgrade application when available_to_{build, invoke}
+    #[test]
+    fn available_to_research_has_upgrades_applied() {}
+
+    #[test]
+    fn available_to_invoke_has_upgrades_applied() {}
+
+    #[test]
+    fn apply_research_gamestate_has_upgrades_applied() {}
+
+    #[test]
+    fn available_to_upgrade_unlocks_by_research() {}
+
+    #[test]
+    fn available_to_upgrade_shows_all_unlocked() {}
+
+    #[test]
+    fn select_upgrade_allow_up_to_cap_selections() {}
+
+    #[test]
+    fn select_upgrade_errors_if_too_many_selected() {}
 
     #[test]
     fn available_to_research_dependencies() {

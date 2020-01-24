@@ -43,7 +43,18 @@ pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
     available
 }
 
-pub fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
+pub fn get_upgrade_by_research(state: &GameState) -> Vec<Upgrade> {
+    let mut available = vec![];
+    for upgrade in get_upgrade_names().iter().map(|x| get_upgrade(x)) {
+        if upgrade.is_available(state) {
+            available.push(upgrade);
+        }
+    }
+
+    available
+}
+
+fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
     match upgrade {
         UpgradeActions::AddBuildingPops(pops) => building.pops += pops,
         UpgradeActions::AddBuildingConversion(name) => building.conversions.push(name.to_string()),
@@ -57,17 +68,6 @@ pub fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions)
         }
         UpgradeActions::ChangeEdictLength(_) => die(&"ChangeEdictLength upgrade on building"),
     }
-}
-
-pub fn get_upgrade_by_research(state: &GameState) -> Vec<Upgrade> {
-    let mut available = vec![];
-    for upgrade in get_upgrade_names().iter().map(|x| get_upgrade(x)) {
-        if upgrade.is_available(state) {
-            available.push(upgrade);
-        }
-    }
-
-    available
 }
 
 fn get_upgrades_by_name(upgrades: &Vec<String>) -> HashMap<String, Vec<Upgrade>> {
@@ -130,6 +130,11 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 mod tests {
     use super::*;
     use crate::engine::tests::*;
+
+    // Apply each upgrade to a building
+    // Apply each upgrade to an edict
+    // Test upgrade unlock by research
+    // Test upgrade application when available_to_{build, invoke}
 
     #[test]
     fn available_to_research_dependencies() {

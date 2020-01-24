@@ -98,6 +98,10 @@ impl DerivedState {
     pub fn find_research(&self, name: &str) -> &Research {
         self.available_research.iter().filter(|x| x.name == name).nth(0).unwrap()
     }
+
+    pub fn find_upgrade(&self, name: &str) -> &Upgrade {
+        self.available_upgrade.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
 }
 
 #[cfg(test)]

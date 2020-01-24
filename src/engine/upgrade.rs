@@ -106,9 +106,7 @@ fn get_building_by_research(state: &GameState) -> Vec<Building> {
     let mut available = vec![];
 
     for building in get_building_names().iter().map(|x| get_building(x)) {
-        let has_missing_dep = building.research.iter().any(|x| !state.research.contains(x));
-
-        if !(has_missing_dep || building.immortal) {
+        if building.is_available(&state) && !building.immortal {
             available.push(building);
         }
     }
@@ -120,9 +118,7 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
     let mut available = vec![];
 
     for edict in get_edict_names().iter().map(|x| get_edict(x)) {
-        let has_missing_dep = edict.research.iter().any(|x| !state.research.contains(x));
-
-        if !(has_missing_dep) {
+        if edict.is_available(&state) {
             available.push(edict);
         }
     }

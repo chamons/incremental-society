@@ -7,10 +7,8 @@ pub fn can_research(state: &GameState, research: &Research) -> Result<(), Engine
         return Err(EngineError::init("Research already in progress"));
     }
 
-    for dep in &research.dependencies {
-        if !state.research.contains(dep) {
-            return Err(EngineError::init("Unmet dependency for research"));
-        }
+    if !research.is_available(&state) {
+        return Err(EngineError::init("Unmet dependency for research"));
     }
 
     for cost in &research.cost {

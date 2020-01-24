@@ -35,12 +35,7 @@ impl Research {
             return false;
         }
 
-        for d in &self.dependencies {
-            if !state.research.contains(d) {
-                return false;
-            }
-        }
-        true
+        check_available(&self.dependencies, &state)
     }
 
     pub fn details(&self) -> Vec<String> {
@@ -48,6 +43,15 @@ impl Research {
         details.push(format!("Cost: {}", self.cost.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")));
         details
     }
+}
+
+pub fn check_available(dependencies: &HashSet<String>, state: &GameState) -> bool {
+    for d in dependencies {
+        if !state.research.contains(d) {
+            return false;
+        }
+    }
+    true
 }
 
 #[cfg(test)]

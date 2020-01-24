@@ -13,6 +13,7 @@ pub struct GameState {
     pub regions: Vec<Region>,
     pub actions: Vec<Waiter>,
     pub research: HashSet<String>,
+    pub upgrades: Vec<String>,
 
     #[serde(skip)]
     #[serde(default = "crate::engine::DerivedState::init")]

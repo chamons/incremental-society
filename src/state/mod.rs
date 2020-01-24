@@ -16,6 +16,6 @@ pub use conversion::{Conversion, ConversionLength};
 pub use edict::Edict;
 pub use gamestate::GameState;
 pub use region::Region;
-pub use research::Research;
+pub use research::{check_available, Research};
 pub use resources::{ResourceAmount, ResourceKind, ResourceQuantity, ResourceTotal, NUM_RESOURCES};
-pub use upgrade::UpgradeActions;
+pub use upgrade::{Upgrade, UpgradeActions};

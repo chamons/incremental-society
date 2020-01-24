@@ -1,4 +1,4 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
 
 use std::collections::HashMap;
 
@@ -80,6 +80,10 @@ lazy_static! {
             "Settlement",
             Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
         );
+        m
+    };
+    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+        let mut m = HashMap::new();
         m
     };
 }
@@ -192,6 +196,10 @@ lazy_static! {
 
         m
     };
+    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+        let mut m = HashMap::new();
+        m
+    };
 }
 
 pub fn get_conversion(name: &str) -> Conversion {
@@ -224,4 +232,12 @@ pub fn get_research(name: &str) -> Research {
 
 pub fn get_research_names() -> Vec<String> {
     RESEARCH.keys().map(|x| (*x).to_string()).collect()
+}
+
+pub fn get_upgrade(name: &str) -> Upgrade {
+    UPGRADE[name].clone()
+}
+
+pub fn get_upgrade_names() -> Vec<String> {
+    UPGRADE.keys().map(|x| (*x).to_string()).collect()
 }

@@ -63,7 +63,7 @@ pub fn apply_build(state: &mut GameState, building: &str, region_index: usize) {
 
 #[cfg(test)]
 mod tests {
-    use super::{super::process, *};
+    use super::*;
 
     use std::error::Error;
 
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn build_invalid_region() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions = vec![];
 
         assert!(build(&mut state, get_test_building("Test Building"), 0).is_err());
@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn build_without_resources() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions = vec![Region::init("First Region")];
 
         let error = build(&mut state, get_test_building("Test Building"), 0).unwrap_err();
@@ -91,7 +91,7 @@ mod tests {
     fn build_without_room() {
         let building = get_test_building("Test Building");
 
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 20;
         state.regions = vec![Region::init_with_buildings("First Region", vec![building.clone(), building.clone()])];
 
@@ -101,9 +101,9 @@ mod tests {
 
     #[test]
     fn build_without_pops() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions = vec![Region::init("Test Region")];
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         let error = build(&mut state, get_test_building("Test Gather Hut"), 0).unwrap_err();
         assert_eq!("Insufficient pops for building", error.description());
@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn build_immortal_building() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         assert_eq!(
             "Unable to build Test Immortal",
             build(&mut state, get_test_building("Test Immortal"), 1).unwrap_err().description()
@@ -120,11 +120,11 @@ mod tests {
 
     #[test]
     fn build_multiple_buildings_at_once() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state
             .regions
             .push(Region::init_with_buildings("Region", vec![get_test_building("Test Building")]));
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         build(&mut state, get_test_building("Test Gather Hut"), 0).unwrap();
         assert!(build(&mut state, get_test_building("Test Gather Hut"), 0).is_err());
@@ -132,10 +132,10 @@ mod tests {
 
     #[test]
     fn build_valid_building() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building")])];
         state.resources[ResourceKind::Fuel] = 20;
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         let old_storage = state.derived_state.storage[ResourceKind::Fuel];
 

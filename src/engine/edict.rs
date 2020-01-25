@@ -38,13 +38,13 @@ pub fn apply_edict(state: &mut GameState, name: &str) {
 mod tests {
     use std::error::Error;
 
-    use super::{super::process, *};
+    use super::*;
     use crate::engine::tests::*;
     use crate::state::{Region, ResourceKind};
 
     #[test]
     fn invoke_valid() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
         state.regions.push(region);
         state.resources[ResourceKind::Fuel] = 1;
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn invoke_no_resources() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         let test_edict = get_test_edict("TestEdict");
 
         assert_eq!("Insufficient resources for edict", edict(&mut state, &test_edict).unwrap_err().description());
@@ -76,7 +76,7 @@ mod tests {
 
     #[test]
     fn invoke_can_not_while_any_edict_in_flight() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         state.resources[ResourceKind::Fuel] = 1;
         let test_edict = get_test_edict("TestEdict");
 
@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn invoke_twice() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         state.resources[ResourceKind::Fuel] = 2;
         let test_edict = get_test_edict("TestEdict");
 

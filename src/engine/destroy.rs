@@ -62,19 +62,19 @@ mod tests {
 
     #[test]
     fn destroy_invalid_region() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         assert!(destroy(&mut state, 2, 0).is_err());
     }
 
     #[test]
     fn destroy_invalid_building() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         assert!(destroy(&mut state, 0, 2).is_err());
     }
 
     #[test]
     fn destroy_drops_pops_too_low_fails() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
 
         assert_eq!(
             "Insufficient pops for remaining buildings after destruction",
@@ -84,14 +84,14 @@ mod tests {
 
     #[test]
     fn destroy_immortal_building() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         state.regions[1].add_building(get_test_building("Test Immortal"));
         assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
     }
 
     #[test]
     fn destroy_building_already_being_destroyed() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
             vec![get_test_building("Empty Building"), get_test_building("Empty Building")],
@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     fn destroy_valid_building() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         let old_storage = state.derived_state.storage[ResourceKind::Food];
         assert!(destroy(&mut state, 1, 0).is_ok());
 

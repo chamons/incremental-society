@@ -43,13 +43,15 @@ pub fn apply_research(state: &mut GameState, research: &str) {
 
 #[cfg(test)]
 mod tests {
-    use super::{super::process, *};
+    use super::*;
+    use crate::engine::tests::*;
+
     use crate::engine::tests::*;
     use crate::state::{ResourceKind, RESEARCH_LENGTH};
 
     #[test]
     fn research_without_resources() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         let test_cost_research = get_test_research("TestWithCost");
 
         assert!(research(&mut state, &test_cost_research).is_err());
@@ -59,7 +61,7 @@ mod tests {
 
     #[test]
     fn research_already_in_progress() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         let nodep_research = get_test_research("TestNoDeps");
         let dep_research = get_test_research("Dep");
 
@@ -69,7 +71,7 @@ mod tests {
 
     #[test]
     fn research_dependency_unmet() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         let dep_research = get_test_research("TestWithDep");
 
         assert!(research(&mut state, &dep_research).is_err());
@@ -79,14 +81,14 @@ mod tests {
 
     #[test]
     fn valid_research() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         let nodep_research = get_test_research("TestNoDeps");
 
         research(&mut state, &nodep_research).unwrap();
 
         for _ in 0..RESEARCH_LENGTH {
             assert_eq!(0, state.research.len());
-            process::process_tick(&mut state);
+            process_tick(&mut state);
         }
 
         assert_eq!(1, state.research.len());

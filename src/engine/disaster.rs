@@ -74,16 +74,16 @@ pub fn invoke_disaster_if_needed(state: &mut GameState) -> Option<&'static str> 
 
 #[cfg(test)]
 mod tests {
-    use super::{super::process, *};
+    use super::*;
     use crate::engine::destroy;
     use crate::engine::tests::*;
     use crate::state::Region;
 
     #[test]
     fn invoke_disaster_if_instability_full() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         state.regions[1].add_building(get_test_building("Stability Building"));
-        process::recalculate(&mut state);
+        recalculate(&mut state);
         state.resources[ResourceKind::Knowledge] = state.derived_state.storage[ResourceKind::Knowledge];
         state.resources[ResourceKind::Instability] = state.derived_state.storage[ResourceKind::Instability];
 
@@ -94,11 +94,11 @@ mod tests {
 
     #[test]
     fn disaster_removes_resources_but_food() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state
             .regions
             .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
-        process::recalculate(&mut state);
+        recalculate(&mut state);
         assert_eq!(0, find_all_vulnerable_building_indexes(&state).len());
 
         state.resources[ResourceKind::Fuel] = 100;
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn disaster_kills_buildings() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
             vec![
@@ -130,7 +130,7 @@ mod tests {
 
     #[test]
     fn disaster_kills_buildings_not_immortal() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state
             .regions
             .push(Region::init_with_buildings("Region", vec![get_test_building("Test Immortal")]));
@@ -142,7 +142,7 @@ mod tests {
 
     #[test]
     fn disaster_resets_instability() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.resources[ResourceKind::Instability] = 100;
         disaster(&mut state);
         assert_eq!(0, state.resources[ResourceKind::Instability]);
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn disaster_cancels_any_buildings_to_be_destroyed() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.resources[ResourceKind::Instability] = 100;
         state
             .regions

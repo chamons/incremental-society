@@ -29,6 +29,8 @@ pub mod tests {
     pub use super::data::get_edict as get_test_edict;
     pub use super::data::get_research as get_test_research;
     pub use super::data::get_upgrade as get_test_upgrade;
-
     pub use super::process::init_empty_game_state;
+    pub use super::process::init_test_game_state;
+    pub use super::process::process_tick;
+    pub use super::process::recalculate;
 }

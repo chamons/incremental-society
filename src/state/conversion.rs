@@ -6,7 +6,7 @@ use super::{EPIC_CONVERSION, LONG_CONVERSION, MEDIUM_CONVERSION, SHORT_CONVERSIO
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ConversionLength {
     Short,
     Medium,

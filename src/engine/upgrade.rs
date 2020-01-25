@@ -130,18 +130,52 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 mod tests {
     use super::*;
     use crate::engine::tests::*;
+    use crate::state::ConversionLength;
 
     #[test]
-    fn available_to_research_has_upgrades_applied() {}
+    fn available_to_research_has_upgrades_applied() {
+        let mut state = init_empty_game_state();
+
+        let available = available_to_build(&state);
+        let before = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
+        assert_eq!(2, before.conversions.len());
+
+        state.upgrades.push("TestUpgrade".to_owned());
+
+        let available = available_to_build(&state);
+        let after = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
+        assert_eq!(3, after.conversions.len());
+    }
 
     #[test]
-    fn available_to_invoke_has_upgrades_applied() {}
+    fn available_to_invoke_has_upgrades_applied() {
+        let mut state = init_empty_game_state();
+
+        let available = available_to_invoke(&state);
+        let before = available.iter().filter(|x| x.name == "TestEdict").nth(0).unwrap();
+        assert_eq!(ConversionLength::Short, before.conversion.length);
+
+        state.upgrades.push("TestEdictUpgrade".to_owned());
+
+        let available = available_to_invoke(&state);
+        let after = available.iter().filter(|x| x.name == "TestEdict").nth(0).unwrap();
+        assert_eq!(ConversionLength::Long, after.conversion.length);
+    }
+
+    #[test]
+    fn available_to_upgrade_unlocks_by_research() {
+        let mut state = init_empty_game_state();
+        let available = available_to_upgrade(&state);
+        assert_eq!(2, available.len());
+
+        state.research.insert("UpgradeTech".to_owned());
+
+        let available = available_to_upgrade(&state);
+        assert_eq!(3, available.len());
+    }
 
     #[test]
     fn apply_research_gamestate_has_upgrades_applied() {}
-
-    #[test]
-    fn available_to_upgrade_unlocks_by_research() {}
 
     #[test]
     fn available_to_upgrade_shows_all_unlocked() {}
@@ -156,19 +190,19 @@ mod tests {
     fn available_to_research_dependencies() {
         let mut state = init_empty_game_state();
         let mut base_research = available_to_research(&state);
-        assert_eq!(3, base_research.len());
+        assert_eq!(4, base_research.len());
 
         state.research.insert("TestNoDeps".to_owned());
         base_research = available_to_research(&state);
-        assert_eq!(2, base_research.len());
+        assert_eq!(3, base_research.len());
 
         state.research.insert("Dep".to_owned());
         base_research = available_to_research(&state);
-        assert_eq!(2, base_research.len());
+        assert_eq!(3, base_research.len());
 
         state.research.insert("TestWithDep".to_owned());
         base_research = available_to_research(&state);
-        assert_eq!(1, base_research.len());
+        assert_eq!(2, base_research.len());
     }
 
     #[test]

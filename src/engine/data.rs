@@ -1,4 +1,4 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade, UpgradeActions};
 
 use std::collections::HashMap;
 
@@ -193,11 +193,36 @@ lazy_static! {
             "TestWithCost",
             Research::init("TestWithCost").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
         );
+        m.insert("UpgradeTech", Research::init("UpgradeTech"));
 
         m
     };
     static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
+
+        m.insert(
+            "TestUpgrade",
+            Upgrade::init(
+                "TestUpgrade",
+                vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
+                vec!["Test Building".to_owned()],
+            ),
+        );
+
+        m.insert(
+            "TestEdictUpgrade",
+            Upgrade::init(
+                "TestEdictUpgrade",
+                vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long)],
+                vec!["TestEdict".to_owned()],
+            ),
+        );
+
+        m.insert(
+            "TestUpgradeWithDep",
+            Upgrade::init("TestUpgrade", vec![], vec![]).with_research(vec!["UpgradeTech"]),
+        );
+
         m
     };
 }

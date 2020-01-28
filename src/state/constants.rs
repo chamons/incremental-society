@@ -1,6 +1,7 @@
 use super::{ResourceKind, ResourceQuantity};
 
 pub const BUILD_LENGTH: u32 = 30 * 8;
+pub const UPGRADE_LENGTH: u32 = 30 * 12;
 pub const SUSTAIN_POP_DURATION: u32 = 80;
 pub const DESTROY_LENGTH: u32 = 30 * 5;
 pub const REGION_BUILDING_COUNT: usize = 2;

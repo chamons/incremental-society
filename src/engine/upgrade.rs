@@ -1,14 +1,20 @@
 use std::collections::{HashMap, HashSet};
 
-use super::{die, EngineError};
+use super::{die, process, EngineError};
 use crate::engine::data::{get_building, get_building_names, get_edict, get_edict_names, get_research, get_research_names, get_upgrade, get_upgrade_names};
-use crate::state::{Building, Edict, GameState, Research, ResourceTotal, Upgrade, UpgradeActions, COST_PER_UPGRADE, MAX_UPGRADES};
+use crate::state::{
+    Building, DelayedAction, Edict, GameState, Research, ResourceTotal, Upgrade, UpgradeActions, Waiter, COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH,
+};
 
-pub fn can_apply_upgrades(state: &GameState, upgrades: Vec<Upgrade>) -> Result<(), EngineError> {
+pub fn can_apply_upgrades(state: &GameState, upgrades: &Vec<Upgrade>) -> Result<(), EngineError> {
     let cost = get_upgrade_cost(state, &upgrades);
 
     if upgrades.len() > MAX_UPGRADES {
         return Err(EngineError::init("Insufficient upgrade slots for upgrade plan."));
+    }
+
+    if state.actions.iter().any(|x| x.action.is_upgrade()) {
+        return Err(EngineError::init("Unable to upgrade due to another upgrade already in progress."));
     }
 
     if !state.resources.has_total(&cost) {
@@ -18,11 +24,35 @@ pub fn can_apply_upgrades(state: &GameState, upgrades: Vec<Upgrade>) -> Result<(
     Ok(())
 }
 
-pub fn apply_upgrades(state: &mut GameState, upgrades: Vec<Upgrade>) -> Result<(), EngineError> {
-    can_apply_upgrades(state, upgrades)?;
+pub fn upgrade(state: &mut GameState, upgrades: Vec<Upgrade>) -> Result<(), EngineError> {
+    can_apply_upgrades(state, &upgrades)?;
 
-    // Since we can toggle between upgrades (for a price) it is easier to check "update" redo every building
+    let action = Waiter::init_one_shot(
+        "Implementing Upgrades",
+        UPGRADE_LENGTH,
+        DelayedAction::Upgrade(upgrades.iter().map(|x| x.name.to_owned()).collect()),
+    );
+    state.actions.push(action);
+    process::recalculate(state);
+
     Ok(())
+}
+
+pub fn apply_upgrade(state: &mut GameState, upgrades: Vec<Upgrade>) {
+    state.upgrades = upgrades.iter().map(|x| x.name.to_string()).collect();
+
+    // We must first recalculate to take into account the new upgraded buildings
+    process::recalculate(state);
+
+    // Since we can toggle between upgrades (for a price) it is easier to check "update" redo every thing that can be upgraded (building/edict)
+    for r in &mut state.regions {
+        for i in 0..r.buildings.len() {
+            r.buildings[i] = state.derived_state.find_building(&r.buildings[i].name).clone();
+        }
+    }
+
+    // We must recalculate again to take into account those upgraded buildings
+    process::recalculate(state);
 }
 
 pub fn get_upgrade_cost(state: &GameState, upgrades: &Vec<Upgrade>) -> ResourceTotal {
@@ -168,7 +198,13 @@ mod tests {
 
     use super::*;
     use crate::engine::tests::*;
-    use crate::state::ConversionLength;
+    use crate::state::{ConversionLength, Region, ResourceKind};
+
+    fn give_update_resources(state: &mut GameState, count: i64) {
+        for c in COST_PER_UPGRADE.iter() {
+            state.resources.add(c.0, c.1 * count);
+        }
+    }
 
     #[test]
     fn available_to_research_has_upgrades_applied() {
@@ -223,10 +259,58 @@ mod tests {
     }
 
     #[test]
-    fn apply_research_gamestate_has_upgrades_applied() {}
+    fn research_multiple_in_flight() {
+        let mut state = init_empty_game_state();
+        give_update_resources(&mut state, 2);
+
+        upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).unwrap();
+        assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_err());
+    }
 
     #[test]
-    fn apply_research_gamestate_has_upgrades_removed() {}
+    fn research_has_upgrades_applied() {
+        let mut state = init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
+        recalculate(&mut state);
+
+        give_update_resources(&mut state, 2);
+
+        upgrade(&mut state, vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]).unwrap();
+
+        for _ in 0..UPGRADE_LENGTH {
+            assert_eq!(0, state.upgrades.len());
+            assert_eq!(ConversionLength::Short, state.derived_state.find_edict("TestEdict").conversion.length);
+            assert_eq!(2, state.buildings()[0].conversions.len());
+            process::process_tick(&mut state);
+        }
+
+        assert_eq!(2, state.upgrades.len());
+        assert_eq!(ConversionLength::Long, state.derived_state.find_edict("TestEdict").conversion.length);
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+        assert_eq!(3, state.buildings()[0].conversions.len());
+    }
+
+    #[test]
+    fn research_has_upgrades_removed() {
+        let mut state = init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
+        recalculate(&mut state);
+        give_update_resources(&mut state, 1);
+
+        apply_upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]);
+
+        upgrade(&mut state, vec![]).unwrap();
+
+        for _ in 0..UPGRADE_LENGTH {
+            assert_eq!(1, state.upgrades.len());
+            assert_eq!(3, state.buildings()[0].conversions.len());
+            process::process_tick(&mut state);
+        }
+
+        assert_eq!(0, state.upgrades.len());
+        assert_eq!(2, state.buildings()[0].conversions.len());
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+    }
 
     #[test]
     fn apply_research_allow_up_to_cap_selections() {
@@ -234,15 +318,13 @@ mod tests {
         assert_eq!(2, MAX_UPGRADES);
 
         let mut state = init_empty_game_state();
-        for c in COST_PER_UPGRADE.iter() {
-            state.resources.add(c.0, c.1 * 2);
-        }
+        give_update_resources(&mut state, 2);
 
-        assert!(can_apply_upgrades(&state, vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]).is_ok());
+        assert!(can_apply_upgrades(&state, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]).is_ok());
 
         let err = can_apply_upgrades(
             &state,
-            vec![
+            &vec![
                 get_test_upgrade("TestUpgrade"),
                 get_test_upgrade("TestEdictUpgrade"),
                 get_test_upgrade("TestOtherUpgrade"),
@@ -252,9 +334,6 @@ mod tests {
 
         assert_eq!("Insufficient upgrade slots for upgrade plan.", err.description());
     }
-
-    #[test]
-    fn apply_research_errors_if_too_many_selected() {}
 
     #[test]
     fn apply_research_costs_per_added() {

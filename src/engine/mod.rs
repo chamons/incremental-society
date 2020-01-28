@@ -22,7 +22,7 @@ pub use edict::{can_invoke_edict, edict};
 pub use error::EngineError;
 pub use process::{init_new_game_state, process_tick};
 pub use research::{can_research, research};
-pub use upgrade::apply_upgrades;
+pub use upgrade::{apply_upgrade, upgrade};
 
 #[cfg(test)]
 pub mod tests {

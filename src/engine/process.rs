@@ -1,12 +1,8 @@
 use std::cmp::min;
 use std::collections::HashSet;
 
-use super::build;
-use super::conversions;
-use super::destroy;
-use super::edict;
-use super::research;
 use super::DerivedState;
+use super::{build, conversions, destroy, edict, research, upgrade};
 use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
@@ -29,6 +25,7 @@ fn apply_actions(state: &mut GameState) {
             DelayedAction::Build(building, region_index) => build::apply_build(state, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
             DelayedAction::Research(research) => research::apply_research(state, research),
+            DelayedAction::Upgrade(upgrades) => upgrade::apply_upgrade(state, upgrades.iter().map(|x| state.derived_state.find_upgrade(x).clone()).collect()),
         }
     }
 }

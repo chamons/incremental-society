@@ -59,6 +59,15 @@ impl ResourceTotal {
         ResourceTotal { resources: [0; NUM_RESOURCES] }
     }
 
+    pub fn has_total(&self, total: &ResourceTotal) -> bool {
+        for i in 0..NUM_RESOURCES {
+            if self[i] < total[i] {
+                return false;
+            }
+        }
+        true
+    }
+
     pub fn has_amount(&self, amount: &ResourceAmount) -> bool {
         self.has(amount.kind, amount.amount)
     }
@@ -129,6 +138,19 @@ impl IndexMut<usize> for ResourceTotal {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resource_total_has_total() {
+        let mut total = ResourceTotal::init();
+        total[ResourceKind::Fuel] = 5;
+
+        let mut other = ResourceTotal::init();
+        other[ResourceKind::Fuel] = 10;
+
+        assert!(!total.has_total(&other));
+        other[ResourceKind::Fuel] = 5;
+        assert!(total.has_total(&other));
+    }
 
     #[test]
     fn resource_total_has_enough() {

@@ -218,9 +218,11 @@ lazy_static! {
             ),
         );
 
+        m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));
+
         m.insert(
             "TestUpgradeWithDep",
-            Upgrade::init("TestUpgrade", vec![], vec![]).with_research(vec!["UpgradeTech"]),
+            Upgrade::init("TestUpgradeWithDep", vec![], vec![]).with_research(vec!["UpgradeTech"]),
         );
 
         m

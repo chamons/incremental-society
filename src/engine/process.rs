@@ -66,7 +66,7 @@ pub fn init_new_game_state() -> GameState {
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
-        upgrades: vec![],
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
     state
@@ -80,7 +80,7 @@ pub fn init_empty_game_state() -> GameState {
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
-        upgrades: vec![],
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
     state
@@ -97,7 +97,7 @@ pub fn init_test_game_state() -> GameState {
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
-        upgrades: vec![],
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
 

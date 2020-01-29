@@ -4,8 +4,9 @@ use std::time::{Duration, Instant};
 
 use incremental_society::console_ui::{self, OptionList, Selection};
 use incremental_society::engine;
-use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
+use incremental_society::state::{Building, DelayedAction, GameState, ResourceKind, MAX_UPGRADES, NUM_RESOURCES};
 
+use itertools::Itertools;
 use pancurses::{Input, Window};
 
 fn main() {
@@ -90,7 +91,7 @@ impl<'a> UI<'a> {
             }
 
             if is_char(input, 'b') {
-                let building_options = &state.derived_state.available_buildings;
+                let building_options: Vec<&Building> = state.derived_state.available_buildings.iter().filter(|x| !x.immortal).collect();
                 let building_names: Vec<&String> = building_options.iter().map(|x| &x.name).collect();
                 let selection = Selection::init_list(
                     &building_names[..],
@@ -181,6 +182,42 @@ impl<'a> UI<'a> {
                         }
                     }
                     None => self.clear_message(),
+                }
+            }
+
+            if is_char(input, 'u') {
+                let upgrades = &state.derived_state.available_upgrade;
+                let upgrade_names: Vec<&String> = upgrades.iter().map(|x| &x.name).collect();
+
+                let selection = Selection::init_list(&upgrade_names, |_| true, |o| upgrades.get(o).unwrap().details());
+                match OptionList::init(&self.term, selection).run_multiple_selection(
+                    upgrade_names.iter().map(|x| state.upgrades.contains(*x)).collect(),
+                    |selection| {
+                        let selected_upgrades = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        engine::can_apply_upgrades(&state, &selected_upgrades).is_ok()
+                    },
+                    |selection| {
+                        let selected_upgrades = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        [
+                            format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
+                            format!(
+                                "{}",
+                                engine::get_upgrade_cost(&state, &selected_upgrades)
+                                    .iter()
+                                    .map(|x| format!("{} {}", x.amount, x.kind))
+                                    .format(", ")
+                            ),
+                        ]
+                    },
+                ) {
+                    Some(selected_items) => {
+                        let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        match engine::upgrade(&mut state, selected_upgrades) {
+                            Err(e) => self.set_message(e.description()),
+                            _ => self.clear_message(),
+                        }
+                    }
+                    _ => self.clear_message(),
                 }
             }
 

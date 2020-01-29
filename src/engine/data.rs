@@ -84,6 +84,9 @@ lazy_static! {
     };
     static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
+        m.insert("a", Upgrade::init("a", vec![], vec![]));
+        m.insert("b", Upgrade::init("b", vec![], vec![]));
+        m.insert("c", Upgrade::init("c", vec![], vec![]));
         m
     };
 }
@@ -238,11 +241,7 @@ pub fn get_building(name: &str) -> Building {
 }
 
 pub fn get_building_names() -> Vec<String> {
-    BUILDINGS
-        .iter()
-        .filter(|(_, building)| !building.immortal)
-        .map(|(name, _)| (*name).to_string())
-        .collect()
+    BUILDINGS.keys().map(|x| (*x).to_string()).collect()
 }
 
 pub fn get_edict(name: &str) -> Edict {

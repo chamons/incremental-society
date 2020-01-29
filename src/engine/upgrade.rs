@@ -2,9 +2,8 @@ use std::collections::{HashMap, HashSet};
 
 use super::{die, process, EngineError};
 use crate::engine::data::{get_building, get_building_names, get_edict, get_edict_names, get_research, get_research_names, get_upgrade, get_upgrade_names};
-use crate::state::{
-    Building, DelayedAction, Edict, GameState, Research, ResourceTotal, Upgrade, UpgradeActions, Waiter, COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH,
-};
+use crate::state::{Building, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
+use crate::state::{COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH};
 
 pub fn can_apply_upgrades(state: &GameState, upgrades: &Vec<Upgrade>) -> Result<(), EngineError> {
     let cost = get_upgrade_cost(state, &upgrades);
@@ -17,7 +16,7 @@ pub fn can_apply_upgrades(state: &GameState, upgrades: &Vec<Upgrade>) -> Result<
         return Err(EngineError::init("Unable to upgrade due to another upgrade already in progress."));
     }
 
-    if !state.resources.has_total(&cost) {
+    if !state.resources.has_range(&cost) {
         return Err(EngineError::init("Insufficient resources for upgrade cost."));
     }
 
@@ -55,16 +54,20 @@ pub fn apply_upgrade(state: &mut GameState, upgrades: Vec<Upgrade>) {
     process::recalculate(state);
 }
 
-pub fn get_upgrade_cost(state: &GameState, upgrades: &Vec<Upgrade>) -> ResourceTotal {
+pub fn get_upgrade_cost(state: &GameState, upgrades: &Vec<Upgrade>) -> Vec<ResourceAmount> {
     let current: HashSet<&String> = state.upgrades.iter().collect();
     let desired: HashSet<&String> = upgrades.iter().map(|x| &x.name).collect();
 
     let difference: HashSet<_> = desired.symmetric_difference(&current).collect();
 
-    let mut cost = ResourceTotal::init();
+    let mut cost: Vec<ResourceAmount> = vec![];
     for _ in 0..difference.len() {
         for c in COST_PER_UPGRADE.iter() {
-            cost.add(c.0, c.1);
+            if let Some(i) = cost.iter().position(|x| x.kind == c.0) {
+                cost[i].amount += c.1;
+            } else {
+                cost.push(ResourceAmount::init(c.0, c.1));
+            }
         }
     }
     cost
@@ -145,7 +148,7 @@ fn apply_edict_upgrade(edict: &mut Edict, upgrade: &UpgradeActions) {
     }
 }
 
-fn get_upgrades_by_name(upgrades: &Vec<String>) -> HashMap<String, Vec<Upgrade>> {
+fn get_upgrades_by_name(upgrades: &HashSet<String>) -> HashMap<String, Vec<Upgrade>> {
     let mut sorted_list: HashMap<String, Vec<Upgrade>> = HashMap::new();
     for upgrade in upgrades {
         let upgrade = get_upgrade(upgrade);
@@ -172,7 +175,7 @@ fn get_building_by_research(state: &GameState) -> Vec<Building> {
     let mut available = vec![];
 
     for building in get_building_names().iter().map(|x| get_building(x)) {
-        if building.is_available(&state) && !building.immortal {
+        if building.is_available(&state) {
             available.push(building);
         }
     }
@@ -214,7 +217,7 @@ mod tests {
         let before = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
         assert_eq!(2, before.conversions.len());
 
-        state.upgrades.push("TestUpgrade".to_owned());
+        state.upgrades.insert("TestUpgrade".to_owned());
 
         let available = available_to_build(&state);
         let after = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
@@ -229,7 +232,7 @@ mod tests {
         let before = available.iter().filter(|x| x.name == "TestEdict").nth(0).unwrap();
         assert_eq!(ConversionLength::Short, before.conversion.length);
 
-        state.upgrades.push("TestEdictUpgrade".to_owned());
+        state.upgrades.insert("TestEdictUpgrade".to_owned());
 
         let available = available_to_invoke(&state);
         let after = available.iter().filter(|x| x.name == "TestEdict").nth(0).unwrap();
@@ -253,7 +256,7 @@ mod tests {
         let available = available_to_upgrade(&state);
         let inital_count = available.len();
 
-        state.upgrades.push(available.get(0).unwrap().name.to_string());
+        state.upgrades.insert(available.get(0).unwrap().name.to_string());
         let available = available_to_upgrade(&state);
         assert_eq!(inital_count, available.len());
     }
@@ -341,33 +344,33 @@ mod tests {
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]);
 
-        for c in COST_PER_UPGRADE.iter() {
-            assert_eq!(total_cost[c.0], c.1 * 2);
+        for i in 0..COST_PER_UPGRADE.len() {
+            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1 * 2);
         }
     }
 
     #[test]
     fn apply_research_costs_per_removed() {
         let mut state = init_empty_game_state();
-        state.upgrades.push("TestUpgrade".to_owned());
-        state.upgrades.push("TestEdictUpgrade".to_owned());
+        state.upgrades.insert("TestUpgrade".to_owned());
+        state.upgrades.insert("TestEdictUpgrade".to_owned());
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestUpgrade")]);
 
-        for c in COST_PER_UPGRADE.iter() {
-            assert_eq!(total_cost[c.0], c.1);
+        for i in 0..COST_PER_UPGRADE.len() {
+            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1);
         }
     }
 
     #[test]
     fn apply_research_costs_per_toggle() {
         let mut state = init_empty_game_state();
-        state.upgrades.push("TestUpgrade".to_owned());
+        state.upgrades.insert("TestUpgrade".to_owned());
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestEdictUpgrade")]);
 
-        for c in COST_PER_UPGRADE.iter() {
-            assert_eq!(total_cost[c.0], c.1 * 2);
+        for i in 0..COST_PER_UPGRADE.len() {
+            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1 * 2);
         }
     }
 
@@ -388,12 +391,6 @@ mod tests {
         state.research.insert("TestWithDep".to_owned());
         base_research = available_to_research(&state);
         assert_eq!(2, base_research.len());
-    }
-
-    #[test]
-    fn available_to_build_does_not_include_immortal() {
-        let state = init_empty_game_state();
-        assert!(!available_to_build(&state).iter().any(|x| x.immortal));
     }
 
     #[test]

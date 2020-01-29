@@ -55,7 +55,7 @@ impl<'a> OptionList<'a> {
         self.term.mvaddstr(y, x + 3, text.to_string());
     }
 
-    fn write_with_clear_left(&self, y: i32, line: &String) {
+    fn write_with_clear_left(&self, y: i32, line: &str) {
         self.term.mvaddstr(y, self.start_x, " ".repeat(OptionList::MODAL_WIDTH));
         let x = self.start_x + OptionList::MODAL_WIDTH as i32 - line.len() as i32 - 2;
         self.term.mvaddstr(y, x, line);
@@ -155,7 +155,7 @@ impl<'a> OptionList<'a> {
         original_win.overwrite(&self.term);
     }
 
-    fn draw_multiple_selection(&self, selected: &Vec<bool>, valid_selection: &impl Fn(&Vec<usize>) -> bool, status_line: &impl Fn(&Vec<usize>) -> [String; 2]) {
+    fn draw_multiple_selection(&self, selected: &[bool], valid_selection: &impl Fn(&Vec<usize>) -> bool, status_line: &impl Fn(&Vec<usize>) -> [String; 2]) {
         let mut y: i32 = self.start_y;
         for (i, o) in self.options.iter().enumerate() {
             let is_selected = selected[i];
@@ -187,7 +187,7 @@ impl<'a> OptionList<'a> {
     fn write_full_status(
         &self,
         y: &mut i32,
-        selected: &Vec<bool>,
+        selected: &[bool],
         valid_selection: &impl Fn(&Vec<usize>) -> bool,
         status_line: &impl Fn(&Vec<usize>) -> [String; 2],
     ) {
@@ -220,6 +220,6 @@ impl<'a> OptionList<'a> {
     }
 }
 
-fn convert_toggle_to_index(selected_items: &Vec<bool>) -> Vec<usize> {
+fn convert_toggle_to_index(selected_items: &[bool]) -> Vec<usize> {
     selected_items.iter().enumerate().filter(|(_, e)| **e).map(|(i, _)| i).collect()
 }

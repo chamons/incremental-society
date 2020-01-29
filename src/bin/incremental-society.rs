@@ -4,7 +4,7 @@ use std::time::{Duration, Instant};
 
 use incremental_society::console_ui::{self, OptionList, Selection};
 use incremental_society::engine;
-use incremental_society::state::{Building, DelayedAction, GameState, ResourceKind, MAX_UPGRADES, NUM_RESOURCES};
+use incremental_society::state::{Building, DelayedAction, GameState, ResourceKind, Upgrade, MAX_UPGRADES, NUM_RESOURCES};
 
 use itertools::Itertools;
 use pancurses::{Input, Window};
@@ -193,16 +193,16 @@ impl<'a> UI<'a> {
                 match OptionList::init(&self.term, selection).run_multiple_selection(
                     upgrade_names.iter().map(|x| state.upgrades.contains(*x)).collect(),
                     |selection| {
-                        let selected_upgrades = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-                        engine::can_apply_upgrades(&state, &selected_upgrades).is_ok()
+                        let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        engine::can_apply_upgrades(&state, &selected_upgrades[..]).is_ok()
                     },
                     |selection| {
-                        let selected_upgrades = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
                         [
                             format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
                             format!(
                                 "{}",
-                                engine::get_upgrade_cost(&state, &selected_upgrades)
+                                engine::get_upgrade_cost(&state, &selected_upgrades[..])
                                     .iter()
                                     .map(|x| format!("{} {}", x.amount, x.kind))
                                     .format(", ")

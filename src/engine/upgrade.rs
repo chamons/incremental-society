@@ -5,7 +5,7 @@ use crate::engine::data::{get_building, get_building_names, get_edict, get_edict
 use crate::state::{Building, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
 use crate::state::{COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH};
 
-pub fn can_apply_upgrades(state: &GameState, upgrades: &Vec<Upgrade>) -> Result<(), EngineError> {
+pub fn can_apply_upgrades(state: &GameState, upgrades: &[Upgrade]) -> Result<(), EngineError> {
     let cost = get_upgrade_cost(state, &upgrades);
 
     if upgrades.len() > MAX_UPGRADES {
@@ -54,7 +54,7 @@ pub fn apply_upgrade(state: &mut GameState, upgrades: Vec<Upgrade>) {
     process::recalculate(state);
 }
 
-pub fn get_upgrade_cost(state: &GameState, upgrades: &Vec<Upgrade>) -> Vec<ResourceAmount> {
+pub fn get_upgrade_cost(state: &GameState, upgrades: &[Upgrade]) -> Vec<ResourceAmount> {
     let current: HashSet<&String> = state.upgrades.iter().collect();
     let desired: HashSet<&String> = upgrades.iter().map(|x| &x.name).collect();
 
@@ -130,7 +130,7 @@ fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
         UpgradeActions::AddBuildingStorage(storage) => {
             if let Some(position) = building.storage.iter().position(|x| x.kind == storage.kind) {
                 let current = &mut building.storage.get_mut(position).unwrap();
-                current.amount += current.amount + storage.amount;
+                current.amount += storage.amount;
             } else {
                 building.storage.push(*storage);
             }

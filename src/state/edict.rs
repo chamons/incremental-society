@@ -1,5 +1,6 @@
-use super::{check_available, Conversion, GameState};
 use std::collections::HashSet;
+
+use super::{check_available, Conversion, GameState};
 
 #[derive(Debug, Clone)]
 pub struct Edict {

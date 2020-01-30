@@ -143,6 +143,7 @@ lazy_static! {
         m.insert(
             "Stability Building",
             Building::init("Stability Building").with_storage(vec![
+                ResourceAmount::init(ResourceKind::Food, 10),
                 ResourceAmount::init(ResourceKind::Knowledge, 10),
                 ResourceAmount::init(ResourceKind::Instability, 10),
             ]),
@@ -221,6 +222,15 @@ lazy_static! {
             ),
         );
 
+        m.insert(
+            "TestConversionUpgrade",
+            Upgrade::init(
+                "TestConversionUpgrade",
+                vec![UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1))],
+                vec!["TestChop".to_owned()],
+            ),
+        );
+
         m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));
 
         m.insert(
@@ -234,6 +244,10 @@ lazy_static! {
 
 pub fn get_conversion(name: &str) -> Conversion {
     CONVERSIONS[name].clone()
+}
+
+pub fn get_conversion_names() -> Vec<String> {
+    CONVERSIONS.keys().map(|x| (*x).to_string()).collect()
 }
 
 pub fn get_building(name: &str) -> Building {

@@ -10,6 +10,9 @@ pub enum UpgradeActions {
     AddBuildingConversion(String),
     AddBuildingStorage(ResourceAmount),
     ChangeEdictLength(ConversionLength),
+    ChangeConversionLength(ConversionLength),
+    ChangeConversionInput(ResourceAmount),
+    ChangeConversionOutput(ResourceAmount),
 }
 
 impl UpgradeActions {
@@ -19,6 +22,9 @@ impl UpgradeActions {
             UpgradeActions::AddBuildingConversion(name) => format!("Adds {} conversion to building", name),
             UpgradeActions::AddBuildingStorage(storage) => format!("Adds {:?} storage", storage),
             UpgradeActions::ChangeEdictLength(length) => format!("Changes edict length to {:?}", length),
+            UpgradeActions::ChangeConversionLength(length) => format!("Changes conversion length to {:?}", length),
+            UpgradeActions::ChangeConversionInput(input) => format!("Adds {:?} to required conversion input", input),
+            UpgradeActions::ChangeConversionOutput(output) => format!("Adds {:?} to required conversion output", output),
         }
     }
 }

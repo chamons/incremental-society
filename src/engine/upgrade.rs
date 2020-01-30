@@ -27,6 +27,9 @@ pub fn can_apply_upgrades(state: &GameState, upgrades: &[Upgrade]) -> Result<(),
 pub fn upgrade(state: &mut GameState, upgrades: Vec<Upgrade>) -> Result<(), EngineError> {
     can_apply_upgrades(state, &upgrades)?;
 
+    let cost = get_upgrade_cost(state, &upgrades);
+    state.resources.remove_range(&cost);
+
     let action = Waiter::init_one_shot(
         "Implementing Upgrades",
         UPGRADE_LENGTH,
@@ -74,54 +77,57 @@ pub fn get_upgrade_cost(state: &GameState, upgrades: &[Upgrade]) -> Vec<Resource
     cost
 }
 
+pub fn current_conversions(state: &GameState) -> Vec<Conversion> {
+    let upgrades = get_upgrades_by_name(&state.upgrades);
+    let mut conversions: Vec<Conversion> = get_conversion_names().iter().map(|x| get_conversion(x)).collect();
+
+    for mut conversion in &mut conversions {
+        if let Some(upgrades) = upgrades.get(&conversion.name) {
+            for u in upgrades.iter().flat_map(|x| &x.upgrades) {
+                apply_conversion_upgrade(&mut conversion, u);
+            }
+        }
+    }
+
+    conversions
+}
+
 pub fn available_to_research(state: &GameState) -> Vec<Research> {
     get_research_by_research(&state)
 }
 
 pub fn available_to_build(state: &GameState) -> Vec<Building> {
-    let mut available = vec![];
-
     let upgrades = get_upgrades_by_name(&state.upgrades);
-    for b in get_building_by_research(&state) {
-        let mut b = b.clone();
+    let mut buildings: Vec<Building> = get_building_by_research(&state);
+
+    for mut b in &mut buildings {
         if let Some(upgrades) = upgrades.get(&b.name) {
             for u in upgrades.iter().flat_map(|x| &x.upgrades) {
                 apply_building_upgrade(&mut b, u);
             }
         }
-        available.push(b);
     }
 
-    available
+    buildings
 }
 
 pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
-    let mut available = vec![];
-
     let upgrades = get_upgrades_by_name(&state.upgrades);
-    for e in get_edict_by_research(&state) {
-        let mut e = e.clone();
+    let mut edicts: Vec<Edict> = get_edict_by_research(&state);
+
+    for mut e in &mut edicts {
         if let Some(upgrades) = upgrades.get(&e.name) {
             for u in upgrades.iter().flat_map(|x| &x.upgrades) {
                 apply_edict_upgrade(&mut e, u);
             }
         }
-
-        available.push(e);
     }
 
-    available
+    edicts
 }
 
 pub fn available_to_upgrade(state: &GameState) -> Vec<Upgrade> {
-    let mut available = vec![];
-    for upgrade in get_upgrade_names().iter().map(|x| get_upgrade(x)) {
-        if upgrade.is_available(state) {
-            available.push(upgrade);
-        }
-    }
-
-    available
+    get_upgrade_names().iter().map(|x| get_upgrade(x)).filter(|x| x.is_available(state)).collect()
 }
 
 fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
@@ -136,16 +142,23 @@ fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
                 building.storage.push(*storage);
             }
         }
-        UpgradeActions::ChangeEdictLength(_) => die(&"ChangeEdictLength upgrade on building"),
+        _ => {}
     }
 }
 
 fn apply_edict_upgrade(edict: &mut Edict, upgrade: &UpgradeActions) {
     match upgrade {
         UpgradeActions::ChangeEdictLength(length) => edict.conversion.length = *length,
-        UpgradeActions::AddBuildingPops(_) => die(&"AddBuildingPops upgrade on edict"),
-        UpgradeActions::AddBuildingConversion(_) => die(&"AddBuildingConversion upgrade on edict"),
-        UpgradeActions::AddBuildingStorage(_) => die(&"AddBuildingStorage upgrade on edict"),
+        _ => {}
+    }
+}
+
+fn apply_conversion_upgrade(conversion: &mut Conversion, upgrade: &UpgradeActions) {
+    match upgrade {
+        UpgradeActions::ChangeConversionLength(length) => conversion.length = *length,
+        UpgradeActions::ChangeConversionInput(input) => conversion.input.push(*input),
+        UpgradeActions::ChangeConversionOutput(output) => conversion.output.push(*output),
+        _ => {}
     }
 }
 
@@ -162,38 +175,15 @@ fn get_upgrades_by_name(upgrades: &HashSet<String>) -> HashMap<String, Vec<Upgra
 }
 
 fn get_research_by_research(state: &GameState) -> Vec<Research> {
-    let mut available = vec![];
-    for research in get_research_names().iter().map(|x| get_research(x)) {
-        if research.is_available(state) {
-            available.push(research);
-        }
-    }
-
-    available
+    get_research_names().iter().map(|x| get_research(x)).filter(|x| x.is_available(state)).collect()
 }
 
 fn get_building_by_research(state: &GameState) -> Vec<Building> {
-    let mut available = vec![];
-
-    for building in get_building_names().iter().map(|x| get_building(x)) {
-        if building.is_available(&state) {
-            available.push(building);
-        }
-    }
-
-    available
+    get_building_names().iter().map(|x| get_building(x)).filter(|x| x.is_available(state)).collect()
 }
 
 fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
-    let mut available = vec![];
-
-    for edict in get_edict_names().iter().map(|x| get_edict(x)) {
-        if edict.is_available(&state) {
-            available.push(edict);
-        }
-    }
-
-    available
+    get_edict_names().iter().map(|x| get_edict(x)).filter(|x| x.is_available(state)).collect()
 }
 
 #[cfg(test)]
@@ -272,30 +262,88 @@ mod tests {
     }
 
     #[test]
-    fn research_has_upgrades_applied() {
+    fn upgrade_costs_resources() {
+        let mut state = init_empty_game_state();
+        assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_err());
+
+        give_update_resources(&mut state, 1);
+
+        assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_ok());
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn has_building_upgrade_applied() {
         let mut state = init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
         recalculate(&mut state);
 
-        give_update_resources(&mut state, 2);
+        give_update_resources(&mut state, 1);
 
-        upgrade(&mut state, vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]).unwrap();
+        upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).unwrap();
 
         for _ in 0..UPGRADE_LENGTH {
             assert_eq!(0, state.upgrades.len());
-            assert_eq!(ConversionLength::Short, state.derived_state.find_edict("TestEdict").conversion.length);
             assert_eq!(2, state.buildings()[0].conversions.len());
             process::process_tick(&mut state);
         }
 
-        assert_eq!(2, state.upgrades.len());
-        assert_eq!(ConversionLength::Long, state.derived_state.find_edict("TestEdict").conversion.length);
+        assert_eq!(1, state.upgrades.len());
         assert_eq!(0, state.resources[ResourceKind::Knowledge]);
         assert_eq!(3, state.buildings()[0].conversions.len());
     }
 
     #[test]
-    fn research_has_upgrades_removed() {
+    fn has_edict_applied() {
+        let mut state = init_empty_game_state();
+
+        give_update_resources(&mut state, 1);
+        upgrade(&mut state, vec![get_test_upgrade("TestEdictUpgrade")]).unwrap();
+
+        for _ in 0..UPGRADE_LENGTH {
+            assert_eq!(0, state.upgrades.len());
+            assert_eq!(ConversionLength::Short, state.derived_state.find_edict("TestEdict").conversion.length);
+            process::process_tick(&mut state);
+        }
+
+        assert_eq!(1, state.upgrades.len());
+        assert_eq!(ConversionLength::Long, state.derived_state.find_edict("TestEdict").conversion.length);
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn has_conversion_applied() {
+        let mut state = init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings(
+            "First Region",
+            vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
+        )];
+        state.resources[ResourceKind::Food] = 10;
+        recalculate(&mut state);
+
+        give_update_resources(&mut state, 1);
+
+        upgrade(&mut state, vec![get_test_upgrade("TestConversionUpgrade")]).unwrap();
+
+        for _ in 0..UPGRADE_LENGTH {
+            assert_eq!(0, state.upgrades.len());
+            assert_eq!(1, state.derived_state.find_conversion("TestChop").output.len());
+            process::process_tick(&mut state);
+        }
+
+        assert_eq!(1, state.upgrades.len());
+        assert_eq!(2, state.derived_state.find_conversion("TestChop").output.len());
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+
+        let conversion_length = state.derived_state.find_conversion("TestChop").tick_length();
+        for _ in 0..conversion_length {
+            process::process_tick(&mut state);
+        }
+        assert_eq!(2, state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn has_upgrades_removed() {
         let mut state = init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
         recalculate(&mut state);

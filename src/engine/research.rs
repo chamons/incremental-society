@@ -1,18 +1,14 @@
 use super::{process, EngineError};
-use crate::data;
-use crate::state::{DelayedAction, GameState, Waiter};
 
-pub fn can_research(state: &GameState, research: &str) -> Result<(), EngineError> {
+use crate::state::{DelayedAction, GameState, Research, Waiter, RESEARCH_LENGTH};
+
+pub fn can_research(state: &GameState, research: &Research) -> Result<(), EngineError> {
     if state.actions.iter().any(|x| x.action.is_research()) {
         return Err(EngineError::init("Research already in progress"));
     }
 
-    let research = data::get_research(research);
-
-    for dep in &research.dependencies {
-        if !state.research.contains(dep) {
-            return Err(EngineError::init("Unmet dependency for research"));
-        }
+    if !research.is_available(&state) {
+        return Err(EngineError::init("Unmet dependency for research"));
     }
 
     for cost in &research.cost {
@@ -24,15 +20,14 @@ pub fn can_research(state: &GameState, research: &str) -> Result<(), EngineError
     Ok(())
 }
 
-pub fn research(state: &mut GameState, research: &str) -> Result<(), EngineError> {
+pub fn research(state: &mut GameState, research: &Research) -> Result<(), EngineError> {
     can_research(state, research)?;
-    let research = data::get_research(research);
 
     state.resources.remove_range(&research.cost);
 
     let action = Waiter::init_one_shot(
         &format!("Researching {}", research.name)[..],
-        data::RESEARCH_LENGTH,
+        RESEARCH_LENGTH,
         DelayedAction::Research(research.name.to_string()),
     );
     state.actions.push(action);
@@ -48,43 +43,51 @@ pub fn apply_research(state: &mut GameState, research: &str) {
 
 #[cfg(test)]
 mod tests {
-    use super::{super::process, *};
-    use crate::state::ResourceKind;
+    use super::*;
+    use crate::engine::tests::*;
+
+    use crate::state::{ResourceKind, RESEARCH_LENGTH};
 
     #[test]
     fn research_without_resources() {
-        let mut state = process::init_empty_game_state();
-        assert!(research(&mut state, "TestWithCost").is_err());
+        let mut state = init_empty_game_state();
+        let test_cost_research = get_test_research("TestWithCost");
+
+        assert!(research(&mut state, &test_cost_research).is_err());
         state.resources[ResourceKind::Knowledge] = 10;
-        assert!(research(&mut state, "TestWithCost").is_ok());
+        assert!(research(&mut state, &test_cost_research).is_ok());
     }
 
     #[test]
     fn research_already_in_progress() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
+        let nodep_research = get_test_research("TestNoDeps");
+        let dep_research = get_test_research("Dep");
 
-        research(&mut state, "TestNoDeps").unwrap();
-        assert!(research(&mut state, "Dep").is_err());
+        research(&mut state, &nodep_research).unwrap();
+        assert!(research(&mut state, &dep_research).is_err());
     }
 
     #[test]
     fn research_dependency_unmet() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
+        let dep_research = get_test_research("TestWithDep");
 
-        assert!(research(&mut state, "TestWithDep").is_err());
+        assert!(research(&mut state, &dep_research).is_err());
         state.research.insert("Dep".to_owned());
-        assert!(research(&mut state, "TestWithDep").is_ok());
+        assert!(research(&mut state, &dep_research).is_ok());
     }
 
     #[test]
     fn valid_research() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
+        let nodep_research = get_test_research("TestNoDeps");
 
-        research(&mut state, "TestNoDeps").unwrap();
+        research(&mut state, &nodep_research).unwrap();
 
-        for _ in 0..data::RESEARCH_LENGTH {
+        for _ in 0..RESEARCH_LENGTH {
             assert_eq!(0, state.research.len());
-            process::process_tick(&mut state);
+            process_tick(&mut state);
         }
 
         assert_eq!(1, state.research.len());

@@ -8,6 +8,7 @@ pub enum DelayedAction {
     Build(String, usize),
     Destroy(usize, usize),
     Research(String),
+    Upgrade(Vec<String>),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

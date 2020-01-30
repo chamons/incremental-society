@@ -1,12 +1,12 @@
 use std::fmt;
 
 use super::resources::*;
-use crate::data;
+use super::{EPIC_CONVERSION, LONG_CONVERSION, MEDIUM_CONVERSION, SHORT_CONVERSION};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ConversionLength {
     Short,
     Medium,
@@ -51,10 +51,10 @@ impl Conversion {
 
     pub fn tick_length(&self) -> u32 {
         match &self.length {
-            ConversionLength::Short => data::SHORT_CONVERSION,
-            ConversionLength::Medium => data::MEDIUM_CONVERSION,
-            ConversionLength::Long => data::LONG_CONVERSION,
-            ConversionLength::Epic => data::EPIC_CONVERSION,
+            ConversionLength::Short => SHORT_CONVERSION,
+            ConversionLength::Medium => MEDIUM_CONVERSION,
+            ConversionLength::Long => LONG_CONVERSION,
+            ConversionLength::Epic => EPIC_CONVERSION,
         }
     }
 

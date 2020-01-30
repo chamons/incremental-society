@@ -1,17 +1,21 @@
 mod actions;
 mod building;
+mod constants;
 mod conversion;
 mod edict;
 mod gamestate;
 mod region;
 mod research;
 mod resources;
+mod upgrade;
 
 pub use actions::{DelayedAction, Waiter};
 pub use building::Building;
+pub use constants::*;
 pub use conversion::{Conversion, ConversionLength};
 pub use edict::Edict;
 pub use gamestate::GameState;
 pub use region::Region;
-pub use research::{available_to_build, available_to_invoke, available_to_research, Research};
+pub use research::{check_available, Research};
 pub use resources::{ResourceAmount, ResourceKind, ResourceQuantity, ResourceTotal, NUM_RESOURCES};
+pub use upgrade::{Upgrade, UpgradeActions};

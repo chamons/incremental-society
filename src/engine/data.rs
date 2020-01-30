@@ -1,17 +1,6 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade, UpgradeActions};
 
 use std::collections::HashMap;
-
-pub const BUILD_LENGTH: u32 = 30 * 8;
-pub const SUSTAIN_POP_DURATION: u32 = 80;
-pub const DESTROY_LENGTH: u32 = 30 * 5;
-pub const REGION_BUILDING_COUNT: usize = 2;
-pub const RESEARCH_LENGTH: u32 = 30 * 8;
-
-pub const SHORT_CONVERSION: u32 = 50;
-pub const MEDIUM_CONVERSION: u32 = 100;
-pub const LONG_CONVERSION: u32 = 150;
-pub const EPIC_CONVERSION: u32 = 300;
 
 #[cfg(not(test))]
 lazy_static! {
@@ -93,6 +82,13 @@ lazy_static! {
         );
         m
     };
+    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+        let mut m = HashMap::new();
+        m.insert("a", Upgrade::init("a", vec![UpgradeActions::AddBuildingPops(2)], vec![]));
+        m.insert("b", Upgrade::init("b", vec![], vec![]));
+        m.insert("c", Upgrade::init("c", vec![], vec![]));
+        m
+    };
 }
 
 #[cfg(test)]
@@ -113,7 +109,6 @@ lazy_static! {
             ),
         );
 
-        m.insert("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![]));
         m.insert(
             "TestHunt",
             Conversion::init("TestHunt", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
@@ -184,6 +179,10 @@ lazy_static! {
             )
             .with_research(vec!["TestNoDeps"]),
         );
+        e.insert(
+            "OtherTestEdict",
+            Edict::init("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![])),
+        );
 
         e
     };
@@ -196,6 +195,37 @@ lazy_static! {
         m.insert(
             "TestWithCost",
             Research::init("TestWithCost").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+        );
+        m.insert("UpgradeTech", Research::init("UpgradeTech"));
+
+        m
+    };
+    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+        let mut m = HashMap::new();
+
+        m.insert(
+            "TestUpgrade",
+            Upgrade::init(
+                "TestUpgrade",
+                vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
+                vec!["Test Building".to_owned()],
+            ),
+        );
+
+        m.insert(
+            "TestEdictUpgrade",
+            Upgrade::init(
+                "TestEdictUpgrade",
+                vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long)],
+                vec!["TestEdict".to_owned()],
+            ),
+        );
+
+        m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));
+
+        m.insert(
+            "TestUpgradeWithDep",
+            Upgrade::init("TestUpgradeWithDep", vec![], vec![]).with_research(vec!["UpgradeTech"]),
         );
 
         m
@@ -211,11 +241,7 @@ pub fn get_building(name: &str) -> Building {
 }
 
 pub fn get_building_names() -> Vec<String> {
-    BUILDINGS
-        .iter()
-        .filter(|(_, building)| !building.immortal)
-        .map(|(name, _)| (*name).to_string())
-        .collect()
+    BUILDINGS.keys().map(|x| (*x).to_string()).collect()
 }
 
 pub fn get_edict(name: &str) -> Edict {
@@ -232,4 +258,12 @@ pub fn get_research(name: &str) -> Research {
 
 pub fn get_research_names() -> Vec<String> {
     RESEARCH.keys().map(|x| (*x).to_string()).collect()
+}
+
+pub fn get_upgrade(name: &str) -> Upgrade {
+    UPGRADE[name].clone()
+}
+
+pub fn get_upgrade_names() -> Vec<String> {
+    UPGRADE.keys().map(|x| (*x).to_string()).collect()
 }

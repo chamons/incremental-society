@@ -3,14 +3,6 @@ use super::{clear_color, set_color, Colors};
 use pancurses::Input::Character;
 use pancurses::Window;
 
-pub struct OptionList<'a> {
-    term: &'a Window,
-    options: Vec<Selection>,
-    start_x: i32,
-    start_y: i32,
-    border: String,
-}
-
 pub struct Selection {
     name: String,
     active: bool,
@@ -29,6 +21,14 @@ impl Selection {
             })
             .collect()
     }
+}
+
+pub struct OptionList<'a> {
+    term: &'a Window,
+    options: Vec<Selection>,
+    start_x: i32,
+    start_y: i32,
+    border: String,
 }
 
 impl<'a> OptionList<'a> {
@@ -55,18 +55,25 @@ impl<'a> OptionList<'a> {
         self.term.mvaddstr(y, x + 3, text.to_string());
     }
 
+    fn write_with_clear_left(&self, y: i32, line: &str) {
+        self.term.mvaddstr(y, self.start_x, " ".repeat(OptionList::MODAL_WIDTH));
+        let x = self.start_x + OptionList::MODAL_WIDTH as i32 - line.len() as i32 - 2;
+        self.term.mvaddstr(y, x, line);
+    }
+
     pub fn run(&self) -> Option<usize> {
         let original_win = self.term.dupwin();
 
         let mut y: i32 = self.start_y;
         for (i, o) in self.options.iter().enumerate() {
             // Clear each line
-            let option_text = format!("{} - {}", (b'a' + i as u8) as char, o.name);
             if !o.active {
                 set_color(Colors::Red, self.term);
             }
 
+            let option_text = format!("{} - {}", (b'a' + i as u8) as char, o.name);
             self.write_with_clear(y, self.start_x, &option_text);
+
             y += 1;
             for l in o.details.iter() {
                 self.write_with_clear(y, self.start_x + 2, &l);
@@ -83,29 +90,122 @@ impl<'a> OptionList<'a> {
 
         self.term.nodelay(false);
 
-        let mut selected = None;
         loop {
             if let Some(input) = self.term.getch() {
                 if let Character(c) = input {
                     if c.is_ascii_alphabetic() {
                         let index = c as u8 - b'a';
                         if index < self.options.len() as u8 && self.options.get(index as usize).unwrap().active {
-                            selected = Some(index as usize);
-                            break;
+                            self.shutdown_option_display(&original_win);
+                            return Some(index as usize);
                         }
                     }
                     // Escape
                     if c as u8 == 27 {
-                        break;
+                        self.shutdown_option_display(&original_win);
+                        return None;
                     }
                 }
             }
         }
+    }
 
+    pub fn run_multiple_selection(
+        &self,
+        initial_selection: Vec<bool>,
+        valid_selection: impl Fn(&Vec<usize>) -> bool,
+        status_line: impl Fn(&Vec<usize>) -> [String; 2],
+    ) -> Option<Vec<usize>> {
+        let original_win = self.term.dupwin();
+
+        self.term.nodelay(false);
+
+        let mut selected_items = initial_selection;
+        loop {
+            self.draw_multiple_selection(&selected_items, &valid_selection, &status_line);
+
+            if let Some(input) = self.term.getch() {
+                if let Character(c) = input {
+                    if c.is_ascii_alphabetic() {
+                        let index = (c as u8 - b'a') as usize;
+                        if index < self.options.len() {
+                            selected_items[index] = !selected_items[index];
+                        }
+                    }
+                    // Escape
+                    if c as u8 == 27 {
+                        self.shutdown_option_display(&original_win);
+                        return None;
+                    }
+                    // Enter (CR/LF)
+                    if c as u8 == 10 || c as u8 == 13 {
+                        let index = convert_toggle_to_index(&selected_items);
+                        if valid_selection(&index) {
+                            self.shutdown_option_display(&original_win);
+                            return Some(index);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn shutdown_option_display(&self, original_win: &Window) {
         self.term.nodelay(true);
         original_win.overwrite(&self.term);
+    }
 
-        selected
+    fn draw_multiple_selection(&self, selected: &[bool], valid_selection: &impl Fn(&Vec<usize>) -> bool, status_line: &impl Fn(&Vec<usize>) -> [String; 2]) {
+        let mut y: i32 = self.start_y;
+        for (i, o) in self.options.iter().enumerate() {
+            let is_selected = selected[i];
+            if is_selected {
+                set_color(Colors::LightBlue, self.term);
+            }
+
+            let option_text = format!("{} - {}", (b'a' + i as u8) as char, o.name);
+            self.write_with_clear(y, self.start_x, &option_text);
+
+            y += 1;
+            for l in o.details.iter() {
+                self.write_with_clear(y, self.start_x + 2, &l);
+                y += 1;
+            }
+
+            if is_selected {
+                clear_color(Colors::LightBlue, self.term);
+            }
+        }
+
+        self.write_full_status(&mut y, selected, valid_selection, status_line);
+
+        self.draw_border(y - self.start_y);
+
+        self.term.mv(y, (self.start_x + OptionList::MODAL_WIDTH as i32) as i32);
+    }
+
+    fn write_full_status(
+        &self,
+        y: &mut i32,
+        selected: &[bool],
+        valid_selection: &impl Fn(&Vec<usize>) -> bool,
+        status_line: &impl Fn(&Vec<usize>) -> [String; 2],
+    ) {
+        let index = convert_toggle_to_index(selected);
+        let valid_selection = valid_selection(&index);
+        if !valid_selection {
+            set_color(Colors::Red, self.term);
+        }
+
+        let lines = status_line(&index);
+        self.write_with_clear_left(*y, &lines[0]);
+        *y += 1;
+        self.write_with_clear_left(*y, &lines[1]);
+        *y += 1;
+
+        if !valid_selection {
+            clear_color(Colors::Red, self.term);
+        }
     }
 
     fn draw_border(&self, height: i32) {
@@ -118,4 +218,8 @@ impl<'a> OptionList<'a> {
 
         self.term.mvaddstr(self.start_y + height as i32, self.start_x, self.border.clone());
     }
+}
+
+fn convert_toggle_to_index(selected_items: &[bool]) -> Vec<usize> {
+    selected_items.iter().enumerate().filter(|(_, e)| **e).map(|(i, _)| i).collect()
 }

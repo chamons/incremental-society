@@ -1,13 +1,8 @@
 use std::cmp::min;
 use std::collections::HashSet;
 
-use super::build;
-use super::conversions;
-use super::destroy;
-use super::edict;
-use super::research;
 use super::DerivedState;
-use crate::data;
+use super::{build, conversions, destroy, edict, research, upgrade};
 use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
@@ -30,6 +25,7 @@ fn apply_actions(state: &mut GameState) {
             DelayedAction::Build(building, region_index) => build::apply_build(state, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(state, *region_index, *building_index),
             DelayedAction::Research(research) => research::apply_research(state, research),
+            DelayedAction::Upgrade(upgrades) => upgrade::apply_upgrade(state, upgrades.iter().map(|x| state.derived_state.find_upgrade(x).clone()).collect()),
         }
     }
 }
@@ -58,16 +54,19 @@ pub fn recalculate(state: &mut GameState) {
     crate::engine::sync_building_to_conversions(state);
 }
 
+use super::data::get_building;
+
 pub fn init_new_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
         regions: vec![
-            Region::init_with_buildings("Lusitania", vec![data::get_building("Settlement"), data::get_building("Hunting Grounds")]),
+            Region::init_with_buildings("Lusitania", vec![get_building("Settlement"), get_building("Hunting Grounds")]),
             Region::init("Illyricum"),
         ],
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
     state
@@ -81,6 +80,7 @@ pub fn init_empty_game_state() -> GameState {
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
     state
@@ -91,12 +91,13 @@ pub fn init_test_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
         regions: vec![
-            Region::init_with_buildings("Lusitania", vec![data::get_building("Test Building"), data::get_building("Test Building")]),
-            Region::init_with_buildings("Illyricum", vec![data::get_building("Test Gather Hut")]),
+            Region::init_with_buildings("Lusitania", vec![get_building("Test Building"), get_building("Test Building")]),
+            Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
         ],
         actions: vec![],
         derived_state: DerivedState::init(),
         research: HashSet::new(),
+        upgrades: HashSet::new(),
     };
     recalculate(&mut state);
 
@@ -106,8 +107,8 @@ pub fn init_test_game_state() -> GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::get_edict;
     use crate::engine::edict;
+    use crate::engine::tests::*;
     use crate::state::{GameState, ResourceKind};
 
     #[test]
@@ -145,9 +146,10 @@ mod tests {
     fn invoke_takes_times_to_complete() {
         let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 2;
+        let test_edict = get_test_edict("TestEdict");
 
-        edict(&mut state, "TestEdict").unwrap();
-        let edict_length = get_edict("TestEdict").conversion.tick_length();
+        edict(&mut state, &test_edict).unwrap();
+        let edict_length = test_edict.conversion.tick_length();
         for _ in 0..edict_length {
             assert_eq!(2, state.actions.len());
             process_tick(&mut state);

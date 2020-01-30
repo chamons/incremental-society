@@ -43,6 +43,9 @@ pub fn complete_actions(state: &mut GameState) {
 
 pub fn die_unless<T: AsRef<str>>(condition: bool, message: &T) {
     if !condition {
-        panic!(format!("Debug Assert: {}", message.as_ref()));
+        die(message);
     }
+}
+pub fn die<T: AsRef<str>>(message: &T) {
+    panic!(format!("Debug Assert: {}", message.as_ref()));
 }

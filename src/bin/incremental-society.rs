@@ -1,13 +1,12 @@
 use std::error::Error;
 use std::thread::sleep;
-use std::time::Duration;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use incremental_society::console_ui::{self, OptionList, Selection};
-use incremental_society::data;
 use incremental_society::engine;
-use incremental_society::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
+use incremental_society::state::{Building, DelayedAction, GameState, ResourceKind, Upgrade, MAX_UPGRADES, NUM_RESOURCES};
 
+use itertools::Itertools;
 use pancurses::{Input, Window};
 
 fn main() {
@@ -92,16 +91,17 @@ impl<'a> UI<'a> {
             }
 
             if is_char(input, 'b') {
-                let building_options = &state.derived_state.available_buildings;
+                let building_options: Vec<&Building> = state.derived_state.available_buildings.iter().filter(|x| !x.immortal).collect();
+                let building_names: Vec<&String> = building_options.iter().map(|x| &x.name).collect();
                 let selection = Selection::init_list(
-                    &building_options,
-                    |o| engine::can_build_building(&state, &data::get_building(&building_options[o])).is_ok(),
-                    |o| data::get_building(&building_options[o]).details(),
+                    &building_names[..],
+                    |o| engine::can_build_building(&state, &&building_options[o]).is_ok(),
+                    |o| building_options[o].details(),
                 );
 
                 match OptionList::init(&self.term, selection).run() {
                     Some(building_index) => {
-                        let building = data::get_building(&building_options[building_index]);
+                        let building = building_options[building_index].clone();
                         let name = building.name.clone();
                         let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
                         let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok(), |_| vec![]);
@@ -127,10 +127,10 @@ impl<'a> UI<'a> {
                             let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok(), |_| vec![]);
                             match OptionList::init(&self.term, selection).run() {
                                 Some(building_index) => {
-                                    let building = data::get_building(&buildings[building_index]);
+                                    let building_name = &buildings[building_index];
                                     match engine::destroy(&mut state, region_index, building_index) {
                                         Err(e) => self.set_message(e.description()),
-                                        _ => self.set_message(format!("Destroying {}", building.name)),
+                                        _ => self.set_message(format!("Destroying {}", building_name)),
                                     }
                                 }
                                 None => self.clear_message(),
@@ -143,16 +143,18 @@ impl<'a> UI<'a> {
 
             if is_char(input, 'e') {
                 let edicts = &state.derived_state.available_edicts;
+                let edict_names: Vec<&String> = edicts.iter().map(|x| &x.name).collect();
+
                 let selection = Selection::init_list(
-                    &edicts,
-                    |o| engine::can_invoke_edict(&state, edicts.get(o).unwrap()).is_ok(),
-                    |o| data::get_edict(edicts.get(o).unwrap()).conversion.details(),
+                    &edict_names,
+                    |o| engine::can_invoke_edict(&state, &edicts.get(o).unwrap()).is_ok(),
+                    |o| edicts.get(o).unwrap().conversion.details(),
                 );
                 match OptionList::init(&self.term, selection).run() {
                     Some(edict_index) => {
-                        let edict_name = edicts.get(edict_index).unwrap().to_string();
+                        let edict = edicts.get(edict_index).unwrap().clone();
 
-                        match engine::edict(&mut state, &edict_name) {
+                        match engine::edict(&mut state, &edict) {
                             Err(e) => self.set_message(e.description()),
                             _ => self.clear_message(),
                         }
@@ -163,21 +165,59 @@ impl<'a> UI<'a> {
 
             if is_char(input, 'r') {
                 let research = &state.derived_state.available_research;
+                let research_names: Vec<&String> = research.iter().map(|x| &x.name).collect();
+
                 let selection = Selection::init_list(
-                    &research,
-                    |o| engine::can_research(&state, research.get(o).unwrap()).is_ok(),
-                    |o| data::get_research(research.get(o).unwrap()).details(),
+                    &research_names,
+                    |o| engine::can_research(&state, &research.get(o).unwrap()).is_ok(),
+                    |o| research.get(o).unwrap().details(),
                 );
                 match OptionList::init(&self.term, selection).run() {
-                    Some(edict_index) => {
-                        let research_name = research.get(edict_index).unwrap().to_string();
+                    Some(research_index) => {
+                        let research = research.get(research_index).unwrap().clone();
 
-                        match engine::research(&mut state, &research_name) {
+                        match engine::research(&mut state, &research) {
                             Err(e) => self.set_message(e.description()),
                             _ => self.clear_message(),
                         }
                     }
                     None => self.clear_message(),
+                }
+            }
+
+            if is_char(input, 'u') {
+                let upgrades = &state.derived_state.available_upgrade;
+                let upgrade_names: Vec<&String> = upgrades.iter().map(|x| &x.name).collect();
+
+                let selection = Selection::init_list(&upgrade_names, |_| true, |o| upgrades.get(o).unwrap().details());
+                match OptionList::init(&self.term, selection).run_multiple_selection(
+                    upgrade_names.iter().map(|x| state.upgrades.contains(*x)).collect(),
+                    |selection| {
+                        let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        engine::can_apply_upgrades(&state, &selected_upgrades[..]).is_ok()
+                    },
+                    |selection| {
+                        let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        [
+                            format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
+                            format!(
+                                "{}",
+                                engine::get_upgrade_cost(&state, &selected_upgrades[..])
+                                    .iter()
+                                    .map(|x| format!("{} {}", x.amount, x.kind))
+                                    .format(", ")
+                            ),
+                        ]
+                    },
+                ) {
+                    Some(selected_items) => {
+                        let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
+                        match engine::upgrade(&mut state, selected_upgrades) {
+                            Err(e) => self.set_message(e.description()),
+                            _ => self.clear_message(),
+                        }
+                    }
+                    _ => self.clear_message(),
                 }
             }
 

@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
-use crate::data;
-use crate::state::{DelayedAction, GameState, Waiter};
+use super::data::get_conversion;
+use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION};
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
-    data::get_conversion(name).convert(&mut state.resources);
+    get_conversion(name).convert(&mut state.resources);
 }
 
 // There is a modeling problem the engine conversion code needs to handle:
@@ -36,13 +36,13 @@ pub fn sync_building_to_conversions(state: &mut GameState) {
     }
 
     for not_started in active_conversions.keys().filter(|x| !in_flight.contains(*x)) {
-        let conversion = data::get_conversion(not_started);
+        let conversion = get_conversion(not_started);
         let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
         state.actions.push(action);
     }
 
     if state.action_with_name("Sustain Population").is_none() {
-        let action = Waiter::init_repeating("Sustain Population", data::SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+        let action = Waiter::init_repeating("Sustain Population", SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
         state.actions.push(action);
     }
 }
@@ -69,77 +69,82 @@ fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::super::process;
-    use crate::data::get_building;
+    use crate::engine::tests::*;
     use crate::state::Region;
 
     #[test]
     fn existing_conversions_untouched_on_sync() {
-        let mut state = process::init_test_game_state();
+        let mut state = init_test_game_state();
         assert_eq!(3, state.actions.len());
 
-        process::recalculate(&mut state);
+        recalculate(&mut state);
         assert_eq!(3, state.actions.len());
     }
 
     #[test]
     fn removed_buildings_remove_conversion_on_sync() {
-        let mut state = process::init_empty_game_state();
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        process::recalculate(&mut state);
+        let mut state = init_empty_game_state();
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
+        recalculate(&mut state);
         assert_eq!(2, state.actions.len());
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         assert_eq!(1, state.actions.len());
     }
 
     #[test]
     fn added_buildings_add_conversions_on_sync() {
-        let mut state = process::init_empty_game_state();
-        process::recalculate(&mut state);
+        let mut state = init_empty_game_state();
+        recalculate(&mut state);
         assert_eq!(1, state.actions.len());
 
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        process::recalculate(&mut state);
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
+        recalculate(&mut state);
 
         assert_eq!(2, state.actions.len());
     }
 
     #[test]
     fn add_and_remove_multiple_on_sync() {
-        let mut state = process::init_empty_game_state();
+        let mut state = init_empty_game_state();
         state.regions.push(Region::init_with_buildings(
             "Region",
-            vec![get_building("Test Building"), get_building("Test Gather Hut")],
+            vec![get_test_building("Test Building"), get_test_building("Test Gather Hut")],
         ));
-        process::recalculate(&mut state);
+        recalculate(&mut state);
         assert_eq!(3, state.actions.len());
 
         let region = state.regions.get_mut(0).unwrap();
         region.buildings.remove(0);
-        region.buildings.push(get_building("Test Hunt Cabin"));
+        region.buildings.push(get_test_building("Test Hunt Cabin"));
 
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         assert_eq!(3, state.actions.len());
     }
 
     #[test]
     fn removed_then_readded_starts_at_zero_on_sync() {
-        let mut state = process::init_empty_game_state();
-        state.regions.push(Region::init_with_buildings("Region", vec![get_building("Test Gather Hut")]));
-        process::recalculate(&mut state);
+        let mut state = init_empty_game_state();
+        state
+            .regions
+            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
+        recalculate(&mut state);
 
         state.action_with_name_mut("TestGather").unwrap().current_tick = 10;
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
         state.regions.get_mut(0).unwrap().buildings.remove(0);
-        process::recalculate(&mut state);
+        recalculate(&mut state);
 
-        state.regions.get_mut(0).unwrap().buildings.push(get_building("Test Gather Hut"));
-        process::recalculate(&mut state);
+        state.regions.get_mut(0).unwrap().buildings.push(get_test_building("Test Gather Hut"));
+        recalculate(&mut state);
 
         assert_eq!(100, state.action_with_name("TestGather").unwrap().current_tick);
     }

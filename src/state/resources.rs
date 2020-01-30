@@ -59,6 +59,15 @@ impl ResourceTotal {
         ResourceTotal { resources: [0; NUM_RESOURCES] }
     }
 
+    pub fn has_range(&self, elements: &[ResourceAmount]) -> bool {
+        for x in elements {
+            if self[x.kind] < x.amount {
+                return false;
+            }
+        }
+        true
+    }
+
     pub fn has_amount(&self, amount: &ResourceAmount) -> bool {
         self.has(amount.kind, amount.amount)
     }
@@ -129,6 +138,18 @@ impl IndexMut<usize> for ResourceTotal {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resource_total_has_range() {
+        let mut total = ResourceTotal::init();
+        total[ResourceKind::Fuel] = 5;
+
+        let mut other = vec![ResourceAmount::init(ResourceKind::Fuel, 10)];
+
+        assert!(!total.has_range(&other));
+        other[0].amount = 5;
+        assert!(total.has_range(&other));
+    }
 
     #[test]
     fn resource_total_has_enough() {

@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 use super::resources::*;
+use super::{check_available, GameState};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -9,7 +11,7 @@ use serde::{Deserialize, Serialize};
 pub struct Building {
     pub name: String,
     pub conversions: Vec<String>,
-    pub research: Vec<String>,
+    pub research: HashSet<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
     pub pops: u32,
@@ -21,7 +23,7 @@ impl Building {
         Building {
             name: name.to_owned(),
             conversions: vec![],
-            research: vec![],
+            research: HashSet::new(),
             build_cost: vec![],
             storage: vec![],
             pops: 0,
@@ -57,6 +59,10 @@ impl Building {
     pub fn with_immortal(mut self) -> Building {
         self.immortal = true;
         self
+    }
+
+    pub fn is_available(&self, state: &GameState) -> bool {
+        check_available(&self.research, &state)
     }
 
     pub fn details(&self) -> Vec<String> {

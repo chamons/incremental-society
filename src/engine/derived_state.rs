@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use crate::state::{available_to_build, available_to_invoke, available_to_research, GameState, ResourceTotal};
+pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade};
+pub use crate::state::{Building, Edict, GameState, Research, ResourceTotal, Upgrade};
 
 use itertools::Itertools;
 
@@ -11,9 +12,10 @@ pub struct DerivedState {
     pub storage: ResourceTotal,
     pub pops: u32,
     pub used_pops: u32,
-    pub available_buildings: Vec<String>,
-    pub available_edicts: Vec<String>,
-    pub available_research: Vec<String>,
+    pub available_buildings: Vec<Building>,
+    pub available_edicts: Vec<Edict>,
+    pub available_research: Vec<Research>,
+    pub available_upgrade: Vec<Upgrade>,
 }
 
 impl DerivedState {
@@ -27,6 +29,7 @@ impl DerivedState {
             available_buildings: vec![],
             available_edicts: vec![],
             available_research: vec![],
+            available_upgrade: vec![],
         }
     }
 
@@ -40,6 +43,7 @@ impl DerivedState {
             available_buildings: available_to_build(state),
             available_edicts: available_to_invoke(state),
             available_research: available_to_research(state),
+            available_upgrade: available_to_upgrade(state),
         }
     }
 
@@ -82,16 +86,32 @@ impl DerivedState {
     fn calculate_used_pops(state: &GameState) -> u32 {
         state.regions.iter().flat_map(|x| &x.buildings).count() as u32
     }
+
+    pub fn find_building(&self, name: &str) -> &Building {
+        self.available_buildings.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_edict(&self, name: &str) -> &Edict {
+        self.available_edicts.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_research(&self, name: &str) -> &Research {
+        self.available_research.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_upgrade(&self, name: &str) -> &Upgrade {
+        self.available_upgrade.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::super::process;
+    use crate::engine::tests::*;
     use crate::state::ResourceKind;
 
     #[test]
     fn conversion_with_counts() {
-        let state = process::init_test_game_state();
+        let state = init_test_game_state();
         let conversions = &state.derived_state.conversions;
         assert_eq!(4, *conversions.get("TestChop").unwrap());
         assert_eq!(1, *conversions.get("TestGather").unwrap());
@@ -99,7 +119,7 @@ mod tests {
 
     #[test]
     fn conversion_names() {
-        let state = process::init_test_game_state();
+        let state = init_test_game_state();
         let conversions = &state.derived_state.conversions_names;
         assert_eq!("TestChop", conversions[0]);
         assert_eq!("TestGather", conversions[1]);
@@ -107,7 +127,7 @@ mod tests {
 
     #[test]
     fn storage() {
-        let state = process::init_test_game_state();
+        let state = init_test_game_state();
         let storage = state.derived_state.storage;
         assert!(storage[ResourceKind::Food] >= 20);
         assert!(storage[ResourceKind::Fuel] >= 30);
@@ -115,7 +135,7 @@ mod tests {
 
     #[test]
     fn pops() {
-        let state = process::init_test_game_state();
+        let state = init_test_game_state();
         assert!(state.derived_state.pops >= 4);
         assert!(state.derived_state.used_pops >= 3);
     }

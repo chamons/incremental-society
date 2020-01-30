@@ -153,7 +153,7 @@ fn get_upgrades_by_name(upgrades: &HashSet<String>) -> HashMap<String, Vec<Upgra
     for upgrade in upgrades {
         let upgrade = get_upgrade(upgrade);
         for item in &upgrade.items_upgraded {
-            sorted_list.entry(item.to_string()).or_insert(vec![]).push(upgrade.clone());
+            sorted_list.entry(item.to_string()).or_insert_with(|| vec![]).push(upgrade.clone());
         }
     }
 

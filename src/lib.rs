@@ -1,3 +1,5 @@
+#![allow(clippy::implicit_hasher)]
+
 pub mod console_ui;
 pub mod engine;
 pub mod state;

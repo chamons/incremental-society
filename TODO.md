@@ -1,6 +1,5 @@
 ## Todo
 
-- Upgrades have built in cost instead of a global default to enable and disable
 - Remove duplication around .format(", ")
 - Gameplay pass through middle stone age
 

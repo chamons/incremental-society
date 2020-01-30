@@ -4,7 +4,7 @@ use super::{process, EngineError};
 use crate::engine::data::{get_building, get_conversion, get_edict, get_research, get_upgrade};
 use crate::engine::data::{get_building_names, get_conversion_names, get_edict_names, get_research_names, get_upgrade_names};
 use crate::state::{Building, Conversion, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
-use crate::state::{COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH};
+use crate::state::{MAX_UPGRADES, UPGRADE_LENGTH};
 
 pub fn can_apply_upgrades(state: &GameState, upgrades: &[Upgrade]) -> Result<(), EngineError> {
     let cost = get_upgrade_cost(state, &upgrades);
@@ -65,12 +65,12 @@ pub fn get_upgrade_cost(state: &GameState, upgrades: &[Upgrade]) -> Vec<Resource
     let difference: HashSet<_> = desired.symmetric_difference(&current).collect();
 
     let mut cost: Vec<ResourceAmount> = vec![];
-    for _ in 0..difference.len() {
-        for c in COST_PER_UPGRADE.iter() {
-            if let Some(i) = cost.iter().position(|x| x.kind == c.0) {
-                cost[i].amount += c.1;
+    for diff in difference.iter().map(|x| state.derived_state.find_upgrade(x)) {
+        for c in diff.cost.iter() {
+            if let Some(i) = cost.iter().position(|x| x.kind == c.kind) {
+                cost[i].amount += c.amount;
             } else {
-                cost.push(ResourceAmount::init(c.0, c.1));
+                cost.push(c.clone());
             }
         }
     }
@@ -195,10 +195,8 @@ mod tests {
     use crate::engine::tests::*;
     use crate::state::{ConversionLength, Region, ResourceKind};
 
-    fn give_update_resources(state: &mut GameState, count: i64) {
-        for c in COST_PER_UPGRADE.iter() {
-            state.resources.add(c.0, c.1 * count);
-        }
+    fn give_test_update_resources(state: &mut GameState, count: i64) {
+        state.resources.add(ResourceKind::Knowledge, 25 * count);
     }
 
     #[test]
@@ -256,7 +254,7 @@ mod tests {
     #[test]
     fn research_multiple_in_flight() {
         let mut state = init_empty_game_state();
-        give_update_resources(&mut state, 2);
+        give_test_update_resources(&mut state, 2);
 
         upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).unwrap();
         assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_err());
@@ -267,7 +265,7 @@ mod tests {
         let mut state = init_empty_game_state();
         assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_err());
 
-        give_update_resources(&mut state, 1);
+        give_test_update_resources(&mut state, 1);
 
         assert!(upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).is_ok());
         assert_eq!(0, state.resources[ResourceKind::Knowledge]);
@@ -279,7 +277,7 @@ mod tests {
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
         recalculate(&mut state);
 
-        give_update_resources(&mut state, 1);
+        give_test_update_resources(&mut state, 1);
 
         upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]).unwrap();
 
@@ -298,7 +296,7 @@ mod tests {
     fn has_edict_applied() {
         let mut state = init_empty_game_state();
 
-        give_update_resources(&mut state, 1);
+        give_test_update_resources(&mut state, 1);
         upgrade(&mut state, vec![get_test_upgrade("TestEdictUpgrade")]).unwrap();
 
         for _ in 0..UPGRADE_LENGTH {
@@ -322,7 +320,7 @@ mod tests {
         state.resources[ResourceKind::Food] = 10;
         recalculate(&mut state);
 
-        give_update_resources(&mut state, 1);
+        give_test_update_resources(&mut state, 1);
 
         upgrade(&mut state, vec![get_test_upgrade("TestConversionUpgrade")]).unwrap();
 
@@ -348,7 +346,7 @@ mod tests {
         let mut state = init_empty_game_state();
         state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
         recalculate(&mut state);
-        give_update_resources(&mut state, 1);
+        give_test_update_resources(&mut state, 1);
 
         apply_upgrade(&mut state, vec![get_test_upgrade("TestUpgrade")]);
 
@@ -383,7 +381,7 @@ mod tests {
         assert_eq!(2, MAX_UPGRADES);
 
         let mut state = init_empty_game_state();
-        give_update_resources(&mut state, 2);
+        give_test_update_resources(&mut state, 2);
 
         assert!(can_apply_upgrades(&state, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]).is_ok());
 
@@ -406,9 +404,7 @@ mod tests {
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]);
 
-        for i in 0..COST_PER_UPGRADE.len() {
-            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1 * 2);
-        }
+        assert_eq!(total_cost[0].amount, 50);
     }
 
     #[test]
@@ -419,9 +415,7 @@ mod tests {
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestUpgrade")]);
 
-        for i in 0..COST_PER_UPGRADE.len() {
-            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1);
-        }
+        assert_eq!(total_cost[0].amount, 25);
     }
 
     #[test]
@@ -431,9 +425,7 @@ mod tests {
 
         let total_cost = get_upgrade_cost(&state, &vec![get_test_upgrade("TestEdictUpgrade")]);
 
-        for i in 0..COST_PER_UPGRADE.len() {
-            assert_eq!(total_cost[i].amount, COST_PER_UPGRADE[i].1 * 2);
-        }
+        assert_eq!(total_cost[0].amount, 50);
     }
 
     #[test]

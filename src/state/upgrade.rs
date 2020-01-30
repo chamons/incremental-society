@@ -35,6 +35,7 @@ pub struct Upgrade {
     pub upgrades: Vec<UpgradeActions>,
     pub items_upgraded: Vec<String>,
     pub research: HashSet<String>,
+    pub cost: Vec<ResourceAmount>,
 }
 
 impl Upgrade {
@@ -48,11 +49,17 @@ impl Upgrade {
             upgrades,
             items_upgraded,
             research: HashSet::new(),
+            cost: vec![],
         }
     }
 
     pub fn with_research(mut self, research: Vec<&str>) -> Upgrade {
         self.research = research.iter().map(|x| (*x).to_owned()).collect();
+        self
+    }
+
+    pub fn with_cost(mut self, cost: Vec<ResourceAmount>) -> Upgrade {
+        self.cost = cost;
         self
     }
 

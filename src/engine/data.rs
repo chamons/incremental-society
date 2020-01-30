@@ -210,7 +210,8 @@ lazy_static! {
                 "TestUpgrade",
                 vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
                 vec!["Test Building".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert(
@@ -219,7 +220,8 @@ lazy_static! {
                 "TestEdictUpgrade",
                 vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long)],
                 vec!["TestEdict".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert(
@@ -228,7 +230,8 @@ lazy_static! {
                 "TestConversionUpgrade",
                 vec![UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1))],
                 vec!["TestChop".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert(
@@ -241,7 +244,8 @@ lazy_static! {
                     UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1)),
                 ],
                 vec!["Test Building".to_owned(), "TestEdict".to_owned(), "TestChop".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));

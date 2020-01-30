@@ -120,7 +120,7 @@ impl<'a> OptionList<'a> {
 
         self.term.nodelay(false);
 
-        let mut selected_items = initial_selection.clone();
+        let mut selected_items = initial_selection;
         loop {
             self.draw_multiple_selection(&selected_items, &valid_selection, &status_line);
 

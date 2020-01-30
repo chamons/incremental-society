@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade};
-pub use crate::state::{Building, Edict, GameState, Research, ResourceTotal, Upgrade};
+pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade, current_conversions};
+pub use crate::state::{Building, Conversion, Edict, GameState, Research, ResourceTotal, Upgrade};
 
 use itertools::Itertools;
 
@@ -16,6 +16,7 @@ pub struct DerivedState {
     pub available_edicts: Vec<Edict>,
     pub available_research: Vec<Research>,
     pub available_upgrade: Vec<Upgrade>,
+    pub all_conversions: Vec<Conversion>,
 }
 
 impl DerivedState {
@@ -30,6 +31,7 @@ impl DerivedState {
             available_edicts: vec![],
             available_research: vec![],
             available_upgrade: vec![],
+            all_conversions: vec![],
         }
     }
 
@@ -44,6 +46,7 @@ impl DerivedState {
             available_edicts: available_to_invoke(state),
             available_research: available_to_research(state),
             available_upgrade: available_to_upgrade(state),
+            all_conversions: current_conversions(state),
         }
     }
 
@@ -101,6 +104,10 @@ impl DerivedState {
 
     pub fn find_upgrade(&self, name: &str) -> &Upgrade {
         self.available_upgrade.iter().filter(|x| x.name == name).nth(0).unwrap()
+    }
+
+    pub fn find_conversion(&self, name: &str) -> &Conversion {
+        self.all_conversions.iter().filter(|x| x.name == name).nth(0).unwrap()
     }
 }
 

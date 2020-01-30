@@ -10,6 +10,9 @@ pub enum UpgradeActions {
     AddBuildingConversion(String),
     AddBuildingStorage(ResourceAmount),
     ChangeEdictLength(ConversionLength),
+    ChangeConversionLength(ConversionLength),
+    ChangeConversionInput(ResourceAmount),
+    ChangeConversionOutput(ResourceAmount),
 }
 
 impl UpgradeActions {
@@ -19,6 +22,9 @@ impl UpgradeActions {
             UpgradeActions::AddBuildingConversion(name) => format!("Adds {} conversion to building", name),
             UpgradeActions::AddBuildingStorage(storage) => format!("Adds {:?} storage", storage),
             UpgradeActions::ChangeEdictLength(length) => format!("Changes edict length to {:?}", length),
+            UpgradeActions::ChangeConversionLength(length) => format!("Changes conversion length to {:?}", length),
+            UpgradeActions::ChangeConversionInput(input) => format!("Adds {:?} to required conversion input", input),
+            UpgradeActions::ChangeConversionOutput(output) => format!("Adds {:?} to required conversion output", output),
         }
     }
 }
@@ -29,6 +35,7 @@ pub struct Upgrade {
     pub upgrades: Vec<UpgradeActions>,
     pub items_upgraded: Vec<String>,
     pub research: HashSet<String>,
+    pub cost: Vec<ResourceAmount>,
 }
 
 impl Upgrade {
@@ -42,11 +49,17 @@ impl Upgrade {
             upgrades,
             items_upgraded,
             research: HashSet::new(),
+            cost: vec![],
         }
     }
 
     pub fn with_research(mut self, research: Vec<&str>) -> Upgrade {
         self.research = research.iter().map(|x| (*x).to_owned()).collect();
+        self
+    }
+
+    pub fn with_cost(mut self, cost: Vec<ResourceAmount>) -> Upgrade {
+        self.cost = cost;
         self
     }
 

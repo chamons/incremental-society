@@ -143,6 +143,7 @@ lazy_static! {
         m.insert(
             "Stability Building",
             Building::init("Stability Building").with_storage(vec![
+                ResourceAmount::init(ResourceKind::Food, 10),
                 ResourceAmount::init(ResourceKind::Knowledge, 10),
                 ResourceAmount::init(ResourceKind::Instability, 10),
             ]),
@@ -209,7 +210,8 @@ lazy_static! {
                 "TestUpgrade",
                 vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
                 vec!["Test Building".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert(
@@ -218,7 +220,32 @@ lazy_static! {
                 "TestEdictUpgrade",
                 vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long)],
                 vec!["TestEdict".to_owned()],
-            ),
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
+        );
+
+        m.insert(
+            "TestConversionUpgrade",
+            Upgrade::init(
+                "TestConversionUpgrade",
+                vec![UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1))],
+                vec!["TestChop".to_owned()],
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
+        );
+
+        m.insert(
+            "TestMultiUpgrade",
+            Upgrade::init(
+                "TestMultiUpgrade",
+                vec![
+                    UpgradeActions::AddBuildingConversion("TestChop".to_owned()),
+                    UpgradeActions::ChangeEdictLength(ConversionLength::Long),
+                    UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1)),
+                ],
+                vec!["Test Building".to_owned(), "TestEdict".to_owned(), "TestChop".to_owned()],
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
         );
 
         m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));
@@ -234,6 +261,10 @@ lazy_static! {
 
 pub fn get_conversion(name: &str) -> Conversion {
     CONVERSIONS[name].clone()
+}
+
+pub fn get_conversion_names() -> Vec<String> {
+    CONVERSIONS.keys().map(|x| (*x).to_string()).collect()
 }
 
 pub fn get_building(name: &str) -> Building {

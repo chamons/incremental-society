@@ -46,7 +46,6 @@ mod tests {
     use super::*;
     use crate::engine::tests::*;
 
-    use crate::engine::tests::*;
     use crate::state::{ResourceKind, RESEARCH_LENGTH};
 
     #[test]

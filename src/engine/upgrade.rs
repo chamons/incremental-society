@@ -1,8 +1,9 @@
 use std::collections::{HashMap, HashSet};
 
-use super::{die, process, EngineError};
-use crate::engine::data::{get_building, get_building_names, get_edict, get_edict_names, get_research, get_research_names, get_upgrade, get_upgrade_names};
-use crate::state::{Building, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
+use super::{process, EngineError};
+use crate::engine::data::{get_building, get_conversion, get_edict, get_research, get_upgrade};
+use crate::engine::data::{get_building_names, get_conversion_names, get_edict_names, get_research_names, get_upgrade_names};
+use crate::state::{Building, Conversion, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
 use crate::state::{COST_PER_UPGRADE, MAX_UPGRADES, UPGRADE_LENGTH};
 
 pub fn can_apply_upgrades(state: &GameState, upgrades: &[Upgrade]) -> Result<(), EngineError> {

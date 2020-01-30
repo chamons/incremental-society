@@ -365,6 +365,18 @@ mod tests {
     }
 
     #[test]
+    fn upgrade_affects_multiple_items_differently() {
+        let mut state = init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building").clone()])];
+        state.upgrades.insert("TestMultiUpgrade".to_string());
+        recalculate(&mut state);
+
+        assert_eq!(2, state.buildings()[0].conversions.len());
+        assert_eq!(2, state.derived_state.find_conversion("TestChop").output.len());
+        assert_eq!(ConversionLength::Long, state.derived_state.find_edict("TestEdict").conversion.length);
+    }
+
+    #[test]
     fn apply_research_allow_up_to_cap_selections() {
         // If changes, test need changes
         assert_eq!(2, MAX_UPGRADES);

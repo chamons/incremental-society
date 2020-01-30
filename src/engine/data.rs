@@ -231,6 +231,19 @@ lazy_static! {
             ),
         );
 
+        m.insert(
+            "TestMultiUpgrade",
+            Upgrade::init(
+                "TestMultiUpgrade",
+                vec![
+                    UpgradeActions::AddBuildingConversion("TestChop".to_owned()),
+                    UpgradeActions::ChangeEdictLength(ConversionLength::Long),
+                    UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1)),
+                ],
+                vec!["Test Building".to_owned(), "TestEdict".to_owned(), "TestChop".to_owned()],
+            ),
+        );
+
         m.insert("TestOtherUpgrade", Upgrade::init("TestOtherUpgrade", vec![], vec![]));
 
         m.insert(

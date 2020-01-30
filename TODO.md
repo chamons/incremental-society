@@ -1,8 +1,5 @@
 ## Todo
 
-
-- Upgrades can affects conversion (Hunting uses tool to increase yield)
-- Upgrades can affect building and conversion at same time
 - Upgrades have built in cost instead of a global default to enable and disable
 - Remove duplication around .format(", ")
 - Gameplay pass through middle stone age

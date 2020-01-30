@@ -146,6 +146,7 @@ fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
     }
 }
 
+#[allow(clippy::single_match)]
 fn apply_edict_upgrade(edict: &mut Edict, upgrade: &UpgradeActions) {
     match upgrade {
         UpgradeActions::ChangeEdictLength(length) => edict.conversion.length = *length,

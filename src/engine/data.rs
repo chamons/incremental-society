@@ -84,8 +84,6 @@ lazy_static! {
     };
     static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
-        m.insert("a", Upgrade::init("a", vec![UpgradeActions::AddBuildingPops(2)], vec![]));
-        m.insert("b", Upgrade::init("b", vec![], vec![]));
         m.insert("c", Upgrade::init("c", vec![], vec![]));
         m
     };

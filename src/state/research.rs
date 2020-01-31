@@ -1,8 +1,6 @@
 use std::collections::HashSet;
 
-use super::{GameState, ResourceAmount};
-
-use itertools::Itertools;
+use super::{format_resource_list, GameState, ResourceAmount};
 
 #[derive(Clone, Debug)]
 pub struct Research {
@@ -40,7 +38,7 @@ impl Research {
 
     pub fn details(&self) -> Vec<String> {
         let mut details: Vec<String> = vec![];
-        details.push(format!("Cost: {}", self.cost.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")));
+        details.push(format_resource_list("Cost: {}", &self.cost));
         details
     }
 }

@@ -17,5 +17,5 @@ pub use edict::Edict;
 pub use gamestate::GameState;
 pub use region::Region;
 pub use research::{check_available, Research};
-pub use resources::{ResourceAmount, ResourceKind, ResourceQuantity, ResourceTotal, NUM_RESOURCES};
+pub use resources::{format_resource_list, ResourceAmount, ResourceKind, ResourceQuantity, ResourceTotal, NUM_RESOURCES};
 pub use upgrade::{Upgrade, UpgradeActions};

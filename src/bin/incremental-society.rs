@@ -4,9 +4,8 @@ use std::time::{Duration, Instant};
 
 use incremental_society::console_ui::{self, OptionList, Selection};
 use incremental_society::engine;
-use incremental_society::state::{Building, DelayedAction, GameState, ResourceKind, Upgrade, MAX_UPGRADES, NUM_RESOURCES};
+use incremental_society::state::{format_resource_list, Building, DelayedAction, GameState, ResourceKind, Upgrade, MAX_UPGRADES, NUM_RESOURCES};
 
-use itertools::Itertools;
 use pancurses::{Input, Window};
 
 fn main() {
@@ -200,13 +199,7 @@ impl<'a> UI<'a> {
                         let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
                         [
                             format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
-                            format!(
-                                "{}",
-                                engine::get_upgrade_cost(&state, &selected_upgrades[..])
-                                    .iter()
-                                    .map(|x| format!("{} {}", x.amount, x.kind))
-                                    .format(", ")
-                            ),
+                            format_resource_list("", &engine::get_upgrade_cost(&state, &selected_upgrades[..])),
                         ]
                     },
                 ) {

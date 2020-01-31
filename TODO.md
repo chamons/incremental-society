@@ -1,6 +1,5 @@
 ## Todo
 
-- Remove duplication around .format(", ")
 - Gameplay pass through middle stone age
 
 - Research 1 of 3

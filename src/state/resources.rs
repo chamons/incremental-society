@@ -1,6 +1,7 @@
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
+use itertools::Itertools;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 
@@ -133,6 +134,11 @@ impl IndexMut<usize> for ResourceTotal {
     fn index_mut(&mut self, index: usize) -> &mut ResourceQuantity {
         &mut self.resources[index]
     }
+}
+
+pub fn format_resource_list(prefix: &str, list: &Vec<ResourceAmount>) -> String {
+    let output_list = list.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ");
+    format!("{}{}", prefix, output_list)
 }
 
 #[cfg(test)]

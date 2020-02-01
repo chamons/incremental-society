@@ -46,7 +46,7 @@ pub fn build(state: &mut GameState, building: Building, region_index: usize) -> 
     let action = Waiter::init_one_shot(
         &format!("Build {}", building.name)[..],
         BUILD_LENGTH,
-        DelayedAction::Build(building.name.to_string(), region_index),
+        DelayedAction::Build(building.name, region_index),
     );
     state.actions.push(action);
     process::recalculate(state);

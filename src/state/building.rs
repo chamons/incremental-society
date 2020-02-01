@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use super::resources::*;
-use super::{check_available, GameState};
+use super::{check_available, format_resource_list, GameState};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -68,16 +68,19 @@ impl Building {
     pub fn details(&self) -> Vec<String> {
         let mut details: Vec<String> = vec![];
         if !self.build_cost.is_empty() {
-            details.push(format!("Cost: {}", self.build_cost.iter().format(", ")));
+            details.push(format_resource_list("Cost: ", &self.build_cost));
         }
+
         let mut conversion_count = BTreeMap::new();
         for c in self.conversions.iter() {
             let entry = conversion_count.entry(c).or_insert(0);
             *entry += 1;
         }
-
         details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
 
+        if !self.storage.is_empty() {
+            details.push(format_resource_list("Storage: ", &self.storage));
+        }
         if !self.research.is_empty() {
             details.push(format!("Requires Research: {}", self.research.iter().format(", ")));
         }

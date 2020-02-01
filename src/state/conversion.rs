@@ -3,7 +3,6 @@ use std::fmt;
 use super::resources::*;
 use super::{EPIC_CONVERSION, LONG_CONVERSION, MEDIUM_CONVERSION, SHORT_CONVERSION};
 
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
@@ -60,14 +59,8 @@ impl Conversion {
 
     pub fn details(&self) -> Vec<String> {
         let mut details: Vec<String> = vec![];
-        details.push(format!(
-            "Requires: {}",
-            self.input.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")
-        ));
-        details.push(format!(
-            "Provides: {}",
-            self.output.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ")
-        ));
+        details.push(format_resource_list("Requires: ", &self.input));
+        details.push(format_resource_list("Provides: ", &self.output));
         details.push(format!("Length: {} ({})", self.length, self.tick_length()));
         details
     }

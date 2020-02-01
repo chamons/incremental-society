@@ -15,13 +15,13 @@ lazy_static! {
                 "Gathering",
                 ConversionLength::Long,
                 vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 1), ResourceAmount::init(ResourceKind::Fuel, 1)],
+                vec![ResourceAmount::init(ResourceKind::Food, 5), ResourceAmount::init(ResourceKind::Fuel, 1)],
             ),
         );
 
         m.insert(
             "Hunting",
-            Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
+            Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 10)]),
         );
 
         m
@@ -33,7 +33,7 @@ lazy_static! {
             Building::init("Settlement")
                 .with_conversions(vec!["Hunting"])
                 .with_storage(vec![
-                    ResourceAmount::init(ResourceKind::Food, 50),
+                    ResourceAmount::init(ResourceKind::Food, 250),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
@@ -48,14 +48,16 @@ lazy_static! {
                 .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
-                .with_pops(3),
+                .with_pops(3)
+                .with_research("Settlement"),
         );
 
         m.insert(
             "Hunting Grounds",
             Building::init("Hunting Grounds")
                 .with_conversions(vec!["Hunting"])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)])
+                .with_research("Settlement"),
         );
 
         m
@@ -68,10 +70,17 @@ lazy_static! {
                 "Feast",
                 Conversion::init(
                     "Feast",
-                    ConversionLength::Epic,
-                    vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                    ConversionLength::Long,
+                    vec![ResourceAmount::init(ResourceKind::Food, 200)],
                     vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
                 ),
+            ),
+        );
+        e.insert(
+            "Hunt",
+            Edict::init(
+                "Hunt",
+                Conversion::init("Hunt", ConversionLength::Long, vec![], vec![ResourceAmount::init(ResourceKind::Food, 100)]),
             ),
         );
 

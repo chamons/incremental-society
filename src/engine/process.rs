@@ -31,8 +31,8 @@ fn apply_actions(state: &mut GameState) {
 }
 
 fn sustain_population(state: &mut GameState) {
-    const FOOD_PER_POP: i64 = 1;
-    const INSTABILITY_PER_MISSING_FOOD: i64 = 15;
+    const FOOD_PER_POP: i64 = 5;
+    const INSTABILITY_PER_MISSING_FOOD: i64 = 3;
 
     let required_food = state.derived_state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {
@@ -189,11 +189,11 @@ mod tests {
     #[test]
     fn sustain_population_with_food() {
         let mut state = init_test_game_state();
-        state.resources[ResourceKind::Food] = 10;
+        state.resources[ResourceKind::Food] = 30;
         state.resources[ResourceKind::Instability] = 50;
         sustain_population(&mut state);
 
-        assert_eq!(6, state.resources[ResourceKind::Food]);
+        assert_eq!(10, state.resources[ResourceKind::Food]);
         assert!(state.resources[ResourceKind::Instability] < 50);
     }
 

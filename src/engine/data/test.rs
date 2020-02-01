@@ -41,20 +41,20 @@ lazy_static! {
             "Test Gather Hut",
             Building::init("Test Gather Hut")
                 .with_conversions(vec!["TestGather"])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 120)]),
         );
 
         m.insert(
             "Test Hunt Cabin",
             Building::init("Test Hunt Cabin")
                 .with_conversions(vec!["TestHunt", "TestHunt"])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 60)]),
         );
 
         m.insert(
             "Stability Building",
             Building::init("Stability Building").with_storage(vec![
-                ResourceAmount::init(ResourceKind::Food, 10),
+                ResourceAmount::init(ResourceKind::Food, 30),
                 ResourceAmount::init(ResourceKind::Knowledge, 10),
                 ResourceAmount::init(ResourceKind::Instability, 10),
             ]),
@@ -62,7 +62,7 @@ lazy_static! {
 
         m.insert(
             "Requires Research Building",
-            Building::init("Requires Research Building").with_research(vec!["TestNoDeps"]),
+            Building::init("Requires Research Building").with_research("TestNoDeps"),
         );
 
         m.insert("Test Immortal", Building::init("Test Immortal").with_immortal());

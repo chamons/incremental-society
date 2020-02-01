@@ -51,7 +51,13 @@ impl Building {
         self
     }
 
-    pub fn with_research(mut self, research: Vec<&str>) -> Building {
+    pub fn with_research(mut self, research: &str) -> Building {
+        self.research = HashSet::new();
+        self.research.insert(research.to_string());
+        self
+    }
+
+    pub fn with_many_research(mut self, research: Vec<&str>) -> Building {
         self.research = research.iter().map(|x| (*x).to_owned()).collect();
         self
     }

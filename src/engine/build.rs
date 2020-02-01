@@ -93,7 +93,10 @@ mod tests {
 
         let mut state = init_empty_game_state();
         state.resources[ResourceKind::Fuel] = 20;
-        state.regions = vec![Region::init_with_buildings("First Region", vec![building.clone(), building.clone()])];
+        state.regions = vec![Region::init_with_buildings(
+            "First Region",
+            vec![building.clone(), building.clone(), building.clone(), building.clone()],
+        )];
 
         let error = build(&mut state, building, 0).unwrap_err();
         assert_eq!("Insufficient room for building", error.description());

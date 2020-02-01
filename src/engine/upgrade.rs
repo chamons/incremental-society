@@ -317,7 +317,7 @@ mod tests {
             "First Region",
             vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
         )];
-        state.resources[ResourceKind::Food] = 10;
+        state.resources[ResourceKind::Food] = 300;
         recalculate(&mut state);
 
         give_test_update_resources(&mut state, 1);

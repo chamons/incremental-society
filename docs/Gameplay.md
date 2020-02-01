@@ -122,7 +122,8 @@ Each specialization will answer:
 - How do I get "goods", needed by bronze age citizens?
 - What gameplay system do I open up in the Bronze Age (Cities, Raiding, Trade)
 
-The first major choice is food specialization:
+The first major choice is food specialization, the primary way the society feeds itself.
+
 
 - Agriculture allows significantly more food production and specialization within your territory.
     - Expanding number of slots in your territory and their power

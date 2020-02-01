@@ -1,100 +1,10 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
-
-#[cfg(test)]
-use crate::state::UpgradeActions;
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade, UpgradeActions};
 
 use std::collections::HashMap;
 
-#[cfg(not(test))]
-lazy_static! {
-    static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
-        let mut m = HashMap::new();
-        m.insert(
-            "Gathering",
-            Conversion::init(
-                "Gathering",
-                ConversionLength::Long,
-                vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 1), ResourceAmount::init(ResourceKind::Fuel, 1)],
-            ),
-        );
-
-        m.insert(
-            "Hunting",
-            Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
-        );
-
-        m
-    };
-    static ref BUILDINGS: HashMap<&'static str, Building> = {
-        let mut m: HashMap<&'static str, Building> = HashMap::new();
-        m.insert(
-            "Settlement",
-            Building::init("Settlement")
-                .with_conversions(vec!["Hunting"])
-                .with_storage(vec![
-                    ResourceAmount::init(ResourceKind::Food, 50),
-                    ResourceAmount::init(ResourceKind::Fuel, 50),
-                    ResourceAmount::init(ResourceKind::Knowledge, 50),
-                    ResourceAmount::init(ResourceKind::Instability, 50),
-                ])
-                .with_pops(3)
-                .with_immortal(),
-        );
-
-        m.insert(
-            "Gathering Camp",
-            Building::init("Gathering Camp")
-                .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
-                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
-                .with_pops(3),
-        );
-
-        m.insert(
-            "Hunting Grounds",
-            Building::init("Hunting Grounds")
-                .with_conversions(vec!["Hunting"])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
-        );
-
-        m
-    };
-    static ref EDICTS: HashMap<&'static str, Edict> = {
-        let mut e: HashMap<&'static str, Edict> = HashMap::new();
-        e.insert(
-            "Feast",
-            Edict::init(
-                "Feast",
-                Conversion::init(
-                    "Feast",
-                    ConversionLength::Epic,
-                    vec![ResourceAmount::init(ResourceKind::Food, 20)],
-                    vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
-                ),
-            ),
-        );
-
-        e
-    };
-    static ref RESEARCH: HashMap<&'static str, Research> = {
-        let mut m = HashMap::new();
-        m.insert(
-            "Settlement",
-            Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
-        );
-        m
-    };
-    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
-        let mut m = HashMap::new();
-        m.insert("c", Upgrade::init("c", vec![], vec![]));
-        m
-    };
-}
-
 #[cfg(test)]
 lazy_static! {
-    static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
+    pub static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
         m.insert(
             "TestChop",
@@ -116,7 +26,7 @@ lazy_static! {
         );
         m
     };
-    static ref BUILDINGS: HashMap<&'static str, Building> = {
+    pub static ref BUILDINGS: HashMap<&'static str, Building> = {
         let mut m = HashMap::new();
         m.insert("Empty Building", Building::init("Empty Building"));
         m.insert(
@@ -159,7 +69,7 @@ lazy_static! {
 
         m
     };
-    static ref EDICTS: HashMap<&'static str, Edict> = {
+    pub static ref EDICTS: HashMap<&'static str, Edict> = {
         let mut e: HashMap<&'static str, Edict> = HashMap::new();
         e.insert(
             "TestEdict",
@@ -188,7 +98,7 @@ lazy_static! {
 
         e
     };
-    static ref RESEARCH: HashMap<&'static str, Research> = {
+    pub static ref RESEARCH: HashMap<&'static str, Research> = {
         let mut m = HashMap::new();
 
         m.insert("TestNoDeps", Research::init("TestNoDeps"));
@@ -202,7 +112,7 @@ lazy_static! {
 
         m
     };
-    static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+    pub static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
 
         m.insert(
@@ -258,44 +168,4 @@ lazy_static! {
 
         m
     };
-}
-
-pub fn get_conversion(name: &str) -> Conversion {
-    CONVERSIONS[name].clone()
-}
-
-pub fn get_conversion_names() -> Vec<String> {
-    CONVERSIONS.keys().map(|x| (*x).to_string()).collect()
-}
-
-pub fn get_building(name: &str) -> Building {
-    BUILDINGS[name].clone()
-}
-
-pub fn get_building_names() -> Vec<String> {
-    BUILDINGS.keys().map(|x| (*x).to_string()).collect()
-}
-
-pub fn get_edict(name: &str) -> Edict {
-    EDICTS[name].clone()
-}
-
-pub fn get_edict_names() -> Vec<String> {
-    EDICTS.keys().map(|x| (*x).to_string()).collect()
-}
-
-pub fn get_research(name: &str) -> Research {
-    RESEARCH[name].clone()
-}
-
-pub fn get_research_names() -> Vec<String> {
-    RESEARCH.keys().map(|x| (*x).to_string()).collect()
-}
-
-pub fn get_upgrade(name: &str) -> Upgrade {
-    UPGRADE[name].clone()
-}
-
-pub fn get_upgrade_names() -> Vec<String> {
-    UPGRADE.keys().map(|x| (*x).to_string()).collect()
 }

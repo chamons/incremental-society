@@ -1,7 +1,6 @@
 mod actions;
 mod build;
 mod conversions;
-mod data;
 mod debug;
 mod derived_state;
 mod destroy;
@@ -12,6 +11,8 @@ mod limits;
 mod process;
 mod research;
 mod upgrade;
+
+mod data;
 
 pub use build::{build, can_build_building, can_build_in_region};
 pub use conversions::sync_building_to_conversions;

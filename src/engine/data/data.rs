@@ -1,0 +1,93 @@
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
+
+#[cfg(test)]
+use crate::state::UpgradeActions;
+
+use std::collections::HashMap;
+
+#[cfg(not(test))]
+lazy_static! {
+    pub static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
+        let mut m = HashMap::new();
+        m.insert(
+            "Gathering",
+            Conversion::init(
+                "Gathering",
+                ConversionLength::Long,
+                vec![],
+                vec![ResourceAmount::init(ResourceKind::Food, 1), ResourceAmount::init(ResourceKind::Fuel, 1)],
+            ),
+        );
+
+        m.insert(
+            "Hunting",
+            Conversion::init("Hunting", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 2)]),
+        );
+
+        m
+    };
+    pub static ref BUILDINGS: HashMap<&'static str, Building> = {
+        let mut m: HashMap<&'static str, Building> = HashMap::new();
+        m.insert(
+            "Settlement",
+            Building::init("Settlement")
+                .with_conversions(vec!["Hunting"])
+                .with_storage(vec![
+                    ResourceAmount::init(ResourceKind::Food, 50),
+                    ResourceAmount::init(ResourceKind::Fuel, 50),
+                    ResourceAmount::init(ResourceKind::Knowledge, 50),
+                    ResourceAmount::init(ResourceKind::Instability, 50),
+                ])
+                .with_pops(3)
+                .with_immortal(),
+        );
+
+        m.insert(
+            "Gathering Camp",
+            Building::init("Gathering Camp")
+                .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
+                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
+                .with_pops(3),
+        );
+
+        m.insert(
+            "Hunting Grounds",
+            Building::init("Hunting Grounds")
+                .with_conversions(vec!["Hunting"])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)]),
+        );
+
+        m
+    };
+    pub static ref EDICTS: HashMap<&'static str, Edict> = {
+        let mut e: HashMap<&'static str, Edict> = HashMap::new();
+        e.insert(
+            "Feast",
+            Edict::init(
+                "Feast",
+                Conversion::init(
+                    "Feast",
+                    ConversionLength::Epic,
+                    vec![ResourceAmount::init(ResourceKind::Food, 20)],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
+                ),
+            ),
+        );
+
+        e
+    };
+    pub static ref RESEARCH: HashMap<&'static str, Research> = {
+        let mut m = HashMap::new();
+        m.insert(
+            "Settlement",
+            Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+        );
+        m
+    };
+    pub static ref UPGRADE: HashMap<&'static str, Upgrade> = {
+        let mut m = HashMap::new();
+        m.insert("c", Upgrade::init("c", vec![], vec![]));
+        m
+    };
+}

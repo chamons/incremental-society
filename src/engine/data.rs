@@ -1,4 +1,7 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade, UpgradeActions};
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
+
+#[cfg(test)]
+use crate::state::UpgradeActions;
 
 use std::collections::HashMap;
 

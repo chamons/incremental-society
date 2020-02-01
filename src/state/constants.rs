@@ -10,4 +10,4 @@ pub const LONG_CONVERSION: u32 = 150;
 pub const EPIC_CONVERSION: u32 = 300;
 
 pub const MAX_UPGRADES: usize = 2;
-pub const REGION_BUILDING_COUNT: usize = 2;
+pub const REGION_BUILDING_COUNT: usize = 4;

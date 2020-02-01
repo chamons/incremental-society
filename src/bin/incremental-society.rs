@@ -285,14 +285,14 @@ impl<'a> UI<'a> {
 
     fn write_region_contents(&self, text: &str, x: i32, y: i32) -> i32 {
         // RIGHT_COL_WIDTH - 2
-        self.write_right(&format!("|{: <38}|", text), x, y)
+        self.write_right(&format!("|{: <67}|", text), x, y)
     }
 
     #[allow(unused_assignments)]
     fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
         let mut y = y;
         for r in &state.regions {
-            y = self.write_right("----------------------------------------", 0, y);
+            y = self.write_right("---------------------------------------------------------------------", 0, y);
 
             y = self.write_region_contents(&r.name, 0, y);
 
@@ -320,7 +320,7 @@ impl<'a> UI<'a> {
                     x += building_name_length as i32 + 3;
                 }
             }
-            y = self.write_right("----------------------------------------", 0, y);
+            y = self.write_right("---------------------------------------------------------------------", 0, y);
         }
 
         y
@@ -370,7 +370,7 @@ impl<'a> UI<'a> {
     }
 
     const RIGHT_COL: i32 = 50;
-    const RIGHT_COL_WIDTH: i32 = 40;
+    const RIGHT_COL_WIDTH: i32 = 69;
 
     fn write_right(&self, text: &str, x: i32, y: i32) -> i32 {
         self.write(text, x + UI::RIGHT_COL, y)

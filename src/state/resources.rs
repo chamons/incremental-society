@@ -136,7 +136,7 @@ impl IndexMut<usize> for ResourceTotal {
     }
 }
 
-pub fn format_resource_list(prefix: &str, list: &Vec<ResourceAmount>) -> String {
+pub fn format_resource_list(prefix: &str, list: &[ResourceAmount]) -> String {
     let output_list = list.iter().map(|x| format!("{} {}", x.amount, x.kind)).format(", ");
     format!("{}{}", prefix, output_list)
 }

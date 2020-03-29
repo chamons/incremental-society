@@ -38,7 +38,7 @@ impl Research {
 
     pub fn details(&self) -> Vec<String> {
         let mut details: Vec<String> = vec![];
-        details.push(format_resource_list("Cost: {}", &self.cost));
+        details.push(format_resource_list("Cost: ", &self.cost));
         details
     }
 }

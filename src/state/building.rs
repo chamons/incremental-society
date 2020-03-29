@@ -87,9 +87,6 @@ impl Building {
         if !self.storage.is_empty() {
             details.push(format_resource_list("Storage: ", &self.storage));
         }
-        if !self.research.is_empty() {
-            details.push(format!("Requires Research: {}", self.research.iter().format(", ")));
-        }
 
         details
     }

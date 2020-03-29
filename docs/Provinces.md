@@ -30,4 +30,4 @@ Each province can have set by the central administration to be carried out by th
 - Rapid Expansion - At a cost of significantly increased upkeep improve building speed, infrastructure growth rate, and provide bonus population growth.
 - Royal Officials - By sending officers of the central government as administrations, reduce local autonomy further at a small loyalty cost, as people chafe over the ruling elite.
 - Frontier Society - Focus on natural resource production at a cost of maximum infrastructure.
-- Servants of the State - By appointing members of the upper classes at their own expense as magistrates, the cost to the central government can significantly be reduced. Reduced maximum loyality by roviding so much control to individuals.
+- Servants of the State - By appointing members of the upper classes at their own expense as magistrates, the cost to the central government can significantly be reduced. Reduced maximum loyality by providing so much control to individuals.

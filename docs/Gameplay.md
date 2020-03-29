@@ -6,7 +6,7 @@ There are two major inputs the player has into incremental-society right now, an
 
 - Building Selection
 - Edicts
-- (Research selection)
+- Research selection
 - (Laws selection)
 - (Religion selection)
 - (Trade/Warfare selection)
@@ -19,11 +19,11 @@ There are current two output, with more planned
 
 - Buildings/Regions
 - Resources Totals
-- (Research gained)
+- Research gained
 - (Laws Reformed)
 - (Religion Revelations)
 
-The core gameplay loops is get resources to make decisions to get more resources. 
+The core gameplay loops is get resources to make decisions to get more resources.
 
 How to do that without:
 
@@ -33,9 +33,63 @@ How to do that without:
 
 is the hard part.
 
-## Early Stone Age
+## Archaic
 
-The game starts in the earliest part of the stone age, with your tribe having nothing more than a "roving band" with Camp you return to often.
+Your tribe having nothing more than a "roving band" with no fixed home.
+
+The gameplay loop is very simple, hunt to provide food. Don't starve. Feast when times are good (to gain bits of knowledge).
+
+(We need some tutorial messages here at some point).
+
+Once you have knowledge and resources, you can start researching ideas.
+
+Only stockpiles and timer are shown. Hide buildings, provinces, and such.
+
+Techs:
+
+Gathering -> Tool Making        -> Spears         -> Spear Throwers  
+                                -> Stone Grinders
+          -> Seasonal Gathering
+          -> Burial Rights
+          -> Early Settlements
+
+Gathering - Expand the tribes expeditions to target plants and wild grains. Also collect some stone and wood where readily available. 
+        Unlocks Gathering Action. Minor food, and trivial stone/wood
+Tool Making - Since times immemorial what separates mankind from the animal kingdom is the consistent use of tools. Begin fashioning tools from bone, stone, and wood.
+        Unlocks other tool techs
+Seasonal Gathering - By migrating along consistent routes, resources can be exploited in season and yield increased.
+        Improves overall gathering yield but increases duration
+Stone Spears - Topped with sharpened stone projectile points, these weapons allowed hunters to go after larger prey.
+        Improves hunting maximum yield
+Spear Throwers - A wooden spear thrower allows hunters to launch spears with significantly greater force and accuracy. This allows them to hunt smaller game, which are more plentiful and consistent than megafauna.
+        Improve hunting minimum and maximum yield
+Stone Grinders - Grinding nuts, seeds, and grains extends the edible yield of gathering by allowing a wider range of items to be gathered.
+        Improves gathering food yield.
+Burial Rights - Death confronts us all in the end. Rituals to bury the diseased with honor and respect helped comfort the tribe and form the basis for later religion.
+        Improves "Instability" decay rate.
+Early Settlements - A stable food supply provides the ability to begin to settle in place. Beginning with seasonal camps over time they become more long lasting.
+        Settlements lead to a new "Stone Age". Buildings and jobs can provide "passive" income and allow specialization.
+
+In the early stone age, here is the resource list:
+
+### Tier 0
+
+- Food
+- Wood
+- Stone
+
+### Tier 1
+
+- Knowledge
+
+## Stone Age
+
+Techs:
+
+Stone Axes
+Stone Scrapers
+
+Your tribe having nothing more than a "roving band" with Camp you return to often.
 
 One provence. 5 buildings?
 

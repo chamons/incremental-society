@@ -65,12 +65,16 @@ Spear Throwers - A wooden spear thrower allows hunters to launch spears with sig
         Improve hunting minimum and maximum yield
 Stone Grinders - Grinding nuts, seeds, and grains extends the edible yield of gathering by allowing a wider range of items to be gathered.
         Improves gathering food yield.
-Burial Rights - Death confronts us all in the end. Rituals to bury the diseased with honor and respect helped comfort the tribe and form the basis for later religion.
-        Improves "Instability" decay rate.
 Early Settlements - A stable food supply provides the ability to begin to settle in place. Beginning with seasonal camps over time they become more long lasting.
         Settlements lead to a new "Stone Age". Buildings and jobs can provide "passive" income and allow specialization.
+Domestication of Dogs
+        Slightly improves "Instability" decay rate.
+        Slightly improves hunting yield
+Pigments
+        Improves "Instability" decay rate.
 
-In the early stone age, here is the resource list:
+
+Resource list:
 
 ### Tier 0
 
@@ -84,44 +88,52 @@ In the early stone age, here is the resource list:
 
 ## Stone Age
 
+A cental camp allows producing buildings to provide passive income. There won't be enough building slots for every good, so some manual hunting/gathering/feasting is likely necessary.
+
 Techs:
 
+Early Settlements -> Trapping
+                  -> Organized Gathering
+                  -> Storytelling
+                  -> Burial Rights
+                  -> Craftsmanship     -> Stone Axes
+                                       -> Harpoons
+                                       -> Pottery
+                                       -> Weaving    -> Clothing
+                                                     -> Basket Making
+                                       -> Agriculture
+Trapping
+        Building "Hunting grounds" (Passive Food)
+Archery
+        Upgrade - Bow & Arrow - Improve Hunting production output.
+
+
+Organized Gathering
+        Building "Gathering Camp" (Passive Stone, Wood)
+Storytelling
+        Building "Story Circle" (Passive knowledge)
+Craftsmanship
+        Building "Crafter's Hut" which converts Stone/Wood to Tools
 Stone Axes
-Stone Scrapers
+        Sharpened stone axes improve wood yield from Gathering and Gathering Camps
+Burial Rights - Death confronts us all in the end. Rituals to bury the diseased with honor and respect helped comfort the tribe and form the basis for later religion.
+        Improves "Instability" decay rate.
+Harpoons
+Pottery
+Weaving
+Clothing
+Basket Making
+Agriculture
 
-Your tribe having nothing more than a "roving band" with Camp you return to often.
 
-One provence. 5 buildings?
+## Agricultural Age
 
-You have some food stored, but not much, and no passive ability to get more.
+Techs:
 
-(We need some tutorial messages here at some point).
+Domestication of Livestock
 
-You have a number of edicts you can use to order your tribe around:
 
-- Hunt (Medium duration, gather huge amount of food)
-- Feast (Long duration, convert food to knowledge)
-
-You have to hunt to keep your tribe along, and feasting when times are good.
-
-When you have enough knowledge, you can research the entry technology - Settlement. 
-
-That will unlock the ability to build buildings and destroy them, to do some collection for you:
-
-- Gathering Camp - Trivial amount of food, wood, and stone.
-
-You will still need to hunt for food, and feast for knowledge. 
-
-Once you have a bit of a base, though still manual, the next goal is research unlocked after settlement.
-
-There are a few open paths:
-
-- Storytelling (Research and Stone) - Building "Story Circle" (Passive knowledge)
-- Hunting and Trapping (Research, Wood, Stone) - Unlocks hunting grounds (Collects minor version of "Hunt" edict, but not great)
-
-- Once both of those are researched, you can research Tookmaking (Research, Stone), which promotes you to Middle Stone Age.
-
-In the early stone age, here is the resource list:
+In the stone age, here is the resource list:
 
 ### Tier 0
 
@@ -132,39 +144,16 @@ In the early stone age, here is the resource list:
 ### Tier 1
 
 - Knowledge
+- Tools
 
-## Middle Stone Age
 
-With a inefficient but passive base, the goal is to research new technologies, and grow your tribe.
-
-Tools are the future, and all research and buildings will require them to some extend. The are produced by:
-
-Crafter's Hut - Convert Stone to tools (slowly)
-
-Research:
+## Late Stone Age
 
 - Woodworking
     - Building - Logging Camp (Wood, Tools). Produces more wood than gathering camp, but nothing else.
 - Stonecutting
     - Building - Quarry (Wood, Tools, Stone). Produces a lot more stone than gathering camp, but nothing else.
-- Archery
-    - Upgrade - Bow & Arrow - Improve Hunting production output.
 
-Researching Agriculture transitions to the late stone age.
-
-In the middle stone age, here is the resource list:
-
-### Tier 0
-- Food
-- Wood
-- Stone
-
-### Tier 1
-
-- Tools
-- Knowledge
-
-## Late Stone Age
 
 TODO
 

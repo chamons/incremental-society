@@ -2,6 +2,7 @@
 
 These are a set up of ideas for research and upgrades, based upon history and a number of historical based games. Not all will necessarily be used, but it's a place to centralize ideas and research.
 
+https://en.wikipedia.org/wiki/Timeline_of_historic_inventions
 
 ## Stone Age
 

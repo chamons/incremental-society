@@ -2,7 +2,6 @@
 ## Todo Now
 
 - Archaic Age
-   - Start with one province, one hidden building
    - Range of edict outcomes
    - Upgrades to edict outcomes from tech
 

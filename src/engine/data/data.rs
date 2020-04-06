@@ -32,14 +32,13 @@ lazy_static! {
         m.insert(
             "Settlement",
             Building::init("Settlement")
-                .with_conversions(vec!["Hunting"])
                 .with_storage(vec![
                     ResourceAmount::init(ResourceKind::Food, 250),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
                 ])
-                .with_pops(3)
+                .with_pops(1)
                 .with_immortal(),
         );
 
@@ -72,7 +71,7 @@ lazy_static! {
                 Conversion::init(
                     "Feast",
                     ConversionLength::Long,
-                    vec![ResourceAmount::init(ResourceKind::Food, 200)],
+                    vec![ResourceAmount::init(ResourceKind::Food, 50)],
                     vec![ResourceAmount::init(ResourceKind::Knowledge, 5)],
                 ),
             ),
@@ -81,7 +80,7 @@ lazy_static! {
             "Hunt",
             Edict::init(
                 "Hunt",
-                Conversion::init("Hunt", ConversionLength::Long, vec![], vec![ResourceAmount::init(ResourceKind::Food, 100)]),
+                Conversion::init("Hunt", ConversionLength::Long, vec![], vec![ResourceAmount::init(ResourceKind::Food, 20)]),
             ),
         );
 

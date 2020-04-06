@@ -59,16 +59,15 @@ use super::data::get_building;
 pub fn init_new_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
-        regions: vec![
-            Region::init_with_buildings("Lusitania", vec![get_building("Settlement"), get_building("Hunting Grounds")]),
-            Region::init("Illyricum"),
-        ],
+        regions: vec![Region::init_with_buildings("Lusitania", vec![get_building("Settlement")])],
         actions: vec![],
         age: super::data::get_ages()[0].to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
     };
+    state.resources[ResourceKind::Food] = 20;
+
     recalculate(&mut state);
     state
 }

@@ -2,11 +2,9 @@
 ## Todo Now
 
 - Archaic Age
-   - Hide provinces, building action, population size, etc
    - Start with one province, one hidden building
    - Range of edict outcomes
    - Upgrades to edict outcomes from tech
-   - List "age" somewhere in the UI
 
 - Change building system to not be population based
 - Buildings unlock job slots

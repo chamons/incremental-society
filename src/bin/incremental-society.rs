@@ -261,6 +261,7 @@ impl<'a> UI<'a> {
         const CONVERSION_BAR_LENGTH: f64 = 30.0;
 
         y = self.write_right("Conversions", 0, y);
+        y += 1;
 
         for c in &state.actions {
             let percentage = c.percentage();
@@ -289,6 +290,10 @@ impl<'a> UI<'a> {
 
     #[allow(unused_assignments)]
     fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
+        if !self.should_draw_buildings(state) {
+            return 0;
+        }
+
         let mut y = y;
         for r in &state.regions {
             y = self.write_right("---------------------------------------------------------------------", 0, y);
@@ -325,13 +330,20 @@ impl<'a> UI<'a> {
         y
     }
 
+    fn should_draw_buildings(&self, state: &GameState) -> bool {
+        state.age != "Archaic"
+    }
+
     #[allow(unused_assignments)]
     fn draw_country_stats(&self, state: &GameState, y: i32) -> i32 {
         let mut y = self.write("Elysium", 1, y);
+        y += 1;
         y = self.write(format!("{} Age", state.age), 1, y);
-        y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
-        y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
-        y = self.write("----------------", 0, y + 1);
+        if self.should_draw_buildings(state) {
+            y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
+            y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
+        }
+        y = self.write(" ----------------", 0, y + 1);
 
         y
     }

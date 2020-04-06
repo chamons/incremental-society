@@ -36,8 +36,6 @@ pub fn apply_edict(state: &mut GameState, name: &str) {
 
 #[cfg(test)]
 mod tests {
-    use std::error::Error;
-
     use super::*;
     use crate::engine::tests::*;
     use crate::state::{Region, ResourceKind};
@@ -71,7 +69,7 @@ mod tests {
         let mut state = init_test_game_state();
         let test_edict = get_test_edict("TestEdict");
 
-        assert_eq!("Insufficient resources for edict", edict(&mut state, &test_edict).unwrap_err().description());
+        assert_eq!("Insufficient resources for edict", edict(&mut state, &test_edict).unwrap_err().to_string());
     }
 
     #[test]
@@ -84,7 +82,7 @@ mod tests {
 
         let other_test_edict = get_test_edict("OtherTestEdict");
 
-        assert_eq!("Edict already in progress", edict(&mut state, &other_test_edict).unwrap_err().description());
+        assert_eq!("Edict already in progress", edict(&mut state, &other_test_edict).unwrap_err().to_string());
     }
 
     #[test]
@@ -94,6 +92,6 @@ mod tests {
         let test_edict = get_test_edict("TestEdict");
 
         edict(&mut state, &test_edict).unwrap();
-        assert_eq!("Edict already in progress", edict(&mut state, &test_edict).unwrap_err().description());
+        assert_eq!("Edict already in progress", edict(&mut state, &test_edict).unwrap_err().to_string());
     }
 }

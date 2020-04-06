@@ -55,7 +55,6 @@ pub fn apply_destroy(state: &mut GameState, region_index: usize, building_index:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::error::Error;
 
     use crate::engine::tests::*;
     use crate::state::{Region, ResourceKind, DESTROY_LENGTH};
@@ -78,7 +77,7 @@ mod tests {
 
         assert_eq!(
             "Insufficient pops for remaining buildings after destruction",
-            destroy(&mut state, 0, 0).unwrap_err().description()
+            destroy(&mut state, 0, 0).unwrap_err().to_string()
         );
     }
 
@@ -86,7 +85,7 @@ mod tests {
     fn destroy_immortal_building() {
         let mut state = init_test_game_state();
         state.regions[1].add_building(get_test_building("Test Immortal"));
-        assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().description());
+        assert_eq!("Unable to destroy Test Immortal", destroy(&mut state, 1, 1).unwrap_err().to_string());
     }
 
     #[test]

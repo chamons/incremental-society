@@ -65,8 +65,6 @@ pub fn apply_build(state: &mut GameState, building: &str, region_index: usize) {
 mod tests {
     use super::*;
 
-    use std::error::Error;
-
     use crate::engine::tests::*;
     use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 
@@ -84,7 +82,7 @@ mod tests {
         state.regions = vec![Region::init("First Region")];
 
         let error = build(&mut state, get_test_building("Test Building"), 0).unwrap_err();
-        assert_eq!("Insufficient resources for build cost", error.description());
+        assert_eq!("Insufficient resources for build cost", error.to_string());
     }
 
     #[test]
@@ -99,7 +97,7 @@ mod tests {
         )];
 
         let error = build(&mut state, building, 0).unwrap_err();
-        assert_eq!("Insufficient room for building", error.description());
+        assert_eq!("Insufficient room for building", error.to_string());
     }
 
     #[test]
@@ -109,7 +107,7 @@ mod tests {
         recalculate(&mut state);
 
         let error = build(&mut state, get_test_building("Test Gather Hut"), 0).unwrap_err();
-        assert_eq!("Insufficient pops for building", error.description());
+        assert_eq!("Insufficient pops for building", error.to_string());
     }
 
     #[test]
@@ -117,7 +115,7 @@ mod tests {
         let mut state = init_test_game_state();
         assert_eq!(
             "Unable to build Test Immortal",
-            build(&mut state, get_test_building("Test Immortal"), 1).unwrap_err().description()
+            build(&mut state, get_test_building("Test Immortal"), 1).unwrap_err().to_string()
         );
     }
 

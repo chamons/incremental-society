@@ -189,8 +189,6 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 
 #[cfg(test)]
 mod tests {
-    use std::error::Error;
-
     use super::*;
     use crate::engine::tests::*;
     use crate::state::{ConversionLength, Region, ResourceKind};
@@ -395,7 +393,7 @@ mod tests {
         )
         .unwrap_err();
 
-        assert_eq!("Insufficient upgrade slots for upgrade plan.", err.description());
+        assert_eq!("Insufficient upgrade slots for upgrade plan.", err.to_string());
     }
 
     #[test]

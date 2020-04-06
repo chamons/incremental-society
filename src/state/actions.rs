@@ -42,7 +42,7 @@ impl Waiter {
     }
 
     pub fn percentage(&self) -> f64 {
-        ((self.duration as f64 - self.current_tick as f64) / self.duration as f64)
+        (self.duration as f64 - self.current_tick as f64) / self.duration as f64
     }
 }
 

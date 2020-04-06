@@ -16,6 +16,7 @@
 
 ## Later
 
+- Show KB buttons at bottom of screen
 - Gameplay pass through middle stone age
 
 - Research 1 of 3

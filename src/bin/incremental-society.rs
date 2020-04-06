@@ -328,6 +328,7 @@ impl<'a> UI<'a> {
     #[allow(unused_assignments)]
     fn draw_country_stats(&self, state: &GameState, y: i32) -> i32 {
         let mut y = self.write("Elysium", 1, y);
+        y = self.write(format!("{} Age", state.age), 1, y);
         y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
         y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
         y = self.write("----------------", 0, y + 1);

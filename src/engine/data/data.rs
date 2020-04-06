@@ -7,6 +7,7 @@ use std::collections::HashMap;
 
 #[cfg(not(test))]
 lazy_static! {
+    pub static ref AGES: Vec<&'static str> = { vec!["Archaic", "Stone", "Agricultural"] };
     pub static ref CONVERSIONS: HashMap<&'static str, Conversion> = {
         let mut m = HashMap::new();
         m.insert(

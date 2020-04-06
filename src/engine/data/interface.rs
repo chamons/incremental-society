@@ -1,5 +1,9 @@
-use super::{BUILDINGS, CONVERSIONS, EDICTS, RESEARCH, UPGRADE};
+use super::{AGES, BUILDINGS, CONVERSIONS, EDICTS, RESEARCH, UPGRADE};
 use crate::state::{Building, Conversion, Edict, Research, Upgrade};
+
+pub fn get_ages() -> Vec<&'static str> {
+    AGES.to_vec()
+}
 
 pub fn get_conversion(name: &str) -> Conversion {
     CONVERSIONS[name].clone()

@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
@@ -106,7 +105,7 @@ impl<'a> UI<'a> {
                         let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok(), |_| vec![]);
                         match OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
-                                Err(e) => self.set_message(e.description()),
+                                Err(e) => self.set_message(e.to_string()),
                                 _ => self.set_message(format!("Built {}", name)),
                             },
                             None => self.clear_message(),
@@ -128,7 +127,7 @@ impl<'a> UI<'a> {
                                 Some(building_index) => {
                                     let building_name = &buildings[building_index];
                                     match engine::destroy(&mut state, region_index, building_index) {
-                                        Err(e) => self.set_message(e.description()),
+                                        Err(e) => self.set_message(e.to_string()),
                                         _ => self.set_message(format!("Destroying {}", building_name)),
                                     }
                                 }
@@ -154,7 +153,7 @@ impl<'a> UI<'a> {
                         let edict = edicts.get(edict_index).unwrap().clone();
 
                         match engine::edict(&mut state, &edict) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }
@@ -176,7 +175,7 @@ impl<'a> UI<'a> {
                         let research = research.get(research_index).unwrap().clone();
 
                         match engine::research(&mut state, &research) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }
@@ -206,7 +205,7 @@ impl<'a> UI<'a> {
                     Some(selected_items) => {
                         let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
                         match engine::upgrade(&mut state, selected_upgrades) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }

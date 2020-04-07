@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Building {
     pub name: String,
-    pub conversions: Vec<String>,
+    pub jobs: Vec<String>,
     pub research: HashSet<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
@@ -22,7 +22,7 @@ impl Building {
     pub fn init(name: &'static str) -> Building {
         Building {
             name: name.to_owned(),
-            conversions: vec![],
+            jobs: vec![],
             research: HashSet::new(),
             build_cost: vec![],
             storage: vec![],
@@ -31,8 +31,8 @@ impl Building {
         }
     }
 
-    pub fn with_conversions(mut self, conversions: Vec<&str>) -> Building {
-        self.conversions = conversions.iter().map(|x| (*x).to_owned()).collect();
+    pub fn with_jobs(mut self, jobs: Vec<&str>) -> Building {
+        self.jobs = jobs.iter().map(|x| (*x).to_owned()).collect();
         self
     }
 
@@ -78,11 +78,11 @@ impl Building {
         }
 
         let mut conversion_count = BTreeMap::new();
-        for c in self.conversions.iter() {
+        for c in self.jobs.iter() {
             let entry = conversion_count.entry(c).or_insert(0);
             *entry += 1;
         }
-        details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
+        details.push(format!("Jobs: {}", conversion_count.iter().map(format_details).format(", ")));
 
         if !self.storage.is_empty() {
             details.push(format_resource_list("Storage: ", &self.storage));

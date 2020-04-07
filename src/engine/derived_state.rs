@@ -40,6 +40,12 @@ impl DerivedState {
             available_edicts: available_to_invoke(state),
             available_research: available_to_research(state),
             available_upgrade: available_to_upgrade(state),
+
+            // This needs to be provided jobs
+            // Then there there needs to be state on job distribution
+            // There needs to be checks on job to prevent destruction under jobs taken
+            // There needs to be an unassigned
+            // Then every conversion needs to take into account (can you swap a job right before a long one finishes to get entire tick, or does it reset?)
             all_conversions: current_conversions(state),
         }
     }

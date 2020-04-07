@@ -25,7 +25,10 @@ fn apply_actions(state: &mut GameState) {
         match action {
             DelayedAction::Edict(name) => edict::apply_edict(state, name),
             DelayedAction::Conversion(name) => {
-                for _ in 0..*state.derived_state.conversions.get(name).unwrap() {
+                // HACK
+                let job_count = 1;
+
+                for _ in 0..job_count {
                     conversions::apply_convert(state, name);
                 }
             }
@@ -57,8 +60,6 @@ fn sustain_population(state: &mut GameState) {
 
 pub fn recalculate(state: &mut GameState) {
     state.derived_state = DerivedState::calculate(&state);
-    // See sync_building_to_conversions for the story on why we're doing this :(
-    crate::engine::sync_building_to_conversions(state);
 }
 
 use super::data::get_building;

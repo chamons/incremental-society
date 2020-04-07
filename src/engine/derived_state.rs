@@ -1,70 +1,71 @@
 use std::collections::HashMap;
 
-pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade, current_conversions};
+pub use super::upgrade;
 pub use crate::state::{Building, Conversion, Edict, GameState, Research, ResourceTotal, Upgrade};
 
 use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct DerivedState {
-    pub conversions_names: Vec<String>,
-    pub conversions: HashMap<String, u32>,
+    pub current_jobs_names: Vec<String>,
+    pub current_jobs: HashMap<String, u32>,
     pub storage: ResourceTotal,
     pub available_buildings: Vec<Building>,
     pub available_edicts: Vec<Edict>,
     pub available_research: Vec<Research>,
     pub available_upgrade: Vec<Upgrade>,
-    pub all_conversions: Vec<Conversion>,
+    pub available_conversions: Vec<Conversion>,
 }
 
 impl DerivedState {
     pub fn init() -> DerivedState {
         DerivedState {
-            conversions_names: vec![],
-            conversions: HashMap::new(),
+            current_jobs_names: vec![],
+            current_jobs: HashMap::new(),
             storage: ResourceTotal::init(),
             available_buildings: vec![],
             available_edicts: vec![],
             available_research: vec![],
             available_upgrade: vec![],
-            all_conversions: vec![],
+            available_conversions: vec![],
         }
     }
 
     pub fn calculate(state: &GameState) -> DerivedState {
         DerivedState {
-            conversions_names: DerivedState::conversion_names(state),
-            conversions: DerivedState::conversion_with_counts(state),
+            current_jobs_names: DerivedState::jobs_names(state),
+            current_jobs: DerivedState::jobs_with_counts(state),
             storage: DerivedState::calculate_storage(state),
-            available_buildings: available_to_build(state),
-            available_edicts: available_to_invoke(state),
-            available_research: available_to_research(state),
-            available_upgrade: available_to_upgrade(state),
 
+            // Items with respect to upgrades
+            available_buildings: upgrade::available_to_build(state),
+            available_edicts: upgrade::available_to_invoke(state),
+            available_research: upgrade::available_to_research(state),
+            available_upgrade: upgrade::available_to_upgrade(state),
+            available_conversions: upgrade::current_conversions(state),
             // This needs to be provided jobs
             // Then there there needs to be state on job distribution
             // There needs to be checks on job to prevent destruction under jobs taken
             // There needs to be an unassigned
             // Then every conversion needs to take into account (can you swap a job right before a long one finishes to get entire tick, or does it reset?)
-            all_conversions: current_conversions(state),
         }
     }
 
-    fn conversion_with_counts(state: &GameState) -> HashMap<String, u32> {
+    fn jobs_with_counts(state: &GameState) -> HashMap<String, u32> {
         let mut counts = HashMap::new();
-        for c in state.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.conversions) {
+        for c in state.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.jobs) {
             let entry = counts.entry(c.to_string()).or_insert(0);
             *entry += 1;
         }
         counts
     }
 
-    fn conversion_names(state: &GameState) -> Vec<String> {
+    fn jobs_names(state: &GameState) -> Vec<String> {
         let mut names: Vec<String> = state
             .regions
             .iter()
             .flat_map(|x| &x.buildings)
-            .flat_map(|x| &x.conversions)
+            .flat_map(|x| &x.jobs)
             .unique()
             .cloned()
             .collect();
@@ -99,7 +100,7 @@ impl DerivedState {
     }
 
     pub fn find_conversion(&self, name: &str) -> &Conversion {
-        self.all_conversions.iter().filter(|x| x.name == name).nth(0).unwrap()
+        self.available_conversions.iter().filter(|x| x.name == name).nth(0).unwrap()
     }
 }
 

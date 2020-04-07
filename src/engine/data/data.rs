@@ -45,7 +45,7 @@ lazy_static! {
         m.insert(
             "Gathering Camp",
             Building::init("Gathering Camp")
-                .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
+                .with_jobs(vec!["Gathering", "Gathering", "Hunting"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
                 .with_research("Settlement"),
@@ -54,7 +54,7 @@ lazy_static! {
         m.insert(
             "Hunting Grounds",
             Building::init("Hunting Grounds")
-                .with_conversions(vec!["Hunting"])
+                .with_jobs(vec!["Hunting"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)])
                 .with_research("Settlement"),
         );

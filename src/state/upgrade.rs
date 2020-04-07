@@ -7,7 +7,7 @@ use super::{check_available, ConversionLength, GameState, ResourceAmount};
 #[derive(Debug, Clone)]
 pub enum UpgradeActions {
     AddBuildingHousing(u32),
-    AddBuildingConversion(String),
+    AddBuildingJob(String),
     AddBuildingStorage(ResourceAmount),
     ChangeEdictLength(ConversionLength),
     ChangeConversionLength(ConversionLength),
@@ -19,7 +19,7 @@ impl UpgradeActions {
     pub fn details(&self) -> String {
         match self {
             UpgradeActions::AddBuildingHousing(pops) => format!("Adds {} population housing", pops),
-            UpgradeActions::AddBuildingConversion(name) => format!("Adds {} conversion to building", name),
+            UpgradeActions::AddBuildingJob(name) => format!("Adds {} job to building", name),
             UpgradeActions::AddBuildingStorage(storage) => format!("Adds {:?} storage", storage),
             UpgradeActions::ChangeEdictLength(length) => format!("Changes edict length to {:?}", length),
             UpgradeActions::ChangeConversionLength(length) => format!("Changes conversion length to {:?}", length),

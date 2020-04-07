@@ -33,7 +33,7 @@ lazy_static! {
         m.insert(
             "Test Building",
             Building::init("Test Building")
-                .with_conversions(vec!["TestChop", "TestChop"])
+                .with_jobs(vec!["TestChop", "TestChop"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 10)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 15)])
                 .with_housing(2),
@@ -41,14 +41,14 @@ lazy_static! {
         m.insert(
             "Test Gather Hut",
             Building::init("Test Gather Hut")
-                .with_conversions(vec!["TestGather"])
+                .with_jobs(vec!["TestGather"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 120)]),
         );
 
         m.insert(
             "Test Hunt Cabin",
             Building::init("Test Hunt Cabin")
-                .with_conversions(vec!["TestHunt", "TestHunt"])
+                .with_jobs(vec!["TestHunt", "TestHunt"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 60)]),
         );
 

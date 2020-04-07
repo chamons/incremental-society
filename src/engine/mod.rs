@@ -14,7 +14,6 @@ mod upgrade;
 mod data;
 
 pub use build::{build, can_build_building, can_build_in_region};
-pub use conversions::sync_building_to_conversions;
 pub use debug::{complete_actions, die, die_unless, dump_state, load_default_state, max_resources};
 pub use derived_state::DerivedState;
 pub use destroy::{can_destroy_building, destroy};

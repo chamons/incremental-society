@@ -68,11 +68,6 @@ mod tests {
     }
 
     #[test]
-    fn destroy_drops_jobs_too_low_fails() {
-        assert_eq!(false, true);
-    }
-
-    #[test]
     fn destroy_immortal_building() {
         let mut state = init_test_game_state();
         state.regions[1].add_building(get_test_building("Test Immortal"));

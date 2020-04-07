@@ -110,19 +110,19 @@ mod tests {
     use crate::state::ResourceKind;
 
     #[test]
-    fn conversion_with_counts() {
+    fn jobs_with_counts() {
         let state = init_test_game_state();
-        let conversions = &state.derived_state.conversions;
-        assert_eq!(4, *conversions.get("TestChop").unwrap());
-        assert_eq!(1, *conversions.get("TestGather").unwrap());
+        let jobs = &state.derived_state.current_jobs;
+        assert_eq!(4, *jobs.get("TestChop").unwrap());
+        assert_eq!(1, *jobs.get("TestGather").unwrap());
     }
 
     #[test]
-    fn conversion_names() {
+    fn jobs_names() {
         let state = init_test_game_state();
-        let conversions = &state.derived_state.conversions_names;
-        assert_eq!("TestChop", conversions[0]);
-        assert_eq!("TestGather", conversions[1]);
+        let jobs = &state.derived_state.current_jobs_names;
+        assert_eq!("TestChop", jobs[0]);
+        assert_eq!("TestGather", jobs[1]);
     }
 
     #[test]

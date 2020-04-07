@@ -120,7 +120,7 @@ lazy_static! {
             "TestUpgrade",
             Upgrade::init(
                 "TestUpgrade",
-                vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
+                vec![UpgradeActions::AddBuildingJob("TestChop".to_owned())],
                 vec!["Test Building".to_owned()],
             )
             .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
@@ -151,7 +151,7 @@ lazy_static! {
             Upgrade::init(
                 "TestMultiUpgrade",
                 vec![
-                    UpgradeActions::AddBuildingConversion("TestChop".to_owned()),
+                    UpgradeActions::AddBuildingJob("TestChop".to_owned()),
                     UpgradeActions::ChangeEdictLength(ConversionLength::Long),
                     UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1)),
                 ],

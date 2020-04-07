@@ -189,8 +189,6 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 
 #[cfg(test)]
 mod tests {
-    use std::error::Error;
-
     use super::*;
     use crate::engine::tests::*;
     use crate::state::{ConversionLength, Region, ResourceKind};
@@ -317,7 +315,7 @@ mod tests {
             "First Region",
             vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
         )];
-        state.resources[ResourceKind::Food] = 10;
+        state.resources[ResourceKind::Food] = 300;
         recalculate(&mut state);
 
         give_test_update_resources(&mut state, 1);
@@ -395,7 +393,7 @@ mod tests {
         )
         .unwrap_err();
 
-        assert_eq!("Insufficient upgrade slots for upgrade plan.", err.description());
+        assert_eq!("Insufficient upgrade slots for upgrade plan.", err.to_string());
     }
 
     #[test]

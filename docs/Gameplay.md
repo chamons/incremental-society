@@ -2,72 +2,90 @@
 
 This document lays out some gameplay systems and plans to be tested out. It is a living document, and will change, but the game may diverge over time. That's ok, it's a map, nothing more.
 
-There are two major inputs the player has into incremental-society right now, and some more planned
+There are three major inputs the player has into incremental-society right now, and some more planned
 
 - Building Selection
 - Edicts
-- (Research selection)
+- Research selection
 - (Laws selection)
 - (Religion selection)
 - (Trade/Warfare selection)
 
 Buildings provide constant resources over time, but are fire and forget mostly.
 
- Edicts are almost like "clicking" in traditional incremental games, an action that you can repeat over and over to get some good.
+Edicts are almost like "clicking" in traditional incremental games, an action that you can repeat over and over to get some good.
 
-There are current two output, with more planned
+Research allows research to be spent to unlock new buildings, edicts, and more. It is the primary progression path through the ages. 
+
+There are current three output, with more planned
 
 - Buildings/Regions
 - Resources Totals
-- (Research gained)
+- Research gained
 - (Laws Reformed)
 - (Religion Revelations)
 
-The core gameplay loops is get resources to make decisions to get more resources. 
+The core gameplay loops is get resources to make decisions to get more resources.
 
 How to do that without:
 
 - Make waiting for awhile being bored to get stuff
 - Without making absurdly huge numbers (like most clickers)
-- Have interesting decisions
+- Have interesting decisions. 
 
 is the hard part.
 
-## Early Stone Age
+## Archaic
 
-The game starts in the earliest part of the stone age, with your tribe having nothing more than a "roving band" with Camp you return to often.
+Your tribe having nothing more than a "roving band" with no fixed home.
 
-One provence. 5 buildings?
-
-You have some food stored, but not much, and no passive ability to get more.
+The gameplay loop is very simple, hunt to provide food. Don't starve. Feast when times are good (to gain bits of knowledge).
 
 (We need some tutorial messages here at some point).
 
-You have a number of edicts you can use to order your tribe around:
+Once you have knowledge and resources, you can start researching ideas.
 
-- Hunt (Medium duration, gather huge amount of food)
-- Feast (Long duration, convert food to knowledge)
+Only stockpiles and timer are shown. Hide buildings, provinces, and such.
 
-You have to hunt to keep your tribe along, and feasting when times are good.
+Techs:
 
-When you have enough knowledge, you can research the entry technology - Settlement. 
+Gathering -> Tool Making        -> Spears         -> Spear Throwers  
+                                -> Stone Grinders
+          -> Seasonal Gathering
+          -> Early Settlements
+-> Domestication of Dogs
+          -> Pigments
 
-That will unlock the ability to build buildings and destroy them, to do some collection for you:
+Gathering - Expand the tribes expeditions to target plants and wild grains. Also collect some stone and wood where readily available. 
+        Unlocks Gathering Action. Minor food, and trivial stone/wood
+        
+Tool Making - Since times immemorial what separates mankind from the animal kingdom is the consistent use of tools. Begin fashioning tools from bone, stone, and wood.
+        Unlocks other tool techs
+        
+Seasonal Gathering - By migrating along consistent routes, resources can be exploited in season and yield increased.
+        Improves overall gathering yield but increases duration
+        
+Stone Spears - Topped with sharpened stone projectile points, these weapons allowed hunters to go after larger prey.
+        Improves hunting maximum yield
+        
+Spear Throwers - A wooden spear thrower allows hunters to launch spears with significantly greater force and accuracy. This allows them to hunt smaller game, which are more plentiful and consistent than megafauna.
+        Improve hunting minimum and maximum yield
+        
+Stone Grinders - Grinding nuts, seeds, and grains extends the edible yield of gathering by allowing a wider range of items to be gathered.
+        Improves gathering food yield.
+        
+Early Settlements - A stable food supply provides the ability to begin to settle in place. Beginning with seasonal camps over time they become more long lasting.
+        Settlements lead to a new "Stone Age". Buildings and jobs can provide "passive" income and allow specialization.
+        
+Domestication of Dogs
+        Slightly improves "Instability" decay rate.
+        Slightly improves hunting yield
+        
+Pigments
+        Improves "Instability" decay rate.
 
-- Gathering Camp - Trivial amount of food, wood, and stone.
 
-You will still need to hunt for food, and feast for knowledge. 
-
-Once you have a bit of a base, though still manual, the next goal is research unlocked after settlement.
-
-There are a few open paths:
-
-- Storytelling (Research and Stone) - Building "Story Circle" (Passive knowledge)
-- Hunting and Trapping (Research, Wood, Stone) - Unlocks hunting grounds (Collects minor version of "Hunt" edict, but not great)
-
-- Once both of those are researched, you can research Tookmaking (Research, Stone), which promotes you to Middle Stone Age.
-
-In the early stone age, here is the resource list:
+Resource list:
 
 ### Tier 0
 
@@ -79,67 +97,109 @@ In the early stone age, here is the resource list:
 
 - Knowledge
 
-## Middle Stone Age
+## Stone Age
 
-With a inefficient but passive base, the goal is to research new technologies, and grow your tribe.
+A cental camp allows producing buildings to provide passive income. There won't be enough building slots for every good, so some manual hunting/gathering/feasting is likely necessary.
 
-Tools are the future, and all research and buildings will require them to some extend. The are produced by:
+First age where "upgrades" bonuses you can choose between are available. 
 
-Crafter's Hut - Convert Stone to tools (slowly)
+Techs:
 
-Research:
+Early Settlements -> Trapping          -> Food Dehydration
+                  -> Organized Gathering
+                  -> Storytelling      -> Burial Rights
+                  -> Craftsmanship     -> Stone Axes
+                                       -> Harpoons
+                                       -> Archery
+                                       -> Basket Making
+                                       -> Agriculture
+Trapping
+        Building "Hunting grounds" (Passive Food) and unlock archery 
+        Upgrade - Skilled Hunters- Improve Hunting edict
+        
+Food Dehydration
+         Improve food storage
 
-- Woodworking
-    - Building - Logging Camp (Wood, Tools). Produces more wood than gathering camp, but nothing else.
-- Stonecutting
-    - Building - Quarry (Wood, Tools, Stone). Produces a lot more stone than gathering camp, but nothing else.
-- Archery
-    - Upgrade - Bow & Arrow - Improve Hunting production output.
+Organized Gathering
+        Building "Gathering Camp" (Passive Stone, Wood, some storage)
+        Upgrade - Plant Lore - Improve food from gathering camp
+        
+Storytelling
+        Building "Story Circle" (Passive knowledge)
+        Upgrade - Ancient Lore - improve knowledge gain
+        
+Craftsmanship
+        Building "Crafter's Hut" which converts Stone/Wood to Tools
+        Unlock Craft Edict to convert Stone/Wood to Tools
+        Upgrade - Efficient Crafters - Reduce input of tools by 1/2
+        
+Stone Axes
+        Sharpened stone axes improve wood yield from Gathering and Gathering Camps
 
-Researching Agriculture transitions to the late stone age.
+Burial Rights - Death confronts us all in the end. Rituals to bury the diseased with honor and respect helped comfort the tribe and form the basis for later religion.
+        Improves "Instability" decay rate.
+        
+Harpoons - Specializes spears for hunting in rivers and lakes. Expands hunting possibilities.
+        Improve hunting ground food yield
+        Improve hunting edict yield
 
-In the middle stone age, here is the resource list:
+        
+Basket Making
+        Improve gathering building yield in all areas
+        Improve gathering edict
+        
+Music
+        Edict - Celebration. Food for instability loss
+        
+Agriculture
+          Unlocks next age
+          Building Farm - Low consistent food yield
+
+
+In the stone age, here is the resource list:
 
 ### Tier 0
+
 - Food
 - Wood
 - Stone
 
 ### Tier 1
 
+- Knowledge
 - Tools
-- Knowledge
 
-## Late Stone Age
+## Agricultural Age
 
-TODO
+Agriculture allows a consistent and stable food source year after year. This fuels expansion of settlements into large communities and incipient towns. 
+
+
+### Specialization
 
 There will be a "cluster" of technologies unlocked with each (food) specialization, and the generic charcoal/metal needed for bronze age.
 
-Each specialization will answer:
+Each of the first specializations will answer:
 
-- How do I get more food?
+- How do I get lots more food?
 - How do I get "goods", needed by bronze age citizens?
 - What gameplay system do I open up in the Bronze Age (Cities, Raiding, Trade)
 
-The first major choice is food specialization, the primary way the society feeds itself.
+In other words, what is the primary way the society feeds itself?
 
-
-- Agriculture allows significantly more food production and specialization within your territory.
-    - Expanding number of slots in your territory and their power
-    - Pottery allows first upgrades which increase power of slots as well.
+- Agriculture focus allows significantly more food production and specialization within your territory.
+    - Expanding number of slots in your territory and their power by expanding upgrade count
+    - Pottery 
         - Upgrade: Pottery hut converts goods over time
         - Upgrade: Farm produces 25% more food. Food storage of settlement and huts doubles.
-    - Moderate goods production via Clay -> Pottery
     - First Cities (Bronze Age)
     - "Building Tall"
-- Animal Husbandry
+- Animal Husbandry focus
     - Allows efficient travel over land, and thus more territory (2nd territory)
     - Animals (via tanning and weaving) allow efficient goods production. Below average food production.
     - Building "Wide and aggressive"
     - Unlocks "warfare", allowing raids to capture resources. (Bronze Age)
 - Fishing and Sailing
-    - Fishing provides average food production
+    - Fishing boats provides average food production
     - Ports produce passive tools and goods production, but somewhat random (-2 something, +3 something)
     - Instead of wide or tall, build flexible but inconsistent.
     - Trade (Bronze Age)
@@ -147,12 +207,15 @@ The first major choice is food specialization, the primary way the society feeds
 
 Generic Techs
 
-- Metal Lore
-    - Upgrade: Quarry's produces small amounts of ore
-- Charcoal
+Woodworking
+    - Building - Logging Camp (Wood, Tools). Produces more wood than gathering camp, but nothing else.
+Stonecutting
+    - Building - Quarry (Wood, Tools, Stone). Produces a lot more stone than gathering camp, but nothing else.
+Charcoal
     - Charcoal Pit: Produce fuel from wood
 
-Research Bronze Working moves to the bronze age. Warning: The will require consistent production of fuel, goods, and tools.
+Bronze Working 
+    - moves to the bronze age. Warning: The will require consistent production of fuel, goods, and tools.
 
 In the late stone age, here is the resource list:
 
@@ -161,17 +224,16 @@ In the late stone age, here is the resource list:
 - Food
 - Wood
 - Stone
-- Ore
 
 ### Tier 1
 
 - Goods
-- Charcoal
+- Fuel
 - Tools
 - Knowledge
 
 
-FAR FUTURE
+# FAR FUTURE
 
 ## Early Bronze Age
 
@@ -184,3 +246,5 @@ Research:
 - Writing
 - Religion
 - Early Cities / Raiding / Trade
+- Metal Lore
+    - Upgrade: Quarry's produces small amounts of ore

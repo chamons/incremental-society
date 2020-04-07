@@ -14,6 +14,7 @@ pub struct GameState {
     pub actions: Vec<Waiter>,
     pub research: HashSet<String>,
     pub upgrades: HashSet<String>,
+    pub age: String,
 
     #[serde(skip)]
     #[serde(default = "crate::engine::DerivedState::init")]

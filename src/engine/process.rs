@@ -31,8 +31,8 @@ fn apply_actions(state: &mut GameState) {
 }
 
 fn sustain_population(state: &mut GameState) {
-    const FOOD_PER_POP: i64 = 1;
-    const INSTABILITY_PER_MISSING_FOOD: i64 = 15;
+    const FOOD_PER_POP: i64 = 5;
+    const INSTABILITY_PER_MISSING_FOOD: i64 = 3;
 
     let required_food = state.derived_state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {
@@ -59,15 +59,15 @@ use super::data::get_building;
 pub fn init_new_game_state() -> GameState {
     let mut state = GameState {
         resources: ResourceTotal::init(),
-        regions: vec![
-            Region::init_with_buildings("Lusitania", vec![get_building("Settlement"), get_building("Hunting Grounds")]),
-            Region::init("Illyricum"),
-        ],
+        regions: vec![Region::init_with_buildings("Lusitania", vec![get_building("Settlement")])],
         actions: vec![],
+        age: super::data::get_ages()[0].to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
     };
+    state.resources[ResourceKind::Food] = 20;
+
     recalculate(&mut state);
     state
 }
@@ -78,6 +78,7 @@ pub fn init_empty_game_state() -> GameState {
         resources: ResourceTotal::init(),
         regions: vec![],
         actions: vec![],
+        age: "Stone".to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
@@ -95,6 +96,7 @@ pub fn init_test_game_state() -> GameState {
             Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
         ],
         actions: vec![],
+        age: super::data::get_ages()[0].to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
@@ -189,11 +191,11 @@ mod tests {
     #[test]
     fn sustain_population_with_food() {
         let mut state = init_test_game_state();
-        state.resources[ResourceKind::Food] = 10;
+        state.resources[ResourceKind::Food] = 30;
         state.resources[ResourceKind::Instability] = 50;
         sustain_population(&mut state);
 
-        assert_eq!(6, state.resources[ResourceKind::Food]);
+        assert_eq!(10, state.resources[ResourceKind::Food]);
         assert!(state.resources[ResourceKind::Instability] < 50);
     }
 

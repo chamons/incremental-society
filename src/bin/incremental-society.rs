@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
@@ -106,7 +105,7 @@ impl<'a> UI<'a> {
                         let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok(), |_| vec![]);
                         match OptionList::init(&self.term, selection).run() {
                             Some(region_index) => match engine::build(&mut state, building, region_index) {
-                                Err(e) => self.set_message(e.description()),
+                                Err(e) => self.set_message(e.to_string()),
                                 _ => self.set_message(format!("Built {}", name)),
                             },
                             None => self.clear_message(),
@@ -128,7 +127,7 @@ impl<'a> UI<'a> {
                                 Some(building_index) => {
                                     let building_name = &buildings[building_index];
                                     match engine::destroy(&mut state, region_index, building_index) {
-                                        Err(e) => self.set_message(e.description()),
+                                        Err(e) => self.set_message(e.to_string()),
                                         _ => self.set_message(format!("Destroying {}", building_name)),
                                     }
                                 }
@@ -154,7 +153,7 @@ impl<'a> UI<'a> {
                         let edict = edicts.get(edict_index).unwrap().clone();
 
                         match engine::edict(&mut state, &edict) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }
@@ -176,7 +175,7 @@ impl<'a> UI<'a> {
                         let research = research.get(research_index).unwrap().clone();
 
                         match engine::research(&mut state, &research) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }
@@ -206,7 +205,7 @@ impl<'a> UI<'a> {
                     Some(selected_items) => {
                         let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
                         match engine::upgrade(&mut state, selected_upgrades) {
-                            Err(e) => self.set_message(e.description()),
+                            Err(e) => self.set_message(e.to_string()),
                             _ => self.clear_message(),
                         }
                     }
@@ -262,6 +261,7 @@ impl<'a> UI<'a> {
         const CONVERSION_BAR_LENGTH: f64 = 30.0;
 
         y = self.write_right("Conversions", 0, y);
+        y += 1;
 
         for c in &state.actions {
             let percentage = c.percentage();
@@ -285,14 +285,18 @@ impl<'a> UI<'a> {
 
     fn write_region_contents(&self, text: &str, x: i32, y: i32) -> i32 {
         // RIGHT_COL_WIDTH - 2
-        self.write_right(&format!("|{: <38}|", text), x, y)
+        self.write_right(&format!("|{: <67}|", text), x, y)
     }
 
     #[allow(unused_assignments)]
     fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
+        if !self.should_draw_buildings(state) {
+            return 0;
+        }
+
         let mut y = y;
         for r in &state.regions {
-            y = self.write_right("----------------------------------------", 0, y);
+            y = self.write_right("---------------------------------------------------------------------", 0, y);
 
             y = self.write_region_contents(&r.name, 0, y);
 
@@ -320,18 +324,26 @@ impl<'a> UI<'a> {
                     x += building_name_length as i32 + 3;
                 }
             }
-            y = self.write_right("----------------------------------------", 0, y);
+            y = self.write_right("---------------------------------------------------------------------", 0, y);
         }
 
         y
     }
 
+    fn should_draw_buildings(&self, state: &GameState) -> bool {
+        state.age != "Archaic"
+    }
+
     #[allow(unused_assignments)]
     fn draw_country_stats(&self, state: &GameState, y: i32) -> i32 {
         let mut y = self.write("Elysium", 1, y);
-        y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
-        y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
-        y = self.write("----------------", 0, y + 1);
+        y += 1;
+        y = self.write(format!("{} Age", state.age), 1, y);
+        if self.should_draw_buildings(state) {
+            y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
+            y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
+        }
+        y = self.write(" ----------------", 0, y + 1);
 
         y
     }
@@ -370,7 +382,7 @@ impl<'a> UI<'a> {
     }
 
     const RIGHT_COL: i32 = 50;
-    const RIGHT_COL_WIDTH: i32 = 40;
+    const RIGHT_COL_WIDTH: i32 = 69;
 
     fn write_right(&self, text: &str, x: i32, y: i32) -> i32 {
         self.write(text, x + UI::RIGHT_COL, y)

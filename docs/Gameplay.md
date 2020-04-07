@@ -110,9 +110,10 @@ Early Settlements -> Trapping          -> Food Dehydration
                   -> Storytelling      -> Burial Rights
                   -> Craftsmanship     -> Stone Axes
                                        -> Harpoons
-                                       -> Archery
                                        -> Basket Making
                                        -> Agriculture
+                                       -> Storage Pits
+
 Trapping
         Building "Hunting grounds" (Passive Food) and unlock archery 
         Upgrade - Skilled Hunters- Improve Hunting edict
@@ -131,7 +132,7 @@ Storytelling
 Craftsmanship
         Building "Crafter's Hut" which converts Stone/Wood to Tools
         Unlock Craft Edict to convert Stone/Wood to Tools
-        Upgrade - Efficient Crafters - Reduce input of tools by 1/2
+        Upgrade - Efficient Crafting - Reduce input of tools by 1/2
         
 Stone Axes
         Sharpened stone axes improve wood yield from Gathering and Gathering Camps
@@ -155,6 +156,9 @@ Agriculture
           Unlocks next age
           Building Farm - Low consistent food yield
 
+Storage Pits
+        Building "Storage Pits" - Improve Wood/Stone/Food Storage
+        Edict "Deep Stone Lined Pits" - Improve Settlement/Storage Pits storage capacity
 
 In the stone age, here is the resource list:
 

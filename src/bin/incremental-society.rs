@@ -340,8 +340,7 @@ impl<'a> UI<'a> {
         y += 1;
         y = self.write(format!("{} Age", state.age), 1, y);
         if self.should_draw_buildings(state) {
-            y = self.write(format!("Population: {}", state.derived_state.pops), 1, y + 1);
-            y = self.write(format!("Buildings: {} of {}", state.derived_state.used_pops, state.derived_state.pops), 1, y);
+            y = self.write(format!("Population: {}", state.pops), 1, y + 1);
         }
         y = self.write(" ----------------", 0, y + 1);
 

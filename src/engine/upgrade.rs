@@ -132,7 +132,7 @@ pub fn available_to_upgrade(state: &GameState) -> Vec<Upgrade> {
 
 fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
     match upgrade {
-        UpgradeActions::AddBuildingPops(pops) => building.pops += pops,
+        UpgradeActions::AddBuildingHousing(housing) => building.housing += housing,
         UpgradeActions::AddBuildingConversion(name) => building.conversions.push(name.to_string()),
         UpgradeActions::AddBuildingStorage(storage) => {
             if let Some(position) = building.storage.iter().position(|x| x.kind == storage.kind) {

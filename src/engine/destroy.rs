@@ -14,10 +14,6 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
     }
     let building = building.unwrap();
 
-    if building.pops > 0 && state.derived_state.used_pops > state.derived_state.pops - building.pops {
-        return Err(EngineError::init("Insufficient pops for remaining buildings after destruction"));
-    }
-
     if building.immortal {
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
@@ -72,13 +68,8 @@ mod tests {
     }
 
     #[test]
-    fn destroy_drops_pops_too_low_fails() {
-        let mut state = init_test_game_state();
-
-        assert_eq!(
-            "Insufficient pops for remaining buildings after destruction",
-            destroy(&mut state, 0, 0).unwrap_err().to_string()
-        );
+    fn destroy_drops_jobs_too_low_fails() {
+        assert_eq!(false, true);
     }
 
     #[test]

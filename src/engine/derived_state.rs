@@ -10,8 +10,6 @@ pub struct DerivedState {
     pub conversions_names: Vec<String>,
     pub conversions: HashMap<String, u32>,
     pub storage: ResourceTotal,
-    pub pops: u32,
-    pub used_pops: u32,
     pub available_buildings: Vec<Building>,
     pub available_edicts: Vec<Edict>,
     pub available_research: Vec<Research>,
@@ -25,8 +23,6 @@ impl DerivedState {
             conversions_names: vec![],
             conversions: HashMap::new(),
             storage: ResourceTotal::init(),
-            pops: 0,
-            used_pops: 0,
             available_buildings: vec![],
             available_edicts: vec![],
             available_research: vec![],
@@ -40,8 +36,6 @@ impl DerivedState {
             conversions_names: DerivedState::conversion_names(state),
             conversions: DerivedState::conversion_with_counts(state),
             storage: DerivedState::calculate_storage(state),
-            pops: DerivedState::calculate_pops(state),
-            used_pops: DerivedState::calculate_used_pops(state),
             available_buildings: available_to_build(state),
             available_edicts: available_to_invoke(state),
             available_research: available_to_research(state),
@@ -80,14 +74,6 @@ impl DerivedState {
             }
         }
         storage
-    }
-
-    fn calculate_pops(state: &GameState) -> u32 {
-        state.regions.iter().flat_map(|x| &x.buildings).map(|x| x.pops).sum()
-    }
-
-    fn calculate_used_pops(state: &GameState) -> u32 {
-        state.regions.iter().flat_map(|x| &x.buildings).count() as u32
     }
 
     pub fn find_building(&self, name: &str) -> &Building {
@@ -138,12 +124,5 @@ mod tests {
         let storage = state.derived_state.storage;
         assert!(storage[ResourceKind::Food] >= 20);
         assert!(storage[ResourceKind::Fuel] >= 30);
-    }
-
-    #[test]
-    fn pops() {
-        let state = init_test_game_state();
-        assert!(state.derived_state.pops >= 4);
-        assert!(state.derived_state.used_pops >= 3);
     }
 }

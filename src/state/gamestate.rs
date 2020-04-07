@@ -12,6 +12,7 @@ pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
     pub actions: Vec<Waiter>,
+    pub pops: u32,
     pub research: HashSet<String>,
     pub upgrades: HashSet<String>,
     pub age: String,

@@ -14,7 +14,7 @@ pub struct Building {
     pub research: HashSet<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
-    pub pops: u32,
+    pub housing: u32,
     pub immortal: bool,
 }
 
@@ -26,7 +26,7 @@ impl Building {
             research: HashSet::new(),
             build_cost: vec![],
             storage: vec![],
-            pops: 0,
+            housing: 0,
             immortal: false,
         }
     }
@@ -46,8 +46,8 @@ impl Building {
         self
     }
 
-    pub fn with_pops(mut self, pops: u32) -> Building {
-        self.pops = pops;
+    pub fn with_housing(mut self, housing: u32) -> Building {
+        self.housing = housing;
         self
     }
 
@@ -86,6 +86,10 @@ impl Building {
 
         if !self.storage.is_empty() {
             details.push(format_resource_list("Storage: ", &self.storage));
+        }
+
+        if self.housing > 0 {
+            details.push(format!("Houses: {}", self.housing));
         }
 
         details

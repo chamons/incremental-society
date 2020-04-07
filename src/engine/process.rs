@@ -8,7 +8,15 @@ use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
     apply_actions(state);
     super::limits::honor_storage_and_floors(state);
-    super::disaster::invoke_disaster_if_needed(state)
+
+    handle_possible_revolt(state);
+    None
+}
+
+fn handle_possible_revolt(state: &mut GameState) {
+    if state.resources[ResourceKind::Instability] > 0 && state.resources[ResourceKind::Instability] == state.derived_state.storage[ResourceKind::Instability] {
+        // TODO - Lose Game
+    }
 }
 
 fn apply_actions(state: &mut GameState) {
@@ -34,13 +42,12 @@ fn sustain_population(state: &mut GameState) {
     const FOOD_PER_POP: i64 = 5;
     const INSTABILITY_PER_MISSING_FOOD: i64 = 3;
 
-    let required_food = state.derived_state.pops as i64 * FOOD_PER_POP;
+    let required_food = state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {
         state.resources.remove(ResourceKind::Food, required_food);
-        state.resources.remove(
-            ResourceKind::Instability,
-            min(state.derived_state.pops as i64, state.resources[ResourceKind::Instability]),
-        );
+        state
+            .resources
+            .remove(ResourceKind::Instability, min(state.pops as i64, state.resources[ResourceKind::Instability]));
     } else {
         let missing_food = required_food - state.resources[ResourceKind::Food];
         state.resources.remove(ResourceKind::Food, state.resources[ResourceKind::Food]);
@@ -61,6 +68,7 @@ pub fn init_new_game_state() -> GameState {
         resources: ResourceTotal::init(),
         regions: vec![Region::init_with_buildings("Lusitania", vec![get_building("Settlement")])],
         actions: vec![],
+        pops: 1,
         age: super::data::get_ages()[0].to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
@@ -78,6 +86,7 @@ pub fn init_empty_game_state() -> GameState {
         resources: ResourceTotal::init(),
         regions: vec![],
         actions: vec![],
+        pops: 0,
         age: "Stone".to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
@@ -96,6 +105,7 @@ pub fn init_test_game_state() -> GameState {
             Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
         ],
         actions: vec![],
+        pops: 1,
         age: super::data::get_ages()[0].to_string(),
         derived_state: DerivedState::init(),
         research: HashSet::new(),
@@ -193,9 +203,10 @@ mod tests {
         let mut state = init_test_game_state();
         state.resources[ResourceKind::Food] = 30;
         state.resources[ResourceKind::Instability] = 50;
+        state.pops = 3;
         sustain_population(&mut state);
 
-        assert_eq!(10, state.resources[ResourceKind::Food]);
+        assert_eq!(15, state.resources[ResourceKind::Food]);
         assert!(state.resources[ResourceKind::Instability] < 50);
     }
 

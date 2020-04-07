@@ -38,7 +38,7 @@ lazy_static! {
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
                 ])
-                .with_pops(1)
+                .with_housing(3)
                 .with_immortal(),
         );
 
@@ -48,7 +48,6 @@ lazy_static! {
                 .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
-                .with_pops(3)
                 .with_research("Settlement"),
         );
 

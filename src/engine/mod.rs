@@ -4,7 +4,6 @@ mod conversions;
 mod debug;
 mod derived_state;
 mod destroy;
-mod disaster;
 mod edict;
 mod error;
 mod limits;

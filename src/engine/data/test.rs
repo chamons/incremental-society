@@ -36,7 +36,7 @@ lazy_static! {
                 .with_conversions(vec!["TestChop", "TestChop"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 10)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 15)])
-                .with_pops(2),
+                .with_housing(2),
         );
         m.insert(
             "Test Gather Hut",

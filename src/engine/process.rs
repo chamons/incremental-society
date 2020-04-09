@@ -1,5 +1,5 @@
 use std::cmp::min;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use super::DerivedState;
 use super::{build, conversions, destroy, edict, research, upgrade};
@@ -74,6 +74,7 @@ pub fn init_new_game_state() -> GameState {
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
+        jobs: HashMap::new(),
     };
     state.resources[ResourceKind::Food] = 20;
 
@@ -92,6 +93,7 @@ pub fn init_empty_game_state() -> GameState {
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
+        jobs: HashMap::new(),
     };
     recalculate(&mut state);
     state
@@ -111,6 +113,7 @@ pub fn init_test_game_state() -> GameState {
         derived_state: DerivedState::init(),
         research: HashSet::new(),
         upgrades: HashSet::new(),
+        jobs: HashMap::new(),
     };
     recalculate(&mut state);
 

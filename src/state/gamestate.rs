@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use super::actions::Waiter;
 use super::building::Building;
@@ -16,6 +16,7 @@ pub struct GameState {
     pub research: HashSet<String>,
     pub upgrades: HashSet<String>,
     pub age: String,
+    pub jobs: HashMap<String, u32>,
 
     #[serde(skip)]
     #[serde(default = "crate::engine::DerivedState::init")]

@@ -25,8 +25,7 @@ fn apply_actions(state: &mut GameState) {
         match action {
             DelayedAction::Edict(name) => edict::apply_edict(state, name),
             DelayedAction::Conversion(name) => {
-                let job_count = state.jobs[name];
-
+                let job_count = *state.jobs.get(name).unwrap_or(&0);
                 for _ in 0..job_count {
                     conversions::apply_convert(state, name);
                 }
@@ -59,6 +58,7 @@ fn sustain_population(state: &mut GameState) {
 
 pub fn recalculate(state: &mut GameState) {
     state.derived_state = DerivedState::calculate(&state);
+    conversions::start_missing_converts(state);
 }
 
 use super::data::get_building;

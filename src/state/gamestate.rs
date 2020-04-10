@@ -37,6 +37,10 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
+    pub fn conversion_names(&self) -> HashSet<String> {
+        self.actions.iter().filter(|x| x.action.is_conversion()).map(|x| x.name.to_string()).collect()
+    }
+
     pub fn action_with_name(&self, name: &str) -> Option<&Waiter> {
         self.actions.iter().filter(|x| x.name == name).nth(0)
     }

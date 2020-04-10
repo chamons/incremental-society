@@ -5,7 +5,7 @@ pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
     match state.derived_state.current_building_jobs.get(name) {
         Some(available_count) => {
             let current_count = state.jobs.entry(name.to_string()).or_insert(0);
-            if *current_count + 1 <= *available_count {
+            if *current_count < *available_count {
                 *current_count += 1;
                 Ok(())
             } else {

@@ -44,6 +44,10 @@ impl Waiter {
     pub fn percentage(&self) -> f64 {
         (self.duration as f64 - self.current_tick as f64) / self.duration as f64
     }
+
+    pub fn reset(&mut self) {
+        self.current_tick = self.duration;
+    }
 }
 
 #[cfg(test)]
@@ -64,5 +68,13 @@ mod tests {
         assert_approx_eq!(0.92, x.percentage());
         x.current_tick = 2;
         assert_approx_eq!(0.99, x.percentage());
+    }
+
+    #[test]
+    fn reset() {
+        let mut x = Waiter::init_one_shot("Test", 200, DelayedAction::SustainPops());
+        x.current_tick -= 10;
+        x.reset();
+        assert_eq!(x.current_tick, x.duration);
     }
 }

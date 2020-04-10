@@ -21,6 +21,10 @@ pub fn start_missing_converts(state: &mut GameState) {
     }
 }
 
+pub fn reset_conversion_status(state: &mut GameState, name: &str) {
+    state.action_with_name_mut(name).unwrap().reset();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -71,5 +75,17 @@ mod tests {
         start_missing_converts(&mut state);
 
         assert_eq!(4, state.actions.len());
+    }
+
+    #[test]
+    pub fn reset_conversion() {
+        let mut state = init_test_game_state();
+        let starting_tick = state.action_with_name("TestChop").unwrap().current_tick;
+        super::super::process::process_tick(&mut state);
+        assert_eq!(1, starting_tick - state.action_with_name("TestChop").unwrap().current_tick);
+
+        reset_conversion_status(&mut state, "TestChop");
+
+        assert_eq!(starting_tick, state.action_with_name("TestChop").unwrap().current_tick);
     }
 }

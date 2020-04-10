@@ -25,8 +25,7 @@ fn apply_actions(state: &mut GameState) {
         match action {
             DelayedAction::Edict(name) => edict::apply_edict(state, name),
             DelayedAction::Conversion(name) => {
-                // HACK
-                let job_count = 1;
+                let job_count = state.jobs[name];
 
                 for _ in 0..job_count {
                     conversions::apply_convert(state, name);

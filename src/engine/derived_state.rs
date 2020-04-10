@@ -38,11 +38,10 @@ impl DerivedState {
             available_research: upgrade::available_to_research(state),
             available_upgrade: upgrade::available_to_upgrade(state),
             available_conversions: upgrade::current_conversions(state),
-            // This needs to be provided jobs
-            // Then there there needs to be state on job distribution
-            // There needs to be checks on job to prevent destruction under jobs taken
-            // There needs to be an unassigned
-            // Then every conversion needs to take into account (can you swap a job right before a long one finishes to get entire tick, or does it reset?)
+            // Reassign job resets conversoin
+            // Prevent building destruction if would cause some jobs to be oversubscrubed? Or just fix jobs?
+            // Fixup existing tests
+            // Add UI in game to assign jobs
         }
     }
 

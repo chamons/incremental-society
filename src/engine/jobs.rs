@@ -1,4 +1,4 @@
-use super::EngineError;
+use super::{conversions::reset_conversion_status, EngineError};
 use crate::state::GameState;
 
 pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
@@ -7,6 +7,9 @@ pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
             let current_count = state.jobs.entry(name.to_string()).or_insert(0);
             if *current_count < *available_count {
                 *current_count += 1;
+                if let Some(_) = state.action_with_name(name) {
+                    reset_conversion_status(state, name);
+                }
                 Ok(())
             } else {
                 Err(EngineError::init(format!("{} does not have another available slot", name)))
@@ -22,6 +25,9 @@ pub fn remove_job(state: &mut GameState, name: &str) -> Result<(), EngineError> 
             Some(current_count) => {
                 if *current_count > 0 {
                     *current_count -= 1;
+                    if let Some(_) = state.action_with_name(name) {
+                        reset_conversion_status(state, name);
+                    }
                     Ok(())
                 } else {
                     Err(EngineError::init(format!("{} does not have an active slot", name)))
@@ -61,6 +67,15 @@ mod tests {
     }
 
     #[test]
+    pub fn add_with_conversion_in_flight_resets() {
+        let mut state = init_test_game_state();
+        super::super::process_tick(&mut state);
+        let tick_before_assign = state.action_with_name("TestGather").unwrap().current_tick;
+        add_job(&mut state, "TestGather").unwrap();
+        assert_ne!(tick_before_assign, state.action_with_name("TestGather").unwrap().current_tick);
+    }
+
+    #[test]
     pub fn remove_with_active_job() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
@@ -80,5 +95,15 @@ mod tests {
         let mut state = init_test_game_state();
         let error = remove_job(&mut state, "TestGather").unwrap_err();
         assert_eq!("TestGather does not have an active slot", error.to_string());
+    }
+
+    #[test]
+    pub fn remove_with_conversion_in_flight_resets() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestGather").unwrap();
+        super::super::process_tick(&mut state);
+        let tick_before_remove = state.action_with_name("TestGather").unwrap().current_tick;
+        remove_job(&mut state, "TestGather").unwrap();
+        assert_ne!(tick_before_remove, state.action_with_name("TestGather").unwrap().current_tick);
     }
 }

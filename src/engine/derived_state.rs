@@ -3,12 +3,9 @@ use std::collections::HashMap;
 pub use super::upgrade;
 pub use crate::state::{Building, Conversion, Edict, GameState, Research, ResourceTotal, Upgrade};
 
-use itertools::Itertools;
-
 #[derive(Debug)]
 pub struct DerivedState {
-    pub current_jobs_names: Vec<String>,
-    pub current_jobs: HashMap<String, u32>,
+    pub current_building_jobs: HashMap<String, u32>,
     pub storage: ResourceTotal,
     pub available_buildings: Vec<Building>,
     pub available_edicts: Vec<Edict>,
@@ -20,8 +17,7 @@ pub struct DerivedState {
 impl DerivedState {
     pub fn init() -> DerivedState {
         DerivedState {
-            current_jobs_names: vec![],
-            current_jobs: HashMap::new(),
+            current_building_jobs: HashMap::new(),
             storage: ResourceTotal::init(),
             available_buildings: vec![],
             available_edicts: vec![],
@@ -33,8 +29,7 @@ impl DerivedState {
 
     pub fn calculate(state: &GameState) -> DerivedState {
         DerivedState {
-            current_jobs_names: DerivedState::jobs_names(state),
-            current_jobs: DerivedState::jobs_with_counts(state),
+            current_building_jobs: DerivedState::jobs_with_counts(state),
             storage: DerivedState::calculate_storage(state),
 
             // Items with respect to upgrades
@@ -58,19 +53,6 @@ impl DerivedState {
             *entry += 1;
         }
         counts
-    }
-
-    fn jobs_names(state: &GameState) -> Vec<String> {
-        let mut names: Vec<String> = state
-            .regions
-            .iter()
-            .flat_map(|x| &x.buildings)
-            .flat_map(|x| &x.jobs)
-            .unique()
-            .cloned()
-            .collect();
-        names.sort();
-        names
     }
 
     fn calculate_storage(state: &GameState) -> ResourceTotal {
@@ -112,17 +94,9 @@ mod tests {
     #[test]
     fn jobs_with_counts() {
         let state = init_test_game_state();
-        let jobs = &state.derived_state.current_jobs;
+        let jobs = &state.derived_state.current_building_jobs;
         assert_eq!(4, *jobs.get("TestChop").unwrap());
         assert_eq!(1, *jobs.get("TestGather").unwrap());
-    }
-
-    #[test]
-    fn jobs_names() {
-        let state = init_test_game_state();
-        let jobs = &state.derived_state.current_jobs_names;
-        assert_eq!("TestChop", jobs[0]);
-        assert_eq!("TestGather", jobs[1]);
     }
 
     #[test]

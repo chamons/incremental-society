@@ -268,7 +268,7 @@ impl<'a> UI<'a> {
 
             // Don't update y, as we have to draw the bar
             if let DelayedAction::Conversion(name) = &c.action {
-                let count = state.derived_state.current_jobs.get(name).unwrap();
+                let count = state.derived_state.current_building_jobs.get(name).unwrap();
                 self.write_right(&format!("{} ({})", name, count), 0, y);
             } else {
                 self.write_right(&c.name, 0, y);

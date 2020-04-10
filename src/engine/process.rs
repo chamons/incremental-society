@@ -123,8 +123,8 @@ pub fn init_test_game_state() -> GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::engine::edict;
-    use crate::engine::tests::*;
+    // use crate::engine::edict;
+    // use crate::engine::tests::*;
     use crate::state::{GameState, ResourceKind};
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION};
+use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
 use std::collections::HashSet;
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
@@ -15,8 +15,8 @@ pub fn start_missing_converts(state: &mut GameState) {
         state.actions.push(action);
     }
 
-    if state.action_with_name("Sustain Population").is_none() {
-        let action = Waiter::init_repeating("Sustain Population", SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+    if state.action_with_name(SUSTAIN_POP_NAME).is_none() {
+        let action = Waiter::init_repeating(SUSTAIN_POP_NAME, SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
         state.actions.push(action);
     }
 }
@@ -43,7 +43,7 @@ mod tests {
         start_missing_converts(&mut state);
 
         assert_eq!(1, state.actions.len());
-        assert_eq!("Sustain Population", state.actions[0].name);
+        assert_eq!(SUSTAIN_POP_NAME, state.actions[0].name);
     }
 
     #[test]

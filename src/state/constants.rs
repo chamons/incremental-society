@@ -11,3 +11,5 @@ pub const EPIC_CONVERSION: u32 = 300;
 
 pub const MAX_UPGRADES: usize = 2;
 pub const REGION_BUILDING_COUNT: usize = 4;
+
+pub const SUSTAIN_POP_NAME: &'static str = "Sustain Population";

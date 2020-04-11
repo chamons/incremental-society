@@ -1,26 +1,51 @@
-use crate::state::GameState;
+use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 use pancurses::{Input, Window};
 
-pub struct Screen<'a> {
+pub struct Screen {
     messages: String,
     message_timeout: u32,
-    term: &'a Window,
+    pub term: Window,
 }
 
-impl<'a> Screen<'a> {
-    pub fn init() -> Screen<'a> {
-        let term = pancurses::initscr();
+impl Screen {
+    pub fn init() -> Screen {
         super::init_colors();
+        let term = pancurses::initscr();
+
+        term.keypad(true);
+        term.nodelay(true);
+        pancurses::noecho();
 
         Screen {
             messages: "".to_string(),
             message_timeout: 0,
-            term: &term,
+            term: term,
         }
     }
 
+    pub fn tick_message(&mut self) {
+        if self.message_timeout > 0 {
+            self.message_timeout -= 1;
+        } else {
+            self.clear_message();
+        }
+    }
+
+    pub fn set_message<S>(&mut self, message: S)
+    where
+        S: Into<String>,
+    {
+        self.messages = message.into();
+        self.message_timeout = 120;
+    }
+
+    pub fn clear_message(&mut self) {
+        self.messages.clear();
+        self.message_timeout = 0;
+    }
+
     #[allow(unused_assignments)]
-    fn draw(&self, state: &GameState) {
+    pub fn draw(&self, state: &GameState) {
         self.term.clear();
 
         let mut y = 1;
@@ -94,12 +119,12 @@ impl<'a> Screen<'a> {
                     let building_name_length: usize = building_name.len();
 
                     // Draw box manually
-                    self.write("|", UI::RIGHT_COL, y);
-                    self.write("|", UI::RIGHT_COL, y + 1);
-                    self.write("|", UI::RIGHT_COL, y + 2);
-                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y);
-                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y + 1);
-                    self.write("|", UI::RIGHT_COL + UI::RIGHT_COL_WIDTH - 1, y + 2);
+                    self.write("|", Screen::RIGHT_COL, y);
+                    self.write("|", Screen::RIGHT_COL, y + 1);
+                    self.write("|", Screen::RIGHT_COL, y + 2);
+                    self.write("|", Screen::RIGHT_COL + Screen::RIGHT_COL_WIDTH - 1, y);
+                    self.write("|", Screen::RIGHT_COL + Screen::RIGHT_COL_WIDTH - 1, y + 1);
+                    self.write("|", Screen::RIGHT_COL + Screen::RIGHT_COL_WIDTH - 1, y + 2);
 
                     y = self.write_right(&"_".repeat(building_name_length + 2), x + 2, y);
                     y = self.write_right(&format!("|{}|", building_name), x + 2, y);
@@ -168,6 +193,6 @@ impl<'a> Screen<'a> {
     const RIGHT_COL_WIDTH: i32 = 69;
 
     fn write_right(&self, text: &str, x: i32, y: i32) -> i32 {
-        self.write(text, x + UI::RIGHT_COL, y)
+        self.write(text, x + Screen::RIGHT_COL, y)
     }
 }

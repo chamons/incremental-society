@@ -35,4 +35,12 @@ pub mod tests {
     pub use super::process::init_test_game_state;
     pub use super::process::process_tick;
     pub use super::process::recalculate;
+
+    pub fn assert_is_none<T>(item: Option<T>) {
+        assert_eq!(true, matches!(item, None));
+    }
+
+    pub fn assert_is_some<T>(item: Option<T>) {
+        assert_eq!(true, matches!(item, Some(_)));
+    }
 }

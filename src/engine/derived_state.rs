@@ -38,8 +38,6 @@ impl DerivedState {
             available_research: upgrade::available_to_research(state),
             available_upgrade: upgrade::available_to_upgrade(state),
             available_conversions: upgrade::current_conversions(state),
-            // Prevent building destruction if would cause some jobs to be oversubscrubed? Or just fix jobs?
-            // Fixup existing tests
             // Add UI in game to assign jobs
         }
     }

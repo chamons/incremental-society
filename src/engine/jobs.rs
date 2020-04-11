@@ -1,5 +1,7 @@
-use super::{conversions::reset_conversion_status, EngineError};
-use crate::state::GameState;
+use std::collections::HashMap;
+
+use super::{conversions::reset_conversion_status, process, EngineError};
+use crate::state::{Building, GameState};
 
 pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
     match state.derived_state.current_building_jobs.get(name) {
@@ -10,6 +12,7 @@ pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
                 if let Some(_) = state.action_with_name(name) {
                     reset_conversion_status(state, name);
                 }
+                process::recalculate(state);
                 Ok(())
             } else {
                 Err(EngineError::init(format!("{} does not have another available slot", name)))
@@ -28,6 +31,7 @@ pub fn remove_job(state: &mut GameState, name: &str) -> Result<(), EngineError> 
                     if let Some(_) = state.action_with_name(name) {
                         reset_conversion_status(state, name);
                     }
+                    process::recalculate(state);
                     Ok(())
                 } else {
                     Err(EngineError::init(format!("{} does not have an active slot", name)))
@@ -39,10 +43,27 @@ pub fn remove_job(state: &mut GameState, name: &str) -> Result<(), EngineError> 
     }
 }
 
+pub fn reduce_active_jobs_by_loss(state: &mut GameState, building: &Building) {
+    let mut building_job_count = HashMap::new();
+    for job in building.jobs.iter() {
+        building_job_count.entry(job).and_modify(|e| *e += 1).or_insert(1);
+    }
+
+    for (job_lost, count) in building_job_count.iter() {
+        let new_building_max = state.derived_state.current_building_jobs[&job_lost.to_string()] - count;
+        if new_building_max < state.job_count(job_lost) {
+            state.jobs.insert(job_lost.to_string(), new_building_max);
+            reset_conversion_status(state, job_lost);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::engine::tests::*;
+    use crate::engine::{add_job, destroy, process_tick};
+    use crate::state::DESTROY_LENGTH;
 
     #[test]
     pub fn add_with_open_spot() {
@@ -61,7 +82,7 @@ mod tests {
     #[test]
     pub fn add_with_no_full_spot() {
         let mut state = init_test_game_state();
-        state.jobs.insert("TestGather".to_string(), 1);
+        add_job(&mut state, "TestGather").unwrap();
         let error = add_job(&mut state, "TestGather").unwrap_err();
         assert_eq!("TestGather does not have another available slot", error.to_string());
     }
@@ -69,10 +90,11 @@ mod tests {
     #[test]
     pub fn add_with_conversion_in_flight_resets() {
         let mut state = init_test_game_state();
-        super::super::process_tick(&mut state);
-        let tick_before_assign = state.action_with_name("TestGather").unwrap().current_tick;
-        add_job(&mut state, "TestGather").unwrap();
-        assert_ne!(tick_before_assign, state.action_with_name("TestGather").unwrap().current_tick);
+        add_job(&mut state, "TestChop").unwrap();
+        process_tick(&mut state);
+        let tick_before_assign = state.action_with_name("TestChop").unwrap().current_tick;
+        add_job(&mut state, "TestChop").unwrap();
+        assert_ne!(tick_before_assign, state.action_with_name("TestChop").unwrap().current_tick);
     }
 
     #[test]
@@ -101,9 +123,55 @@ mod tests {
     pub fn remove_with_conversion_in_flight_resets() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
-        super::super::process_tick(&mut state);
+        process_tick(&mut state);
         let tick_before_remove = state.action_with_name("TestGather").unwrap().current_tick;
         remove_job(&mut state, "TestGather").unwrap();
         assert_ne!(tick_before_remove, state.action_with_name("TestGather").unwrap().current_tick);
+    }
+
+    #[test]
+    pub fn reduce_jobs_no_active_jobs_lost() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
+        process_tick(&mut state);
+        assert_eq!(0, state.job_count("TestGather"));
+
+        reduce_active_jobs_by_loss(&mut state, &get_test_building("Test Building"));
+        assert_eq!(0, state.job_count("TestGather"));
+    }
+
+    #[test]
+    pub fn reduce_jobs_one_active_job_lost() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestGather").unwrap();
+        for _ in 0..3 {
+            add_job(&mut state, "TestChop").unwrap();
+        }
+        process_tick(&mut state);
+        assert_eq!(3, state.job_count("TestChop"));
+
+        reduce_active_jobs_by_loss(&mut state, &get_test_building("Test Building"));
+        assert_eq!(2, state.job_count("TestChop"));
+        assert_eq!(1, state.job_count("TestGather"));
+    }
+
+    #[test]
+    pub fn reduce_jobs_many_active_jobs_lost() {
+        let mut state = init_test_game_state();
+        for _ in 0..3 {
+            add_job(&mut state, "TestChop").unwrap();
+        }
+        process_tick(&mut state);
+        assert_eq!(3, state.job_count("TestChop"));
+
+        reduce_active_jobs_by_loss(&mut state, &get_test_building("Test Building"));
+        assert_eq!(2, state.job_count("TestChop"));
+        destroy(&mut state, 0, 0).unwrap();
+        for _ in 0..DESTROY_LENGTH {
+            process::process_tick(&mut state);
+        }
+
+        reduce_active_jobs_by_loss(&mut state, &get_test_building("Test Building"));
+        assert_eq!(0, state.job_count("TestChop"));
     }
 }

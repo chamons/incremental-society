@@ -1,4 +1,4 @@
-use super::{process, EngineError};
+use super::{jobs, process, EngineError};
 use crate::state::{DelayedAction, GameState, Waiter, DESTROY_LENGTH};
 
 pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
@@ -42,7 +42,21 @@ pub fn destroy(state: &mut GameState, region_index: usize, building_index: usize
     Ok(())
 }
 
+fn get_building_name(state: &GameState, region_index: usize, building_index: usize) -> String {
+    let region = state.regions.get(region_index).unwrap();
+    region.buildings[building_index].name.to_string()
+}
+
+fn apply_job_loss(state: &mut GameState, region_index: usize, building_index: usize) {
+    let building_name = get_building_name(state, region_index, building_index);
+    let building = state.derived_state.find_building(&building_name).clone();
+
+    jobs::reduce_active_jobs_by_loss(state, &building);
+}
+
 pub fn apply_destroy(state: &mut GameState, region_index: usize, building_index: usize) {
+    apply_job_loss(state, region_index, building_index);
+
     let region = state.regions.get_mut(region_index).unwrap();
     region.remove_building(building_index);
     process::recalculate(state);
@@ -52,6 +66,7 @@ pub fn apply_destroy(state: &mut GameState, region_index: usize, building_index:
 mod tests {
     use super::*;
 
+    use crate::engine::add_job;
     use crate::engine::tests::*;
     use crate::state::{Region, ResourceKind, DESTROY_LENGTH};
 
@@ -85,18 +100,37 @@ mod tests {
         assert!(destroy(&mut state, 0, 1).is_err());
     }
 
+    fn test_destroy_building(state: &mut GameState, region: usize, index: usize) {
+        assert!(destroy(state, region, index).is_ok());
+        for _ in 0..DESTROY_LENGTH {
+            process::process_tick(state);
+        }
+    }
+
     #[test]
     fn destroy_valid_building() {
         let mut state = init_test_game_state();
         let old_storage = state.derived_state.storage[ResourceKind::Food];
-        assert!(destroy(&mut state, 1, 0).is_ok());
+        assert_eq!(3, state.buildings().len());
 
-        for _ in 0..DESTROY_LENGTH {
-            assert_eq!(3, state.buildings().len());
-            process::process_tick(&mut state);
-        }
+        test_destroy_building(&mut state, 1, 0);
 
         assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Food]);
+    }
+
+    #[test]
+    fn destroy_building_with_jobs_unassigns() {
+        let mut state = init_test_game_state();
+        for _ in 0..4 {
+            add_job(&mut state, "TestChop").unwrap();
+        }
+        let starting_tick = state.action_with_name("TestChop").unwrap().current_tick;
+        // So we are one tick into chopping
+        super::super::process_tick(&mut state);
+
+        test_destroy_building(&mut state, 0, 0);
+        assert_eq!(2, state.jobs["TestChop"]);
+        assert_eq!(0, starting_tick - state.action_with_name("TestChop").unwrap().current_tick);
     }
 }

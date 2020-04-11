@@ -37,6 +37,13 @@ impl GameState {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
     }
 
+    pub fn job_count(&self, name: &str) -> u32 {
+        match self.jobs.get(&name.to_string()) {
+            Some(o) => *o,
+            _ => 0,
+        }
+    }
+
     pub fn conversion_names(&self) -> HashSet<String> {
         self.actions.iter().filter(|x| x.action.is_conversion()).map(|x| x.name.to_string()).collect()
     }

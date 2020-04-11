@@ -184,49 +184,24 @@ fn handle_upgrade_command(screen: &mut Screen, mut state: &mut GameState) {
 
 fn handle_input(screen: &mut Screen, state: &mut GameState) -> bool {
     if let Some(input) = screen.term.getch() {
-        if let Input::KeyResize = input {
-            pancurses::resize_term(0, 0);
-        }
-
-        if is_char(input, 'q') {
-            return true;
-        }
-
-        if is_char(input, 'b') {
-            handle_build_command(screen, state);
-        }
-
-        if is_char(input, 'd') {
-            handle_destroy_command(screen, state);
-        }
-
-        if is_char(input, 'e') {
-            handle_edict_command(screen, state);
-        }
-
-        if is_char(input, 'r') {
-            handle_research_command(screen, state);
-        }
-
-        if is_char(input, 'u') {
-            handle_upgrade_command(screen, state);
-        }
-        #[cfg(debug_assertions)]
-        {
-            if is_char(input, '~') {
-                handle_debug_command(screen, state);
+        match input {
+            Input::KeyResize => {
+                pancurses::resize_term(0, 0);
             }
-        }
+            Input::Character(i) => match i {
+                'q' => return true,
+                'b' => handle_build_command(screen, state),
+                'd' => handle_destroy_command(screen, state),
+                'e' => handle_edict_command(screen, state),
+                'r' => handle_research_command(screen, state),
+                'u' => handle_upgrade_command(screen, state),
+                #[cfg(debug_assertions)]
+                '~' => handle_debug_command(screen, state),
+                _ => {}
+            },
+            _ => {}
+        };
     }
 
-    false
-}
-
-fn is_char(input: Input, c: char) -> bool {
-    if let Input::Character(i) = input {
-        if i == c {
-            return true;
-        }
-    }
     false
 }

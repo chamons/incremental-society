@@ -1,4 +1,4 @@
-use crate::console_ui::{OptionList, Screen, Selection};
+use crate::console_ui::{Screen, Selection};
 use crate::engine;
 use crate::state::{format_resource_list, Building, GameState, Upgrade, MAX_UPGRADES};
 
@@ -13,13 +13,13 @@ fn handle_build_command(screen: &mut Screen, mut state: &mut GameState) {
         |o| building_options[o].details(),
     );
 
-    match OptionList::init(&screen.term, selection).run() {
+    match screen.show_modal_selection(selection) {
         Some(building_index) => {
             let building = building_options[building_index].clone();
             let name = building.name.clone();
             let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
             let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&state, o).is_ok(), |_| vec![]);
-            match OptionList::init(&screen.term, selection).run() {
+            match screen.show_modal_selection(selection) {
                 Some(region_index) => match engine::build(&mut state, building, region_index) {
                     Err(e) => screen.set_message(e.to_string()),
                     _ => screen.set_message(format!("Built {}", name)),
@@ -34,12 +34,12 @@ fn handle_build_command(screen: &mut Screen, mut state: &mut GameState) {
 fn handle_destroy_command(screen: &mut Screen, mut state: &mut GameState) {
     let regions: Vec<String> = state.regions.iter().map(|x| x.name.to_string()).collect();
     let selection = Selection::init_list(&regions, |_| true /* Any region can have buildings destroyed */, |_| vec![]);
-    match OptionList::init(&screen.term, selection).run() {
+    match screen.show_modal_selection(selection) {
         Some(region_index) => {
             let buildings: Vec<String> = state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
             if !buildings.is_empty() {
                 let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(&state, region_index, o).is_ok(), |_| vec![]);
-                match OptionList::init(&screen.term, selection).run() {
+                match screen.show_modal_selection(selection) {
                     Some(building_index) => {
                         let building_name = &buildings[building_index];
                         match engine::destroy(&mut state, region_index, building_index) {
@@ -64,7 +64,7 @@ fn handle_edict_command(screen: &mut Screen, mut state: &mut GameState) {
         |o| engine::can_invoke_edict(&state, &edicts.get(o).unwrap()).is_ok(),
         |o| edicts.get(o).unwrap().conversion.details(),
     );
-    match OptionList::init(&screen.term, selection).run() {
+    match screen.show_modal_selection(selection) {
         Some(edict_index) => {
             let edict = edicts.get(edict_index).unwrap().clone();
 
@@ -86,7 +86,7 @@ fn handle_research_command(screen: &mut Screen, mut state: &mut GameState) {
         |o| engine::can_research(&state, &research.get(o).unwrap()).is_ok(),
         |o| research.get(o).unwrap().details(),
     );
-    match OptionList::init(&screen.term, selection).run() {
+    match screen.show_modal_selection(selection) {
         Some(research_index) => {
             let research = research.get(research_index).unwrap().clone();
 
@@ -103,7 +103,7 @@ fn handle_research_command(screen: &mut Screen, mut state: &mut GameState) {
 fn handle_debug_command(screen: &mut Screen, mut state: &mut GameState) {
     let debug_options = vec!["Dump State", "Load Default GameState", "Max Resources", "Complete Actions"];
     let selection = Selection::init_list(&debug_options, |_| true, |_| vec![]);
-    match OptionList::init(&screen.term, selection).run() {
+    match screen.show_modal_selection(selection) {
         Some(debug_index) => match debug_index {
             0 => engine::dump_state(&state),
             1 => engine::load_default_state(&mut state),
@@ -120,7 +120,8 @@ fn handle_upgrade_command(screen: &mut Screen, mut state: &mut GameState) {
     let upgrade_names: Vec<&String> = upgrades.iter().map(|x| &x.name).collect();
 
     let selection = Selection::init_list(&upgrade_names, |_| true, |o| upgrades.get(o).unwrap().details());
-    match OptionList::init(&screen.term, selection).run_multiple_selection(
+    match screen.show_modal_multiple_selection(
+        selection,
         upgrade_names.iter().map(|x| state.upgrades.contains(*x)).collect(),
         |selection| {
             let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
@@ -146,7 +147,7 @@ fn handle_upgrade_command(screen: &mut Screen, mut state: &mut GameState) {
 }
 
 pub fn handle_input(screen: &mut Screen, state: &mut GameState) -> bool {
-    if let Some(input) = screen.term.getch() {
+    if let Some(input) = screen.get_input() {
         match input {
             Input::KeyResize => {
                 pancurses::resize_term(0, 0);

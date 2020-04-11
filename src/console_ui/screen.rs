@@ -1,10 +1,11 @@
+use crate::console_ui::{OptionList, Selection};
 use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 use pancurses::{Input, Window};
 
 pub struct Screen {
     messages: String,
     message_timeout: u32,
-    pub term: Window,
+    term: Window,
 }
 
 impl Screen {
@@ -42,6 +43,24 @@ impl Screen {
     pub fn clear_message(&mut self) {
         self.messages.clear();
         self.message_timeout = 0;
+    }
+
+    pub fn get_input(&self) -> Option<Input> {
+        self.term.getch()
+    }
+
+    pub fn show_modal_selection(&self, options: Vec<Selection>) -> Option<usize> {
+        OptionList::init(&self.term, options).run()
+    }
+
+    pub fn show_modal_multiple_selection(
+        &self,
+        options: Vec<Selection>,
+        initial_selection: Vec<bool>,
+        valid_selection: impl Fn(&Vec<usize>) -> bool,
+        status_line: impl Fn(&Vec<usize>) -> [String; 2],
+    ) -> Option<Vec<usize>> {
+        OptionList::init(&self.term, options).run_multiple_selection(initial_selection, valid_selection, status_line)
     }
 
     #[allow(unused_assignments)]

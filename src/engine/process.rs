@@ -122,8 +122,8 @@ pub fn init_test_game_state() -> GameState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    // use crate::engine::edict;
-    // use crate::engine::tests::*;
+    use crate::engine::tests::*;
+    use crate::engine::{add_job, edict};
     use crate::state::{GameState, ResourceKind};
 
     #[test]
@@ -144,62 +144,76 @@ mod tests {
         assert_eq!("Test Gather Hut", buildings.get(2).unwrap().name);
     }
 
-    // #[test]
-    // fn process_tick_storage_limits_honored() {
-    //     let mut state = init_test_game_state();
-    //     state.resources[ResourceKind::Food] = state.derived_state.storage[ResourceKind::Food] - 1;
-    //     state.resources[ResourceKind::Fuel] = state.derived_state.storage[ResourceKind::Fuel] - 1;
-    //     state.action_with_name_mut("TestGather").unwrap().current_tick = 1;
-    //     state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
+    #[test]
+    fn process_tick_storage_limits_honored() {
+        let mut state = init_test_game_state();
+        state.pops = 2;
+        add_job(&mut state, "TestGather").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
+        state.resources[ResourceKind::Food] = state.derived_state.storage[ResourceKind::Food] - 1;
+        state.resources[ResourceKind::Fuel] = state.derived_state.storage[ResourceKind::Fuel] - 1;
+        process_tick(&mut state);
 
-    //     process_tick(&mut state);
-    //     assert_eq!(state.resources[ResourceKind::Food], state.derived_state.storage[ResourceKind::Food]);
-    //     assert_eq!(state.resources[ResourceKind::Fuel], state.derived_state.storage[ResourceKind::Fuel]);
-    // }
+        state.action_with_name_mut("TestGather").unwrap().current_tick = 1;
+        state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
+        process_tick(&mut state);
 
-    // #[test]
-    // fn invoke_takes_times_to_complete() {
-    //     let mut state = init_empty_game_state();
-    //     state.resources[ResourceKind::Fuel] = 2;
-    //     let test_edict = get_test_edict("TestEdict");
+        assert_eq!(state.resources[ResourceKind::Food], state.derived_state.storage[ResourceKind::Food]);
+        assert_eq!(state.resources[ResourceKind::Fuel], state.derived_state.storage[ResourceKind::Fuel]);
+    }
 
-    //     edict(&mut state, &test_edict).unwrap();
-    //     let edict_length = test_edict.conversion.tick_length();
-    //     for _ in 0..edict_length {
-    //         assert_eq!(2, state.actions.len());
-    //         process_tick(&mut state);
-    //     }
-    //     assert_eq!(1, state.actions.len());
-    // }
+    #[test]
+    fn invoke_takes_times_to_complete() {
+        let mut state = init_empty_game_state();
+        state.resources[ResourceKind::Fuel] = 2;
+        let test_edict = get_test_edict("TestEdict");
 
-    // #[test]
-    // fn process_conversions_none_ready() {
-    //     let mut state = init_test_game_state();
-    //     process_tick(&mut state);
-    //     assert_eq!(0, state.resources[ResourceKind::Food]);
-    //     assert_eq!(0, state.resources[ResourceKind::Fuel]);
-    // }
+        edict(&mut state, &test_edict).unwrap();
+        let edict_length = test_edict.conversion.tick_length();
+        for _ in 0..edict_length {
+            assert_eq!(2, state.actions.len());
+            process_tick(&mut state);
+        }
+        assert_eq!(1, state.actions.len());
+    }
 
-    // #[test]
-    // fn process_conversions_one_ready() {
-    //     let mut state = init_test_game_state();
-    //     state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
-    //     process_tick(&mut state);
+    #[test]
+    fn process_conversions_none_ready() {
+        let mut state = init_test_game_state();
+        process_tick(&mut state);
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        assert_eq!(0, state.resources[ResourceKind::Fuel]);
+    }
 
-    //     assert_eq!(0, state.resources[ResourceKind::Food]);
-    //     assert_eq!(4, state.resources[ResourceKind::Fuel]);
-    // }
+    #[test]
+    fn process_conversions_one_ready() {
+        let mut state = init_test_game_state();
+        state.pops = 1;
+        add_job(&mut state, "TestChop").unwrap();
+        process_tick(&mut state);
 
-    // #[test]
-    // fn process_conversions_many_ready() {
-    //     let mut state = init_test_game_state();
-    //     state.action_with_name_mut("TestGather").unwrap().current_tick = 1;
-    //     state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
-    //     process_tick(&mut state);
+        state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
+        process_tick(&mut state);
 
-    //     assert_eq!(1, state.resources[ResourceKind::Food]);
-    //     assert_eq!(4, state.resources[ResourceKind::Fuel]);
-    // }
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        assert_eq!(1, state.resources[ResourceKind::Fuel]);
+    }
+
+    #[test]
+    fn process_conversions_many_ready() {
+        let mut state = init_test_game_state();
+        state.pops = 3;
+        add_job(&mut state, "TestGather").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
+        process_tick(&mut state);
+        state.action_with_name_mut("TestGather").unwrap().current_tick = 1;
+        state.action_with_name_mut("TestChop").unwrap().current_tick = 1;
+        process_tick(&mut state);
+
+        assert_eq!(1, state.resources[ResourceKind::Food]);
+        assert_eq!(2, state.resources[ResourceKind::Fuel]);
+    }
 
     #[test]
     fn sustain_population_with_food() {

@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use super::actions::Waiter;
 use super::building::Building;
@@ -12,9 +12,11 @@ pub struct GameState {
     pub resources: ResourceTotal,
     pub regions: Vec<Region>,
     pub actions: Vec<Waiter>,
+    pub pops: u32,
     pub research: HashSet<String>,
     pub upgrades: HashSet<String>,
     pub age: String,
+    pub jobs: HashMap<String, u32>,
 
     #[serde(skip)]
     #[serde(default = "crate::engine::DerivedState::init")]
@@ -33,6 +35,21 @@ impl GameState {
 
     pub fn buildings(&self) -> Vec<&Building> {
         self.regions.iter().flat_map(|x| &x.buildings).collect()
+    }
+
+    pub fn job_count(&self, name: &str) -> u32 {
+        match self.jobs.get(&name.to_string()) {
+            Some(o) => *o,
+            _ => 0,
+        }
+    }
+
+    pub fn total_jobs_assigned(&self) -> u32 {
+        self.jobs.values().sum()
+    }
+
+    pub fn conversion_names(&self) -> HashSet<String> {
+        self.actions.iter().filter(|x| x.action.is_conversion()).map(|x| x.name.to_string()).collect()
     }
 
     pub fn action_with_name(&self, name: &str) -> Option<&Waiter> {

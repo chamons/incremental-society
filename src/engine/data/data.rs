@@ -32,30 +32,30 @@ lazy_static! {
         m.insert(
             "Settlement",
             Building::init("Settlement")
+                .with_jobs(vec!["Gathering", "Gathering", "Hunting"])
                 .with_storage(vec![
                     ResourceAmount::init(ResourceKind::Food, 250),
                     ResourceAmount::init(ResourceKind::Fuel, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
                 ])
-                .with_pops(1)
+                .with_housing(3)
                 .with_immortal(),
         );
 
         m.insert(
             "Gathering Camp",
             Building::init("Gathering Camp")
-                .with_conversions(vec!["Gathering", "Gathering", "Hunting"])
+                .with_jobs(vec!["Gathering", "Gathering", "Hunting"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
-                .with_pops(3)
                 .with_research("Settlement"),
         );
 
         m.insert(
             "Hunting Grounds",
             Building::init("Hunting Grounds")
-                .with_conversions(vec!["Hunting"])
+                .with_jobs(vec!["Hunting"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)])
                 .with_research("Settlement"),
         );

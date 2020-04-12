@@ -4,9 +4,6 @@
 - Archaic Age
    - Range of edict outcomes
    - Upgrades to edict outcomes from tech
-   - Change building system to not be population based
-   - Buildings unlock job slots
-   - Jobs slots can be filled by pops
    
 - Stability loss causes game reset, not just "bad things"
 

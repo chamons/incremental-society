@@ -4,9 +4,9 @@ mod conversions;
 mod debug;
 mod derived_state;
 mod destroy;
-mod disaster;
 mod edict;
 mod error;
+mod jobs;
 mod limits;
 mod process;
 mod research;
@@ -15,12 +15,12 @@ mod upgrade;
 mod data;
 
 pub use build::{build, can_build_building, can_build_in_region};
-pub use conversions::sync_building_to_conversions;
 pub use debug::{complete_actions, die, die_unless, dump_state, load_default_state, max_resources};
 pub use derived_state::DerivedState;
 pub use destroy::{can_destroy_building, destroy};
 pub use edict::{can_invoke_edict, edict};
 pub use error::EngineError;
+pub use jobs::{add_job, remove_job};
 pub use process::{init_new_game_state, process_tick};
 pub use research::{can_research, research};
 pub use upgrade::{apply_upgrade, can_apply_upgrades, get_upgrade_cost, upgrade};
@@ -35,4 +35,12 @@ pub mod tests {
     pub use super::process::init_test_game_state;
     pub use super::process::process_tick;
     pub use super::process::recalculate;
+
+    pub fn assert_is_none<T>(item: Option<T>) {
+        assert_eq!(true, matches!(item, None));
+    }
+
+    pub fn assert_is_some<T>(item: Option<T>) {
+        assert_eq!(true, matches!(item, Some(_)));
+    }
 }

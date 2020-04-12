@@ -10,11 +10,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Building {
     pub name: String,
-    pub conversions: Vec<String>,
+    pub jobs: Vec<String>,
     pub research: HashSet<String>,
     pub build_cost: Vec<ResourceAmount>,
     pub storage: Vec<ResourceAmount>,
-    pub pops: u32,
+    pub housing: u32,
     pub immortal: bool,
 }
 
@@ -22,17 +22,17 @@ impl Building {
     pub fn init(name: &'static str) -> Building {
         Building {
             name: name.to_owned(),
-            conversions: vec![],
+            jobs: vec![],
             research: HashSet::new(),
             build_cost: vec![],
             storage: vec![],
-            pops: 0,
+            housing: 0,
             immortal: false,
         }
     }
 
-    pub fn with_conversions(mut self, conversions: Vec<&str>) -> Building {
-        self.conversions = conversions.iter().map(|x| (*x).to_owned()).collect();
+    pub fn with_jobs(mut self, jobs: Vec<&str>) -> Building {
+        self.jobs = jobs.iter().map(|x| (*x).to_owned()).collect();
         self
     }
 
@@ -46,8 +46,8 @@ impl Building {
         self
     }
 
-    pub fn with_pops(mut self, pops: u32) -> Building {
-        self.pops = pops;
+    pub fn with_housing(mut self, housing: u32) -> Building {
+        self.housing = housing;
         self
     }
 
@@ -78,14 +78,18 @@ impl Building {
         }
 
         let mut conversion_count = BTreeMap::new();
-        for c in self.conversions.iter() {
+        for c in self.jobs.iter() {
             let entry = conversion_count.entry(c).or_insert(0);
             *entry += 1;
         }
-        details.push(format!("Provides: {}", conversion_count.iter().map(format_details).format(", ")));
+        details.push(format!("Jobs: {}", conversion_count.iter().map(format_details).format(", ")));
 
         if !self.storage.is_empty() {
             details.push(format_resource_list("Storage: ", &self.storage));
+        }
+
+        if self.housing > 0 {
+            details.push(format!("Houses: {}", self.housing));
         }
 
         details

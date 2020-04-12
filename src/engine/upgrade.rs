@@ -132,8 +132,8 @@ pub fn available_to_upgrade(state: &GameState) -> Vec<Upgrade> {
 
 fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
     match upgrade {
-        UpgradeActions::AddBuildingPops(pops) => building.pops += pops,
-        UpgradeActions::AddBuildingConversion(name) => building.conversions.push(name.to_string()),
+        UpgradeActions::AddBuildingHousing(housing) => building.housing += housing,
+        UpgradeActions::AddBuildingJob(name) => building.jobs.push(name.to_string()),
         UpgradeActions::AddBuildingStorage(storage) => {
             if let Some(position) = building.storage.iter().position(|x| x.kind == storage.kind) {
                 let current = &mut building.storage.get_mut(position).unwrap();
@@ -190,6 +190,7 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::engine::add_job;
     use crate::engine::tests::*;
     use crate::state::{ConversionLength, Region, ResourceKind};
 
@@ -203,13 +204,13 @@ mod tests {
 
         let available = available_to_build(&state);
         let before = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
-        assert_eq!(2, before.conversions.len());
+        assert_eq!(2, before.jobs.len());
 
         state.upgrades.insert("TestUpgrade".to_owned());
 
         let available = available_to_build(&state);
         let after = available.iter().filter(|x| x.name == "Test Building").nth(0).unwrap();
-        assert_eq!(3, after.conversions.len());
+        assert_eq!(3, after.jobs.len());
     }
 
     #[test]
@@ -281,13 +282,13 @@ mod tests {
 
         for _ in 0..UPGRADE_LENGTH {
             assert_eq!(0, state.upgrades.len());
-            assert_eq!(2, state.buildings()[0].conversions.len());
+            assert_eq!(2, state.buildings()[0].jobs.len());
             process::process_tick(&mut state);
         }
 
         assert_eq!(1, state.upgrades.len());
         assert_eq!(0, state.resources[ResourceKind::Knowledge]);
-        assert_eq!(3, state.buildings()[0].conversions.len());
+        assert_eq!(3, state.buildings()[0].jobs.len());
     }
 
     #[test]
@@ -316,7 +317,11 @@ mod tests {
             vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
         )];
         state.resources[ResourceKind::Food] = 300;
+        state.pops = 2;
         recalculate(&mut state);
+
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
 
         give_test_update_resources(&mut state, 1);
 
@@ -352,12 +357,12 @@ mod tests {
 
         for _ in 0..UPGRADE_LENGTH {
             assert_eq!(1, state.upgrades.len());
-            assert_eq!(3, state.buildings()[0].conversions.len());
+            assert_eq!(3, state.buildings()[0].jobs.len());
             process::process_tick(&mut state);
         }
 
         assert_eq!(0, state.upgrades.len());
-        assert_eq!(2, state.buildings()[0].conversions.len());
+        assert_eq!(2, state.buildings()[0].jobs.len());
         assert_eq!(0, state.resources[ResourceKind::Knowledge]);
     }
 
@@ -368,7 +373,7 @@ mod tests {
         state.upgrades.insert("TestMultiUpgrade".to_string());
         recalculate(&mut state);
 
-        assert_eq!(2, state.buildings()[0].conversions.len());
+        assert_eq!(2, state.buildings()[0].jobs.len());
         assert_eq!(2, state.derived_state.find_conversion("TestChop").output.len());
         assert_eq!(ConversionLength::Long, state.derived_state.find_edict("TestEdict").conversion.length);
     }

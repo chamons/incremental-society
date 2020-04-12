@@ -1,75 +1,54 @@
 use std::collections::HashMap;
 
-pub use super::upgrade::{available_to_build, available_to_invoke, available_to_research, available_to_upgrade, current_conversions};
+pub use super::upgrade;
 pub use crate::state::{Building, Conversion, Edict, GameState, Research, ResourceTotal, Upgrade};
-
-use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct DerivedState {
-    pub conversions_names: Vec<String>,
-    pub conversions: HashMap<String, u32>,
+    pub current_building_jobs: HashMap<String, u32>,
     pub storage: ResourceTotal,
-    pub pops: u32,
-    pub used_pops: u32,
     pub available_buildings: Vec<Building>,
     pub available_edicts: Vec<Edict>,
     pub available_research: Vec<Research>,
     pub available_upgrade: Vec<Upgrade>,
-    pub all_conversions: Vec<Conversion>,
+    pub available_conversions: Vec<Conversion>,
 }
 
 impl DerivedState {
     pub fn init() -> DerivedState {
         DerivedState {
-            conversions_names: vec![],
-            conversions: HashMap::new(),
+            current_building_jobs: HashMap::new(),
             storage: ResourceTotal::init(),
-            pops: 0,
-            used_pops: 0,
             available_buildings: vec![],
             available_edicts: vec![],
             available_research: vec![],
             available_upgrade: vec![],
-            all_conversions: vec![],
+            available_conversions: vec![],
         }
     }
 
     pub fn calculate(state: &GameState) -> DerivedState {
         DerivedState {
-            conversions_names: DerivedState::conversion_names(state),
-            conversions: DerivedState::conversion_with_counts(state),
+            current_building_jobs: DerivedState::jobs_with_counts(state),
             storage: DerivedState::calculate_storage(state),
-            pops: DerivedState::calculate_pops(state),
-            used_pops: DerivedState::calculate_used_pops(state),
-            available_buildings: available_to_build(state),
-            available_edicts: available_to_invoke(state),
-            available_research: available_to_research(state),
-            available_upgrade: available_to_upgrade(state),
-            all_conversions: current_conversions(state),
+
+            // Items with respect to upgrades
+            available_buildings: upgrade::available_to_build(state),
+            available_edicts: upgrade::available_to_invoke(state),
+            available_research: upgrade::available_to_research(state),
+            available_upgrade: upgrade::available_to_upgrade(state),
+            available_conversions: upgrade::current_conversions(state),
+            // Add UI in game to assign jobs
         }
     }
 
-    fn conversion_with_counts(state: &GameState) -> HashMap<String, u32> {
+    fn jobs_with_counts(state: &GameState) -> HashMap<String, u32> {
         let mut counts = HashMap::new();
-        for c in state.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.conversions) {
+        for c in state.regions.iter().flat_map(|x| &x.buildings).flat_map(|x| &x.jobs) {
             let entry = counts.entry(c.to_string()).or_insert(0);
             *entry += 1;
         }
         counts
-    }
-
-    fn conversion_names(state: &GameState) -> Vec<String> {
-        let mut names: Vec<String> = state
-            .regions
-            .iter()
-            .flat_map(|x| &x.buildings)
-            .flat_map(|x| &x.conversions)
-            .unique()
-            .cloned()
-            .collect();
-        names.sort();
-        names
     }
 
     fn calculate_storage(state: &GameState) -> ResourceTotal {
@@ -80,14 +59,6 @@ impl DerivedState {
             }
         }
         storage
-    }
-
-    fn calculate_pops(state: &GameState) -> u32 {
-        state.regions.iter().flat_map(|x| &x.buildings).map(|x| x.pops).sum()
-    }
-
-    fn calculate_used_pops(state: &GameState) -> u32 {
-        state.regions.iter().flat_map(|x| &x.buildings).count() as u32
     }
 
     pub fn find_building(&self, name: &str) -> &Building {
@@ -107,7 +78,7 @@ impl DerivedState {
     }
 
     pub fn find_conversion(&self, name: &str) -> &Conversion {
-        self.all_conversions.iter().filter(|x| x.name == name).nth(0).unwrap()
+        self.available_conversions.iter().filter(|x| x.name == name).nth(0).unwrap()
     }
 }
 
@@ -117,19 +88,11 @@ mod tests {
     use crate::state::ResourceKind;
 
     #[test]
-    fn conversion_with_counts() {
+    fn jobs_with_counts() {
         let state = init_test_game_state();
-        let conversions = &state.derived_state.conversions;
-        assert_eq!(4, *conversions.get("TestChop").unwrap());
-        assert_eq!(1, *conversions.get("TestGather").unwrap());
-    }
-
-    #[test]
-    fn conversion_names() {
-        let state = init_test_game_state();
-        let conversions = &state.derived_state.conversions_names;
-        assert_eq!("TestChop", conversions[0]);
-        assert_eq!("TestGather", conversions[1]);
+        let jobs = &state.derived_state.current_building_jobs;
+        assert_eq!(4, *jobs.get("TestChop").unwrap());
+        assert_eq!(1, *jobs.get("TestGather").unwrap());
     }
 
     #[test]
@@ -138,12 +101,5 @@ mod tests {
         let storage = state.derived_state.storage;
         assert!(storage[ResourceKind::Food] >= 20);
         assert!(storage[ResourceKind::Fuel] >= 30);
-    }
-
-    #[test]
-    fn pops() {
-        let state = init_test_game_state();
-        assert!(state.derived_state.pops >= 4);
-        assert!(state.derived_state.used_pops >= 3);
     }
 }

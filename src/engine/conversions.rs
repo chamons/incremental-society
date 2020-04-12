@@ -1,150 +1,152 @@
+use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
 use std::collections::HashSet;
-
-use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION};
 
 pub fn apply_convert(state: &mut GameState, name: &str) {
     state.derived_state.find_conversion(name).convert(&mut state.resources);
 }
 
-// There is a modeling problem the engine conversion code needs to handle:
-// - The game state actions system (actions.rs) handles all conversions
-// - That assumes that none of them are canceled in flight.
-// - That makes sense for most things, but the source of conversions are buildings, which can appear/disappear at a whim
-// - Imagine:
-//     Region 1 has Library which gives Conversion Research
-//     Build it on tick 100, Destroy on tick 110
-//     There will be a Research conversion in flight with zero buildings "powering" it.
-//     You really don't want to get research when it finishes, and you don't want to see it in your UI
-// - You also need to "kick" a new delayed action on the first building, or anything adding a brand new conversion
-//
-// Ideally you'd be able to put this in DerivedState, as it gets blapped every major state change.
-// However, you need to remember the ticks. If you have library 1 built and are 10 tick into a research
-// and build a second, you want to still be ten ticks in.
-// DerivedState also is not serialized on save, so we can't depend on it existing always.
-//
-// So after recalculating the derived state, we then "synchronize" the derived state conversion list with the actions list
-// Make a list of every conversion provided, and every conversion in flight.
-// - If there are new ones on the building side kick them.
-// - If there any in the action list not in the conversion list, kill them
-pub fn sync_building_to_conversions(state: &mut GameState) {
-    let in_flight = get_in_flight(state);
-    let active_conversions = &state.derived_state.conversions;
-    for orphan in in_flight.iter().filter(|x| !active_conversions.contains_key(*x)) {
-        let position = state.actions.iter().position(|x| matches_conversion_name(x, orphan)).unwrap();
-        state.actions.remove(position);
+pub fn start_missing_converts(state: &mut GameState) {
+    let current_converts: HashSet<String> = state.conversion_names();
+    let missing_converts = state.derived_state.current_building_jobs.keys().filter(|x| !current_converts.contains(*x));
+
+    for not_started in missing_converts {
+        if state.job_count(not_started) > 0 {
+            let conversion = state.derived_state.find_conversion(not_started);
+            let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
+            state.actions.push(action);
+        }
     }
 
-    for not_started in active_conversions.keys().filter(|x| !in_flight.contains(*x)) {
-        let conversion = state.derived_state.find_conversion(not_started);
-        let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
-        state.actions.push(action);
-    }
-
-    if state.action_with_name("Sustain Population").is_none() {
-        let action = Waiter::init_repeating("Sustain Population", SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+    if state.action_with_name(SUSTAIN_POP_NAME).is_none() {
+        let action = Waiter::init_repeating(SUSTAIN_POP_NAME, SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
         state.actions.push(action);
     }
 }
 
-fn get_in_flight(state: &GameState) -> HashSet<String> {
-    state.actions.iter().filter_map(filter_map_conversion_name).collect()
+pub fn reset_conversion_status(state: &mut GameState, name: &str) {
+    state.action_with_name_mut(name).unwrap().reset();
 }
 
-fn filter_map_conversion_name(waiter: &Waiter) -> Option<String> {
-    if let DelayedAction::Conversion(name) = &waiter.action {
-        Some(name.to_string())
-    } else {
-        None
-    }
-}
-
-fn matches_conversion_name(waiter: &Waiter, name: &str) -> bool {
-    if let DelayedAction::Conversion(conversion_name) = &waiter.action {
-        conversion_name == name
-    } else {
-        false
-    }
+pub fn clear_conversion(state: &mut GameState, name: &str) -> Option<Waiter> {
+    let to_remove = state.action_with_name(name)?;
+    let pos_to_remove = state.actions.iter().position(|x| x.name == to_remove.name)?;
+    Some(state.actions.remove(pos_to_remove))
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::engine::tests::*;
-    use crate::state::Region;
+    use crate::engine::{build, jobs::add_job, process};
+    use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 
     #[test]
-    fn existing_conversions_untouched_on_sync() {
+    fn valid_apply_convert() {
         let mut state = init_test_game_state();
-        assert_eq!(3, state.actions.len());
-
-        recalculate(&mut state);
-        assert_eq!(3, state.actions.len());
+        assert_eq!(0, state.resources[ResourceKind::Food]);
+        apply_convert(&mut state, "TestGather");
+        assert_ne!(0, state.resources[ResourceKind::Food]);
     }
 
     #[test]
-    fn removed_buildings_remove_conversion_on_sync() {
+    fn start_missing_converts_sustain_only() {
         let mut state = init_empty_game_state();
-        state
-            .regions
-            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
+        // Ensure no actions are running
+        state.actions.clear();
+
+        start_missing_converts(&mut state);
+
+        assert_eq!(1, state.actions.len());
+        assert_eq!(SUSTAIN_POP_NAME, state.actions[0].name);
+    }
+
+    #[test]
+    fn start_missing_both() {
+        let mut state = init_empty_game_state();
+        state.pops = 2;
+
+        // Ensure no actions are running
+        state.actions.clear();
+
+        let region = Region::init_with_buildings("TestRegion", vec![get_test_building("Test Building")]);
+        state.regions.insert(0, region);
         recalculate(&mut state);
+
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
+
+        start_missing_converts(&mut state);
+
         assert_eq!(2, state.actions.len());
+    }
 
-        state.regions.get_mut(0).unwrap().buildings.remove(0);
-        recalculate(&mut state);
+    #[test]
+    fn start_only_new() {
+        let mut state = init_test_game_state();
+        state.pops = 5;
 
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestGather").unwrap();
+        assert_eq!(3, state.actions.len());
+
+        build(&mut state, get_test_building("Test Hunt Cabin"), 0).unwrap();
+        for _ in 0..BUILD_LENGTH {
+            process::process_tick(&mut state);
+        }
+        add_job(&mut state, "TestHunt").unwrap();
+        add_job(&mut state, "TestHunt").unwrap();
+
+        start_missing_converts(&mut state);
+
+        assert_eq!(4, state.actions.len());
+    }
+
+    #[test]
+    fn state_none_if_no_jobs_set() {
+        let mut state = init_test_game_state();
+        assert_eq!(1, state.actions.len());
+
+        build(&mut state, get_test_building("Test Hunt Cabin"), 0).unwrap();
+        for _ in 0..BUILD_LENGTH {
+            process::process_tick(&mut state);
+        }
+
+        start_missing_converts(&mut state);
         assert_eq!(1, state.actions.len());
     }
 
     #[test]
-    fn added_buildings_add_conversions_on_sync() {
-        let mut state = init_empty_game_state();
-        recalculate(&mut state);
-        assert_eq!(1, state.actions.len());
+    fn reset_conversion() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
 
-        state
-            .regions
-            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
-        recalculate(&mut state);
+        let starting_tick = state.action_with_name("TestChop").unwrap().current_tick;
+        process::process_tick(&mut state);
+        assert_eq!(1, starting_tick - state.action_with_name("TestChop").unwrap().current_tick);
 
-        assert_eq!(2, state.actions.len());
+        reset_conversion_status(&mut state, "TestChop");
+
+        assert_eq!(starting_tick, state.action_with_name("TestChop").unwrap().current_tick);
     }
 
     #[test]
-    fn add_and_remove_multiple_on_sync() {
-        let mut state = init_empty_game_state();
-        state.regions.push(Region::init_with_buildings(
-            "Region",
-            vec![get_test_building("Test Building"), get_test_building("Test Gather Hut")],
-        ));
-        recalculate(&mut state);
-        assert_eq!(3, state.actions.len());
+    fn clear_conversion_removes_if_exists() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
+        process::process_tick(&mut state);
+        assert_is_some(state.action_with_name("TestChop"));
 
-        let region = state.regions.get_mut(0).unwrap();
-        region.buildings.remove(0);
-        region.buildings.push(get_test_building("Test Hunt Cabin"));
-
-        recalculate(&mut state);
-
-        assert_eq!(3, state.actions.len());
+        clear_conversion(&mut state, "TestChop").unwrap();
+        assert_is_none(state.action_with_name("TestChop"));
     }
 
     #[test]
-    fn removed_then_readded_starts_at_zero_on_sync() {
-        let mut state = init_empty_game_state();
-        state
-            .regions
-            .push(Region::init_with_buildings("Region", vec![get_test_building("Test Gather Hut")]));
-        recalculate(&mut state);
+    fn clear_conversion_none_if_not_found() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
 
-        state.action_with_name_mut("TestGather").unwrap().current_tick = 10;
-        recalculate(&mut state);
-
-        state.regions.get_mut(0).unwrap().buildings.remove(0);
-        recalculate(&mut state);
-
-        state.regions.get_mut(0).unwrap().buildings.push(get_test_building("Test Gather Hut"));
-        recalculate(&mut state);
-
-        assert_eq!(100, state.action_with_name("TestGather").unwrap().current_tick);
+        process::process_tick(&mut state);
+        assert_is_none(clear_conversion(&mut state, "TestGather"));
     }
 }

@@ -33,22 +33,22 @@ lazy_static! {
         m.insert(
             "Test Building",
             Building::init("Test Building")
-                .with_conversions(vec!["TestChop", "TestChop"])
+                .with_jobs(vec!["TestChop", "TestChop"])
                 .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 10)])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 15)])
-                .with_pops(2),
+                .with_housing(2),
         );
         m.insert(
             "Test Gather Hut",
             Building::init("Test Gather Hut")
-                .with_conversions(vec!["TestGather"])
+                .with_jobs(vec!["TestGather"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 120)]),
         );
 
         m.insert(
             "Test Hunt Cabin",
             Building::init("Test Hunt Cabin")
-                .with_conversions(vec!["TestHunt", "TestHunt"])
+                .with_jobs(vec!["TestHunt", "TestHunt"])
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 60)]),
         );
 
@@ -120,7 +120,7 @@ lazy_static! {
             "TestUpgrade",
             Upgrade::init(
                 "TestUpgrade",
-                vec![UpgradeActions::AddBuildingConversion("TestChop".to_owned())],
+                vec![UpgradeActions::AddBuildingJob("TestChop".to_owned())],
                 vec!["Test Building".to_owned()],
             )
             .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
@@ -151,7 +151,7 @@ lazy_static! {
             Upgrade::init(
                 "TestMultiUpgrade",
                 vec![
-                    UpgradeActions::AddBuildingConversion("TestChop".to_owned()),
+                    UpgradeActions::AddBuildingJob("TestChop".to_owned()),
                     UpgradeActions::ChangeEdictLength(ConversionLength::Long),
                     UpgradeActions::ChangeConversionOutput(ResourceAmount::init(ResourceKind::Knowledge, 1)),
                 ],

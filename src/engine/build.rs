@@ -26,10 +26,6 @@ pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), 
         }
     }
 
-    if state.derived_state.used_pops + 1 > state.derived_state.pops {
-        return Err(EngineError::init("Insufficient pops for building"));
-    }
-
     if building.immortal {
         return Err(EngineError::init(format!("Unable to build {}", building.name)));
     }
@@ -101,16 +97,6 @@ mod tests {
     }
 
     #[test]
-    fn build_without_pops() {
-        let mut state = init_empty_game_state();
-        state.regions = vec![Region::init("Test Region")];
-        recalculate(&mut state);
-
-        let error = build(&mut state, get_test_building("Test Gather Hut"), 0).unwrap_err();
-        assert_eq!("Insufficient pops for building", error.to_string());
-    }
-
-    #[test]
     fn build_immortal_building() {
         let mut state = init_test_game_state();
         assert_eq!(
@@ -148,8 +134,6 @@ mod tests {
             process::process_tick(&mut state);
         }
 
-        // Chops from Test Building
-        assert!(10 < state.resources[ResourceKind::Fuel]);
         assert_eq!(2, state.buildings().len());
         assert_ne!(old_storage, state.derived_state.storage[ResourceKind::Fuel]);
     }

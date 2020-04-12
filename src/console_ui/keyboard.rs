@@ -146,12 +146,28 @@ fn handle_upgrade_command(screen: &mut Screen, mut state: &mut GameState) {
     }
 }
 
+fn handle_job_increase(screen: &mut Screen, state: &mut GameState) {
+    match engine::add_job(state, &screen.current_job_name(state)) {
+        Err(e) => screen.set_message(e.to_string()),
+        _ => screen.clear_message(),
+    }
+}
+
+fn handle_job_decrease(screen: &mut Screen, state: &mut GameState) {
+    match engine::remove_job(state, &screen.current_job_name(state)) {
+        Err(e) => screen.set_message(e.to_string()),
+        _ => screen.clear_message(),
+    }
+}
+
 pub fn handle_input(screen: &mut Screen, state: &mut GameState) -> bool {
     if let Some(input) = screen.get_input() {
         match input {
             Input::KeyResize => {
                 pancurses::resize_term(0, 0);
             }
+            Input::KeyUp => screen.move_job_pos_up(),
+            Input::KeyDown => screen.move_job_pos_down(state),
             Input::Character(i) => match i {
                 'q' => return true,
                 'b' => handle_build_command(screen, state),
@@ -159,6 +175,8 @@ pub fn handle_input(screen: &mut Screen, state: &mut GameState) -> bool {
                 'e' => handle_edict_command(screen, state),
                 'r' => handle_research_command(screen, state),
                 'u' => handle_upgrade_command(screen, state),
+                '+' => handle_job_increase(screen, state),
+                '-' => handle_job_decrease(screen, state),
                 #[cfg(debug_assertions)]
                 '~' => handle_debug_command(screen, state),
                 _ => {}

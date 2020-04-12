@@ -57,6 +57,8 @@ mod tests {
     #[test]
     pub fn start_missing_both() {
         let mut state = init_empty_game_state();
+        state.pops = 2;
+
         // Ensure no actions are running
         state.actions.clear();
 
@@ -75,6 +77,8 @@ mod tests {
     #[test]
     pub fn start_only_new() {
         let mut state = init_test_game_state();
+        state.pops = 5;
+
         add_job(&mut state, "TestChop").unwrap();
         add_job(&mut state, "TestChop").unwrap();
         add_job(&mut state, "TestGather").unwrap();

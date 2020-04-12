@@ -1,4 +1,4 @@
-use crate::console_ui::{OptionList, Selection};
+use crate::console_ui::{clear_color, set_color, Colors, OptionList, Selection};
 use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
 use pancurses::{Input, Window};
 
@@ -6,12 +6,14 @@ pub struct Screen {
     messages: String,
     message_timeout: u32,
     term: Window,
+    job_pos: usize,
 }
 
 impl Screen {
     pub fn init() -> Screen {
-        super::init_colors();
         let term = pancurses::initscr();
+
+        super::init_colors();
 
         term.keypad(true);
         term.nodelay(true);
@@ -21,6 +23,7 @@ impl Screen {
             messages: "".to_string(),
             message_timeout: 0,
             term: term,
+            job_pos: 0,
         }
     }
 
@@ -63,6 +66,28 @@ impl Screen {
         OptionList::init(&self.term, options).run_multiple_selection(initial_selection, valid_selection, status_line)
     }
 
+    pub fn current_job_pos(&self) -> usize {
+        self.job_pos
+    }
+
+    pub fn move_job_pos_up(&mut self) {
+        if self.job_pos > 0 {
+            self.job_pos -= 1;
+        }
+    }
+
+    pub fn move_job_pos_down(&mut self, state: &GameState) {
+        if self.job_pos < state.derived_state.current_building_jobs.len() - 1 {
+            self.job_pos += 1;
+        }
+    }
+
+    pub fn current_job_name(&mut self, state: &GameState) -> String {
+        let mut keys: Vec<&String> = state.derived_state.current_building_jobs.keys().collect();
+        keys.sort();
+        keys[self.job_pos].to_string()
+    }
+
     #[allow(unused_assignments)]
     pub fn draw(&self, state: &GameState) {
         self.term.clear();
@@ -71,7 +96,7 @@ impl Screen {
 
         // Left Column
         y = self.draw_country_stats(state, y);
-        y += 1;
+        y = self.draw_jobs(state, y);
         y = self.draw_resources(state, y);
 
         // Right Column
@@ -96,7 +121,7 @@ impl Screen {
 
             // Don't update y, as we have to draw the bar
             if let DelayedAction::Conversion(name) = &c.action {
-                let count = state.derived_state.current_building_jobs.get(name).unwrap();
+                let count = state.job_count(name);
                 self.write_right(&format!("{} ({})", name, count), 0, y);
             } else {
                 self.write_right(&c.name, 0, y);
@@ -159,7 +184,7 @@ impl Screen {
     }
 
     fn should_draw_buildings(&self, state: &GameState) -> bool {
-        state.age != "Archaic"
+        state.age == "Archaic"
     }
 
     #[allow(unused_assignments)]
@@ -169,14 +194,46 @@ impl Screen {
         y = self.write(format!("{} Age", state.age), 1, y);
         if self.should_draw_buildings(state) {
             y = self.write(format!("Population: {}", state.pops), 1, y + 1);
+            let unemployed = state.pops - state.total_jobs_assigned();
+            if unemployed > 0 {
+                y = self.write(format!("Unemployed: {}", unemployed), 1, y);
+            }
         }
+
         y = self.write(" ----------------", 0, y + 1);
 
         y
     }
 
+    fn draw_jobs(&self, state: &GameState, y: i32) -> i32 {
+        let mut y = y + 1;
+
+        if self.should_draw_buildings(state) {
+            let mut jobs: Vec<&String> = state.derived_state.current_building_jobs.keys().collect();
+            jobs.sort();
+
+            for (index, job) in jobs.iter().enumerate() {
+                let at_selected_job = index == self.job_pos;
+
+                if at_selected_job {
+                    set_color(Colors::LightBlue, &self.term);
+                }
+                let current = state.job_count(job);
+                let max = state.derived_state.current_building_jobs[&job.to_string()];
+                y = self.write(format!("{} {}/{}", job, current, max), 1, y);
+                if at_selected_job {
+                    clear_color(Colors::LightBlue, &self.term);
+                }
+            }
+
+            y += 1;
+        }
+
+        y
+    }
+
     fn draw_resources(&self, state: &GameState, y: i32) -> i32 {
-        let mut y = y;
+        let mut y = y + 1;
 
         for i in 0..NUM_RESOURCES {
             let line = &format!(

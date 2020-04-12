@@ -122,6 +122,8 @@ mod tests {
     #[test]
     fn destroy_building_with_jobs_unassigns() {
         let mut state = init_test_game_state();
+        state.pops = 4;
+
         for _ in 0..4 {
             add_job(&mut state, "TestChop").unwrap();
         }

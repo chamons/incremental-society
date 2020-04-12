@@ -32,9 +32,3 @@ fn main() {
 
     pancurses::endwin();
 }
-
-// Need current job position
-// Draw one for each job
-// Draw current highlightned some how
-// Handle + to add-job
-// Handle - to sub-job

@@ -4,6 +4,11 @@ use super::{conversions::reset_conversion_status, process, EngineError};
 use crate::state::{Building, GameState};
 
 pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
+    let current_job_usage: u32 = state.total_jobs_assigned();
+    if current_job_usage + 1 > state.pops {
+        return Err(EngineError::init(format!("No free population to assign to {} job", name)));
+    }
+
     match state.derived_state.current_building_jobs.get(name) {
         Some(available_count) => {
             let current_count = state.jobs.entry(name.to_string()).or_insert(0);
@@ -73,6 +78,14 @@ mod tests {
     }
 
     #[test]
+    pub fn add_with_no_pops() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
+        let error = add_job(&mut state, "TestChop").unwrap_err();
+        assert_eq!("No free population to assign to TestChop job", error.to_string());
+    }
+
+    #[test]
     pub fn add_with_non_existent_job() {
         let mut state = init_test_game_state();
         let error = add_job(&mut state, "NotAJob").unwrap_err();
@@ -82,6 +95,7 @@ mod tests {
     #[test]
     pub fn add_with_no_full_spot() {
         let mut state = init_test_game_state();
+        state.pops = 2;
         add_job(&mut state, "TestGather").unwrap();
         let error = add_job(&mut state, "TestGather").unwrap_err();
         assert_eq!("TestGather does not have another available slot", error.to_string());
@@ -90,6 +104,8 @@ mod tests {
     #[test]
     pub fn add_with_conversion_in_flight_resets() {
         let mut state = init_test_game_state();
+        state.pops = 2;
+
         add_job(&mut state, "TestChop").unwrap();
         process_tick(&mut state);
         let tick_before_assign = state.action_with_name("TestChop").unwrap().current_tick;
@@ -143,6 +159,8 @@ mod tests {
     #[test]
     pub fn reduce_jobs_one_active_job_lost() {
         let mut state = init_test_game_state();
+        state.pops = 4;
+
         add_job(&mut state, "TestGather").unwrap();
         for _ in 0..3 {
             add_job(&mut state, "TestChop").unwrap();
@@ -158,6 +176,8 @@ mod tests {
     #[test]
     pub fn reduce_jobs_many_active_jobs_lost() {
         let mut state = init_test_game_state();
+        state.pops = 4;
+
         for _ in 0..3 {
             add_job(&mut state, "TestChop").unwrap();
         }

@@ -44,6 +44,10 @@ impl GameState {
         }
     }
 
+    pub fn total_jobs_assigned(&self) -> u32 {
+        self.jobs.values().sum()
+    }
+
     pub fn conversion_names(&self) -> HashSet<String> {
         self.actions.iter().filter(|x| x.action.is_conversion()).map(|x| x.name.to_string()).collect()
     }

@@ -143,7 +143,7 @@ impl Screen {
 
     #[allow(unused_assignments)]
     fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
-        if !self.should_draw_buildings(state) {
+        if !self.should_draw_civilized(state) {
             return 0;
         }
 
@@ -183,7 +183,7 @@ impl Screen {
         y
     }
 
-    fn should_draw_buildings(&self, state: &GameState) -> bool {
+    fn should_draw_civilized(&self, state: &GameState) -> bool {
         state.age == "Archaic"
     }
 
@@ -192,7 +192,7 @@ impl Screen {
         let mut y = self.write("Elysium", 1, y);
         y += 1;
         y = self.write(format!("{} Age", state.age), 1, y);
-        if self.should_draw_buildings(state) {
+        if self.should_draw_civilized(state) {
             y = self.write(format!("Population: {}", state.pops), 1, y + 1);
             let unemployed = state.pops - state.total_jobs_assigned();
             if unemployed > 0 {
@@ -206,9 +206,11 @@ impl Screen {
     }
 
     fn draw_jobs(&self, state: &GameState, y: i32) -> i32 {
-        let mut y = y + 1;
+        let mut y = y;
 
-        if self.should_draw_buildings(state) {
+        if self.should_draw_civilized(state) {
+            y += 1;
+
             let mut jobs: Vec<&String> = state.derived_state.current_building_jobs.keys().collect();
             jobs.sort();
 

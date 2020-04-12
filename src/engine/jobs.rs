@@ -15,7 +15,8 @@ pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
             let current_count = state.jobs.entry(name.to_string()).or_insert(0);
             if *current_count < *available_count {
                 *current_count += 1;
-                if let Some(_) = state.action_with_name(name) {
+
+                if state.action_with_name(name).is_some() {
                     reset_conversion_status(state, name);
                 }
                 process::recalculate(state);
@@ -36,7 +37,7 @@ pub fn remove_job(state: &mut GameState, name: &str) -> Result<(), EngineError> 
                     *current_count -= 1;
                     if *current_count == 0 {
                         clear_conversion(state, name);
-                    } else if let Some(_) = state.action_with_name(name) {
+                    } else if state.action_with_name(name).is_some() {
                         reset_conversion_status(state, name);
                     }
 
@@ -59,9 +60,9 @@ pub fn reduce_active_jobs_by_loss(state: &mut GameState, building: &Building) {
     }
 
     for (job_lost, count) in building_job_count.iter() {
-        let new_building_max = state.derived_state.current_building_jobs[&job_lost.to_string()] - count;
+        let new_building_max = state.derived_state.current_building_jobs[&(*job_lost).to_string()] - count;
         if new_building_max < state.job_count(job_lost) {
-            state.jobs.insert(job_lost.to_string(), new_building_max);
+            state.jobs.insert((*job_lost).to_string(), new_building_max);
 
             if new_building_max == 0 {
                 clear_conversion(state, job_lost);

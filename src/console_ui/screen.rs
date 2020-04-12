@@ -22,7 +22,7 @@ impl Screen {
         Screen {
             messages: "".to_string(),
             message_timeout: 0,
-            term: term,
+            term,
             job_pos: 0,
         }
     }
@@ -221,7 +221,7 @@ impl Screen {
                     set_color(Colors::LightBlue, &self.term);
                 }
                 let current = state.job_count(job);
-                let max = state.derived_state.current_building_jobs[&job.to_string()];
+                let max = state.derived_state.current_building_jobs[&(*job).to_string()];
                 y = self.write(format!("{} {}/{}", job, current, max), 1, y);
                 if at_selected_job {
                     clear_color(Colors::LightBlue, &self.term);

@@ -41,7 +41,7 @@ mod tests {
     use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 
     #[test]
-    pub fn valid_apply_convert() {
+    fn valid_apply_convert() {
         let mut state = init_test_game_state();
         assert_eq!(0, state.resources[ResourceKind::Food]);
         apply_convert(&mut state, "TestGather");
@@ -49,7 +49,7 @@ mod tests {
     }
 
     #[test]
-    pub fn start_missing_converts_sustain_only() {
+    fn start_missing_converts_sustain_only() {
         let mut state = init_empty_game_state();
         // Ensure no actions are running
         state.actions.clear();
@@ -61,7 +61,7 @@ mod tests {
     }
 
     #[test]
-    pub fn start_missing_both() {
+    fn start_missing_both() {
         let mut state = init_empty_game_state();
         state.pops = 2;
 
@@ -81,7 +81,7 @@ mod tests {
     }
 
     #[test]
-    pub fn start_only_new() {
+    fn start_only_new() {
         let mut state = init_test_game_state();
         state.pops = 5;
 
@@ -103,7 +103,7 @@ mod tests {
     }
 
     #[test]
-    pub fn state_none_if_no_jobs_set() {
+    fn state_none_if_no_jobs_set() {
         let mut state = init_test_game_state();
         assert_eq!(1, state.actions.len());
 
@@ -117,7 +117,7 @@ mod tests {
     }
 
     #[test]
-    pub fn reset_conversion() {
+    fn reset_conversion() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestChop").unwrap();
 
@@ -131,7 +131,7 @@ mod tests {
     }
 
     #[test]
-    pub fn clear_conversion_removes_if_exists() {
+    fn clear_conversion_removes_if_exists() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestChop").unwrap();
         process::process_tick(&mut state);
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    pub fn clear_conversion_none_if_not_found() {
+    fn clear_conversion_none_if_not_found() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestChop").unwrap();
 

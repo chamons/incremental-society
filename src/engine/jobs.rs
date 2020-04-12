@@ -81,14 +81,14 @@ mod tests {
     use crate::state::DESTROY_LENGTH;
 
     #[test]
-    pub fn add_with_open_spot() {
+    fn add_with_open_spot() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
         assert_eq!(1, state.jobs["TestGather"]);
     }
 
     #[test]
-    pub fn add_with_no_pops() {
+    fn add_with_no_pops() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestChop").unwrap();
         let error = add_job(&mut state, "TestChop").unwrap_err();
@@ -96,14 +96,14 @@ mod tests {
     }
 
     #[test]
-    pub fn add_with_non_existent_job() {
+    fn add_with_non_existent_job() {
         let mut state = init_test_game_state();
         let error = add_job(&mut state, "NotAJob").unwrap_err();
         assert_eq!("NotAJob is not a valid current job", error.to_string());
     }
 
     #[test]
-    pub fn add_with_no_full_spot() {
+    fn add_with_no_full_spot() {
         let mut state = init_test_game_state();
         state.pops = 2;
         add_job(&mut state, "TestGather").unwrap();
@@ -112,7 +112,7 @@ mod tests {
     }
 
     #[test]
-    pub fn add_with_conversion_in_flight_resets() {
+    fn add_with_conversion_in_flight_resets() {
         let mut state = init_test_game_state();
         state.pops = 2;
 
@@ -124,7 +124,7 @@ mod tests {
     }
 
     #[test]
-    pub fn remove_with_active_job() {
+    fn remove_with_active_job() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
         assert_is_some(state.action_with_name("TestGather"));
@@ -135,21 +135,21 @@ mod tests {
     }
 
     #[test]
-    pub fn remove_with_non_existent_job() {
+    fn remove_with_non_existent_job() {
         let mut state = init_test_game_state();
         let error = remove_job(&mut state, "NotAJob").unwrap_err();
         assert_eq!("NotAJob is not a valid current job", error.to_string());
     }
 
     #[test]
-    pub fn remove_with_no_active_job() {
+    fn remove_with_no_active_job() {
         let mut state = init_test_game_state();
         let error = remove_job(&mut state, "TestGather").unwrap_err();
         assert_eq!("TestGather does not have an active slot", error.to_string());
     }
 
     #[test]
-    pub fn remove_with_conversion_in_flight_resets() {
+    fn remove_with_conversion_in_flight_resets() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
         process_tick(&mut state);
@@ -159,7 +159,7 @@ mod tests {
     }
 
     #[test]
-    pub fn reduce_jobs_no_active_jobs_lost() {
+    fn reduce_jobs_no_active_jobs_lost() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestChop").unwrap();
         process_tick(&mut state);
@@ -170,7 +170,7 @@ mod tests {
     }
 
     #[test]
-    pub fn reduce_jobs_one_active_job_lost() {
+    fn reduce_jobs_one_active_job_lost() {
         let mut state = init_test_game_state();
         state.pops = 4;
 
@@ -187,7 +187,7 @@ mod tests {
     }
 
     #[test]
-    pub fn reduce_jobs_many_active_jobs_lost() {
+    fn reduce_jobs_many_active_jobs_lost() {
         let mut state = init_test_game_state();
         state.pops = 4;
 

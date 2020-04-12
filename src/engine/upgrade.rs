@@ -190,6 +190,7 @@ fn get_edict_by_research(state: &GameState) -> Vec<Edict> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::engine::add_job;
     use crate::engine::tests::*;
     use crate::state::{ConversionLength, Region, ResourceKind};
 
@@ -308,36 +309,40 @@ mod tests {
         assert_eq!(0, state.resources[ResourceKind::Knowledge]);
     }
 
-    // #[test]
-    // fn has_conversion_applied() {
-    //     let mut state = init_empty_game_state();
-    //     state.regions = vec![Region::init_with_buildings(
-    //         "First Region",
-    //         vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
-    //     )];
-    //     state.resources[ResourceKind::Food] = 300;
-    //     recalculate(&mut state);
+    #[test]
+    fn has_conversion_applied() {
+        let mut state = init_empty_game_state();
+        state.regions = vec![Region::init_with_buildings(
+            "First Region",
+            vec![get_test_building("Test Building").clone(), get_test_building("Stability Building").clone()],
+        )];
+        state.resources[ResourceKind::Food] = 300;
+        state.pops = 2;
+        recalculate(&mut state);
 
-    //     give_test_update_resources(&mut state, 1);
+        add_job(&mut state, "TestChop").unwrap();
+        add_job(&mut state, "TestChop").unwrap();
 
-    //     upgrade(&mut state, vec![get_test_upgrade("TestConversionUpgrade")]).unwrap();
+        give_test_update_resources(&mut state, 1);
 
-    //     for _ in 0..UPGRADE_LENGTH {
-    //         assert_eq!(0, state.upgrades.len());
-    //         assert_eq!(1, state.derived_state.find_conversion("TestChop").output.len());
-    //         process::process_tick(&mut state);
-    //     }
+        upgrade(&mut state, vec![get_test_upgrade("TestConversionUpgrade")]).unwrap();
 
-    //     assert_eq!(1, state.upgrades.len());
-    //     assert_eq!(2, state.derived_state.find_conversion("TestChop").output.len());
-    //     assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+        for _ in 0..UPGRADE_LENGTH {
+            assert_eq!(0, state.upgrades.len());
+            assert_eq!(1, state.derived_state.find_conversion("TestChop").output.len());
+            process::process_tick(&mut state);
+        }
 
-    //     let conversion_length = state.derived_state.find_conversion("TestChop").tick_length();
-    //     for _ in 0..conversion_length {
-    //         process::process_tick(&mut state);
-    //     }
-    //     assert_eq!(2, state.resources[ResourceKind::Knowledge]);
-    // }
+        assert_eq!(1, state.upgrades.len());
+        assert_eq!(2, state.derived_state.find_conversion("TestChop").output.len());
+        assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+
+        let conversion_length = state.derived_state.find_conversion("TestChop").tick_length();
+        for _ in 0..conversion_length {
+            process::process_tick(&mut state);
+        }
+        assert_eq!(2, state.resources[ResourceKind::Knowledge]);
+    }
 
     #[test]
     fn has_upgrades_removed() {

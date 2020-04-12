@@ -27,6 +27,12 @@ pub fn reset_conversion_status(state: &mut GameState, name: &str) {
     state.action_with_name_mut(name).unwrap().reset();
 }
 
+pub fn clear_conversion(state: &mut GameState, name: &str) -> Option<Waiter> {
+    let to_remove = state.action_with_name(name)?;
+    let pos_to_remove = state.actions.iter().position(|x| x.name == to_remove.name)?;
+    Some(state.actions.remove(pos_to_remove))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -122,5 +128,25 @@ mod tests {
         reset_conversion_status(&mut state, "TestChop");
 
         assert_eq!(starting_tick, state.action_with_name("TestChop").unwrap().current_tick);
+    }
+
+    #[test]
+    pub fn clear_conversion_removes_if_exists() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
+        process::process_tick(&mut state);
+        assert_is_some(state.action_with_name("TestChop"));
+
+        clear_conversion(&mut state, "TestChop").unwrap();
+        assert_is_none(state.action_with_name("TestChop"));
+    }
+
+    #[test]
+    pub fn clear_conversion_none_if_not_found() {
+        let mut state = init_test_game_state();
+        add_job(&mut state, "TestChop").unwrap();
+
+        process::process_tick(&mut state);
+        assert_is_none(clear_conversion(&mut state, "TestGather"));
     }
 }

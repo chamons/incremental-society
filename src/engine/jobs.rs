@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use super::{conversions::reset_conversion_status, process, EngineError};
+use super::conversions::{clear_conversion, reset_conversion_status};
+use super::{process, EngineError};
 use crate::state::{Building, GameState};
 
 pub fn add_job(state: &mut GameState, name: &str) -> Result<(), EngineError> {
@@ -33,9 +34,12 @@ pub fn remove_job(state: &mut GameState, name: &str) -> Result<(), EngineError> 
             Some(current_count) => {
                 if *current_count > 0 {
                     *current_count -= 1;
-                    if let Some(_) = state.action_with_name(name) {
+                    if *current_count == 0 {
+                        clear_conversion(state, name);
+                    } else if let Some(_) = state.action_with_name(name) {
                         reset_conversion_status(state, name);
                     }
+
                     process::recalculate(state);
                     Ok(())
                 } else {
@@ -58,7 +62,12 @@ pub fn reduce_active_jobs_by_loss(state: &mut GameState, building: &Building) {
         let new_building_max = state.derived_state.current_building_jobs[&job_lost.to_string()] - count;
         if new_building_max < state.job_count(job_lost) {
             state.jobs.insert(job_lost.to_string(), new_building_max);
-            reset_conversion_status(state, job_lost);
+
+            if new_building_max == 0 {
+                clear_conversion(state, job_lost);
+            } else {
+                reset_conversion_status(state, job_lost);
+            }
         }
     }
 }
@@ -117,8 +126,11 @@ mod tests {
     pub fn remove_with_active_job() {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
+        assert_is_some(state.action_with_name("TestGather"));
+
         remove_job(&mut state, "TestGather").unwrap();
         assert_eq!(0, state.jobs["TestGather"]);
+        assert_is_none(state.action_with_name("TestGather"));
     }
 
     #[test]
@@ -140,9 +152,9 @@ mod tests {
         let mut state = init_test_game_state();
         add_job(&mut state, "TestGather").unwrap();
         process_tick(&mut state);
-        let tick_before_remove = state.action_with_name("TestGather").unwrap().current_tick;
+        assert_is_some(state.action_with_name("TestGather"));
         remove_job(&mut state, "TestGather").unwrap();
-        assert_ne!(tick_before_remove, state.action_with_name("TestGather").unwrap().current_tick);
+        assert_is_none(state.action_with_name("TestGather"));
     }
 
     #[test]

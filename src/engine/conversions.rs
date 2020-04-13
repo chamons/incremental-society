@@ -1,8 +1,9 @@
+use super::GameContext;
 use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
 use std::collections::HashSet;
 
-pub fn apply_convert(state: &mut GameState, name: &str) {
-    state.derived_state.find_conversion(name).convert(&mut state.resources);
+pub fn apply_convert(context: &mut GameContext, name: &str) {
+    context.derived_state.find_conversion(name).convert(&mut state.resources);
 }
 
 pub fn start_missing_converts(state: &mut GameState) {
@@ -36,7 +37,7 @@ pub fn clear_conversion(state: &mut GameState, name: &str) -> Option<Waiter> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::engine::tests::*;
+    use crate::data::tests::*;
     use crate::engine::{build, jobs::add_job, process};
     use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 

@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
 use super::{process, EngineError};
-use crate::engine::data::{get_building, get_conversion, get_edict, get_research, get_upgrade};
-use crate::engine::data::{get_building_names, get_conversion_names, get_edict_names, get_research_names, get_upgrade_names};
+use crate::data::{get_building, get_conversion, get_edict, get_research, get_upgrade};
+use crate::data::{get_building_names, get_conversion_names, get_edict_names, get_research_names, get_upgrade_names};
 use crate::state::{Building, Conversion, DelayedAction, Edict, GameState, Research, ResourceAmount, Upgrade, UpgradeActions, Waiter};
 use crate::state::{MAX_UPGRADES, UPGRADE_LENGTH};
 

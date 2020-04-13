@@ -6,13 +6,12 @@ mod derived_state;
 mod destroy;
 mod edict;
 mod error;
+mod game_context;
 mod jobs;
 mod limits;
 mod process;
 mod research;
 mod upgrade;
-
-mod data;
 
 pub use build::{build, can_build_building, can_build_in_region};
 pub use debug::{complete_actions, die, die_unless, dump_state, load_default_state, max_resources};
@@ -20,27 +19,8 @@ pub use derived_state::DerivedState;
 pub use destroy::{can_destroy_building, destroy};
 pub use edict::{can_invoke_edict, edict};
 pub use error::EngineError;
+pub use game_context::GameContext;
 pub use jobs::{add_job, remove_job};
-pub use process::{init_new_game_state, process_tick};
+pub use process::process_tick;
 pub use research::{can_research, research};
 pub use upgrade::{apply_upgrade, can_apply_upgrades, get_upgrade_cost, upgrade};
-
-#[cfg(test)]
-pub mod tests {
-    pub use super::data::get_building as get_test_building;
-    pub use super::data::get_edict as get_test_edict;
-    pub use super::data::get_research as get_test_research;
-    pub use super::data::get_upgrade as get_test_upgrade;
-    pub use super::process::init_empty_game_state;
-    pub use super::process::init_test_game_state;
-    pub use super::process::process_tick;
-    pub use super::process::recalculate;
-
-    pub fn assert_is_none<T>(item: Option<T>) {
-        assert_eq!(true, matches!(item, None));
-    }
-
-    pub fn assert_is_some<T>(item: Option<T>) {
-        assert_eq!(true, matches!(item, Some(_)));
-    }
-}

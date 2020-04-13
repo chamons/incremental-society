@@ -17,13 +17,47 @@ pub struct GameState {
     pub upgrades: HashSet<String>,
     pub age: String,
     pub jobs: HashMap<String, u32>,
-
-    #[serde(skip)]
-    #[serde(default = "crate::engine::DerivedState::init")]
-    pub derived_state: crate::engine::DerivedState,
 }
 
+use crate::data::get_ages;
+use crate::data::get_building;
+
 impl GameState {
+    pub fn init(regions: Vec<Region>, pops: u32, age: String) -> GameState {
+        GameState {
+            regions,
+            pops,
+            age,
+            resources: ResourceTotal::init(),
+            actions: vec![],
+            research: HashSet::new(),
+            upgrades: HashSet::new(),
+            jobs: HashMap::new(),
+        }
+    }
+
+    pub fn init_new_game_state() -> GameState {
+        let age = get_ages()[0].to_string();
+        let mut state = GameState::init(vec![Region::init_with_buildings("Lusitania", vec![get_building("Settlement")])], 1, age);
+        state.resources[ResourceKind::Food] = 20;
+        state
+    }
+
+    #[cfg(test)]
+    pub fn init_test_game_state() -> GameState {
+        let age = get_ages()[0].to_string();
+        let region = vec![
+            Region::init_with_buildings("Lusitania", vec![get_building("Test Building"), get_building("Test Building")]),
+            Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
+        ];
+        GameState::init(region, 1, age)
+    }
+
+    #[cfg(test)]
+    pub fn init_test_empty_game_state() -> GameState {
+        GameState::init(vec![], 1, "Archaic".to_string())
+    }
+
     pub fn init_from_json(json: String) -> GameState {
         let state: GameState = serde_json::from_str(&json).unwrap();
         state

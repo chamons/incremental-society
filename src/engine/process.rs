@@ -6,7 +6,10 @@ use super::{build, conversions, destroy, edict, research, upgrade};
 use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
 
 pub fn process_tick(state: &mut GameState) -> Option<&'static str> {
+    conversions::start_missing_converts(state);
+
     apply_actions(state);
+
     super::limits::honor_storage_and_floors(state);
 
     handle_possible_revolt(state);
@@ -54,69 +57,6 @@ fn sustain_population(state: &mut GameState) {
         state.resources.remove(ResourceKind::Food, state.resources[ResourceKind::Food]);
         state.resources.add(ResourceKind::Instability, missing_food * INSTABILITY_PER_MISSING_FOOD);
     }
-}
-
-pub fn recalculate(state: &mut GameState) {
-    state.derived_state = DerivedState::calculate(&state);
-    conversions::start_missing_converts(state);
-}
-
-use super::data::get_building;
-
-pub fn init_new_game_state() -> GameState {
-    let mut state = GameState {
-        resources: ResourceTotal::init(),
-        regions: vec![Region::init_with_buildings("Lusitania", vec![get_building("Settlement")])],
-        actions: vec![],
-        pops: 1,
-        age: super::data::get_ages()[0].to_string(),
-        derived_state: DerivedState::init(),
-        research: HashSet::new(),
-        upgrades: HashSet::new(),
-        jobs: HashMap::new(),
-    };
-    state.resources[ResourceKind::Food] = 20;
-
-    recalculate(&mut state);
-    state
-}
-
-#[cfg(test)]
-pub fn init_empty_game_state() -> GameState {
-    let mut state = GameState {
-        resources: ResourceTotal::init(),
-        regions: vec![],
-        actions: vec![],
-        pops: 0,
-        age: "Stone".to_string(),
-        derived_state: DerivedState::init(),
-        research: HashSet::new(),
-        upgrades: HashSet::new(),
-        jobs: HashMap::new(),
-    };
-    recalculate(&mut state);
-    state
-}
-
-#[cfg(test)]
-pub fn init_test_game_state() -> GameState {
-    let mut state = GameState {
-        resources: ResourceTotal::init(),
-        regions: vec![
-            Region::init_with_buildings("Lusitania", vec![get_building("Test Building"), get_building("Test Building")]),
-            Region::init_with_buildings("Illyricum", vec![get_building("Test Gather Hut")]),
-        ],
-        actions: vec![],
-        pops: 1,
-        age: super::data::get_ages()[0].to_string(),
-        derived_state: DerivedState::init(),
-        research: HashSet::new(),
-        upgrades: HashSet::new(),
-        jobs: HashMap::new(),
-    };
-    recalculate(&mut state);
-
-    state
 }
 
 #[cfg(test)]

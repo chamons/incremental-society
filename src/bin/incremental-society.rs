@@ -6,7 +6,7 @@ use incremental_society::engine;
 use incremental_society::console_ui::{handle_input, Screen};
 
 fn main() {
-    let mut state = engine::init_new_game_state();
+    let mut context = engine::GameContext::init_new_game_context();
     let mut screen = Screen::init();
     loop {
         let now = Instant::now();

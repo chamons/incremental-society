@@ -3,24 +3,24 @@ use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION, SUSTA
 use std::collections::HashSet;
 
 pub fn apply_convert(context: &mut GameContext, name: &str) {
-    context.derived_state.find_conversion(name).convert(&mut state.resources);
+    context.derived_state.find_conversion(name).convert(&mut context.state.resources);
 }
 
-pub fn start_missing_converts(state: &mut GameState) {
-    let current_converts: HashSet<String> = state.conversion_names();
-    let missing_converts = state.derived_state.current_building_jobs.keys().filter(|x| !current_converts.contains(*x));
+pub fn start_missing_converts(context: &mut GameContext) {
+    let current_converts: HashSet<String> = context.state.conversion_names();
+    let missing_converts = context.derived_state.current_building_jobs.keys().filter(|x| !current_converts.contains(*x));
 
     for not_started in missing_converts {
-        if state.job_count(not_started) > 0 {
-            let conversion = state.derived_state.find_conversion(not_started);
+        if context.state.job_count(not_started) > 0 {
+            let conversion = context.derived_state.find_conversion(not_started);
             let action = Waiter::init_repeating(not_started, conversion.tick_length(), DelayedAction::Conversion(not_started.to_string()));
-            state.actions.push(action);
+            context.state.actions.push(action);
         }
     }
 
-    if state.action_with_name(SUSTAIN_POP_NAME).is_none() {
+    if context.state.action_with_name(SUSTAIN_POP_NAME).is_none() {
         let action = Waiter::init_repeating(SUSTAIN_POP_NAME, SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
-        state.actions.push(action);
+        context.state.actions.push(action);
     }
 }
 

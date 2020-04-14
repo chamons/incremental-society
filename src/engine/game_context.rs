@@ -7,6 +7,8 @@ use crate::state::{Building, Conversion, Edict, GameState, Research, ResourceTot
 //
 // GameState - The state of the game that we would serialize to disk on save.
 //   - Example - Technologies researched and buildings built
+// UpgradeState - The current building/edict/etc based upon researched tech/upgrades
+// storage/current_building_jobs - Other calculated state
 
 #[derive(Debug)]
 pub struct GameContext {

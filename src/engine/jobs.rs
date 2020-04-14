@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::conversions::{clear_conversion, reset_conversion_status};
+use super::conversions::{clear_conversion, reset_conversion_status, start_missing_converts};
 use super::{EngineError, GameContext};
 use crate::state::Building;
 
@@ -15,10 +15,14 @@ pub fn add_job(context: &mut GameContext, name: &str) -> Result<(), EngineError>
             let current_count = context.state.jobs.entry(name.to_string()).or_insert(0);
             if *current_count < *available_count {
                 *current_count += 1;
+                if *current_count == 1 {
+                    start_missing_converts(context);
+                }
 
                 if context.state.action_with_name(name).is_some() {
                     reset_conversion_status(&mut context.state, name);
                 }
+
                 context.recalculate();
                 Ok(())
             } else {

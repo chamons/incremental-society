@@ -96,10 +96,10 @@ mod tests {
         edict(&mut context, &test_edict).unwrap();
         let edict_length = test_edict.conversion.tick_length();
         for _ in 0..edict_length {
-            assert_eq!(2, context.state.actions.len());
+            assert_eq!(1, context.state.actions.iter().filter(|x| x.action.is_edict()).count());
             process_tick(&mut context);
         }
-        assert_eq!(1, context.state.actions.len());
+        assert_eq!(0, context.state.actions.iter().filter(|x| x.action.is_edict()).count());
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use super::{process, EngineError, GameContext};
+use super::{EngineError, GameContext};
 use crate::state::{Building, DelayedAction, GameState, Waiter, BUILD_LENGTH};
 
 pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
@@ -51,8 +51,8 @@ pub fn build(context: &mut GameContext, building: Building, region_index: usize)
 }
 
 pub fn apply_build(context: &mut GameContext, building: &str, region_index: usize) {
+    let building = context.find_building(building);
     let region = context.state.regions.get_mut(region_index).unwrap();
-    let building = context.derived_state.find_building(building);
     region.add_building(building.clone());
     context.recalculate();
 }
@@ -61,6 +61,7 @@ pub fn apply_build(context: &mut GameContext, building: &str, region_index: usiz
 mod tests {
     use super::*;
 
+    use super::super::process;
     use crate::data::tests::*;
     use crate::state::{Region, ResourceKind, BUILD_LENGTH};
 
@@ -125,17 +126,17 @@ mod tests {
         context.state.resources[ResourceKind::Fuel] = 20;
         context.recalculate();
 
-        let old_storage = context.derived_state.storage[ResourceKind::Fuel];
+        let old_storage = context.storage[ResourceKind::Fuel];
 
         build(&mut context, get_test_building("Test Building"), 0).unwrap();
         assert_eq!(10, context.state.resources[ResourceKind::Fuel]);
 
         for _ in 0..BUILD_LENGTH {
             assert_eq!(1, context.state.buildings().len());
-            process::process_tick(&mut context.state);
+            process::process_tick(&mut context);
         }
 
         assert_eq!(2, context.state.buildings().len());
-        assert_ne!(old_storage, context.derived_state.storage[ResourceKind::Fuel]);
+        assert_ne!(old_storage, context.storage[ResourceKind::Fuel]);
     }
 }

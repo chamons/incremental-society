@@ -1,5 +1,4 @@
-use super::process;
-use super::EngineError;
+use super::{EngineError, GameContext};
 use crate::state::{DelayedAction, Edict, GameState, Waiter};
 
 pub fn can_invoke_edict(state: &GameState, edict: &Edict) -> Result<(), EngineError> {
@@ -16,82 +15,85 @@ pub fn can_invoke_edict(state: &GameState, edict: &Edict) -> Result<(), EngineEr
     Ok(())
 }
 
-pub fn edict(state: &mut GameState, edict: &Edict) -> Result<(), EngineError> {
-    can_invoke_edict(&state, edict)?;
+pub fn edict(context: &mut GameContext, edict: &Edict) -> Result<(), EngineError> {
+    can_invoke_edict(&context.state, edict)?;
 
-    state.resources.remove_range(&edict.conversion.input);
+    context.state.resources.remove_range(&edict.conversion.input);
 
     let action = Waiter::init_one_shot(&edict.name, edict.conversion.tick_length(), DelayedAction::Edict(edict.name.to_owned()));
-    state.actions.push(action);
-    process::recalculate(state);
+    context.state.actions.push(action);
+    context.recalculate();
 
     Ok(())
 }
 
-pub fn apply_edict(state: &mut GameState, name: &str) {
+pub fn apply_edict(context: &mut GameContext, name: &str) {
     // We've already paid the cost on queue, so just get the output
-    let edict = state.derived_state.find_edict(name);
-    state.resources.add_range(&edict.conversion.output);
+    let edict = context.find_edict(name);
+    context.state.resources.add_range(&edict.conversion.output);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::engine::tests::*;
+
+    use crate::data::tests::*;
+    use crate::engine::process;
     use crate::state::{Region, ResourceKind};
 
     #[test]
     fn invoke_valid() {
-        let mut state = init_empty_game_state();
+        let mut context = GameContext::init_empty_test_game_context();
         let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
-        state.regions.push(region);
-        state.resources[ResourceKind::Fuel] = 1;
+        context.state.regions.push(region);
+        context.state.resources[ResourceKind::Fuel] = 1;
+        context.recalculate();
 
         let test_edict = get_test_edict("TestEdict");
 
-        edict(&mut state, &test_edict).unwrap();
-        state.action_with_name("TestEdict").unwrap();
-        assert_eq!(0, state.resources[ResourceKind::Fuel]);
+        edict(&mut context, &test_edict).unwrap();
+        context.state.action_with_name("TestEdict").unwrap();
+        assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
 
         for _ in 0..test_edict.conversion.tick_length() {
-            assert_eq!(0, state.resources[ResourceKind::Fuel]);
-            assert_eq!(0, state.resources[ResourceKind::Knowledge]);
+            assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+            assert_eq!(0, context.state.resources[ResourceKind::Knowledge]);
 
-            process::process_tick(&mut state);
+            process::process_tick(&mut context);
         }
 
-        assert_eq!(0, state.resources[ResourceKind::Fuel]);
-        assert_eq!(1, state.resources[ResourceKind::Knowledge]);
+        assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(1, context.state.resources[ResourceKind::Knowledge]);
     }
 
     #[test]
     fn invoke_no_resources() {
-        let mut state = init_test_game_state();
+        let mut context = GameContext::init_test_game_context();
         let test_edict = get_test_edict("TestEdict");
 
-        assert_eq!("Insufficient resources for edict", edict(&mut state, &test_edict).unwrap_err().to_string());
+        assert_eq!("Insufficient resources for edict", edict(&mut context, &test_edict).unwrap_err().to_string());
     }
 
     #[test]
     fn invoke_can_not_while_any_edict_in_flight() {
-        let mut state = init_test_game_state();
-        state.resources[ResourceKind::Fuel] = 1;
+        let mut context = GameContext::init_test_game_context();
+        context.state.resources[ResourceKind::Fuel] = 1;
         let test_edict = get_test_edict("TestEdict");
 
-        edict(&mut state, &test_edict).unwrap();
+        edict(&mut context, &test_edict).unwrap();
 
         let other_test_edict = get_test_edict("OtherTestEdict");
 
-        assert_eq!("Edict already in progress", edict(&mut state, &other_test_edict).unwrap_err().to_string());
+        assert_eq!("Edict already in progress", edict(&mut context, &other_test_edict).unwrap_err().to_string());
     }
 
     #[test]
     fn invoke_twice() {
-        let mut state = init_test_game_state();
-        state.resources[ResourceKind::Fuel] = 2;
+        let mut context = GameContext::init_test_game_context();
+        context.state.resources[ResourceKind::Fuel] = 2;
         let test_edict = get_test_edict("TestEdict");
 
-        edict(&mut state, &test_edict).unwrap();
-        assert_eq!("Edict already in progress", edict(&mut state, &test_edict).unwrap_err().to_string());
+        edict(&mut context, &test_edict).unwrap();
+        assert_eq!("Edict already in progress", edict(&mut context, &test_edict).unwrap_err().to_string());
     }
 }

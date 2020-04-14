@@ -94,3 +94,26 @@ impl GameState {
         self.actions.iter_mut().filter(|x| x.name == name).nth(0)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::state::GameState;
+
+    #[test]
+    fn serialization() {
+        let state = GameState::init_test_game_state();
+        let save = state.save();
+        let state = GameState::init_from_json(save);
+        assert_eq!(2, state.regions.len());
+    }
+
+    #[test]
+    fn buildings() {
+        let state = GameState::init_test_game_state();
+        let buildings = state.buildings();
+        assert_eq!(3, buildings.len());
+        assert_eq!("Test Building", buildings.get(0).unwrap().name);
+        assert_eq!("Test Building", buildings.get(1).unwrap().name);
+        assert_eq!("Test Gather Hut", buildings.get(2).unwrap().name);
+    }
+}

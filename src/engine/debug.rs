@@ -25,12 +25,12 @@ pub fn dump_state(state: &GameState) {
 }
 
 pub fn load_default_state(context: &mut GameContext) {
-    *context = init_new_game_context();
+    *context = GameContext::init_new_game_context();
 }
 
 pub fn max_resources(context: &mut GameContext) {
     for i in 0..NUM_RESOURCES {
-        context.state.resources[i] = context.derived_state.storage[i];
+        context.state.resources[i] = context.storage[i];
     }
     context.state.resources[ResourceKind::Instability] = 0;
 }

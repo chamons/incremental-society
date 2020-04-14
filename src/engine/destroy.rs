@@ -49,7 +49,7 @@ fn get_building_name(state: &GameState, region_index: usize, building_index: usi
 
 fn apply_job_loss(context: &mut GameContext, region_index: usize, building_index: usize) {
     let building_name = get_building_name(&context.state, region_index, building_index);
-    let building = context.find_building(&building_name).clone();
+    let building = context.find_building(&building_name);
 
     jobs::reduce_active_jobs_by_loss(context, &building);
 }

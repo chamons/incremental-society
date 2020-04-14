@@ -53,7 +53,7 @@ pub fn build(context: &mut GameContext, building: Building, region_index: usize)
 pub fn apply_build(context: &mut GameContext, building: &str, region_index: usize) {
     let building = context.find_building(building);
     let region = context.state.regions.get_mut(region_index).unwrap();
-    region.add_building(building.clone());
+    region.add_building(building);
     context.recalculate();
 }
 

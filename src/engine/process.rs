@@ -38,7 +38,7 @@ fn apply_actions(context: &mut GameContext) {
             DelayedAction::Build(building, region_index) => build::apply_build(context, building, *region_index),
             DelayedAction::Destroy(region_index, building_index) => destroy::apply_destroy(context, *region_index, *building_index),
             DelayedAction::Research(research) => research::apply_research(context, research),
-            DelayedAction::Upgrade(upgrades) => upgrade::apply_upgrade(context, upgrades.iter().map(|x| context.find_upgrade(x).clone()).collect()),
+            DelayedAction::Upgrade(upgrades) => upgrade::apply_upgrade(context, upgrades.iter().map(|x| context.find_upgrade(x)).collect()),
         }
     }
 }

@@ -1,5 +1,11 @@
-
 ## Todo Now
+
+- Game Context Refactor
+   - Audit APIs that _can_ take GameState but should take GameContext
+   - Review diff and then PR
+- Edict Outcome
+   - Now hang RNG on GameContext
+   - Implement effectiveness on edict that uses RNG
 
 - Archaic Age
    - Range of edict outcomes

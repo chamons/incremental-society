@@ -1,13 +1,13 @@
 use super::{EngineError, GameContext};
-use crate::state::{DelayedAction, Edict, GameState, Waiter};
+use crate::state::{DelayedAction, Edict, Waiter};
 
-pub fn can_invoke_edict(state: &GameState, edict: &Edict) -> Result<(), EngineError> {
-    if state.actions.iter().any(|x| x.action.is_edict()) {
+pub fn can_invoke_edict(context: &GameContext, edict: &Edict) -> Result<(), EngineError> {
+    if context.state.actions.iter().any(|x| x.action.is_edict()) {
         return Err(EngineError::init("Edict already in progress"));
     }
 
     for cost in &edict.conversion.input {
-        if !state.resources.has_amount(&cost) {
+        if !context.state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for edict"));
         }
     }
@@ -16,7 +16,7 @@ pub fn can_invoke_edict(state: &GameState, edict: &Edict) -> Result<(), EngineEr
 }
 
 pub fn edict(context: &mut GameContext, edict: &Edict) -> Result<(), EngineError> {
-    can_invoke_edict(&context.state, edict)?;
+    can_invoke_edict(context, edict)?;
 
     context.state.resources.remove_range(&edict.conversion.input);
 

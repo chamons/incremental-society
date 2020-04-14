@@ -10,7 +10,7 @@ fn handle_build_command(screen: &mut Screen, context: &mut GameContext) {
     let building_names: Vec<&String> = building_options.iter().map(|x| &x.name).collect();
     let selection = Selection::init_list(
         &building_names[..],
-        |o| engine::can_build_building(&context.state, &&building_options[o]).is_ok(),
+        |o| engine::can_build_building(context, &&building_options[o]).is_ok(),
         |o| building_options[o].details(),
     );
 
@@ -19,7 +19,7 @@ fn handle_build_command(screen: &mut Screen, context: &mut GameContext) {
             let building = building_options[building_index].clone();
             let name = building.name.clone();
             let regions: Vec<String> = context.state.regions.iter().map(|x| x.name.to_string()).collect();
-            let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(&context.state, o).is_ok(), |_| vec![]);
+            let selection = Selection::init_list(&regions, |o| engine::can_build_in_region(context, o).is_ok(), |_| vec![]);
             match screen.show_modal_selection(selection) {
                 Some(region_index) => match engine::build(context, building, region_index) {
                     Err(e) => screen.set_message(e.to_string()),
@@ -39,11 +39,7 @@ fn handle_destroy_command(screen: &mut Screen, context: &mut GameContext) {
         Some(region_index) => {
             let buildings: Vec<String> = context.state.regions[region_index].buildings.iter().map(|x| x.name.to_string()).collect();
             if !buildings.is_empty() {
-                let selection = Selection::init_list(
-                    &buildings,
-                    |o| engine::can_destroy_building(&context.state, region_index, o).is_ok(),
-                    |_| vec![],
-                );
+                let selection = Selection::init_list(&buildings, |o| engine::can_destroy_building(context, region_index, o).is_ok(), |_| vec![]);
                 match screen.show_modal_selection(selection) {
                     Some(building_index) => {
                         let building_name = &buildings[building_index];
@@ -66,7 +62,7 @@ fn handle_edict_command(screen: &mut Screen, context: &mut GameContext) {
 
     let selection = Selection::init_list(
         &edict_names,
-        |o| engine::can_invoke_edict(&context.state, &edicts.get(o).unwrap()).is_ok(),
+        |o| engine::can_invoke_edict(context, &edicts.get(o).unwrap()).is_ok(),
         |o| edicts.get(o).unwrap().conversion.details(),
     );
     match screen.show_modal_selection(selection) {
@@ -88,7 +84,7 @@ fn handle_research_command(screen: &mut Screen, context: &mut GameContext) {
 
     let selection = Selection::init_list(
         &research_names,
-        |o| engine::can_research(&context.state, &research.get(o).unwrap()).is_ok(),
+        |o| engine::can_research(context, &research.get(o).unwrap()).is_ok(),
         |o| research.get(o).unwrap().details(),
     );
     match screen.show_modal_selection(selection) {
@@ -111,7 +107,7 @@ fn handle_debug_command(screen: &mut Screen, context: &mut GameContext) {
     match screen.show_modal_selection(selection) {
         Some(debug_index) => match debug_index {
             0 => engine::dump_state(&context.state),
-            1 => engine::load_default_state(context),
+            1 => *context = engine::load_default_state(),
             2 => engine::max_resources(context),
             3 => engine::complete_actions(&mut context.state),
             _ => screen.clear_message(),

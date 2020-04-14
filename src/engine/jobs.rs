@@ -20,7 +20,7 @@ pub fn add_job(context: &mut GameContext, name: &str) -> Result<(), EngineError>
                 }
 
                 if context.state.action_with_name(name).is_some() {
-                    reset_conversion_status(&mut context.state, name);
+                    reset_conversion_status(context, name);
                 }
 
                 context.recalculate();
@@ -40,9 +40,9 @@ pub fn remove_job(context: &mut GameContext, name: &str) -> Result<(), EngineErr
                 if *current_count > 0 {
                     *current_count -= 1;
                     if *current_count == 0 {
-                        clear_conversion(&mut context.state, name);
+                        clear_conversion(context, name);
                     } else if context.state.action_with_name(name).is_some() {
-                        reset_conversion_status(&mut context.state, name);
+                        reset_conversion_status(context, name);
                     }
 
                     context.recalculate();
@@ -69,9 +69,9 @@ pub fn reduce_active_jobs_by_loss(context: &mut GameContext, building: &Building
             context.state.jobs.insert((*job_lost).to_string(), new_building_max);
 
             if new_building_max == 0 {
-                clear_conversion(&mut context.state, job_lost);
+                clear_conversion(context, job_lost);
             } else {
-                reset_conversion_status(&mut context.state, job_lost);
+                reset_conversion_status(context, job_lost);
             }
         }
     }

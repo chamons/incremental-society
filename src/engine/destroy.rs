@@ -1,8 +1,8 @@
 use super::{jobs, EngineError, GameContext};
 use crate::state::{DelayedAction, GameState, Waiter, DESTROY_LENGTH};
 
-pub fn can_destroy_building(state: &GameState, region_index: usize, building_index: usize) -> Result<(), EngineError> {
-    let region = state.regions.get(region_index);
+pub fn can_destroy_building(context: &GameContext, region_index: usize, building_index: usize) -> Result<(), EngineError> {
+    let region = context.state.regions.get(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
     }
@@ -18,7 +18,7 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
         return Err(EngineError::init(format!("Unable to destroy {}", building.name)));
     }
 
-    if state.actions.iter().any(|x| x.action.is_destroy()) {
+    if context.state.actions.iter().any(|x| x.action.is_destroy()) {
         return Err(EngineError::init("Unable to destroy due to another destruction taking place already."));
     }
 
@@ -26,7 +26,7 @@ pub fn can_destroy_building(state: &GameState, region_index: usize, building_ind
 }
 
 pub fn destroy(context: &mut GameContext, region_index: usize, building_index: usize) -> Result<(), EngineError> {
-    can_destroy_building(&context.state, region_index, building_index)?;
+    can_destroy_building(context, region_index, building_index)?;
 
     let region = context.state.regions.get(region_index).unwrap();
     let building = region.buildings.get(building_index).unwrap();

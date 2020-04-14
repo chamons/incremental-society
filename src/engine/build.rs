@@ -1,8 +1,8 @@
 use super::{EngineError, GameContext};
-use crate::state::{Building, DelayedAction, GameState, Waiter, BUILD_LENGTH};
+use crate::state::{Building, DelayedAction, Waiter, BUILD_LENGTH};
 
-pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(), EngineError> {
-    let region = state.regions.get(region_index);
+pub fn can_build_in_region(context: &GameContext, region_index: usize) -> Result<(), EngineError> {
+    let region = context.state.regions.get(region_index);
     if region.is_none() {
         return Err(EngineError::init(format!("Could not find index {}", region_index)));
     }
@@ -12,16 +12,16 @@ pub fn can_build_in_region(state: &GameState, region_index: usize) -> Result<(),
         return Err(EngineError::init("Insufficient room for building"));
     }
 
-    if state.actions.iter().any(|x| x.action.is_build()) {
+    if context.state.actions.iter().any(|x| x.action.is_build()) {
         return Err(EngineError::init("Unable to build due to another building already in progress."));
     }
 
     Ok(())
 }
 
-pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), EngineError> {
+pub fn can_build_building(context: &GameContext, building: &Building) -> Result<(), EngineError> {
     for cost in &building.build_cost {
-        if !state.resources.has_amount(&cost) {
+        if !context.state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for build cost"));
         }
     }
@@ -34,8 +34,8 @@ pub fn can_build_building(state: &GameState, building: &Building) -> Result<(), 
 }
 
 pub fn build(context: &mut GameContext, building: Building, region_index: usize) -> Result<(), EngineError> {
-    can_build_in_region(&context.state, region_index)?;
-    can_build_building(&context.state, &building)?;
+    can_build_in_region(context, region_index)?;
+    can_build_building(context, &building)?;
 
     context.state.resources.remove_range(&building.build_cost);
 

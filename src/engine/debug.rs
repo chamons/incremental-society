@@ -24,8 +24,8 @@ pub fn dump_state(state: &GameState) {
     write_debug_info("incremental-society-state.txt", state.save());
 }
 
-pub fn load_default_state(context: &mut GameContext) {
-    *context = GameContext::init_new_game_context();
+pub fn load_default_state() -> GameContext {
+    GameContext::init_new_game_context()
 }
 
 pub fn max_resources(context: &mut GameContext) {

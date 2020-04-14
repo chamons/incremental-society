@@ -1,18 +1,18 @@
 use super::{EngineError, GameContext};
 
-use crate::state::{DelayedAction, GameState, Research, Waiter, RESEARCH_LENGTH};
+use crate::state::{DelayedAction, Research, Waiter, RESEARCH_LENGTH};
 
-pub fn can_research(state: &GameState, research: &Research) -> Result<(), EngineError> {
-    if state.actions.iter().any(|x| x.action.is_research()) {
+pub fn can_research(context: &GameContext, research: &Research) -> Result<(), EngineError> {
+    if context.state.actions.iter().any(|x| x.action.is_research()) {
         return Err(EngineError::init("Research already in progress"));
     }
 
-    if !research.is_available(&state) {
+    if !research.is_available(&context.state) {
         return Err(EngineError::init("Unmet dependency for research"));
     }
 
     for cost in &research.cost {
-        if !state.resources.has_amount(&cost) {
+        if !context.state.resources.has_amount(&cost) {
             return Err(EngineError::init("Insufficient resources for research"));
         }
     }
@@ -21,7 +21,7 @@ pub fn can_research(state: &GameState, research: &Research) -> Result<(), Engine
 }
 
 pub fn research(context: &mut GameContext, research: &Research) -> Result<(), EngineError> {
-    can_research(&context.state, research)?;
+    can_research(context, research)?;
 
     context.state.resources.remove_range(&research.cost);
 

@@ -1,5 +1,5 @@
 use super::GameContext;
-use crate::state::{DelayedAction, GameState, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
+use crate::state::{DelayedAction, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
 use std::collections::HashSet;
 
 pub fn apply_convert(context: &mut GameContext, name: &str) {
@@ -24,14 +24,14 @@ pub fn start_missing_converts(context: &mut GameContext) {
     }
 }
 
-pub fn reset_conversion_status(state: &mut GameState, name: &str) {
-    state.action_with_name_mut(name).unwrap().reset();
+pub fn reset_conversion_status(context: &mut GameContext, name: &str) {
+    context.state.action_with_name_mut(name).unwrap().reset();
 }
 
-pub fn clear_conversion(state: &mut GameState, name: &str) -> Option<Waiter> {
-    let to_remove = state.action_with_name(name)?;
-    let pos_to_remove = state.actions.iter().position(|x| x.name == to_remove.name)?;
-    Some(state.actions.remove(pos_to_remove))
+pub fn clear_conversion(context: &mut GameContext, name: &str) -> Option<Waiter> {
+    let to_remove = context.state.action_with_name(name)?;
+    let pos_to_remove = context.state.actions.iter().position(|x| x.name == to_remove.name)?;
+    Some(context.state.actions.remove(pos_to_remove))
 }
 
 #[cfg(test)]
@@ -126,7 +126,7 @@ mod tests {
         process::process_tick(&mut context);
         assert_eq!(1, starting_tick - context.state.action_with_name("TestChop").unwrap().current_tick);
 
-        reset_conversion_status(&mut context.state, "TestChop");
+        reset_conversion_status(&mut context, "TestChop");
 
         assert_eq!(starting_tick, context.state.action_with_name("TestChop").unwrap().current_tick);
     }
@@ -138,7 +138,7 @@ mod tests {
         process::process_tick(&mut context);
         assert_is_some(context.state.action_with_name("TestChop"));
 
-        clear_conversion(&mut context.state, "TestChop").unwrap();
+        clear_conversion(&mut context, "TestChop").unwrap();
         assert_is_none(context.state.action_with_name("TestChop"));
     }
 
@@ -148,6 +148,6 @@ mod tests {
         add_job(&mut context, "TestChop").unwrap();
 
         process::process_tick(&mut context);
-        assert_is_none(clear_conversion(&mut context.state, "TestGather"));
+        assert_is_none(clear_conversion(&mut context, "TestGather"));
     }
 }

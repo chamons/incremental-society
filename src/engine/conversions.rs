@@ -106,15 +106,15 @@ mod tests {
     #[test]
     fn state_none_if_no_jobs_set() {
         let mut context = GameContext::init_test_game_context();
-        assert_eq!(1, context.state.actions.len());
 
         build(&mut context, get_test_building("Test Hunt Cabin"), 0).unwrap();
         for _ in 0..BUILD_LENGTH {
             process::process_tick(&mut context);
         }
+        add_job(&mut context, "TestHunt").unwrap();
 
         start_missing_converts(&mut context);
-        assert_eq!(1, context.state.actions.len());
+        assert_eq!(1, context.state.actions.iter().filter(|x| x.action.is_conversion()).count());
     }
 
     #[test]

@@ -11,13 +11,13 @@ fn main() {
     loop {
         let now = Instant::now();
 
-        if handle_input(&mut screen, &mut state) {
+        if handle_input(&mut screen, &mut context) {
             break;
         }
 
-        screen.draw(&state);
+        screen.draw(&context);
 
-        if let Some(msg) = engine::process_tick(&mut state) {
+        if let Some(msg) = engine::process_tick(&mut context) {
             screen.set_message(msg);
         }
 

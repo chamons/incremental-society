@@ -47,7 +47,7 @@ fn apply_actions(context: &mut GameContext) {
 fn sustain_population(context: &mut GameContext) {
     const FOOD_PER_POP: i64 = 5;
     const INSTABILITY_PER_MISSING_FOOD: i64 = 3;
-    let state = &context.state;
+    let state = &mut context.state;
 
     let required_food = state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {

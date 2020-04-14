@@ -47,10 +47,20 @@ pub fn apply_upgrade(context: &mut GameContext, upgrades: Vec<Upgrade>) {
     // We must first recalculate to take into account the new upgraded buildings
     context.recalculate();
 
+    let mut new_buildings: HashMap<String, Building> = HashMap::new();
+
+    for r in &context.state.regions {
+        for b in &r.buildings {
+            if !new_buildings.contains_key(&b.name) {
+                new_buildings.insert(b.name.to_string(), context.find_building(&b.name));
+            }
+        }
+    }
+
     // Since we can toggle between upgrades (for a price) it is easier to check "update" redo every thing that can be upgraded (building/edict)
     for r in &mut context.state.regions {
         for i in 0..r.buildings.len() {
-            r.buildings[i] = context.find_building(&r.buildings[i].name);
+            r.buildings[i] = new_buildings[&r.buildings[i].name[..]].clone();
         }
     }
 

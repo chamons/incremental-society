@@ -1,6 +1,6 @@
 use crate::console_ui::{clear_color, set_color, Colors, OptionList, Selection};
 use crate::engine::GameContext;
-use crate::state::{DelayedAction, GameState, ResourceKind, NUM_RESOURCES};
+use crate::state::{DelayedAction, ResourceKind, NUM_RESOURCES};
 use pancurses::{Input, Window};
 
 pub struct Screen {
@@ -96,33 +96,33 @@ impl Screen {
         let mut y = 1;
 
         // Left Column
-        y = self.draw_country_stats(&context.state, y);
+        y = self.draw_country_stats(context, y);
         y = self.draw_jobs(context, y);
         y = self.draw_resources(context, y);
 
         // Right Column
         y = 1;
-        y = self.draw_regions(&context.state, y);
+        y = self.draw_regions(context, y);
         y += 1;
-        y = self.draw_conversions(&context.state, y);
+        y = self.draw_conversions(context, y);
 
         self.draw_messages();
         self.draw_prompt();
     }
 
-    fn draw_conversions(&self, state: &GameState, y: i32) -> i32 {
+    fn draw_conversions(&self, context: &GameContext, y: i32) -> i32 {
         let mut y = y;
         const CONVERSION_BAR_LENGTH: f64 = 30.0;
 
         y = self.write_right("Conversions", 0, y);
         y += 1;
 
-        for c in &state.actions {
+        for c in &context.state.actions {
             let percentage = c.percentage();
 
             // Don't update y, as we have to draw the bar
             if let DelayedAction::Conversion(name) = &c.action {
-                let count = state.job_count(name);
+                let count = context.state.job_count(name);
                 self.write_right(&format!("{} ({})", name, count), 0, y);
             } else {
                 self.write_right(&c.name, 0, y);
@@ -143,13 +143,13 @@ impl Screen {
     }
 
     #[allow(unused_assignments)]
-    fn draw_regions(&self, state: &GameState, y: i32) -> i32 {
-        if !self.should_draw_civilized(state) {
+    fn draw_regions(&self, context: &GameContext, y: i32) -> i32 {
+        if !self.should_draw_civilized(context) {
             return 0;
         }
 
         let mut y = y;
-        for r in &state.regions {
+        for r in &context.state.regions {
             y = self.write_right("---------------------------------------------------------------------", 0, y);
 
             y = self.write_region_contents(&r.name, 0, y);
@@ -184,18 +184,18 @@ impl Screen {
         y
     }
 
-    fn should_draw_civilized(&self, state: &GameState) -> bool {
-        state.age == "Archaic"
+    fn should_draw_civilized(&self, context: &GameContext) -> bool {
+        context.state.age == "Archaic"
     }
 
     #[allow(unused_assignments)]
-    fn draw_country_stats(&self, state: &GameState, y: i32) -> i32 {
+    fn draw_country_stats(&self, context: &GameContext, y: i32) -> i32 {
         let mut y = self.write("Elysium", 1, y);
         y += 1;
-        y = self.write(format!("{} Age", state.age), 1, y);
-        if self.should_draw_civilized(state) {
-            y = self.write(format!("Population: {}", state.pops), 1, y + 1);
-            let unemployed = state.pops - state.total_jobs_assigned();
+        y = self.write(format!("{} Age", context.state.age), 1, y);
+        if self.should_draw_civilized(context) {
+            y = self.write(format!("Population: {}", context.state.pops), 1, y + 1);
+            let unemployed = context.state.pops - context.state.total_jobs_assigned();
             if unemployed > 0 {
                 y = self.write(format!("Unemployed: {}", unemployed), 1, y);
             }
@@ -209,7 +209,7 @@ impl Screen {
     fn draw_jobs(&self, context: &GameContext, y: i32) -> i32 {
         let mut y = y;
 
-        if self.should_draw_civilized(&context.state) {
+        if self.should_draw_civilized(context) {
             y += 1;
 
             let mut jobs: Vec<&String> = context.current_building_jobs.keys().collect();

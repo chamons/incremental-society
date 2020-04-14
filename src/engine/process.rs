@@ -2,7 +2,7 @@ use std::cmp::min;
 
 use super::GameContext;
 use super::{build, conversions, destroy, edict, research, upgrade};
-use crate::state::{DelayedAction, ResourceKind};
+use crate::state::{tick_actions, DelayedAction, ResourceKind};
 
 pub fn process_tick(context: &mut GameContext) -> Option<&'static str> {
     conversions::start_missing_converts(context);
@@ -24,7 +24,7 @@ fn handle_possible_revolt(context: &mut GameContext) {
 }
 
 fn apply_actions(context: &mut GameContext) {
-    let fired_actions = super::actions::tick_actions(&mut context.state.actions);
+    let fired_actions = tick_actions(&mut context.state.actions);
     for action in fired_actions.iter() {
         match action {
             DelayedAction::Edict(name) => edict::apply_edict(context, name),

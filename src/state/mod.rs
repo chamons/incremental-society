@@ -9,7 +9,7 @@ mod research;
 mod resources;
 mod upgrade;
 
-pub use actions::{DelayedAction, Waiter};
+pub use actions::{tick_actions, DelayedAction, Waiter};
 pub use building::Building;
 pub use constants::*;
 pub use conversion::{Conversion, ConversionLength};

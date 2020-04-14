@@ -1,7 +1,7 @@
 use crate::console_ui::{Screen, Selection};
 use crate::engine;
 use crate::engine::GameContext;
-use crate::state::{format_resource_list, Building, GameState, Upgrade, MAX_UPGRADES};
+use crate::state::{format_resource_list, Building, Upgrade, MAX_UPGRADES};
 
 use pancurses::Input;
 

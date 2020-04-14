@@ -1,7 +1,7 @@
 use std::cmp;
 
 use super::GameContext;
-use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
+use crate::state::{ResourceKind, NUM_RESOURCES};
 
 pub fn honor_storage_and_floors(context: &mut GameContext) {
     for i in 0..NUM_RESOURCES {

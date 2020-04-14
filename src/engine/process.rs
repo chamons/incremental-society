@@ -1,9 +1,8 @@
 use std::cmp::min;
-use std::collections::{HashMap, HashSet};
 
 use super::GameContext;
 use super::{build, conversions, destroy, edict, research, upgrade};
-use crate::state::{DelayedAction, GameState, Region, ResourceKind, ResourceTotal};
+use crate::state::{DelayedAction, ResourceKind};
 
 pub fn process_tick(context: &mut GameContext) -> Option<&'static str> {
     conversions::start_missing_converts(context);
@@ -67,7 +66,7 @@ mod tests {
     use super::*;
     use crate::data::tests::*;
     use crate::engine::{add_job, edict};
-    use crate::state::{GameState, ResourceKind};
+    use crate::state::ResourceKind;
 
     #[test]
     fn process_tick_storage_limits_honored() {

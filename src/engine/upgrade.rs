@@ -413,10 +413,8 @@ mod tests {
 
     #[test]
     fn apply_research_costs_per_added() {
-        let mut context = GameContext::init_empty_test_game_context();
-
+        let context = GameContext::init_empty_test_game_context();
         let total_cost = get_upgrade_cost(&context, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]);
-
         assert_eq!(total_cost[0].amount, 50);
     }
 

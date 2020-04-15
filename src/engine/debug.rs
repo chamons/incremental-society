@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-use super::process::init_new_game_state;
+use super::game_context::GameContext;
 use crate::state::{GameState, ResourceKind, NUM_RESOURCES};
 
 use dirs::home_dir;
@@ -24,15 +24,15 @@ pub fn dump_state(state: &GameState) {
     write_debug_info("incremental-society-state.txt", state.save());
 }
 
-pub fn load_default_state(state: &mut GameState) {
-    *state = init_new_game_state();
+pub fn load_default_state() -> GameContext {
+    GameContext::init_new_game_context()
 }
 
-pub fn max_resources(state: &mut GameState) {
+pub fn max_resources(context: &mut GameContext) {
     for i in 0..NUM_RESOURCES {
-        state.resources[i] = state.derived_state.storage[i];
+        context.state.resources[i] = context.storage[i];
     }
-    state.resources[ResourceKind::Instability] = 0;
+    context.state.resources[ResourceKind::Instability] = 0;
 }
 
 pub fn complete_actions(state: &mut GameState) {

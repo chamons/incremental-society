@@ -6,18 +6,18 @@ use incremental_society::engine;
 use incremental_society::console_ui::{handle_input, Screen};
 
 fn main() {
-    let mut state = engine::init_new_game_state();
+    let mut context = engine::GameContext::init_new_game_context();
     let mut screen = Screen::init();
     loop {
         let now = Instant::now();
 
-        if handle_input(&mut screen, &mut state) {
+        if handle_input(&mut screen, &mut context) {
             break;
         }
 
-        screen.draw(&state);
+        screen.draw(&context);
 
-        if let Some(msg) = engine::process_tick(&mut state) {
+        if let Some(msg) = engine::process_tick(&mut context) {
             screen.set_message(msg);
         }
 

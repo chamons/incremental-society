@@ -11,11 +11,12 @@ pub type ResourceQuantity = i64;
 pub enum ResourceKind {
     Food,
     Wood,
+    Stone,
     Knowledge,
     Instability,
 
     // This must be incremented every time an item is added
-    Size = 4,
+    Size = 5,
 }
 
 impl fmt::Display for ResourceKind {

@@ -75,7 +75,7 @@ mod tests {
             "TestConversion",
             ConversionLength::Medium,
             vec![ResourceAmount::init(ResourceKind::Food, 10)],
-            vec![ResourceAmount::init(ResourceKind::Fuel, 10)],
+            vec![ResourceAmount::init(ResourceKind::Wood, 10)],
         )
     }
 
@@ -83,7 +83,7 @@ mod tests {
     fn has_input() {
         let mut resources = ResourceTotal::init();
         resources[ResourceKind::Food] = 10;
-        resources[ResourceKind::Fuel] = 5;
+        resources[ResourceKind::Wood] = 5;
 
         let conversion = create_test_conversion();
 
@@ -101,7 +101,7 @@ mod tests {
         conversion.convert(&mut resources);
 
         assert_eq!(0, resources[ResourceKind::Food]);
-        assert_eq!(10, resources[ResourceKind::Fuel]);
+        assert_eq!(10, resources[ResourceKind::Wood]);
     }
 
     #[test]
@@ -113,7 +113,7 @@ mod tests {
         conversion.convert(&mut resources);
 
         assert_eq!(5, resources[ResourceKind::Food]);
-        assert_eq!(0, resources[ResourceKind::Fuel]);
+        assert_eq!(0, resources[ResourceKind::Wood]);
     }
 
     #[test]

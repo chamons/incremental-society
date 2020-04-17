@@ -78,7 +78,7 @@ mod tests {
         add_job(&mut context, "TestGather").unwrap();
         add_job(&mut context, "TestChop").unwrap();
         context.state.resources[ResourceKind::Food] = context.storage[ResourceKind::Food] - 1;
-        context.state.resources[ResourceKind::Fuel] = context.storage[ResourceKind::Fuel] - 1;
+        context.state.resources[ResourceKind::Wood] = context.storage[ResourceKind::Wood] - 1;
         process_tick(&mut context);
 
         context.state.action_with_name_mut("TestGather").unwrap().current_tick = 1;
@@ -86,13 +86,13 @@ mod tests {
         process_tick(&mut context);
 
         assert_eq!(context.state.resources[ResourceKind::Food], context.storage[ResourceKind::Food]);
-        assert_eq!(context.state.resources[ResourceKind::Fuel], context.storage[ResourceKind::Fuel]);
+        assert_eq!(context.state.resources[ResourceKind::Wood], context.storage[ResourceKind::Wood]);
     }
 
     #[test]
     fn invoke_takes_times_to_complete() {
         let mut context = GameContext::init_empty_test_game_context();
-        context.state.resources[ResourceKind::Fuel] = 2;
+        context.state.resources[ResourceKind::Wood] = 2;
         let test_edict = get_test_edict("TestEdict");
 
         edict(&mut context, &test_edict).unwrap();
@@ -109,7 +109,7 @@ mod tests {
         let mut context = GameContext::init_test_game_context();
         process_tick(&mut context);
         assert_eq!(0, context.state.resources[ResourceKind::Food]);
-        assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(0, context.state.resources[ResourceKind::Wood]);
     }
 
     #[test]
@@ -123,7 +123,7 @@ mod tests {
         process_tick(&mut context);
 
         assert_eq!(0, context.state.resources[ResourceKind::Food]);
-        assert_eq!(1, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(1, context.state.resources[ResourceKind::Wood]);
     }
 
     #[test]
@@ -139,7 +139,7 @@ mod tests {
         process_tick(&mut context);
 
         assert_eq!(1, context.state.resources[ResourceKind::Food]);
-        assert_eq!(2, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(2, context.state.resources[ResourceKind::Wood]);
     }
 
     #[test]

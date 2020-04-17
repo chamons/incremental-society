@@ -9,7 +9,7 @@ lazy_static! {
         let mut m = HashMap::new();
         m.insert(
             "TestChop",
-            Conversion::init("TestChop", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Fuel, 1)]),
+            Conversion::init("TestChop", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Wood, 1)]),
         );
         m.insert(
             "TestGather",
@@ -34,8 +34,8 @@ lazy_static! {
             "Test Building",
             Building::init("Test Building")
                 .with_jobs(vec!["TestChop", "TestChop"])
-                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 10)])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 15)])
+                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Wood, 10)])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Wood, 15)])
                 .with_housing(2),
         );
         m.insert(
@@ -79,7 +79,7 @@ lazy_static! {
                 Conversion::init(
                     "TestEdict",
                     ConversionLength::Short,
-                    vec![ResourceAmount::init(ResourceKind::Fuel, 1)],
+                    vec![ResourceAmount::init(ResourceKind::Wood, 1)],
                     vec![ResourceAmount::init(ResourceKind::Knowledge, 1)],
                 ),
             ),

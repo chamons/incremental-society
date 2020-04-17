@@ -16,7 +16,7 @@ lazy_static! {
                 "Gathering",
                 ConversionLength::Long,
                 vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 5), ResourceAmount::init(ResourceKind::Fuel, 1)],
+                vec![ResourceAmount::init(ResourceKind::Food, 5), ResourceAmount::init(ResourceKind::Wood, 1)],
             ),
         );
 
@@ -34,7 +34,7 @@ lazy_static! {
             Building::init("Settlement")
                 .with_storage(vec![
                     ResourceAmount::init(ResourceKind::Food, 250),
-                    ResourceAmount::init(ResourceKind::Fuel, 50),
+                    ResourceAmount::init(ResourceKind::Wood, 50),
                     ResourceAmount::init(ResourceKind::Knowledge, 50),
                     ResourceAmount::init(ResourceKind::Instability, 50),
                 ])
@@ -46,8 +46,8 @@ lazy_static! {
             "Gathering Camp",
             Building::init("Gathering Camp")
                 .with_jobs(vec!["Gathering", "Gathering", "Hunting"])
-                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Fuel, 0)])
-                .with_storage(vec![ResourceAmount::init(ResourceKind::Fuel, 25)])
+                .with_build_cost(vec![ResourceAmount::init(ResourceKind::Wood, 0)])
+                .with_storage(vec![ResourceAmount::init(ResourceKind::Wood, 25)])
                 .with_research("Settlement"),
         );
 

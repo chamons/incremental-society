@@ -87,7 +87,7 @@ mod tests {
         let building = get_test_building("Test Building");
 
         let mut context = GameContext::init_empty_test_game_context();
-        context.state.resources[ResourceKind::Fuel] = 20;
+        context.state.resources[ResourceKind::Wood] = 20;
         context.state.regions = vec![Region::init_with_buildings(
             "First Region",
             vec![building.clone(), building.clone(), building.clone(), building.clone()],
@@ -123,13 +123,13 @@ mod tests {
     fn build_valid_building() {
         let mut context = GameContext::init_empty_test_game_context();
         context.state.regions = vec![Region::init_with_buildings("First Region", vec![get_test_building("Test Building")])];
-        context.state.resources[ResourceKind::Fuel] = 20;
+        context.state.resources[ResourceKind::Wood] = 20;
         context.recalculate();
 
-        let old_storage = context.storage[ResourceKind::Fuel];
+        let old_storage = context.storage[ResourceKind::Wood];
 
         build(&mut context, get_test_building("Test Building"), 0).unwrap();
-        assert_eq!(10, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(10, context.state.resources[ResourceKind::Wood]);
 
         for _ in 0..BUILD_LENGTH {
             assert_eq!(1, context.state.buildings().len());
@@ -137,6 +137,6 @@ mod tests {
         }
 
         assert_eq!(2, context.state.buildings().len());
-        assert_ne!(old_storage, context.storage[ResourceKind::Fuel]);
+        assert_ne!(old_storage, context.storage[ResourceKind::Wood]);
     }
 }

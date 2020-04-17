@@ -52,23 +52,23 @@ mod tests {
         let mut context = GameContext::init_empty_test_game_context();
         let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
         context.state.regions.push(region);
-        context.state.resources[ResourceKind::Fuel] = 1;
+        context.state.resources[ResourceKind::Wood] = 1;
         context.recalculate();
 
         let test_edict = get_test_edict("TestEdict");
 
         edict(&mut context, &test_edict).unwrap();
         context.state.action_with_name("TestEdict").unwrap();
-        assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(0, context.state.resources[ResourceKind::Wood]);
 
         for _ in 0..test_edict.conversion.tick_length() {
-            assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+            assert_eq!(0, context.state.resources[ResourceKind::Wood]);
             assert_eq!(0, context.state.resources[ResourceKind::Knowledge]);
 
             process::process_tick(&mut context);
         }
 
-        assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
+        assert_eq!(0, context.state.resources[ResourceKind::Wood]);
         assert_eq!(1, context.state.resources[ResourceKind::Knowledge]);
     }
 
@@ -77,7 +77,7 @@ mod tests {
         let mut context = GameContext::init_empty_test_game_context();
         let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
         context.state.regions.push(region);
-        context.state.resources[ResourceKind::Fuel] = 1;
+        context.state.resources[ResourceKind::Wood] = 1;
         context.recalculate();
 
         let test_edict = get_test_edict("TestEdictWithRange");
@@ -96,7 +96,7 @@ mod tests {
         let mut context = GameContext::init_empty_test_game_context();
         let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
         context.state.regions.push(region);
-        context.state.resources[ResourceKind::Fuel] = 1;
+        context.state.resources[ResourceKind::Wood] = 1;
         context.recalculate();
 
         let test_edict = get_test_edict("TestEdictWithRangeBonus");
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn invoke_can_not_while_any_edict_in_flight() {
         let mut context = GameContext::init_test_game_context();
-        context.state.resources[ResourceKind::Fuel] = 1;
+        context.state.resources[ResourceKind::Wood] = 1;
         let test_edict = get_test_edict("TestEdict");
 
         edict(&mut context, &test_edict).unwrap();
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn invoke_twice() {
         let mut context = GameContext::init_test_game_context();
-        context.state.resources[ResourceKind::Fuel] = 2;
+        context.state.resources[ResourceKind::Wood] = 2;
         let test_edict = get_test_edict("TestEdict");
 
         edict(&mut context, &test_edict).unwrap();

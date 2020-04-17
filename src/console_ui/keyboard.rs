@@ -148,16 +148,22 @@ fn handle_upgrade_command(screen: &mut Screen, context: &mut GameContext) {
 }
 
 fn handle_job_increase(screen: &mut Screen, context: &mut GameContext) {
-    match engine::add_job(context, &screen.current_job_name(context)) {
-        Err(e) => screen.set_message(e.to_string()),
-        _ => screen.clear_message(),
+    match screen.current_job_name(context) {
+        Some(name) => match engine::add_job(context, &name) {
+            Err(e) => screen.set_message(e.to_string()),
+            _ => screen.clear_message(),
+        },
+        None => {}
     }
 }
 
 fn handle_job_decrease(screen: &mut Screen, context: &mut GameContext) {
-    match engine::remove_job(context, &screen.current_job_name(context)) {
-        Err(e) => screen.set_message(e.to_string()),
-        _ => screen.clear_message(),
+    match screen.current_job_name(context) {
+        Some(name) => match engine::remove_job(context, &name) {
+            Err(e) => screen.set_message(e.to_string()),
+            _ => screen.clear_message(),
+        },
+        None => {}
     }
 }
 

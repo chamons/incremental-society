@@ -87,6 +87,12 @@ impl ResourceTotal {
         }
     }
 
+    pub fn add_range_with_coefficient(&mut self, elements: &[ResourceAmount], m: f32) {
+        for x in elements {
+            self.add(x.kind, (m * x.amount as f32).ceil() as ResourceQuantity);
+        }
+    }
+
     pub fn remove(&mut self, resource: ResourceKind, amount: ResourceQuantity) {
         crate::engine::die_unless(
             self.has(resource, amount),
@@ -176,6 +182,32 @@ mod tests {
         assert!(total.has(ResourceKind::Fuel, 5));
         total.add(ResourceKind::Fuel, 10);
         assert!(total.has(ResourceKind::Fuel, 15));
+    }
+
+    #[test]
+    fn resource_total_add_range() {
+        let mut total = ResourceTotal::init();
+        total[ResourceKind::Fuel] = 5;
+        total.add_range(&vec![
+            ResourceAmount::init(ResourceKind::Fuel, 10),
+            ResourceAmount::init(ResourceKind::Knowledge, 10),
+        ]);
+
+        assert!(total.has(ResourceKind::Fuel, 15));
+        assert!(total.has(ResourceKind::Knowledge, 10));
+    }
+
+    #[test]
+    fn resource_total_add_range_with_coefficient() {
+        let mut total = ResourceTotal::init();
+        total[ResourceKind::Fuel] = 5;
+        total.add_range_with_coefficient(
+            &vec![ResourceAmount::init(ResourceKind::Fuel, 10), ResourceAmount::init(ResourceKind::Knowledge, 10)],
+            2.5,
+        );
+
+        assert!(total.has(ResourceKind::Fuel, 30));
+        assert!(total.has(ResourceKind::Knowledge, 25));
     }
 
     #[test]

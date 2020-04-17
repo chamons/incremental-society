@@ -156,10 +156,10 @@ fn apply_building_upgrade(building: &mut Building, upgrade: &UpgradeActions) {
     }
 }
 
-#[allow(clippy::single_match)]
 fn apply_edict_upgrade(edict: &mut Edict, upgrade: &UpgradeActions) {
     match upgrade {
         UpgradeActions::ChangeEdictLength(length) => edict.conversion.length = *length,
+        UpgradeActions::AddEdictBonus(amount) => edict.effective_bonus += amount,
         _ => {}
     }
 }
@@ -249,6 +249,7 @@ mod tests {
         let available = available_to_upgrade(&context.state);
         assert_eq!(initial_count + 1, available.len());
     }
+
     #[test]
     fn available_to_upgrade_shows_all_unlocked() {
         let mut context = GameContext::init_empty_test_game_context();
@@ -301,22 +302,36 @@ mod tests {
         assert_eq!(3, context.state.buildings()[0].jobs.len());
     }
 
-    #[test]
-    fn has_edict_applied() {
-        let mut context = GameContext::init_empty_test_game_context();
-
+    fn apply_edict_upgrade(context: &mut GameContext, name: &str) {
         give_test_update_resources(&mut context.state, 1);
-        upgrade(&mut context, vec![get_test_upgrade("TestEdictUpgrade")]).unwrap();
+        upgrade(context, vec![get_test_upgrade(name)]).unwrap();
 
         for _ in 0..UPGRADE_LENGTH {
             assert_eq!(0, context.state.upgrades.len());
             assert_eq!(ConversionLength::Short, context.find_edict("TestEdict").conversion.length);
-            process::process_tick(&mut context);
+            process::process_tick(context);
         }
 
         assert_eq!(1, context.state.upgrades.len());
-        assert_eq!(ConversionLength::Long, context.find_edict("TestEdict").conversion.length);
         assert_eq!(0, context.state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn edict_length_applied() {
+        let mut context = GameContext::init_empty_test_game_context();
+
+        apply_edict_upgrade(&mut context, "TestEdictUpgrade");
+
+        assert_eq!(ConversionLength::Long, context.find_edict("TestEdict").conversion.length);
+    }
+
+    #[test]
+    fn edict_bonus_applied() {
+        let mut context = GameContext::init_empty_test_game_context();
+
+        apply_edict_upgrade(&mut context, "TestEdictUpgradeYield");
+
+        assert_eq!(1, context.find_edict("TestEdict").effective_bonus);
     }
 
     #[test]

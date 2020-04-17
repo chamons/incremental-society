@@ -30,7 +30,13 @@ pub fn edict(context: &mut GameContext, edict: &Edict) -> Result<(), EngineError
 pub fn apply_edict(context: &mut GameContext, name: &str) {
     // We've already paid the cost on queue, so just get the output
     let edict = context.find_edict(name);
-    context.state.resources.add_range(&edict.conversion.output);
+    match edict.effective_range {
+        1 => context.state.resources.add_range(&edict.conversion.output),
+        n => {
+            let modifier = context.random(1.0 / n as f32, n as f32) + edict.effective_bonus as f32;
+            context.state.resources.add_range_with_coefficient(&edict.conversion.output, modifier);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +70,44 @@ mod tests {
 
         assert_eq!(0, context.state.resources[ResourceKind::Fuel]);
         assert_eq!(1, context.state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn invoke_with_range() {
+        let mut context = GameContext::init_empty_test_game_context();
+        let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
+        context.state.regions.push(region);
+        context.state.resources[ResourceKind::Fuel] = 1;
+        context.recalculate();
+
+        let test_edict = get_test_edict("TestEdictWithRange");
+
+        edict(&mut context, &test_edict).unwrap();
+
+        for _ in 0..test_edict.conversion.tick_length() {
+            process::process_tick(&mut context);
+        }
+
+        assert_eq!(12, context.state.resources[ResourceKind::Knowledge]);
+    }
+
+    #[test]
+    fn invoke_with_range_bonus() {
+        let mut context = GameContext::init_empty_test_game_context();
+        let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
+        context.state.regions.push(region);
+        context.state.resources[ResourceKind::Fuel] = 1;
+        context.recalculate();
+
+        let test_edict = get_test_edict("TestEdictWithRangeBonus");
+
+        edict(&mut context, &test_edict).unwrap();
+
+        for _ in 0..test_edict.conversion.tick_length() {
+            process::process_tick(&mut context);
+        }
+
+        assert_eq!(22, context.state.resources[ResourceKind::Knowledge]);
     }
 
     #[test]

@@ -1,3 +1,5 @@
+use rand::{rngs::SmallRng, Rng, SeedableRng};
+
 use std::collections::HashMap;
 
 use super::UpgradeState;
@@ -16,10 +18,11 @@ pub struct GameContext {
     upgrade_state: UpgradeState,
     pub current_building_jobs: HashMap<String, u32>,
     pub storage: ResourceTotal,
+    rand: SmallRng,
 }
 
 impl GameContext {
-    pub fn init_from_state(state: GameState) -> GameContext {
+    pub fn init_from_state(state: GameState, rand: SmallRng) -> GameContext {
         let upgrade_state = UpgradeState::calculate(&state);
         let current_building_jobs = GameContext::jobs_with_counts(&state);
         let storage = GameContext::calculate_storage(&state);
@@ -29,30 +32,35 @@ impl GameContext {
             upgrade_state,
             current_building_jobs,
             storage,
+            rand,
         }
     }
 
     pub fn init_new_game_context() -> GameContext {
         let state = GameState::init_new_game_state();
-        GameContext::init_from_state(state)
+        GameContext::init_from_state(state, SmallRng::from_entropy())
     }
 
     #[cfg(test)]
     pub fn init_test_game_context() -> GameContext {
         let state = GameState::init_test_game_state();
-        GameContext::init_from_state(state)
+        GameContext::init_from_state(state, SmallRng::from_seed([42; 16]))
     }
 
     #[cfg(test)]
     pub fn init_empty_test_game_context() -> GameContext {
         let state = GameState::init_test_empty_game_state();
-        GameContext::init_from_state(state)
+        GameContext::init_from_state(state, SmallRng::from_seed([42; 16]))
     }
 
     pub fn recalculate(&mut self) {
         self.upgrade_state = UpgradeState::calculate(&self.state);
         self.current_building_jobs = GameContext::jobs_with_counts(&self.state);
         self.storage = GameContext::calculate_storage(&self.state);
+    }
+
+    pub fn random(&mut self, lower: f32, upper: f32) -> f32 {
+        self.rand.gen_range(lower, upper)
     }
 
     fn jobs_with_counts(state: &GameState) -> HashMap<String, u32> {

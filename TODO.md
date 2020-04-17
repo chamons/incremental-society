@@ -1,11 +1,6 @@
 ## Todo Now
 
-- Edict Outcome
-   - Now hang RNG on GameContext
-   - Implement effectiveness on edict that uses RNG
-
 - Archaic Age
-   - Range of edict outcomes
    - Upgrades to edict outcomes from tech
    
 - Stability loss causes game reset, not just "bad things"

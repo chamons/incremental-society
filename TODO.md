@@ -1,7 +1,6 @@
 ## Todo Now
 
 - Archaic Age
-   - Range of edict outcomes
    - Upgrades to edict outcomes from tech
    
 - Stability loss causes game reset, not just "bad things"

@@ -13,7 +13,7 @@ lazy_static = "1.4"
 itertools = "0.8.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.44"
-rand = "0.7"
+rand = { version = "0.7", features = ["small_rng"]}
 assert_approx_eq = "1.1.0"
 derive_is_enum_variant = "0.1.1"
 dirs = "2.0.2"

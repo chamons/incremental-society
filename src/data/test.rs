@@ -56,7 +56,7 @@ lazy_static! {
             "Stability Building",
             Building::init("Stability Building").with_storage(vec![
                 ResourceAmount::init(ResourceKind::Food, 30),
-                ResourceAmount::init(ResourceKind::Knowledge, 10),
+                ResourceAmount::init(ResourceKind::Knowledge, 30),
                 ResourceAmount::init(ResourceKind::Instability, 10),
             ]),
         );
@@ -91,6 +91,18 @@ lazy_static! {
                 Conversion::init("TestEdictWithResearch", ConversionLength::Short, vec![], vec![]),
             )
             .with_research(vec!["TestNoDeps"]),
+        );
+        e.insert(
+            "TestEdictWithRange",
+            Edict::init(
+                "TestEdictWithRange",
+                Conversion::init(
+                    "TestEdictWithRange",
+                    ConversionLength::Short,
+                    vec![],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 10)],
+                )
+            ).with_effective_range(4) /* .25 - 4x*/
         );
         e.insert(
             "OtherTestEdict",

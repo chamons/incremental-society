@@ -192,7 +192,7 @@ impl Screen {
     }
 
     fn should_draw_civilized(&self, context: &GameContext) -> bool {
-        context.state.age == "Archaic"
+        context.state.age != "Archaic"
     }
 
     #[allow(unused_assignments)]

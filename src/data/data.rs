@@ -32,7 +32,6 @@ lazy_static! {
         m.insert(
             "Settlement",
             Building::init("Settlement")
-                .with_jobs(vec!["Gathering", "Gathering", "Hunting"])
                 .with_storage(vec![
                     ResourceAmount::init(ResourceKind::Food, 250),
                     ResourceAmount::init(ResourceKind::Fuel, 50),

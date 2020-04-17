@@ -105,6 +105,18 @@ lazy_static! {
             ).with_effective_range(4) /* .25 - 4x*/
         );
         e.insert(
+            "TestEdictWithRangeBonus",
+            Edict::init(
+                "TestEdictWithRangeBonus",
+                Conversion::init(
+                    "TestEdictWithRangeBonus",
+                    ConversionLength::Short,
+                    vec![],
+                    vec![ResourceAmount::init(ResourceKind::Knowledge, 10)],
+                )
+            ).with_effective_range(4).with_effective_bonus(1) /* 1.25 - 5x*/
+        );
+        e.insert(
             "OtherTestEdict",
             Edict::init("OtherTestEdict", Conversion::init("OtherTestEdict", ConversionLength::Short, vec![], vec![])),
         );
@@ -143,6 +155,16 @@ lazy_static! {
             Upgrade::init(
                 "TestEdictUpgrade",
                 vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long)],
+                vec!["TestEdict".to_owned()],
+            )
+            .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),
+        );
+
+        m.insert(
+            "TestEdictUpgradeYield",
+            Upgrade::init(
+                "TestEdictUpgradeYield",
+                vec![UpgradeActions::AddEdictBonus(1)],
                 vec!["TestEdict".to_owned()],
             )
             .with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 25)]),

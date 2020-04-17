@@ -19,6 +19,7 @@ pub struct GameContext {
     pub current_building_jobs: HashMap<String, u32>,
     pub storage: ResourceTotal,
     rand: SmallRng,
+    pub is_lost: bool,
 }
 
 impl GameContext {
@@ -33,6 +34,7 @@ impl GameContext {
             current_building_jobs,
             storage,
             rand,
+            is_lost: false,
         }
     }
 

@@ -55,7 +55,7 @@ lazy_static! {
         m.insert(
             "Stability Building",
             Building::init("Stability Building").with_storage(vec![
-                ResourceAmount::init(ResourceKind::Food, 30),
+                ResourceAmount::init(ResourceKind::Food, 300),
                 ResourceAmount::init(ResourceKind::Knowledge, 30),
                 ResourceAmount::init(ResourceKind::Instability, 10),
             ]),

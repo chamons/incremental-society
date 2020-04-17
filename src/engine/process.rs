@@ -5,21 +5,24 @@ use super::{build, conversions, destroy, edict, research, upgrade};
 use crate::state::{tick_actions, DelayedAction, ResourceKind};
 
 pub fn process_tick(context: &mut GameContext) -> Option<&'static str> {
+    if context.is_lost {
+        return None;
+    }
+
     conversions::start_missing_converts(context);
 
     apply_actions(context);
 
     super::limits::honor_storage_and_floors(context);
 
-    handle_possible_revolt(context);
+    handle_possible_game_loss(context);
     None
 }
 
-fn handle_possible_revolt(context: &mut GameContext) {
-    if context.state.resources[ResourceKind::Instability] > 0
-        && context.state.resources[ResourceKind::Instability] == context.storage[ResourceKind::Instability]
-    {
-        // TODO - Lose Game
+fn handle_possible_game_loss(context: &mut GameContext) {
+    let resources = &context.state.resources;
+    if resources[ResourceKind::Instability] > 0 && resources[ResourceKind::Instability] == context.storage[ResourceKind::Instability] {
+        context.is_lost = true;
     }
 }
 
@@ -66,7 +69,7 @@ mod tests {
     use super::*;
     use crate::data::tests::*;
     use crate::engine::{add_job, edict};
-    use crate::state::ResourceKind;
+    use crate::state::{Region, ResourceKind};
 
     #[test]
     fn process_tick_storage_limits_honored() {
@@ -159,5 +162,18 @@ mod tests {
 
         assert_eq!(0, context.state.resources[ResourceKind::Food]);
         assert!(context.state.resources[ResourceKind::Instability] > 0);
+    }
+
+    #[test]
+    fn game_list_after_max_instability() {
+        let mut context = GameContext::init_empty_test_game_context();
+        let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
+        context.state.regions.push(region);
+        context.recalculate();
+        context.state.resources[ResourceKind::Instability] = context.storage[ResourceKind::Instability];
+
+        process_tick(&mut context);
+
+        assert!(context.is_lost);
     }
 }

@@ -17,6 +17,12 @@ fn main() {
 
         screen.draw(&context);
 
+        if context.is_lost {
+            screen.show_modal_dialog(vec!["Game Lost".to_owned()]);
+            screen.set_message("Starting new game...");
+            context = engine::GameContext::init_new_game_context();
+        }
+
         if let Some(msg) = engine::process_tick(&mut context) {
             screen.set_message(msg);
         }

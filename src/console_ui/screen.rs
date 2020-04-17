@@ -1,4 +1,4 @@
-use crate::console_ui::{clear_color, set_color, Colors, OptionList, Selection};
+use crate::console_ui::{clear_color, run_modal_dialog, set_color, Colors, OptionList, Selection};
 use crate::engine::GameContext;
 use crate::state::{DelayedAction, ResourceKind, NUM_RESOURCES};
 use pancurses::{Input, Window};
@@ -51,6 +51,10 @@ impl Screen {
 
     pub fn get_input(&self) -> Option<Input> {
         self.term.getch()
+    }
+
+    pub fn show_modal_dialog(&self, options: Vec<String>) {
+        run_modal_dialog(&self.term, options);
     }
 
     pub fn show_modal_selection(&self, options: Vec<Selection>) -> Option<usize> {

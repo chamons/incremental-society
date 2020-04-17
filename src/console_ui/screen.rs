@@ -6,7 +6,7 @@ use pancurses::{Input, Window};
 pub struct Screen {
     messages: String,
     message_timeout: u32,
-    pub term: Window,
+    term: Window,
     job_pos: usize,
 }
 

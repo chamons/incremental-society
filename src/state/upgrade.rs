@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use super::{check_available, ConversionLength, GameState, ResourceAmount};
+use super::{check_available_by_research, ConversionLength, GameState, ResourceAmount};
 
 #[derive(Debug, Clone)]
 pub enum UpgradeActions {
@@ -44,7 +44,11 @@ pub struct Upgrade {
 
 impl Upgrade {
     pub fn is_available(&self, state: &GameState) -> bool {
-        check_available(&self.research, &state)
+        if state.upgrades.contains(&self.name) {
+            return false;
+        }
+
+        check_available_by_research(&self.research, &state)
     }
 
     pub fn init(name: &str, upgrades: Vec<UpgradeActions>, items_upgraded: Vec<String>) -> Upgrade {

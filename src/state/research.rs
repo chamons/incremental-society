@@ -33,7 +33,7 @@ impl Research {
             return false;
         }
 
-        check_available(&self.dependencies, &state)
+        check_available_by_research(&self.dependencies, &state)
     }
 
     pub fn details(&self) -> Vec<String> {
@@ -43,7 +43,7 @@ impl Research {
     }
 }
 
-pub fn check_available(dependencies: &HashSet<String>, state: &GameState) -> bool {
+pub fn check_available_by_research(dependencies: &HashSet<String>, state: &GameState) -> bool {
     for d in dependencies {
         if !state.research.contains(d) {
             return false;

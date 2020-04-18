@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::{check_available, Conversion, GameState};
+use super::{check_available_by_research, Conversion, GameState};
 
 #[derive(Debug, Clone)]
 pub struct Edict {
@@ -48,6 +48,6 @@ impl Edict {
     }
 
     pub fn is_available(&self, state: &GameState) -> bool {
-        check_available(&self.research, &state)
+        check_available_by_research(&self.research, &state)
     }
 }

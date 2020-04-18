@@ -91,7 +91,7 @@ impl Screen {
         let mut keys: Vec<&String> = context.current_building_jobs.keys().collect();
         keys.sort();
         match keys.get(self.job_pos) {
-            Some(name) => Some(name.to_string()),
+            Some(name) => Some((*name).to_string()),
             _ => None,
         }
     }

@@ -2,7 +2,7 @@ use std::cmp::min;
 
 use super::GameContext;
 use super::{build, conversions, destroy, edict, research, upgrade};
-use crate::state::{tick_actions, DelayedAction, ResourceKind};
+use crate::state::{tick_actions, DelayedAction, ResourceKind, BASE_STABILITY_GAIN};
 
 pub fn process_tick(context: &mut GameContext) -> Option<&'static str> {
     if context.is_lost {
@@ -49,19 +49,22 @@ fn apply_actions(context: &mut GameContext) {
 fn sustain_population(context: &mut GameContext) {
     const FOOD_PER_POP: i64 = 5;
     const INSTABILITY_PER_MISSING_FOOD: i64 = 3;
+
+    let mut stability_gain: i64 = context.get_stability_gain() as i64;
     let state = &mut context.state;
 
     let required_food = state.pops as i64 * FOOD_PER_POP;
     if state.resources[ResourceKind::Food] >= required_food {
         state.resources.remove(ResourceKind::Food, required_food);
-        state
-            .resources
-            .remove(ResourceKind::Instability, min(state.pops as i64, state.resources[ResourceKind::Instability]));
+        stability_gain += (BASE_STABILITY_GAIN * state.pops) as i64;
     } else {
         let missing_food = required_food - state.resources[ResourceKind::Food];
         state.resources.remove(ResourceKind::Food, state.resources[ResourceKind::Food]);
         state.resources.add(ResourceKind::Instability, missing_food * INSTABILITY_PER_MISSING_FOOD);
     }
+
+    stability_gain = min(stability_gain, state.resources[ResourceKind::Instability]);
+    state.resources.remove(ResourceKind::Instability, stability_gain);
 }
 
 #[cfg(test)]
@@ -175,5 +178,24 @@ mod tests {
         process_tick(&mut context);
 
         assert!(context.is_lost);
+    }
+
+    #[test]
+    fn stability_gain_with_upgrade() {
+        let mut context = GameContext::init_empty_test_game_context();
+        let region = Region::init_with_buildings("Region", vec![get_test_building("Stability Building")]);
+        context.state.regions.push(region);
+        context.recalculate();
+
+        sustain_population(&mut context);
+        let one_tick_stability_loss = context.state.resources[ResourceKind::Instability];
+
+        context.state.upgrades.insert("StabilityUpgrade".to_owned());
+        context.recalculate();
+        sustain_population(&mut context);
+
+        let one_tick_with_research_stability_loss = context.state.resources[ResourceKind::Instability] - one_tick_stability_loss;
+
+        assert!(one_tick_with_research_stability_loss < one_tick_stability_loss);
     }
 }

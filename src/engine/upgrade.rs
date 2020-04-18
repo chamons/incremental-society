@@ -102,6 +102,19 @@ pub fn current_conversions(state: &GameState) -> Vec<Conversion> {
     conversions
 }
 
+pub fn get_current_stability_gain(state: &GameState) -> u32 {
+    let upgrades: Vec<Upgrade> = state.upgrades.iter().map(|u| get_upgrade(u)).collect();
+
+    upgrades
+        .iter()
+        .flat_map(|u| &u.upgrades)
+        .map(|a| match a {
+            UpgradeActions::ImproveStabilityGain(gain) => *gain,
+            _ => 0,
+        })
+        .sum()
+}
+
 pub fn available_to_research(state: &GameState) -> Vec<Research> {
     get_research_by_research(&state)
 }
@@ -489,5 +502,19 @@ mod tests {
         context.state.research.insert("TestNoDeps".to_owned());
 
         assert_eq!(base_invoke.len() + 1, available_to_invoke(&context.state).len());
+    }
+
+    #[test]
+    fn current_stability_gain() {
+        let mut context = GameContext::init_empty_test_game_context();
+        context.state.upgrades.insert("StabilityUpgrade".to_owned());
+        context.recalculate();
+
+        assert_eq!(2, context.get_stability_gain());
+
+        context.state.upgrades.insert("OtherStabilityUpgrade".to_owned());
+        context.recalculate();
+
+        assert_eq!(3, context.get_stability_gain());
     }
 }

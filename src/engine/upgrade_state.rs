@@ -8,6 +8,7 @@ pub struct UpgradeState {
     pub available_research: Vec<Research>,
     pub available_upgrade: Vec<Upgrade>,
     pub available_conversions: Vec<Conversion>,
+    pub stability_gain: u32,
 }
 
 impl UpgradeState {
@@ -18,6 +19,7 @@ impl UpgradeState {
             available_research: vec![],
             available_upgrade: vec![],
             available_conversions: vec![],
+            stability_gain: 0,
         }
     }
 
@@ -28,6 +30,7 @@ impl UpgradeState {
             available_research: upgrade::available_to_research(state),
             available_upgrade: upgrade::available_to_upgrade(state),
             available_conversions: upgrade::current_conversions(state),
+            stability_gain: upgrade::get_current_stability_gain(state),
         }
     }
 

@@ -1,6 +1,5 @@
 ## Todo Now
 
-- Instability reductions from tech
 - Rework upgrade system (?)
 
 - Archaic Age

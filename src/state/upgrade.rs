@@ -14,6 +14,7 @@ pub enum UpgradeActions {
     ChangeConversionLength(ConversionLength),
     ChangeConversionInput(ResourceAmount),
     ChangeConversionOutput(ResourceAmount),
+    ImproveStabilityGain(u32),
 }
 
 impl UpgradeActions {
@@ -27,6 +28,7 @@ impl UpgradeActions {
             UpgradeActions::ChangeConversionLength(length) => format!("Changes conversion length to {:?}", length),
             UpgradeActions::ChangeConversionInput(input) => format!("Adds {:?} to required conversion input", input),
             UpgradeActions::ChangeConversionOutput(output) => format!("Adds {:?} to required conversion output", output),
+            UpgradeActions::ImproveStabilityGain(output) => format!("Adds {:?} to stability gain over time.", output),
         }
     }
 }

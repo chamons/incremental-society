@@ -13,3 +13,4 @@ pub const MAX_UPGRADES: usize = 2;
 pub const REGION_BUILDING_COUNT: usize = 4;
 
 pub const SUSTAIN_POP_NAME: &str = "Sustain Population";
+pub const BASE_STABILITY_GAIN: u32 = 1;

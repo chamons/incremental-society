@@ -201,6 +201,28 @@ lazy_static! {
             Upgrade::init("TestUpgradeWithDep", vec![], vec![]).with_research(vec!["UpgradeTech"]),
         );
 
+        m.insert(
+            "StabilityUpgrade",
+            Upgrade::init(
+                "StabilityUpgrade",
+                vec![
+                    UpgradeActions::ImproveStabilityGain(2),
+                ],
+                vec![],
+            )
+        );
+
+        m.insert(
+            "OtherStabilityUpgrade",
+            Upgrade::init(
+                "OtherStabilityUpgrade",
+                vec![
+                    UpgradeActions::ImproveStabilityGain(1),
+                ],
+                vec![],
+            )
+        );
+
         m
     };
 }

@@ -1,6 +1,6 @@
 pub const BUILD_LENGTH: u32 = 30 * 8;
 pub const UPGRADE_LENGTH: u32 = 30 * 12;
-pub const SUSTAIN_POP_DURATION: u32 = 80;
+pub const SUSTAIN_POP_LENGTH: u32 = 80;
 pub const DESTROY_LENGTH: u32 = 30 * 5;
 pub const RESEARCH_LENGTH: u32 = 30 * 8;
 

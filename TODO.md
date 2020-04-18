@@ -1,15 +1,5 @@
 ## Todo Now
 
-- Rework upgrade system (?)
-
-- Archaic Age
-   - Upgrades to edict outcomes from tech
-   
-- Stability loss causes game reset, not just "bad things"
-
-
-## Later
-
 - Show KB buttons at bottom of screen
 - Gameplay pass through Archaic
 - Gameplay pass through Stone Age

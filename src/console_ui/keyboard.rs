@@ -1,7 +1,7 @@
 use crate::console_ui::{Screen, Selection};
 use crate::engine;
 use crate::engine::GameContext;
-use crate::state::{format_resource_list, Building, Upgrade, MAX_UPGRADES};
+use crate::state::Building;
 
 use pancurses::Input;
 
@@ -119,31 +119,21 @@ fn handle_debug_command(screen: &mut Screen, context: &mut GameContext) {
 fn handle_upgrade_command(screen: &mut Screen, context: &mut GameContext) {
     let upgrades = &context.get_available_upgrade();
     let upgrade_names: Vec<&String> = upgrades.iter().map(|x| &x.name).collect();
+    let selection = Selection::init_list(
+        &upgrade_names,
+        |o| engine::can_apply_upgrades(context, &upgrades.get(o).unwrap()).is_ok(),
+        |o| upgrades.get(o).unwrap().details(),
+    );
+    match screen.show_modal_selection(selection) {
+        Some(upgrade_index) => {
+            let upgrade = upgrades.get(upgrade_index).unwrap().clone();
 
-    let selection = Selection::init_list(&upgrade_names, |_| true, |o| upgrades.get(o).unwrap().details());
-    match screen.show_modal_multiple_selection(
-        selection,
-        upgrade_names.iter().map(|x| context.state.upgrades.contains(*x)).collect(),
-        |selection| {
-            let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            engine::can_apply_upgrades(&context, &selected_upgrades[..]).is_ok()
-        },
-        |selection| {
-            let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            [
-                format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
-                format_resource_list("", &engine::get_upgrade_cost(&context, &selected_upgrades[..])),
-            ]
-        },
-    ) {
-        Some(selected_items) => {
-            let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            match engine::upgrade(context, selected_upgrades) {
+            match engine::upgrade(context, &upgrade) {
                 Err(e) => screen.set_message(e.to_string()),
                 _ => screen.clear_message(),
             }
         }
-        _ => screen.clear_message(),
+        None => screen.clear_message(),
     }
 }
 

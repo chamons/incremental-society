@@ -107,7 +107,7 @@ fn available_to_build(state: &GameState) -> Vec<Building> {
     buildings
 }
 
-pub fn available_to_invoke(state: &GameState) -> Vec<Edict> {
+fn available_to_invoke(state: &GameState) -> Vec<Edict> {
     let upgrades = get_upgrades_by_name(&state.upgrades);
     let mut edicts: Vec<Edict> = get_edict_by_research(&state);
 

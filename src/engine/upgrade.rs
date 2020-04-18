@@ -61,25 +61,6 @@ pub fn apply_upgrade(context: &mut GameContext, upgrades: &str) {
     context.recalculate();
 }
 
-pub fn get_upgrade_cost(context: &GameContext, upgrades: &[Upgrade]) -> Vec<ResourceAmount> {
-    let current: HashSet<&String> = context.state.upgrades.iter().collect();
-    let desired: HashSet<&String> = upgrades.iter().map(|x| &x.name).collect();
-
-    let difference: HashSet<_> = desired.symmetric_difference(&current).collect();
-
-    let mut cost: Vec<ResourceAmount> = vec![];
-    for diff in difference.iter().map(|x| context.find_upgrade(x)) {
-        for c in diff.cost.iter() {
-            if let Some(i) = cost.iter().position(|x| x.kind == c.kind) {
-                cost[i].amount += c.amount;
-            } else {
-                cost.push(c.clone());
-            }
-        }
-    }
-    cost
-}
-
 pub fn current_conversions(state: &GameState) -> Vec<Conversion> {
     let upgrades = get_upgrades_by_name(&state.upgrades);
     let mut conversions: Vec<Conversion> = get_conversion_names().iter().map(|x| get_conversion(x)).collect();
@@ -385,34 +366,6 @@ mod tests {
         assert_eq!(2, context.state.buildings()[0].jobs.len());
         assert_eq!(2, context.find_conversion("TestChop").output.len());
         assert_eq!(ConversionLength::Long, context.find_edict("TestEdict").conversion.length);
-    }
-
-    #[test]
-    fn apply_research_costs_per_added() {
-        let context = GameContext::init_empty_test_game_context();
-        let total_cost = get_upgrade_cost(&context, &vec![get_test_upgrade("TestUpgrade"), get_test_upgrade("TestEdictUpgrade")]);
-        assert_eq!(total_cost[0].amount, 50);
-    }
-
-    #[test]
-    fn apply_research_costs_per_removed() {
-        let mut context = GameContext::init_empty_test_game_context();
-        context.state.upgrades.insert("TestUpgrade".to_owned());
-        context.state.upgrades.insert("TestEdictUpgrade".to_owned());
-
-        let total_cost = get_upgrade_cost(&context, &vec![get_test_upgrade("TestUpgrade")]);
-
-        assert_eq!(total_cost[0].amount, 25);
-    }
-
-    #[test]
-    fn apply_research_costs_per_toggle() {
-        let mut context = GameContext::init_empty_test_game_context();
-        context.state.upgrades.insert("TestUpgrade".to_owned());
-
-        let total_cost = get_upgrade_cost(&context, &vec![get_test_upgrade("TestEdictUpgrade")]);
-
-        assert_eq!(total_cost[0].amount, 50);
     }
 
     #[test]

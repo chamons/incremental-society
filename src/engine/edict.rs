@@ -2,7 +2,7 @@ use super::{EngineError, GameContext};
 use crate::state::{DelayedAction, Edict, Waiter};
 
 pub fn can_invoke_edict(context: &GameContext, edict: &Edict) -> Result<(), EngineError> {
-    if context.state.actions.iter().any(|x| x.action.is_edict()) {
+    if context.state.actions.iter().any(|x| x.name == edict.name) {
         return Err(EngineError::init("Edict already in progress"));
     }
 
@@ -116,19 +116,6 @@ mod tests {
         let test_edict = get_test_edict("TestEdict");
 
         assert_eq!("Insufficient resources for edict", edict(&mut context, &test_edict).unwrap_err().to_string());
-    }
-
-    #[test]
-    fn invoke_can_not_while_any_edict_in_flight() {
-        let mut context = GameContext::init_test_game_context();
-        context.state.resources[ResourceKind::Wood] = 1;
-        let test_edict = get_test_edict("TestEdict");
-
-        edict(&mut context, &test_edict).unwrap();
-
-        let other_test_edict = get_test_edict("OtherTestEdict");
-
-        assert_eq!("Edict already in progress", edict(&mut context, &other_test_edict).unwrap_err().to_string());
     }
 
     #[test]

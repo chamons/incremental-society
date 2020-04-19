@@ -19,10 +19,6 @@ pub struct Edict {
 
 impl Edict {
     pub fn init(name: &str, conversion: Conversion) -> Edict {
-        Edict::init_with_range(name, conversion)
-    }
-
-    pub fn init_with_range(name: &str, conversion: Conversion) -> Edict {
         Edict {
             name: name.to_owned(),
             conversion,

@@ -1,7 +1,7 @@
 use pancurses::Input::Character;
 use pancurses::Window;
 
-pub const MODAL_WIDTH: usize = 60;
+pub const MODAL_WIDTH: usize = 80;
 
 pub fn draw_border(term: &Window, start_x: i32, start_y: i32, height: i32) {
     let border = "-".repeat(MODAL_WIDTH + 1);

@@ -55,7 +55,7 @@ impl Research {
 }
 
 fn append_string_in_chunks(details: &mut Vec<String>, description: &str) {
-    const DETAIL_LINE_LENGTH: usize = 50;
+    const DETAIL_LINE_LENGTH: usize = 70;
     let mut line = String::with_capacity(DETAIL_LINE_LENGTH);
     for word in description.split_whitespace() {
         if line.len() + word.len() > DETAIL_LINE_LENGTH {

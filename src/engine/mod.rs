@@ -21,5 +21,5 @@ pub use game_context::GameContext;
 pub use jobs::{add_job, remove_job};
 pub use process::process_tick;
 pub use research::{can_research, research};
-pub use upgrade::{apply_upgrade, can_apply_upgrades, get_upgrade_cost, upgrade};
+pub use upgrade::{apply_upgrade, can_apply_upgrades, upgrade};
 pub use upgrade_state::UpgradeState;

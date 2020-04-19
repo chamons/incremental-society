@@ -123,4 +123,8 @@ impl GameContext {
     pub fn get_available_conversions(&self) -> &Vec<Conversion> {
         &self.upgrade_state.available_conversions
     }
+
+    pub fn get_stability_gain(&self) -> u32 {
+        self.upgrade_state.stability_gain
+    }
 }

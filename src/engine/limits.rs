@@ -30,11 +30,11 @@ mod tests {
     fn storage_limits_honored() {
         let mut context = GameContext::init_test_game_context();
         context.state.resources[ResourceKind::Food] = context.storage[ResourceKind::Food] + 1;
-        context.state.resources[ResourceKind::Fuel] = context.storage[ResourceKind::Fuel] + 1;
+        context.state.resources[ResourceKind::Wood] = context.storage[ResourceKind::Wood] + 1;
 
         honor_storage_and_floors(&mut context);
         assert_eq!(context.state.resources[ResourceKind::Food], context.storage[ResourceKind::Food]);
-        assert_eq!(context.state.resources[ResourceKind::Fuel], context.storage[ResourceKind::Fuel]);
+        assert_eq!(context.state.resources[ResourceKind::Wood], context.storage[ResourceKind::Wood]);
     }
 
     #[test]

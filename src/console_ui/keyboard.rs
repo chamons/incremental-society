@@ -1,9 +1,16 @@
 use crate::console_ui::{Screen, Selection};
 use crate::engine;
-use crate::engine::GameContext;
-use crate::state::{format_resource_list, Building, Upgrade, MAX_UPGRADES};
+use crate::engine::{EngineError, GameContext};
+use crate::state::Building;
 
 use pancurses::Input;
+
+fn report_engine_result(screen: &mut Screen, result: Result<(), EngineError>) {
+    match result {
+        Err(e) => screen.set_message(e.to_string()),
+        _ => screen.clear_message(),
+    }
+}
 
 fn handle_build_command(screen: &mut Screen, context: &mut GameContext) {
     let building_options: Vec<&Building> = context.get_available_buildings().iter().filter(|x| !x.immortal).collect();
@@ -68,11 +75,7 @@ fn handle_edict_command(screen: &mut Screen, context: &mut GameContext) {
     match screen.show_modal_selection(selection) {
         Some(edict_index) => {
             let edict = edicts.get(edict_index).unwrap().clone();
-
-            match engine::edict(context, &edict) {
-                Err(e) => screen.set_message(e.to_string()),
-                _ => screen.clear_message(),
-            }
+            report_engine_result(screen, engine::edict(context, &edict));
         }
         None => screen.clear_message(),
     }
@@ -90,11 +93,7 @@ fn handle_research_command(screen: &mut Screen, context: &mut GameContext) {
     match screen.show_modal_selection(selection) {
         Some(research_index) => {
             let research = research.get(research_index).unwrap().clone();
-
-            match engine::research(context, &research) {
-                Err(e) => screen.set_message(e.to_string()),
-                _ => screen.clear_message(),
-            }
+            report_engine_result(screen, engine::research(context, &research));
         }
         None => screen.clear_message(),
     }
@@ -119,45 +118,29 @@ fn handle_debug_command(screen: &mut Screen, context: &mut GameContext) {
 fn handle_upgrade_command(screen: &mut Screen, context: &mut GameContext) {
     let upgrades = &context.get_available_upgrade();
     let upgrade_names: Vec<&String> = upgrades.iter().map(|x| &x.name).collect();
-
-    let selection = Selection::init_list(&upgrade_names, |_| true, |o| upgrades.get(o).unwrap().details());
-    match screen.show_modal_multiple_selection(
-        selection,
-        upgrade_names.iter().map(|x| context.state.upgrades.contains(*x)).collect(),
-        |selection| {
-            let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            engine::can_apply_upgrades(&context, &selected_upgrades[..]).is_ok()
-        },
-        |selection| {
-            let selected_upgrades: Vec<Upgrade> = selection.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            [
-                format!("[Enter] to Accept. ({} of {})", selection.len(), MAX_UPGRADES),
-                format_resource_list("", &engine::get_upgrade_cost(&context, &selected_upgrades[..])),
-            ]
-        },
-    ) {
-        Some(selected_items) => {
-            let selected_upgrades = selected_items.iter().map(|x| upgrades.get(*x).unwrap().clone()).collect();
-            match engine::upgrade(context, selected_upgrades) {
-                Err(e) => screen.set_message(e.to_string()),
-                _ => screen.clear_message(),
-            }
+    let selection = Selection::init_list(
+        &upgrade_names,
+        |o| engine::can_apply_upgrades(context, &upgrades.get(o).unwrap()).is_ok(),
+        |o| upgrades.get(o).unwrap().details(),
+    );
+    match screen.show_modal_selection(selection) {
+        Some(upgrade_index) => {
+            let upgrade = upgrades.get(upgrade_index).unwrap().clone();
+            report_engine_result(screen, engine::upgrade(context, &upgrade));
         }
-        _ => screen.clear_message(),
+        None => screen.clear_message(),
     }
 }
 
 fn handle_job_increase(screen: &mut Screen, context: &mut GameContext) {
-    match engine::add_job(context, &screen.current_job_name(context)) {
-        Err(e) => screen.set_message(e.to_string()),
-        _ => screen.clear_message(),
+    if let Some(name) = screen.current_job_name(context) {
+        report_engine_result(screen, engine::add_job(context, &name));
     }
 }
 
 fn handle_job_decrease(screen: &mut Screen, context: &mut GameContext) {
-    match engine::remove_job(context, &screen.current_job_name(context)) {
-        Err(e) => screen.set_message(e.to_string()),
-        _ => screen.clear_message(),
+    if let Some(name) = screen.current_job_name(context) {
+        report_engine_result(screen, engine::remove_job(context, &name));
     }
 }
 

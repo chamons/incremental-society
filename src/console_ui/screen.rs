@@ -87,10 +87,13 @@ impl Screen {
         }
     }
 
-    pub fn current_job_name(&mut self, context: &GameContext) -> String {
+    pub fn current_job_name(&mut self, context: &GameContext) -> Option<String> {
         let mut keys: Vec<&String> = context.current_building_jobs.keys().collect();
         keys.sort();
-        keys[self.job_pos].to_string()
+        match keys.get(self.job_pos) {
+            Some(name) => Some((*name).to_string()),
+            _ => None,
+        }
     }
 
     #[allow(unused_assignments)]
@@ -189,7 +192,7 @@ impl Screen {
     }
 
     fn should_draw_civilized(&self, context: &GameContext) -> bool {
-        context.state.age == "Archaic"
+        context.state.age != "Archaic"
     }
 
     #[allow(unused_assignments)]

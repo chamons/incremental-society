@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use super::{check_available, ConversionLength, GameState, ResourceAmount};
+use super::{check_available_by_research, ConversionLength, GameState, ResourceAmount};
 
 #[derive(Debug, Clone)]
 pub enum UpgradeActions {
@@ -14,6 +14,7 @@ pub enum UpgradeActions {
     ChangeConversionLength(ConversionLength),
     ChangeConversionInput(ResourceAmount),
     ChangeConversionOutput(ResourceAmount),
+    ImproveStabilityGain(u32),
 }
 
 impl UpgradeActions {
@@ -27,6 +28,7 @@ impl UpgradeActions {
             UpgradeActions::ChangeConversionLength(length) => format!("Changes conversion length to {:?}", length),
             UpgradeActions::ChangeConversionInput(input) => format!("Adds {:?} to required conversion input", input),
             UpgradeActions::ChangeConversionOutput(output) => format!("Adds {:?} to required conversion output", output),
+            UpgradeActions::ImproveStabilityGain(output) => format!("Adds {:?} to stability gain over time.", output),
         }
     }
 }
@@ -42,7 +44,11 @@ pub struct Upgrade {
 
 impl Upgrade {
     pub fn is_available(&self, state: &GameState) -> bool {
-        check_available(&self.research, &state)
+        if state.upgrades.contains(&self.name) {
+            return false;
+        }
+
+        check_available_by_research(&self.research, &state)
     }
 
     pub fn init(name: &str, upgrades: Vec<UpgradeActions>, items_upgraded: Vec<String>) -> Upgrade {

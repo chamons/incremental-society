@@ -10,12 +10,13 @@ pub type ResourceQuantity = i64;
 #[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive, Deserialize, Serialize, PartialEq)]
 pub enum ResourceKind {
     Food,
-    Fuel,
+    Wood,
+    Stone,
     Knowledge,
     Instability,
 
     // This must be incremented every time an item is added
-    Size = 4,
+    Size = 5,
 }
 
 impl fmt::Display for ResourceKind {
@@ -154,9 +155,9 @@ mod tests {
     #[test]
     fn resource_total_has_range() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
+        total[ResourceKind::Wood] = 5;
 
-        let mut other = vec![ResourceAmount::init(ResourceKind::Fuel, 10)];
+        let mut other = vec![ResourceAmount::init(ResourceKind::Wood, 10)];
 
         assert!(!total.has_range(&other));
         other[0].amount = 5;
@@ -166,70 +167,70 @@ mod tests {
     #[test]
     fn resource_total_has_enough() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
+        total[ResourceKind::Wood] = 5;
 
-        assert!(total.has(ResourceKind::Fuel, 1));
-        assert!(total.has(ResourceKind::Fuel, 5));
-        assert_eq!(false, total.has(ResourceKind::Fuel, 15));
+        assert!(total.has(ResourceKind::Wood, 1));
+        assert!(total.has(ResourceKind::Wood, 5));
+        assert_eq!(false, total.has(ResourceKind::Wood, 15));
         assert_eq!(false, total.has(ResourceKind::Food, 1));
     }
 
     #[test]
     fn resource_total_add() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
+        total[ResourceKind::Wood] = 5;
 
-        assert!(total.has(ResourceKind::Fuel, 5));
-        total.add(ResourceKind::Fuel, 10);
-        assert!(total.has(ResourceKind::Fuel, 15));
+        assert!(total.has(ResourceKind::Wood, 5));
+        total.add(ResourceKind::Wood, 10);
+        assert!(total.has(ResourceKind::Wood, 15));
     }
 
     #[test]
     fn resource_total_add_range() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
+        total[ResourceKind::Wood] = 5;
         total.add_range(&vec![
-            ResourceAmount::init(ResourceKind::Fuel, 10),
+            ResourceAmount::init(ResourceKind::Wood, 10),
             ResourceAmount::init(ResourceKind::Knowledge, 10),
         ]);
 
-        assert!(total.has(ResourceKind::Fuel, 15));
+        assert!(total.has(ResourceKind::Wood, 15));
         assert!(total.has(ResourceKind::Knowledge, 10));
     }
 
     #[test]
     fn resource_total_add_range_with_coefficient() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
+        total[ResourceKind::Wood] = 5;
         total.add_range_with_coefficient(
-            &vec![ResourceAmount::init(ResourceKind::Fuel, 10), ResourceAmount::init(ResourceKind::Knowledge, 10)],
+            &vec![ResourceAmount::init(ResourceKind::Wood, 10), ResourceAmount::init(ResourceKind::Knowledge, 10)],
             2.5,
         );
 
-        assert!(total.has(ResourceKind::Fuel, 30));
+        assert!(total.has(ResourceKind::Wood, 30));
         assert!(total.has(ResourceKind::Knowledge, 25));
     }
 
     #[test]
     fn resource_total_remove() {
         let mut total = ResourceTotal::init();
-        total[ResourceKind::Fuel] = 5;
-        assert!(total.has(ResourceKind::Fuel, 5));
-        total.remove(ResourceKind::Fuel, 4);
-        assert!(total.has(ResourceKind::Fuel, 1));
+        total[ResourceKind::Wood] = 5;
+        assert!(total.has(ResourceKind::Wood, 5));
+        total.remove(ResourceKind::Wood, 4);
+        assert!(total.has(ResourceKind::Wood, 1));
     }
 
     #[test]
     fn resource_combine() {
         let mut a = ResourceTotal::init();
         a[ResourceKind::Food] = 5;
-        a[ResourceKind::Fuel] = 5;
+        a[ResourceKind::Wood] = 5;
 
         let mut b = ResourceTotal::init();
         b[ResourceKind::Food] = 5;
         a.combine(&b);
 
         assert_eq!(10, a[ResourceKind::Food]);
-        assert_eq!(5, a[ResourceKind::Fuel]);
+        assert_eq!(5, a[ResourceKind::Wood]);
     }
 }

@@ -1,5 +1,5 @@
 use super::GameContext;
-use crate::state::{DelayedAction, Waiter, SUSTAIN_POP_DURATION, SUSTAIN_POP_NAME};
+use crate::state::{DelayedAction, Waiter, SUSTAIN_POP_LENGTH, SUSTAIN_POP_NAME};
 use std::collections::HashSet;
 
 pub fn apply_convert(context: &mut GameContext, name: &str) {
@@ -19,7 +19,7 @@ pub fn start_missing_converts(context: &mut GameContext) {
     }
 
     if context.state.action_with_name(SUSTAIN_POP_NAME).is_none() {
-        let action = Waiter::init_repeating(SUSTAIN_POP_NAME, SUSTAIN_POP_DURATION, DelayedAction::SustainPops());
+        let action = Waiter::init_repeating(SUSTAIN_POP_NAME, SUSTAIN_POP_LENGTH, DelayedAction::SustainPops());
         context.state.actions.push(action);
     }
 }

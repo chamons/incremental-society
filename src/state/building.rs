@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use super::resources::*;
-use super::{check_available, format_resource_list, GameState};
+use super::{check_available_by_research, format_resource_list, GameState};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -68,7 +68,7 @@ impl Building {
     }
 
     pub fn is_available(&self, state: &GameState) -> bool {
-        check_available(&self.research, &state)
+        check_available_by_research(&self.research, &state)
     }
 
     pub fn details(&self) -> Vec<String> {

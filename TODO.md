@@ -1,13 +1,14 @@
 ## Todo Now
 
-- Show KB buttons at bottom of screen
 - Gameplay pass through Archaic
+- Show KB buttons at bottom of screen
 - Gameplay pass through Stone Age
 
 ## Much Later
 
 - Research 1 of 3
 - Gameplay pass through Agricultural Age
+- Game UI
 
 ## QOL
 

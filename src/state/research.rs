@@ -5,6 +5,7 @@ use super::{format_resource_list, GameState, ResourceAmount};
 #[derive(Clone, Debug)]
 pub struct Research {
     pub name: String,
+    pub description: String,
     pub dependencies: HashSet<String>,
     pub cost: Vec<ResourceAmount>,
 }
@@ -13,6 +14,7 @@ impl Research {
     pub fn init(name: &str) -> Research {
         Research {
             name: name.to_owned(),
+            description: "".to_owned(),
             dependencies: HashSet::new(),
             cost: vec![],
         }
@@ -28,6 +30,11 @@ impl Research {
         self
     }
 
+    pub fn with_description(mut self, description: &str) -> Research {
+        self.description = description.to_string();
+        self
+    }
+
     pub fn is_available(&self, state: &GameState) -> bool {
         if state.research.contains(&self.name) {
             return false;
@@ -39,8 +46,26 @@ impl Research {
     pub fn details(&self) -> Vec<String> {
         let mut details: Vec<String> = vec![];
         details.push(format_resource_list("Cost: ", &self.cost));
+
+        if self.description != "" {
+            append_string_in_chunks(&mut details, &self.description);
+        }
         details
     }
+}
+
+fn append_string_in_chunks(details: &mut Vec<String>, description: &str) {
+    const DETAIL_LINE_LENGTH: usize = 50;
+    let mut line = String::with_capacity(DETAIL_LINE_LENGTH);
+    for word in description.split_whitespace() {
+        if line.len() + word.len() > DETAIL_LINE_LENGTH {
+            details.push(line);
+            line = String::with_capacity(DETAIL_LINE_LENGTH);
+        }
+        line.push_str(word);
+        line.push_str(" ");
+    }
+    details.push(line);
 }
 
 pub fn check_available_by_research(dependencies: &HashSet<String>, state: &GameState) -> bool {

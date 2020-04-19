@@ -90,7 +90,7 @@ lazy_static! {
                 "TestEdictWithResearch",
                 Conversion::init("TestEdictWithResearch", ConversionLength::Short, vec![], vec![]),
             )
-            .with_research(vec!["TestNoDeps"]),
+            .with_single_research("TestNoDeps"),
         );
         e.insert(
             "TestEdictWithRange",
@@ -128,7 +128,7 @@ lazy_static! {
 
         m.insert("TestNoDeps", Research::init("TestNoDeps"));
         m.insert("Dep", Research::init("Dep"));
-        m.insert("TestWithDep", Research::init("TestWithDep").with_dependencies(vec!["Dep"]));
+        m.insert("TestWithDep", Research::init("TestWithDep").with_dependency("Dep"));
         m.insert(
             "TestWithCost",
             Research::init("TestWithCost").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
@@ -198,7 +198,7 @@ lazy_static! {
 
         m.insert(
             "TestUpgradeWithDep",
-            Upgrade::init("TestUpgradeWithDep", vec![], vec![]).with_research(vec!["UpgradeTech"]),
+            Upgrade::init("TestUpgradeWithDep", vec![], vec![]).with_single_research("UpgradeTech"),
         );
 
         m.insert(

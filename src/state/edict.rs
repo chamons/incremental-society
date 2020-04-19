@@ -28,6 +28,11 @@ impl Edict {
         }
     }
 
+    pub fn with_single_research(mut self, research: &str) -> Edict {
+        self.research.insert(research.to_string());
+        self
+    }
+
     pub fn with_research(mut self, research: Vec<&str>) -> Edict {
         self.research = research.iter().map(|x| (*x).to_owned()).collect();
         self

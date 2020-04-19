@@ -25,8 +25,13 @@ impl Research {
         self
     }
 
-    pub fn with_dependencies(mut self, cost: Vec<&str>) -> Research {
-        self.dependencies = cost.iter().map(|x| (*x).to_owned()).collect();
+    pub fn with_dependency(mut self, dependency: &str) -> Research {
+        self.dependencies.insert(dependency.to_string());
+        self
+    }
+
+    pub fn with_dependencies(mut self, dependency: Vec<&str>) -> Research {
+        self.dependencies = dependency.iter().map(|x| (*x).to_owned()).collect();
         self
     }
 

@@ -53,7 +53,7 @@ Gathering -> Tool Making        -> Spears         -> Spear Throwers
                                 -> Stone Grinders
           -> Seasonal Gathering
           -> Early Settlements
--> Domestication of Dogs
+          -> Domestication of Dogs
           -> Pigments
 
 Gathering - Expand the tribes expeditions to target plants and wild grains. Also collect some stone and wood where readily available. 

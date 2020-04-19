@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::{format_resource_list, GameState, ResourceAmount};
+use super::{format_resource_list, GameState, ResourceAmount, ResourceKind, ResourceQuantity};
 
 #[derive(Clone, Debug)]
 pub struct Research {
@@ -22,6 +22,11 @@ impl Research {
 
     pub fn with_cost(mut self, cost: Vec<ResourceAmount>) -> Research {
         self.cost = cost;
+        self
+    }
+
+    pub fn with_knowledge_cost(mut self, amount: ResourceQuantity) -> Research {
+        self.cost = vec![ResourceAmount::init(ResourceKind::Knowledge, amount)];
         self
     }
 

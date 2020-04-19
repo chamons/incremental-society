@@ -1,8 +1,4 @@
-use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade};
-
-#[cfg(test)]
-use crate::state::UpgradeActions;
-
+use crate::state::{Building, Conversion, ConversionLength, Edict, Research, ResourceAmount, ResourceKind, Upgrade, UpgradeActions};
 use std::collections::HashMap;
 
 #[cfg(not(test))]
@@ -16,7 +12,11 @@ lazy_static! {
                 "Gathering",
                 ConversionLength::Long,
                 vec![],
-                vec![ResourceAmount::init(ResourceKind::Food, 5), ResourceAmount::init(ResourceKind::Wood, 1)],
+                vec![
+                    ResourceAmount::init(ResourceKind::Food, 5),
+                    ResourceAmount::init(ResourceKind::Wood, 1),
+                    ResourceAmount::init(ResourceKind::Stone, 1),
+                ],
             ),
         );
 
@@ -42,6 +42,7 @@ lazy_static! {
                 .with_immortal(),
         );
 
+        /*
         m.insert(
             "Gathering Camp",
             Building::init("Gathering Camp")
@@ -58,6 +59,7 @@ lazy_static! {
                 .with_storage(vec![ResourceAmount::init(ResourceKind::Food, 20)])
                 .with_research("Settlement"),
         );
+        */
 
         m
     };
@@ -79,23 +81,64 @@ lazy_static! {
             "Hunt",
             Edict::init(
                 "Hunt",
-                Conversion::init("Hunt", ConversionLength::Long, vec![], vec![ResourceAmount::init(ResourceKind::Food, 20)]),
-            ),
+                Conversion::init("Hunt", ConversionLength::Long, vec![], vec![ResourceAmount::init(ResourceKind::Food, 20)])
+            ).with_effective_range(3),
         );
-
+        e.insert(
+            "Gathering",
+            Edict::init(
+                "Gathering",
+                Conversion::init("Gathering", ConversionLength::Medium, vec![], vec![ResourceAmount::init(ResourceKind::Food, 10),
+                ResourceAmount::init(ResourceKind::Wood, 1),
+                ResourceAmount::init(ResourceKind::Stone, 1)
+            ])).with_effective_range(2).with_single_research("Gathering")
+        );
         e
     };
     pub static ref RESEARCH: HashMap<&'static str, Research> = {
         let mut m = HashMap::new();
         m.insert(
-            "Settlement",
-            Research::init("Settlement").with_cost(vec![ResourceAmount::init(ResourceKind::Knowledge, 10)]),
+            "Gathering",
+            Research::init("Gathering").with_description("Expand the tribe's expeditions to collect plants and wild grains. Also obtain stone and wood where readily available.").with_knowledge_cost(10)
         );
+        m.insert(
+            "Tool Making",
+            Research::init("Tool Making").with_dependencies(vec!["Gathering"]).with_description("Since times immemorial what separates mankind from the animal kingdom is the consistent use of tools. Unlocks fashioning tools from bone, stone, and wood.").with_knowledge_cost(20)
+        );
+        m.insert(
+            "Seasonal Gathering",
+            Research::init("Seasonal Gathering").with_dependencies(vec!["Gathering"]).with_description("By migrating along consistent routes, resources can be exploited in season and yield increased.").with_knowledge_cost(20)
+        );
+        m.insert(
+            "Stone Spears",
+            Research::init("Stone Spears").with_dependencies(vec!["Tool Making"]),
+        );
+        m.insert(
+            "Spear Throwers",
+            Research::init("Spear Throwers").with_dependencies(vec!["Stone Spears"]),
+        );
+        m.insert(
+            "Stone Grinders",
+            Research::init("Stone Grinders").with_dependencies(vec!["Tool Making"]),
+        );
+        m.insert(
+            "Early Settlements",
+            Research::init("Early Settlements").with_dependencies(vec!["Gathering"]),
+        );
+        m.insert(
+            "Domestication of Dogs",
+            Research::init("Domestication of Dogs").with_dependencies(vec!["Gathering"]),
+        );
+        m.insert(
+            "Pigments",
+            Research::init("Pigments").with_dependencies(vec!["Gathering"]),
+        );
+
         m
     };
     pub static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
-        m.insert("c", Upgrade::init("c", vec![], vec![]));
+        m.insert("Seasonal Gathering", Upgrade::init("Seasonal Gathering", vec![ UpgradeActions::ChangeEdictLength(ConversionLength::Long), UpgradeActions::AddEdictBonus(2) ], vec!["Gathering".to_string()]));
         m
     };
 }

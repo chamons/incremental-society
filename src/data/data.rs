@@ -106,39 +106,35 @@ lazy_static! {
             Research::init("Tool Making").with_dependencies(vec!["Gathering"]).with_description("Since times immemorial what separates mankind from the animal kingdom is the consistent use of tools. Unlocks fashioning tools from bone, stone, and wood.").with_knowledge_cost(20)
         );
         m.insert(
-            "Seasonal Gathering",
-            Research::init("Seasonal Gathering").with_dependencies(vec!["Gathering"]).with_description("By migrating along consistent routes, resources can be exploited in season and yield increased.").with_knowledge_cost(20)
-        );
-        m.insert(
-            "Stone Spears",
-            Research::init("Stone Spears").with_dependencies(vec!["Tool Making"]),
-        );
-        m.insert(
-            "Spear Throwers",
-            Research::init("Spear Throwers").with_dependencies(vec!["Stone Spears"]),
-        );
-        m.insert(
-            "Stone Grinders",
-            Research::init("Stone Grinders").with_dependencies(vec!["Tool Making"]),
-        );
-        m.insert(
             "Early Settlements",
             Research::init("Early Settlements").with_dependencies(vec!["Gathering"]),
-        );
-        m.insert(
-            "Domestication of Dogs",
-            Research::init("Domestication of Dogs").with_dependencies(vec!["Gathering"]),
-        );
-        m.insert(
-            "Pigments",
-            Research::init("Pigments").with_dependencies(vec!["Gathering"]),
         );
 
         m
     };
     pub static ref UPGRADE: HashMap<&'static str, Upgrade> = {
         let mut m = HashMap::new();
-        m.insert("Seasonal Gathering", Upgrade::init("Seasonal Gathering", vec![ UpgradeActions::ChangeEdictLength(ConversionLength::Long), UpgradeActions::AddEdictBonus(2) ], vec!["Gathering".to_string()]));
+        m.insert("Seasonal Gathering", Upgrade::init_single("Seasonal Gathering", "Gathering", vec![UpgradeActions::ChangeEdictLength(ConversionLength::Long), UpgradeActions::AddEdictBonus(0.5)]).with_single_research("Gathering"));
+        m.insert(
+            "Stone Spears",
+            Upgrade::init_single("Stone Spears", "Hunting", vec![UpgradeActions::AddEdictBonus(0.25)]).with_single_research("Tool Making"),
+        );
+        m.insert(
+            "Spear Throwers",
+            Upgrade::init_single("Spear Throwers", "Hunting", vec![UpgradeActions::AddEdictBonus(0.5)]).with_single_research("Stone Spears"),
+        );
+        m.insert(
+            "Stone Grinders",
+            Upgrade::init_single("Stone Grinders", "Gathering", vec![UpgradeActions::AddEdictBonus(0.25)]).with_single_research("Tool Making"),
+        );
+        m.insert(
+            "Domestication of Dogs",
+            Upgrade::init_single("Domestication of Dogs", "Hunting", vec![UpgradeActions::AddEdictBonus(0.1)]).with_single_research("Early Settlements"),
+        );
+        m.insert(
+            "Stone Grinders",
+            Upgrade::init_single("Pigments", "", vec![UpgradeActions::ImproveStabilityGain(1)]).with_single_research("Early Settlements"),
+        );
         m
     };
 }

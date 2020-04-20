@@ -10,7 +10,7 @@ pub enum UpgradeActions {
     AddBuildingJob(String),
     AddBuildingStorage(ResourceAmount),
     ChangeEdictLength(ConversionLength),
-    AddEdictBonus(u32),
+    AddEdictBonus(f32),
     ChangeConversionLength(ConversionLength),
     ChangeConversionInput(ResourceAmount),
     ChangeConversionOutput(ResourceAmount),
@@ -51,7 +51,7 @@ impl Upgrade {
         check_available_by_research(&self.research, &state)
     }
 
-    pub fn init(name: &str, upgrades: Vec<UpgradeActions>, items_upgraded: Vec<String>) -> Upgrade {
+    pub fn init(name: &str, items_upgraded: Vec<String>, upgrades: Vec<UpgradeActions>) -> Upgrade {
         Upgrade {
             name: name.to_owned(),
             upgrades,
@@ -59,6 +59,10 @@ impl Upgrade {
             research: HashSet::new(),
             cost: vec![],
         }
+    }
+
+    pub fn init_single(name: &str, item: &str, upgrades: Vec<UpgradeActions>) -> Upgrade {
+        Upgrade::init(name, vec![item.to_string()], upgrades)
     }
 
     pub fn with_single_research(mut self, research: &str) -> Upgrade {
@@ -85,14 +89,6 @@ impl Upgrade {
 
         for u in self.upgrades.iter() {
             details.push(u.details());
-        }
-
-        if !self.upgrades.is_empty() {
-            details.push(format!("{}", self.upgrades.iter().map(|x| x.details()).format("")));
-        }
-
-        if !self.research.is_empty() {
-            details.push(format!("Requires Research: {}", self.research.iter().format(", ")));
         }
 
         details

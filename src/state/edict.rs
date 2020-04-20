@@ -14,7 +14,7 @@ pub struct Edict {
     // Amounts always rounded up
     pub effective_range: u32,
     // An amount added to effective_range before being applied
-    pub effective_bonus: u32,
+    pub effective_bonus: f32,
 }
 
 impl Edict {
@@ -24,7 +24,7 @@ impl Edict {
             conversion,
             research: HashSet::new(),
             effective_range: 1,
-            effective_bonus: 0,
+            effective_bonus: 0.0,
         }
     }
 
@@ -38,7 +38,7 @@ impl Edict {
         self
     }
 
-    pub fn with_effective_bonus(mut self, effective_bonus: u32) -> Edict {
+    pub fn with_effective_bonus(mut self, effective_bonus: f32) -> Edict {
         self.effective_bonus = effective_bonus;
         self
     }

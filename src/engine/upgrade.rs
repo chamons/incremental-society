@@ -140,7 +140,7 @@ mod tests {
 
         upgrade_edict(&mut context, "TestEdictUpgradeYield");
 
-        assert_eq!(1, context.find_edict("TestEdict").effective_bonus);
+        assert_eq!(1.0, context.find_edict("TestEdict").effective_bonus);
     }
 
     #[test]

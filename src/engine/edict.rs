@@ -33,7 +33,7 @@ pub fn apply_edict(context: &mut GameContext, name: &str) {
     match edict.effective_range {
         1 => context.state.resources.add_range(&edict.conversion.output),
         n => {
-            let modifier = context.random(1.0 / n as f32, n as f32) + edict.effective_bonus as f32;
+            let modifier = context.random(1.0 / n as f32, n as f32) + edict.effective_bonus;
             context.state.resources.add_range_with_coefficient(&edict.conversion.output, modifier);
         }
     }

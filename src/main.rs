@@ -111,7 +111,7 @@ impl epi::App for App {
             });
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {});
+        egui::CentralPanel::default().show(ctx, |_ui| {});
     }
 }
 

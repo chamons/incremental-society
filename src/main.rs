@@ -1,8 +1,8 @@
-use std::cell::RefCell;
+use std::{borrow::BorrowMut, cell::RefCell};
 
 use eframe::{
     egui,
-    egui::{epaint::text::FontDefinitions, Style, TextStyle, Ui},
+    egui::{epaint::text::FontDefinitions, Style, TextStyle, Ui, Vec2},
     epi,
 };
 use serde::{Deserialize, Serialize};
@@ -31,6 +31,7 @@ fn create_world() -> World {
 pub struct App {
     ecs: World,
     resources_open: RefCell<bool>,
+    log_open: RefCell<bool>,
     style: Style,
     fonts: Option<FontDefinitions>,
 }
@@ -40,6 +41,7 @@ impl Default for App {
         App {
             ecs: create_world(),
             resources_open: RefCell::new(true),
+            log_open: RefCell::new(true),
             style: create_style(),
             fonts: None,
         }
@@ -81,6 +83,9 @@ impl epi::App for App {
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
         self.set_style(ctx);
 
+        let window = ctx.available_rect();
+        let (window_width, window_height) = (window.max.x, window.max.y);
+
         egui::Window::new("Resources")
             .collapsible(false)
             .scroll(true)
@@ -99,14 +104,49 @@ impl epi::App for App {
                 ui.add_space(1.0);
             });
 
+        egui::Window::new("Log")
+            .collapsible(false)
+            .scroll(true)
+            .resizable(true)
+            .open(&mut self.log_open.borrow_mut())
+            .default_pos((window_width - 280.0, window_height - 205.0))
+            .default_size((250.0, 200.0))
+            .show(ctx, |ui| {
+                ui.add_space(3.0);
+                ui.label("asdf");
+                ui.label("asdf");
+                ui.label("");
+                ui.label("");
+                ui.label("");
+                ui.label("");
+                ui.label("");
+                ui.label("");
+                ui.add_space(1.0);
+            });
+
         egui::TopPanel::top("menu").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
+                ui.style_mut().spacing.item_spacing = Vec2::new(10.0, 10.0);
                 egui::menu::menu(ui, "Views", |ui| {
-                    let borrow = *self.resources_open.borrow();
-                    if show_menu_option(ui, "Resources", borrow) {
-                        *self.resources_open.borrow_mut() = !borrow;
+                    ui.add_space(2.0);
+
+                    let resources = *self.resources_open.borrow();
+                    if show_menu_option(ui, "Resources", resources) {
+                        *self.resources_open.borrow_mut() = !resources;
                     }
+
+                    let log = *self.log_open.borrow();
+                    if show_menu_option(ui, "Log", log) {
+                        *self.log_open.borrow_mut() = !log;
+                    }
+
+                    if ui.button("Reset Windows").clicked() {
+                        *self.resources_open.borrow_mut() = true;
+                        *self.log_open.borrow_mut() = true;
+                        ui.ctx().memory().borrow_mut().reset_areas();
+                    }
+                    ui.add_space(2.0);
                 });
             });
         });

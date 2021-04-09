@@ -5,3 +5,7 @@ debug.txt
 savegame.sav
 crash.txt
 .DS_Store
+
+# Added by cargo
+
+/target

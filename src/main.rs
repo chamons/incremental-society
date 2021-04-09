@@ -1,8 +1,8 @@
-use std::{borrow::BorrowMut, cell::RefCell};
+use std::cell::RefCell;
 
 use eframe::{
     egui,
-    egui::{Style, Ui, Vec2},
+    egui::{epaint::text::FontDefinitions, Style, TextStyle, Ui},
     epi,
 };
 use serde::{Deserialize, Serialize};
@@ -32,6 +32,7 @@ pub struct App {
     ecs: World,
     resources_open: RefCell<bool>,
     style: Style,
+    fonts: Option<FontDefinitions>,
 }
 
 impl Default for App {
@@ -40,6 +41,7 @@ impl Default for App {
             ecs: create_world(),
             resources_open: RefCell::new(true),
             style: create_style(),
+            fonts: None,
         }
     }
 }
@@ -51,9 +53,24 @@ fn create_style() -> Style {
     style
 }
 
-fn show_option(ui: &mut Ui, name: &str, value: bool) -> bool {
+fn configure_fonts(fonts: &FontDefinitions) -> FontDefinitions {
+    let mut fonts = fonts.clone();
+    fonts.family_and_size.get_mut(&TextStyle::Body).unwrap().1 = 16.0;
+    fonts
+}
+
+fn show_menu_option(ui: &mut Ui, name: &str, value: bool) -> bool {
     let action = if value { "Hide" } else { "Show" };
     ui.button(format!("{} {}", action, name)).clicked()
+}
+
+impl App {
+    fn set_style(&mut self, ctx: &egui::CtxRef) {
+        ctx.set_style(self.style.clone());
+
+        let fonts = self.fonts.get_or_insert_with(|| configure_fonts(ctx.fonts().definitions()));
+        ctx.set_fonts(fonts.clone());
+    }
 }
 
 impl epi::App for App {
@@ -62,7 +79,7 @@ impl epi::App for App {
     }
 
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
-        ctx.set_style(self.style.clone());
+        self.set_style(ctx);
 
         egui::Window::new("Resources")
             .collapsible(false)
@@ -79,6 +96,7 @@ impl epi::App for App {
                 ui.label(format!("Population: {}", pop));
 
                 ui.label(format!("Stability: 100"));
+                ui.add_space(1.0);
             });
 
         egui::TopPanel::top("menu").show(ctx, |ui| {
@@ -86,7 +104,7 @@ impl epi::App for App {
             egui::menu::bar(ui, |ui| {
                 egui::menu::menu(ui, "Views", |ui| {
                     let borrow = *self.resources_open.borrow();
-                    if show_option(ui, "Resources", borrow) {
+                    if show_menu_option(ui, "Resources", borrow) {
                         *self.resources_open.borrow_mut() = !borrow;
                     }
                 });

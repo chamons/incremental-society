@@ -61,9 +61,29 @@ fn configure_fonts(fonts: &FontDefinitions) -> FontDefinitions {
     fonts
 }
 
-fn show_menu_option(ui: &mut Ui, name: &str, value: bool) -> bool {
-    let action = if value { "Hide" } else { "Show" };
-    ui.button(format!("{} {}", action, name)).clicked()
+fn show_menu_option(ui: &mut Ui, name: &str, value: &mut bool) {
+    let action = if *value { "Hide" } else { "Show" };
+    if ui.button(format!("{} {}", action, name)).clicked() {
+        *value = !*value;
+    }
+}
+
+fn render_resources(ecs: &World, ui: &mut Ui) {
+    ui.add_space(3.0);
+    let players = ecs.read_storage::<PopComponent>();
+    let pop = (&players).join().count();
+    ui.label(format!("Population: {}", pop));
+    ui.label("Stability: 100");
+    ui.add_space(1.0);
+}
+
+fn render_log(_ecs: &World, ui: &mut Ui) {
+    ui.add_space(3.0);
+    let logs = vec!["asfd".to_string(), "asfd".to_string(), "3".to_string()];
+    for i in 0..logs.len().max(8) {
+        ui.label(logs.get(i).cloned().unwrap_or_else(|| "".to_string()));
+    }
+    ui.add_space(1.0);
 }
 
 impl App {
@@ -81,7 +101,10 @@ impl epi::App for App {
     }
 
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
-        self.set_style(ctx);
+        if self.fonts.is_none() {
+            self.set_style(ctx);
+            return;
+        }
 
         let window = ctx.available_rect();
         let (window_width, window_height) = (window.max.x, window.max.y);
@@ -93,16 +116,7 @@ impl epi::App for App {
             .open(&mut self.resources_open.borrow_mut())
             .default_pos((4.0, 28.0))
             .default_size((250.0, 200.0))
-            .show(ctx, |ui| {
-                ui.add_space(3.0);
-
-                let players = self.ecs.read_storage::<PopComponent>();
-                let pop = (&players).join().count();
-                ui.label(format!("Population: {}", pop));
-
-                ui.label(format!("Stability: 100"));
-                ui.add_space(1.0);
-            });
+            .show(ctx, |ui| render_resources(&self.ecs, ui));
 
         egui::Window::new("Log")
             .collapsible(false)
@@ -111,35 +125,15 @@ impl epi::App for App {
             .open(&mut self.log_open.borrow_mut())
             .default_pos((window_width - 280.0, window_height - 205.0))
             .default_size((250.0, 200.0))
-            .show(ctx, |ui| {
-                ui.add_space(3.0);
-                ui.label("asdf");
-                ui.label("asdf");
-                ui.label("");
-                ui.label("");
-                ui.label("");
-                ui.label("");
-                ui.label("");
-                ui.label("");
-                ui.add_space(1.0);
-            });
+            .show(ctx, |ui| render_log(&self.ecs, ui));
 
         egui::TopPanel::top("menu").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
                 ui.style_mut().spacing.item_spacing = Vec2::new(10.0, 10.0);
                 egui::menu::menu(ui, "Views", |ui| {
                     ui.add_space(2.0);
-
-                    let resources = *self.resources_open.borrow();
-                    if show_menu_option(ui, "Resources", resources) {
-                        *self.resources_open.borrow_mut() = !resources;
-                    }
-
-                    let log = *self.log_open.borrow();
-                    if show_menu_option(ui, "Log", log) {
-                        *self.log_open.borrow_mut() = !log;
-                    }
+                    show_menu_option(ui, "Resources", &mut self.resources_open.borrow_mut());
+                    show_menu_option(ui, "Log", &mut self.log_open.borrow_mut());
 
                     if ui.button("Reset Windows").clicked() {
                         *self.resources_open.borrow_mut() = true;

@@ -14,14 +14,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [macos-latest, windows-latest]
         os: [windows-latest]
     steps:
       - uses: actions/checkout@v2
-      - name: install_dependencies
-        run: |
-          brew install SDL2 sdl2_image sdl2_ttf
-        if: matrix.os == 'macos-latest'
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal

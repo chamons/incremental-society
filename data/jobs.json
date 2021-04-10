@@ -1,0 +1,9 @@
+[
+    {
+        "name": "Gathering",
+        "resources": {
+            "Food": 5,
+            "Wood": 1
+        }
+    }
+]

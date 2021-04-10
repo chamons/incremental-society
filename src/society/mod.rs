@@ -1,6 +1,9 @@
 mod ecs;
+mod jobs;
+mod paths;
 mod pops;
 mod resources;
+mod util;
 mod world;
 
 #[macro_export]
@@ -10,7 +13,10 @@ macro_rules! vec_of_strings {
 
 pub mod prelude {
     pub use super::ecs::*;
+    pub use super::jobs::*;
+    pub use super::paths::*;
     pub use super::pops::*;
     pub use super::resources::*;
+    pub use super::util::*;
     pub use super::world::*;
 }

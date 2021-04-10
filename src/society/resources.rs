@@ -17,19 +17,29 @@ impl Resources {
         *self.storage.get(kind).unwrap_or(&0)
     }
 
+    pub fn has(&self, kind: &str, amount: u32) -> bool {
+        self.get(kind) >= amount
+    }
+
+    pub fn apply(&mut self, kind: &str, delta: i32) {
+        if delta >= 0 {
+            self.add(kind, delta as u32);
+        } else {
+            self.remove(kind, delta.abs() as u32);
+        }
+    }
+
     pub fn add(&mut self, kind: &str, amount: u32) {
         let value = self.storage.entry(kind.to_string()).or_insert(0);
         *value = *value + amount;
     }
 
-    pub fn remove(&mut self, kind: &str, amount: u32) -> bool {
+    pub fn remove(&mut self, kind: &str, amount: u32) {
         let value = self.storage.entry(kind.to_string()).or_insert(0);
         if *value < amount {
             *value = 0;
-            false
         } else {
             *value = *value - amount;
-            true
         }
     }
 }
@@ -56,6 +66,14 @@ mod tests {
     }
 
     #[test]
+    fn has() {
+        let mut resources = Resources::new();
+        assert!(!resources.has("Food", 10));
+        resources.add("Food", 10);
+        assert!(resources.has("Food", 10));
+    }
+
+    #[test]
     fn add() {
         let mut resources = Resources::new();
         resources.add("Food", 10);
@@ -68,16 +86,26 @@ mod tests {
     fn remove() {
         let mut resources = Resources::new();
         resources.add("Food", 10);
-        assert!(resources.remove("Food", 10));
+        resources.remove("Food", 10);
         assert_eq!(0, resources.get("Food"));
-        assert!(!resources.remove("Food", 10));
+        resources.remove("Food", 10);
         assert_eq!(0, resources.get("Food"));
+    }
+
+    #[test]
+    fn apply() {
+        let mut resources = Resources::new();
+        resources.add("Food", 10);
+        resources.apply("Food", -10);
+        assert_eq!(0, resources.get("Food"));
+        resources.apply("Food", 30);
+        assert_eq!(30, resources.get("Food"));
     }
 
     #[test]
     fn remove_nonexistent() {
         let mut resources = Resources::new();
-        assert!(!resources.remove("Food", 10));
+        resources.remove("Food", 10);
         assert_eq!(0, resources.get("Food"));
     }
 }

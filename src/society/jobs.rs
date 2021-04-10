@@ -8,12 +8,12 @@ use super::prelude::*;
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Job {
     pub name: String,
-    pub resources: HashMap<String, u32>,
+    pub resources: HashMap<String, i32>,
 }
 
 impl Job {
     #[cfg(test)]
-    pub fn new_single(name: &str, resource: &str, amount: u32) -> Job {
+    pub fn new_single(name: &str, resource: &str, amount: i32) -> Job {
         Job {
             name: name.to_string(),
             resources: [(resource.to_string(), amount)].iter().cloned().collect(),
@@ -45,6 +45,11 @@ impl JobLibrary {
     }
 }
 
+fn has_consumed_resources(resources: &Resources, job: &Job) -> bool {
+    // All resources consumed (< 0) must exist
+    job.resources.iter().all(|(k, &a)| a > 0 || resources.has(k, a.abs() as u32))
+}
+
 pub fn tick_jobs(ecs: &mut World) {
     let default_job = ecs.get_string_constant("DEFAULT_JOB");
 
@@ -59,8 +64,14 @@ pub fn tick_jobs(ecs: &mut World) {
     let mut resources = ecs.write_resource::<Resources>();
     let job_library = ecs.read_resource::<JobLibrary>();
     for (job, pops_working) in total_jobs {
-        for (resource, amount) in &job_library.get(&job).resources {
-            resources.add(resource, pops_working * amount);
+        let job = job_library.get(&job);
+        for _ in 0..pops_working {
+            if !has_consumed_resources(&resources, job) {
+                break;
+            }
+            for (resource, &amount) in &job.resources {
+                resources.apply(resource, amount);
+            }
         }
     }
 }
@@ -107,5 +118,27 @@ mod tests {
 
         assert_eq!(10, ecs.read_resource::<Resources>().get("Food"));
         assert_eq!(0, ecs.read_resource::<Resources>().get("Wood"));
+    }
+
+    #[test]
+    fn tick_conversion() {
+        let mut ecs = setup_job_world();
+        ecs.write_resource::<JobLibrary>().add_job(Job {
+            name: "TestConvert".to_string(),
+            resources: [("Charcoal".to_string(), 1), ("Wood".to_string(), -10)].iter().cloned().collect(),
+        });
+
+        ecs.write_resource::<Resources>().add("Wood", 10);
+
+        for _ in 0..2 {
+            let id = ecs.next_id();
+            let mut pop = PopComponent::new();
+            pop.job = Some("TestConvert".to_string());
+            ecs.create_entity().with(pop).with(id).build();
+        }
+        tick_jobs(&mut ecs);
+
+        assert_eq!(0, ecs.read_resource::<Resources>().get("Wood"));
+        assert_eq!(1, ecs.read_resource::<Resources>().get("Charcoal"));
     }
 }

@@ -1,20 +1,28 @@
 use std::collections::HashMap;
 
 pub struct Resources {
-    storage: HashMap<String, u32>,
+    current: HashMap<String, u32>,
+    cap: HashMap<String, u32>,
 }
 
 impl Resources {
     pub fn new() -> Resources {
-        Resources { storage: HashMap::new() }
+        Resources {
+            current: HashMap::new(),
+            cap: HashMap::new(),
+        }
+    }
+
+    pub fn set_cap(&mut self, kind: &str, amount: u32) {
+        self.cap.insert(kind.to_string(), amount);
     }
 
     pub fn kinds<'a>(&'a self) -> Box<dyn Iterator<Item = &String> + 'a> {
-        Box::new(self.storage.keys())
+        Box::new(self.current.keys())
     }
 
     pub fn get(&self, kind: &str) -> u32 {
-        *self.storage.get(kind).unwrap_or(&0)
+        *self.current.get(kind).unwrap_or(&0)
     }
 
     pub fn has(&self, kind: &str, amount: u32) -> bool {
@@ -29,18 +37,30 @@ impl Resources {
         }
     }
 
+    fn apply_cap(&mut self, kind: &str) {
+        let cap = *self.cap.get(kind).unwrap_or(&u32::MAX);
+        if self.get(kind) > cap {
+            self.set(kind, cap);
+        }
+    }
+
     pub fn add(&mut self, kind: &str, amount: u32) {
-        let value = self.storage.entry(kind.to_string()).or_insert(0);
+        let value = self.current.entry(kind.to_string()).or_insert(0);
         *value = *value + amount;
+        self.apply_cap(kind);
     }
 
     pub fn remove(&mut self, kind: &str, amount: u32) {
-        let value = self.storage.entry(kind.to_string()).or_insert(0);
+        let value = self.current.entry(kind.to_string()).or_insert(0);
         if *value < amount {
             *value = 0;
         } else {
             *value = *value - amount;
         }
+    }
+
+    pub fn set(&mut self, kind: &str, amount: u32) {
+        self.current.insert(kind.to_string(), amount);
     }
 }
 
@@ -83,6 +103,16 @@ mod tests {
     }
 
     #[test]
+    fn add_at_cap() {
+        let mut resources = Resources::new();
+        resources.set_cap("Food", 20);
+        resources.add("Food", 10);
+        resources.add("Food", 10);
+        resources.add("Food", 10);
+        assert_eq!(20, resources.get("Food"));
+    }
+
+    #[test]
     fn remove() {
         let mut resources = Resources::new();
         resources.add("Food", 10);
@@ -100,6 +130,14 @@ mod tests {
         assert_eq!(0, resources.get("Food"));
         resources.apply("Food", 30);
         assert_eq!(30, resources.get("Food"));
+    }
+
+    #[test]
+    fn set() {
+        let mut resources = Resources::new();
+        resources.add("Food", 10);
+        resources.set("Food", 40);
+        assert_eq!(40, resources.get("Food"));
     }
 
     #[test]

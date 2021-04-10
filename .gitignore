@@ -1,5 +1,11 @@
-/target
+/target/
+Cargo.lock
 **/*.rs.bk
 debug.txt
-.DS_Store
 savegame.sav
+crash.txt
+.DS_Store
+
+# Added by cargo
+
+/target

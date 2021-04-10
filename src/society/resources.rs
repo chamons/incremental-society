@@ -64,9 +64,14 @@ impl Resources {
     }
 }
 
+pub fn has_consumed_resources(resources: &Resources, requirements: &HashMap<String, i32>) -> bool {
+    // All resources consumed (< 0) must exist
+    requirements.iter().all(|(k, &a)| a > 0 || resources.has(k, a.abs() as u32))
+}
+
 #[cfg(test)]
 mod tests {
-    use super::Resources;
+    use super::{has_consumed_resources, Resources};
 
     #[test]
     fn kinds() {
@@ -145,5 +150,22 @@ mod tests {
         let mut resources = Resources::new();
         resources.remove("Food", 10);
         assert_eq!(0, resources.get("Food"));
+    }
+
+    #[test]
+    fn has_consumed_resources_all() {
+        let mut resources = Resources::new();
+        resources.add("Food", 10);
+        assert!(has_consumed_resources(&resources, &[("Food".to_string(), -5)].iter().cloned().collect()));
+    }
+
+    #[test]
+    fn has_consumed_resources_not_all() {
+        let mut resources = Resources::new();
+        resources.remove("Food", 10);
+        assert!(!has_consumed_resources(
+            &resources,
+            &[("Food".to_string(), -5), ("Wood".to_string(), -1)].iter().cloned().collect()
+        ));
     }
 }

@@ -2,6 +2,7 @@ mod constants;
 mod ecs;
 mod identifier;
 mod jobs;
+mod needs;
 mod paths;
 mod pops;
 mod resources;
@@ -18,6 +19,7 @@ pub mod prelude {
     pub use super::ecs::*;
     pub use super::identifier::*;
     pub use super::jobs::*;
+    pub use super::needs::*;
     pub use super::paths::*;
     pub use super::pops::*;
     pub use super::resources::*;

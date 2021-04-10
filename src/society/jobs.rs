@@ -45,11 +45,6 @@ impl JobLibrary {
     }
 }
 
-fn has_consumed_resources(resources: &Resources, job: &Job) -> bool {
-    // All resources consumed (< 0) must exist
-    job.resources.iter().all(|(k, &a)| a > 0 || resources.has(k, a.abs() as u32))
-}
-
 pub fn tick_jobs(ecs: &mut World) {
     let default_job = ecs.get_string_constant("DEFAULT_JOB");
 
@@ -66,7 +61,7 @@ pub fn tick_jobs(ecs: &mut World) {
     for (job, pops_working) in total_jobs {
         let job = job_library.get(&job);
         for _ in 0..pops_working {
-            if !has_consumed_resources(&resources, job) {
+            if !has_consumed_resources(&resources, &job.resources) {
                 break;
             }
             for (resource, &amount) in &job.resources {

@@ -2,6 +2,26 @@ use specs::prelude::*;
 
 use super::prelude::*;
 
+pub struct Age {
+    pub current: String,
+}
+
+impl Age {
+    pub fn new(current: &str) -> Age {
+        Age { current: current.to_string() }
+    }
+}
+
+pub trait EasyAge {
+    fn current_age(&self) -> String;
+}
+
+impl EasyAge for World {
+    fn current_age(&self) -> String {
+        self.read_resource::<Age>().current.to_string()
+    }
+}
+
 pub fn register_world() -> World {
     let mut ecs = World::new();
     ecs.register::<IdentifierComponent>();
@@ -10,6 +30,7 @@ pub fn register_world() -> World {
     ecs.insert(ConstantLibrary::load());
     ecs.insert(IdentifierLibrary::load());
     ecs.insert(JobLibrary::load());
+    ecs.insert(PopNeedLibrary::load());
 
     ecs.insert(Resources::new());
 
@@ -18,6 +39,8 @@ pub fn register_world() -> World {
 
 pub fn create_world() -> World {
     let mut ecs = register_world();
+
+    ecs.insert(Age::new(&ecs.get_string_constant("STARTING_AGE")));
 
     for _ in 0..5 {
         let id = ecs.next_id();

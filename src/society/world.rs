@@ -5,6 +5,9 @@ use super::prelude::*;
 pub fn register_world() -> World {
     let mut ecs = World::new();
     ecs.register::<PopComponent>();
+
+    ecs.insert(Resources::new());
+
     ecs
 }
 

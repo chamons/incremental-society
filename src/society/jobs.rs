@@ -9,18 +9,16 @@ pub struct Job {
     resources: HashMap<String, u32>,
 }
 
-pub struct JobResource {
+pub struct JobLibrary {
     pub jobs: Vec<Job>,
 }
 
-impl JobResource {
-    pub fn new(jobs: Vec<Job>) -> JobResource {
-        JobResource { jobs }
+impl JobLibrary {
+    pub fn load() -> JobLibrary {
+        let input = read_string("data", "jobs.json");
+
+        JobLibrary {
+            jobs: serde_json::from_str(&input).unwrap(),
+        }
     }
-}
-
-pub fn load_jobs() -> JobResource {
-    let input = read_string("data", "jobs.json");
-
-    JobResource::new(serde_json::from_str(&input).unwrap())
 }

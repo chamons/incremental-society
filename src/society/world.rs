@@ -6,7 +6,9 @@ pub fn register_world() -> World {
     let mut ecs = World::new();
     ecs.register::<PopComponent>();
 
-    ecs.insert(load_jobs());
+    ecs.insert(ConstantLibrary::load());
+    ecs.insert(JobLibrary::load());
+
     ecs.insert(Resources::new());
     ecs.write_resource::<Resources>().add("Food", 10);
     ecs.write_resource::<Resources>().add("Wood", 2);

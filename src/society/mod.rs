@@ -1,3 +1,4 @@
+mod constants;
 mod ecs;
 mod jobs;
 mod paths;
@@ -12,6 +13,7 @@ macro_rules! vec_of_strings {
 }
 
 pub mod prelude {
+    pub use super::constants::*;
     pub use super::ecs::*;
     pub use super::jobs::*;
     pub use super::paths::*;

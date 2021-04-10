@@ -5,28 +5,13 @@ use eframe::{
     egui::{epaint::text::FontDefinitions, Style, TextStyle, Ui, Vec2},
     epi,
 };
-use serde::{Deserialize, Serialize};
 use specs::prelude::*;
-use specs_derive::*;
 
-mod ecs;
+mod society;
+use society::prelude::*;
 
-#[derive(Component, Serialize, Deserialize, Clone, Default)]
-struct PopComponent {}
-
-fn register_world() -> World {
-    let mut ecs = World::new();
-    ecs.register::<PopComponent>();
-    ecs
-}
-
-fn create_world() -> World {
-    let mut ecs = register_world();
-    for _ in 0..5 {
-        ecs.create_entity().with(PopComponent::default()).build();
-    }
-    ecs
-}
+mod ui;
+use ui::prelude::*;
 
 pub struct App {
     ecs: World,
@@ -68,24 +53,6 @@ fn show_menu_option(ui: &mut Ui, name: &str, value: &mut bool) {
     }
 }
 
-fn render_resources(ecs: &World, ui: &mut Ui) {
-    ui.add_space(3.0);
-    let players = ecs.read_storage::<PopComponent>();
-    let pop = (&players).join().count();
-    ui.label(format!("Population: {}", pop));
-    ui.label("Stability: 100");
-    ui.add_space(1.0);
-}
-
-fn render_log(_ecs: &World, ui: &mut Ui) {
-    ui.add_space(3.0);
-    let logs = vec!["asfd".to_string(), "asfd".to_string(), "3".to_string()];
-    for i in 0..logs.len().max(8) {
-        ui.label(logs.get(i).cloned().unwrap_or_else(|| "".to_string()));
-    }
-    ui.add_space(1.0);
-}
-
 impl App {
     fn set_style(&mut self, ctx: &egui::CtxRef) {
         ctx.set_style(self.style.clone());
@@ -101,6 +68,7 @@ impl epi::App for App {
     }
 
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
+        // First frame skip drawing but set style so we don't flicker
         if self.fonts.is_none() {
             self.set_style(ctx);
             return;

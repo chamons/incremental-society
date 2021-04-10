@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use super::prelude::*;
 use serde::{Deserialize, Serialize};
+
+use super::prelude::*;
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Job {

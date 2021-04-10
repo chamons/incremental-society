@@ -27,6 +27,7 @@ impl ConstantLibrary {
         self.constants.get(key).unwrap().as_f64().unwrap()
     }
 }
+
 pub trait EasyConstants {
     fn get_constant(&self, name: &str) -> u32;
     fn get_float_constant(&self, name: &str) -> f64;

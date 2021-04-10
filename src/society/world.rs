@@ -4,9 +4,11 @@ use super::prelude::*;
 
 pub fn register_world() -> World {
     let mut ecs = World::new();
+    ecs.register::<IdentifierComponent>();
     ecs.register::<PopComponent>();
 
     ecs.insert(ConstantLibrary::load());
+    ecs.insert(IdentifierLibrary::load());
     ecs.insert(JobLibrary::load());
 
     ecs.insert(Resources::new());
@@ -18,8 +20,10 @@ pub fn register_world() -> World {
 
 pub fn create_world() -> World {
     let mut ecs = register_world();
+
     for _ in 0..5 {
-        ecs.create_entity().with(PopComponent::new()).build();
+        let id = ecs.next_id();
+        ecs.create_entity().with(PopComponent::new()).with(id).build();
     }
     ecs
 }

@@ -12,8 +12,6 @@ pub fn register_world() -> World {
     ecs.insert(JobLibrary::load());
 
     ecs.insert(Resources::new());
-    ecs.write_resource::<Resources>().add("Food", 10);
-    ecs.write_resource::<Resources>().add("Wood", 2);
 
     ecs
 }
@@ -25,5 +23,13 @@ pub fn create_world() -> World {
         let id = ecs.next_id();
         ecs.create_entity().with(PopComponent::new()).with(id).build();
     }
+
+    ecs.write_resource::<Resources>().add("Food", 10);
+    ecs.write_resource::<Resources>().add("Wood", 2);
+
     ecs
+}
+
+pub fn tick(ecs: &mut World) {
+    tick_jobs(ecs);
 }

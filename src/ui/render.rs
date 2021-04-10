@@ -10,7 +10,7 @@ pub fn render_resources(ecs: &World, ui: &mut Ui) {
     ui.add_space(10.0);
     let resources = ecs.read_resource::<Resources>();
     for r in resources.kinds() {
-        ui.label(format!("{}: {}", r, resources.value(r)));
+        ui.label(format!("{}: {}", r, resources.get(r)));
     }
 
     ui.add_space(1.0);

@@ -13,7 +13,7 @@ impl Resources {
         Box::new(self.storage.keys())
     }
 
-    pub fn value(&self, kind: &str) -> u32 {
+    pub fn get(&self, kind: &str) -> u32 {
         *self.storage.get(kind).unwrap_or(&0)
     }
 
@@ -48,11 +48,11 @@ mod tests {
     }
 
     #[test]
-    fn value() {
+    fn get() {
         let mut resources = Resources::new();
-        assert_eq!(0, resources.value("Food"));
+        assert_eq!(0, resources.get("Food"));
         resources.add("Food", 10);
-        assert_eq!(10, resources.value("Food"));
+        assert_eq!(10, resources.get("Food"));
     }
 
     #[test]
@@ -61,7 +61,7 @@ mod tests {
         resources.add("Food", 10);
         resources.add("Food", 10);
         resources.add("Food", 10);
-        assert_eq!(30, resources.value("Food"));
+        assert_eq!(30, resources.get("Food"));
     }
 
     #[test]
@@ -69,15 +69,15 @@ mod tests {
         let mut resources = Resources::new();
         resources.add("Food", 10);
         assert!(resources.remove("Food", 10));
-        assert_eq!(0, resources.value("Food"));
+        assert_eq!(0, resources.get("Food"));
         assert!(!resources.remove("Food", 10));
-        assert_eq!(0, resources.value("Food"));
+        assert_eq!(0, resources.get("Food"));
     }
 
     #[test]
     fn remove_nonexistent() {
         let mut resources = Resources::new();
         assert!(!resources.remove("Food", 10));
-        assert_eq!(0, resources.value("Food"));
+        assert_eq!(0, resources.get("Food"));
     }
 }

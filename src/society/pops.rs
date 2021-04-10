@@ -4,7 +4,7 @@ use specs_derive::*;
 
 #[derive(Component, Serialize, Deserialize, Clone, Default)]
 pub struct PopComponent {
-    job: Option<String>,
+    pub job: Option<String>,
 }
 
 impl PopComponent {

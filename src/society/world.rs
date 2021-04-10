@@ -7,6 +7,8 @@ pub fn register_world() -> World {
     ecs.register::<PopComponent>();
 
     ecs.insert(Resources::new());
+    ecs.write_resource::<Resources>().add("Food", 10);
+    ecs.write_resource::<Resources>().add("Wood", 2);
 
     ecs
 }

@@ -7,7 +7,12 @@ pub fn render_resources(ecs: &World, ui: &mut Ui) {
     let players = ecs.read_storage::<PopComponent>();
     let pop = (&players).join().count();
     ui.label(format!("Population: {}", pop));
-    ui.label("Stability: 100");
+    ui.add_space(10.0);
+    let resources = ecs.read_resource::<Resources>();
+    for r in resources.kinds() {
+        ui.label(format!("{}: {}", r, resources.value(r)));
+    }
+
     ui.add_space(1.0);
 }
 

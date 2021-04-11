@@ -2,8 +2,8 @@
     {
         "name": "Gathering",
         "resources": {
-            "Food": 5,
-            "Wood": 1
+            "Food": 18,
+            "Wood": 5
         }
     }
 ]

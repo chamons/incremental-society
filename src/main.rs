@@ -68,6 +68,9 @@ impl epi::App for App {
     }
 
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
+        // Run at the refresh rate
+        ctx.request_repaint();
+
         // First frame skip drawing but set style so we don't flicker
         if self.fonts.is_none() {
             self.set_style(ctx);
@@ -114,6 +117,8 @@ impl epi::App for App {
         });
 
         egui::CentralPanel::default().show(ctx, |_ui| {});
+
+        tick(&mut self.ecs);
     }
 }
 

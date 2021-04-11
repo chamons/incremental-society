@@ -12,6 +12,21 @@ impl Age {
     }
 }
 
+pub struct Time {
+    pub tick: u64,
+}
+
+impl Time {
+    pub fn new() -> Time {
+        Time { tick: 0 }
+    }
+
+    pub fn tick(&mut self) -> u64 {
+        self.tick += 1;
+        self.tick - 1
+    }
+}
+
 pub trait EasyAge {
     fn current_age(&self) -> String;
 }
@@ -31,6 +46,7 @@ pub fn register_world() -> World {
     ecs.insert(IdentifierLibrary::load());
     ecs.insert(JobLibrary::load());
     ecs.insert(PopNeedLibrary::load());
+    ecs.insert(Time::new());
 
     ecs.insert(Resources::new());
 
@@ -54,5 +70,19 @@ pub fn create_world() -> World {
 }
 
 pub fn tick(ecs: &mut World) {
-    tick_jobs(ecs);
+    let tick = ecs.write_resource::<Time>().tick();
+
+    if tick % ecs.get_constant("STAT_DECAY_TIME") as u64 == 0 {
+        tick_pop_stat_decay(ecs);
+    }
+
+    if tick % ecs.get_constant("JOB_TIME") as u64 == 0 {
+        tick_jobs(ecs);
+    }
+    if tick % ecs.get_constant("NEED_TIME") as u64 == 0 {
+        tick_needs(ecs);
+    }
+    if tick % 1000 == 0 {
+        println!("Tick");
+    }
 }

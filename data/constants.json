@@ -2,5 +2,8 @@
     "DEFAULT_JOB": "Gathering",
     "STARTING_AGE": "Archaic",
     "DECAY_RATE": 100,
-    "HAPPINESS_DROP_NEEDS_UNMET": 1.0
+    "HAPPINESS_DROP_NEEDS_UNMET": 1.0,
+    "STAT_DECAY_TIME": 40,
+    "JOB_TIME": 160,
+    "NEED_TIME": 40
 }

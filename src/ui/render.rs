@@ -12,7 +12,11 @@ pub fn render_resources(ecs: &World, ui: &mut Ui) {
     ui.add_space(10.0);
     let resources = ecs.read_resource::<Resources>();
     for r in resources.kinds() {
-        ui.label(format!("{}: {}", r, resources.get(r)));
+        if let Some(cap) = resources.cap(r) {
+            ui.label(format!("{}: {} / {}", r, resources.get(r), cap));
+        } else {
+            ui.label(format!("{}: {}", r, resources.get(r)));
+        }
     }
 
     ui.add_space(1.0);
@@ -23,6 +27,14 @@ pub fn render_log(_ecs: &World, ui: &mut Ui) {
     let logs = vec![];
     for i in 0..logs.len().max(8) {
         ui.label(logs.get(i).cloned().unwrap_or_else(|| "".to_string()));
+    }
+    ui.add_space(1.0);
+}
+
+pub fn render_jobs(ecs: &World, ui: &mut Ui) {
+    ui.add_space(3.0);
+    for (job, count) in current_job_info(ecs) {
+        ui.label(format!("{}: {}", job, count));
     }
     ui.add_space(1.0);
 }

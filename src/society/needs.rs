@@ -11,16 +11,6 @@ pub struct PopNeed {
     pub resources: HashMap<String, i32>,
 }
 
-impl PopNeed {
-    #[cfg(test)]
-    pub fn new_single(age: &str, resource: &str, amount: i32) -> PopNeed {
-        PopNeed {
-            age: age.to_string(),
-            resources: [(resource.to_string(), amount)].iter().cloned().collect(),
-        }
-    }
-}
-
 pub struct PopNeedLibrary {
     needs: HashMap<String, PopNeed>,
 }

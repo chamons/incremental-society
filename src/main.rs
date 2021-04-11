@@ -17,6 +17,7 @@ pub struct App {
     ecs: World,
     resources_open: RefCell<bool>,
     log_open: RefCell<bool>,
+    jobs_open: RefCell<bool>,
     style: Style,
     fonts: Option<FontDefinitions>,
 }
@@ -27,6 +28,7 @@ impl Default for App {
             ecs: create_world(),
             resources_open: RefCell::new(true),
             log_open: RefCell::new(true),
+            jobs_open: RefCell::new(true),
             style: create_style(),
             fonts: None,
         }
@@ -98,6 +100,15 @@ impl epi::App for App {
             .default_size((250.0, 200.0))
             .show(ctx, |ui| render_log(&self.ecs, ui));
 
+        egui::Window::new("Jobs")
+            .collapsible(false)
+            .scroll(true)
+            .resizable(true)
+            .open(&mut self.jobs_open.borrow_mut())
+            .default_pos((window_width - 280.0, 28.0))
+            .default_size((250.0, 200.0))
+            .show(ctx, |ui| render_jobs(&self.ecs, ui));
+
         egui::TopPanel::top("menu").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.style_mut().spacing.item_spacing = Vec2::new(10.0, 10.0);
@@ -105,10 +116,12 @@ impl epi::App for App {
                     ui.add_space(2.0);
                     show_menu_option(ui, "Resources", &mut self.resources_open.borrow_mut());
                     show_menu_option(ui, "Log", &mut self.log_open.borrow_mut());
+                    show_menu_option(ui, "Jobs", &mut self.jobs_open.borrow_mut());
 
                     if ui.button("Reset Windows").clicked() {
                         *self.resources_open.borrow_mut() = true;
                         *self.log_open.borrow_mut() = true;
+                        *self.jobs_open.borrow_mut() = true;
                         ui.ctx().memory().borrow_mut().reset_areas();
                     }
                     ui.add_space(2.0);

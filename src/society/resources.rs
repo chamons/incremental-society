@@ -13,6 +13,10 @@ impl Resources {
         }
     }
 
+    pub fn cap(&self, kind: &str) -> Option<u32> {
+        self.cap.get(kind).map(|f| *f)
+    }
+
     pub fn set_cap(&mut self, kind: &str, amount: u32) {
         self.cap.insert(kind.to_string(), amount);
     }
@@ -101,6 +105,14 @@ mod tests {
         assert!(!resources.has("Food", 10));
         resources.add("Food", 10);
         assert!(resources.has("Food", 10));
+    }
+
+    #[test]
+    fn get_cap() {
+        let mut resources = Resources::new();
+        assert!(resources.cap("Food").is_none());
+        resources.set_cap("Food", 10);
+        assert!(resources.cap("Food").is_some());
     }
 
     #[test]

@@ -65,6 +65,8 @@ pub fn create_world() -> World {
 
     ecs.write_resource::<Resources>().add("Food", 10);
     ecs.write_resource::<Resources>().add("Wood", 2);
+    ecs.write_resource::<Resources>().set_cap("Food", 500);
+    ecs.write_resource::<Resources>().set_cap("Wood", 100);
 
     ecs
 }
@@ -82,6 +84,7 @@ pub fn tick(ecs: &mut World) {
     if tick % ecs.get_constant("NEED_TIME") as u64 == 0 {
         tick_needs(ecs);
     }
+
     if tick % 1000 == 0 {
         println!("Tick");
     }

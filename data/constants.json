@@ -4,6 +4,6 @@
     "DECAY_RATE": 100,
     "HAPPINESS_DROP_NEEDS_UNMET": 1.0,
     "STAT_DECAY_TIME": 40,
-    "JOB_TIME": 160,
+    "JOB_TIME": 140,
     "NEED_TIME": 40
 }

@@ -45,16 +45,20 @@ impl JobLibrary {
     }
 }
 
-pub fn tick_jobs(ecs: &mut World) {
+fn calc_total_jobs(ecs: &World) -> HashMap<String, u32> {
     let default_job = ecs.get_string_constant("DEFAULT_JOB");
 
     let mut total_jobs = HashMap::new();
-
     let pops = ecs.read_storage::<PopComponent>();
     for pop in (&pops).join() {
         let job = pop.job.as_ref().unwrap_or_else(|| &default_job);
         total_jobs.entry(job.to_string()).and_modify(|j| *j += 1).or_insert(1);
     }
+    total_jobs
+}
+
+pub fn tick_jobs(ecs: &mut World) {
+    let total_jobs = calc_total_jobs(ecs);
 
     let mut resources = ecs.write_resource::<Resources>();
     let job_library = ecs.read_resource::<JobLibrary>();
@@ -69,6 +73,10 @@ pub fn tick_jobs(ecs: &mut World) {
             }
         }
     }
+}
+
+pub fn current_job_info(ecs: &World) -> Vec<(String, u32)> {
+    calc_total_jobs(ecs).iter().map(|(job, amount)| (job.to_string(), *amount)).collect()
 }
 
 #[cfg(test)]

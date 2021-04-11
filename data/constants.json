@@ -1,4 +1,5 @@
 {
     "DEFAULT_JOB": "Gathering",
-    "STARTING_AGE": "Archaic"
+    "STARTING_AGE": "Archaic",
+    "DECAY_RATE": 100
 }

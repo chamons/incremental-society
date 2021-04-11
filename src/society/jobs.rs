@@ -9,14 +9,17 @@ use super::prelude::*;
 pub struct Job {
     pub name: String,
     pub resources: HashMap<String, i32>,
+    #[serde(default)]
+    pub random_output_amount: bool,
 }
 
 impl Job {
     #[cfg(test)]
-    pub fn new_single(name: &str, resource: &str, amount: i32) -> Job {
+    pub fn new_single(name: &str, resource: &str, amount: i32, random_output_amount: bool) -> Job {
         Job {
             name: name.to_string(),
             resources: [(resource.to_string(), amount)].iter().cloned().collect(),
+            random_output_amount,
         }
     }
 }
@@ -60,6 +63,7 @@ fn calc_total_jobs(ecs: &World) -> HashMap<String, u32> {
 pub fn tick_jobs(ecs: &mut World) {
     let total_jobs = calc_total_jobs(ecs);
 
+    let mut rand = ecs.write_resource::<Random>();
     let mut resources = ecs.write_resource::<Resources>();
     let job_library = ecs.read_resource::<JobLibrary>();
     for (job, pops_working) in total_jobs {
@@ -69,7 +73,12 @@ pub fn tick_jobs(ecs: &mut World) {
                 break;
             }
             for (resource, &amount) in &job.resources {
-                resources.apply(resource, amount);
+                // Only randomize output (not consumed) if requested
+                if job.random_output_amount && amount > 0 {
+                    resources.apply(resource, Strength::new(amount as u32).roll(&mut rand.rand) as i32);
+                } else {
+                    resources.apply(resource, amount);
+                }
             }
         }
     }
@@ -86,8 +95,8 @@ mod tests {
 
     fn setup_job_world() -> World {
         let ecs = register_world();
-        ecs.write_resource::<JobLibrary>().add_job(Job::new_single("TestJob", "Food", 5));
-        ecs.write_resource::<JobLibrary>().add_job(Job::new_single("TestOtherJob", "Wood", 10));
+        ecs.write_resource::<JobLibrary>().add_job(Job::new_single("TestJob", "Food", 5, false));
+        ecs.write_resource::<JobLibrary>().add_job(Job::new_single("TestOtherJob", "Wood", 10, false));
 
         ecs.write_resource::<ConstantLibrary>().set("DEFAULT_JOB", Value::String("TestJob".to_string()));
         ecs
@@ -129,6 +138,7 @@ mod tests {
         ecs.write_resource::<JobLibrary>().add_job(Job {
             name: "TestConvert".to_string(),
             resources: [("Charcoal".to_string(), 1), ("Wood".to_string(), -10)].iter().cloned().collect(),
+            random_output_amount: false,
         });
 
         ecs.write_resource::<Resources>().add("Wood", 10);

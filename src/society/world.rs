@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use specs::prelude::*;
 
 use super::prelude::*;
@@ -37,6 +38,16 @@ impl EasyAge for World {
     }
 }
 
+pub struct Random {
+    pub rand: StdRng,
+}
+
+impl Random {
+    pub fn new() -> Random {
+        Random { rand: StdRng::from_entropy() }
+    }
+}
+
 pub fn register_world() -> World {
     let mut ecs = World::new();
     ecs.register::<IdentifierComponent>();
@@ -47,6 +58,7 @@ pub fn register_world() -> World {
     ecs.insert(JobLibrary::load());
     ecs.insert(PopNeedLibrary::load());
     ecs.insert(Time::new());
+    ecs.insert(Random::new());
 
     ecs.insert(Resources::new());
 

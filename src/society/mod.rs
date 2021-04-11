@@ -6,6 +6,7 @@ mod needs;
 mod paths;
 mod pops;
 mod resources;
+mod strength;
 mod util;
 mod world;
 
@@ -23,6 +24,7 @@ pub mod prelude {
     pub use super::paths::*;
     pub use super::pops::*;
     pub use super::resources::*;
+    pub use super::strength::*;
     pub use super::util::*;
     pub use super::world::*;
 }

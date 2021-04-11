@@ -2,8 +2,9 @@
     {
         "name": "Gathering",
         "resources": {
-            "Food": 18,
-            "Wood": 5
-        }
+            "Food": 11,
+            "Wood": 3
+        },
+        "random_output_amount": true
     }
 ]

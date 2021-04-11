@@ -64,6 +64,11 @@ impl Resources {
     }
 }
 
+pub fn has_all_resources(resources: &Resources, requirements: &HashMap<String, i32>) -> bool {
+    // All resources
+    requirements.iter().all(|(k, &a)| resources.has(k, a.abs() as u32))
+}
+
 pub fn has_consumed_resources(resources: &Resources, requirements: &HashMap<String, i32>) -> bool {
     // All resources consumed (< 0) must exist
     requirements.iter().all(|(k, &a)| a > 0 || resources.has(k, a.abs() as u32))

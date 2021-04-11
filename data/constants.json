@@ -1,5 +1,6 @@
 {
     "DEFAULT_JOB": "Gathering",
     "STARTING_AGE": "Archaic",
-    "DECAY_RATE": 100
+    "DECAY_RATE": 100,
+    "HAPPINESS_DROP_NEEDS_UNMET": 1.0
 }

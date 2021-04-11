@@ -50,10 +50,11 @@ pub fn tick_needs(ecs: &mut World) {
     let pop_need = need_library.get(&ecs.current_age());
 
     let mut resources = ecs.write_resource::<Resources>();
-    let pops = ecs.write_storage::<PopComponent>();
-    for _pop in (&pops).join() {
-        if !has_consumed_resources(&resources, &pop_need.resources) {
-            break;
+    let mut pops = ecs.write_storage::<PopComponent>();
+    for pop in (&mut pops).join() {
+        if !has_all_resources(&resources, &pop_need.resources) {
+            pop.happiness -= ecs.get_float_constant("HAPPINESS_DROP_NEEDS_UNMET");
+            // Consume whatever we can after happiness penalty
         }
         for (resource, &amount) in &pop_need.resources {
             resources.remove(resource, amount as u32);
@@ -96,7 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn tick_unfulfilled_needs() {
+    fn tick_unfulfilled_needs_reduces_happiness() {
         let mut ecs = setup_need_world();
         {
             let mut resources = ecs.write_resource::<Resources>();
@@ -108,9 +109,12 @@ mod tests {
             let id = ecs.next_id();
             ecs.create_entity().with(PopComponent::new()).with(id).build();
         }
+        let before = calculate_average_happiness(&ecs);
         tick_needs(&mut ecs);
+        let after = calculate_average_happiness(&ecs);
 
         assert_eq!(14, ecs.read_resource::<Resources>().get("Food"));
         assert_eq!(0, ecs.read_resource::<Resources>().get("Wood"));
+        assert!(after < before);
     }
 }

@@ -21,6 +21,30 @@ impl PopComponent {
     }
 }
 
+pub fn calculate_average_health(ecs: &World) -> f64 {
+    let mut pops = ecs.read_storage::<PopComponent>();
+
+    let mut count = 0;
+    let mut total = 0.0;
+    for p in (&mut pops).join() {
+        count += 1;
+        total += p.health;
+    }
+    total / count as f64
+}
+
+pub fn calculate_average_happiness(ecs: &World) -> f64 {
+    let mut pops = ecs.read_storage::<PopComponent>();
+
+    let mut count = 0;
+    let mut total = 0.0;
+    for p in (&mut pops).join() {
+        count += 1;
+        total += p.happiness;
+    }
+    total / count as f64
+}
+
 pub fn tick_pop_stat_decay(ecs: &mut World) {
     let decay_rate = ecs.get_float_constant("DECAY_RATE");
     let mut pops = ecs.write_storage::<PopComponent>();
@@ -75,5 +99,27 @@ mod tests {
         assert!(pop.happiness > 79.0);
         assert!(pop.health < 21.0);
         assert!(pop.health > 20.0);
+    }
+
+    #[test]
+    fn calculate_average() {
+        let mut ecs = register_world();
+
+        for i in 0..5 {
+            let id = ecs.next_id();
+            let mut pop = PopComponent::new();
+            pop.health = 20.0 - i as f64;
+            pop.happiness = 80.0 + i as f64;
+            ecs.create_entity().with(pop).with(id).build();
+        }
+
+        let happiness = calculate_average_happiness(&ecs);
+        let health = calculate_average_health(&ecs);
+
+        assert!(happiness > 80.0);
+        assert!(happiness < 83.0);
+
+        assert!(health > 16.0);
+        assert!(health < 20.0);
     }
 }
